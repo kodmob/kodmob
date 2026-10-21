@@ -13,7 +13,7 @@ use App\Core\Exceptions\ValidationException;
  *   panel/index.js     (isteğe bağlı) panel sayfaları (`PAGES`, biçim tv/src/panel/extension.js)
  *   tests/             PHP testleri · README.md · LICENSE
  *
- * Anahtar klasörün adıdır; çatının modül anahtarlarıyla çakışamaz. Uyum: `"kodmob": ">=2.5 <3"` (boşlukla
+ * Anahtar klasörün adıdır; çatının modül anahtarlarıyla çakışamaz. Uyum: `"kodmob": ">=3.0 <4"` (boşlukla
  * ayrılmış koşullar: >=, >, <=, <, =, ^). İsteğe bağlı `"requires": ["commerce"]`: paket o modüle takılır,
  * o açık değilken kapalıdır.
  */
@@ -66,7 +66,7 @@ final class ToolManifest
             $errors['version'] = 'Sürüm x.y.z biçiminde olmalı (ör. 0.1.0).';
         }
         if (self::constraint($data['kodmob']) === null) {
-            $errors['kodmob'] = 'Uyumlu çatı sürümü yazılmalı, ör. ">=2.5 <3".';
+            $errors['kodmob'] = 'Uyumlu çatı sürümü yazılmalı, ör. ">=3.0 <4".';
         }
         if (! preg_match(self::NAMESPACE_PATTERN, $data['namespace']) || in_array(explode('\\', $data['namespace'])[0], self::RESERVED, true)) {
             $errors['namespace'] = 'Ad alanı kendi adınızla başlamalı, ör. "KodmobTools\\StokTakibi" (App, Tests, Illuminate… olamaz).';

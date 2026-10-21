@@ -73,7 +73,7 @@ export function kmRoles() {
         },
 
         get pageGroups() {
-            return GROUPS.map((g) => ({ name: g.label, pages: this.menuPages.filter((p) => p.group === g.key) })).filter((g) => g.pages.length);
+            return GROUPS.map((g) => ({ key: g.key, name: g.label, pages: this.menuPages.filter((p) => p.group === g.key) })).filter((g) => g.pages.length);
         },
 
         async pick(slug, force = false) {
@@ -265,7 +265,7 @@ export function kmRoles() {
             const used = new Set(this.menuDraft.flatMap((g) => g.items));
             const q = fold(this.q.trim());
             const list = this.menuPages.filter((p) => !used.has(p.key) && (!q || fold(`${p.label} ${p.href}`).includes(q)));
-            return GROUPS.map((g) => ({ name: g.label, pages: list.filter((p) => p.group === g.key) })).filter((g) => g.pages.length);
+            return GROUPS.map((g) => ({ key: g.key, name: g.label, pages: list.filter((p) => p.group === g.key) })).filter((g) => g.pages.length);
         },
 
         addGroup() {

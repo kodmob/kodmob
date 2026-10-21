@@ -53,7 +53,7 @@
         <template x-if="view === 'pages'">
           <div class="flex flex-col gap-4" data-testid="role-pages">
             <p class="text-sm text-ink-2" x-show="!role?.locked">İşaretli sayfalar bu roldeki herkesin menüsünde görünür. Sayfa içindeki işlemler (yayınlama, silme, kullanıcı ekleme) "İşlem yetkileri"nden verilir.</p>
-            <template x-for="g in filteredPageGroups" :key="g.name">
+            <template x-for="g in filteredPageGroups" :key="g.key">
               <div class="card">
                 <div class="card-header"><h3 class="card-title" x-text="g.name"></h3></div>
                 <ul class="divide-y divide-line">
@@ -150,7 +150,7 @@
                     <template x-for="(g, gi) in menuDraft" :key="g.key"><option :value="gi" :selected="gi === addTarget" x-text="g.label || (gi + 1) + '. grup'"></option></template>
                   </select>
                 </label>
-                <template x-for="pg in unusedPageGroups" :key="pg.name">
+                <template x-for="pg in unusedPageGroups" :key="pg.key">
                   <div>
                     <p class="text-xs font-semibold tracking-wide text-muted uppercase" x-text="pg.name"></p>
                     <ul class="mt-1 flex flex-col gap-0.5">

@@ -39,7 +39,7 @@ stok-takibi/
 | `key` | Klasörün adı; küçük harf, rakam, tire (2–31). Çatının modül anahtarlarıyla çakışamaz. |
 | `label`, `description` | Araç Pazarı'ndaki ad ve tek cümlelik açıklama (Türkçe). |
 | `version` | Paketin sürümü, `x.y.z`. |
-| `kodmob` | Uyumlu çatı sürümü: `">=2.5 <3"`, `"^2.5"`. Uyumsuz paket yüklenmez, Araç Pazarı'nda nedeni yazar. |
+| `kodmob` | Uyumlu çatı sürümü: `">=3.0 <4"`, `"^3.0"`. Uyumsuz paket yüklenmez, Araç Pazarı'nda nedeni yazar. |
 | `author`, `license`, `homepage` | Yazar, lisans (topluluk kataloğu için MIT önerilir), adres. |
 | `namespace` | PHP ad alanı, ör. `KodmobTools\\StokTakibi` (JSON'da çift ters eğik çizgi). `App`, `Tests`, `Illuminate`… olamaz. |
 | `module` | `php/`'deki modül sınıfının adı (`App\Core\Module`'ü genişletir). |
@@ -105,7 +105,7 @@ Panel kataloğu dışarıya istek atmadan bu dosyadan okur (çatıyla güncellen
 ```json
 {
     "key": "stok-takibi", "label": "Stok takibi", "description": "…", "author": "…", "license": "MIT",
-    "version": "0.1.0", "kodmob": ">=2.5 <3", "repository": "https://github.com/…",
+    "version": "0.1.0", "kodmob": ">=3.0 <4", "repository": "https://github.com/…",
     "download": "https://github.com/…/releases/download/v0.1.0/stok-takibi-0.1.0.zip",
     "sha256": "<zip'in sha256 özeti>", "verified": false
 }

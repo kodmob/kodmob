@@ -99,6 +99,8 @@ Rezervasyon ve Oteller, Bülten, yasal belgeler, Jarvis Operatör, sözleşme ve
 - Yedek sayfa düzenini (bölgeler) de taşır.
 
 **Düzeltildi**
+- Roller ve İzinler: iki menü grubunun adı boş olduğundan sayfa listesinde konsol hatası (Alpine anahtar çakışması).
+- Örnek araç paketi (test) çatının 3.x sürümüyle uyumlu.
 - Sayfa düzenleyici panele dönüp yeniden açılınca "Sayfa açılıyor…"da kalıyordu (yenileyince düzeliyordu): kapanan
   görünümün bayrağı panelin kök bileşenine yazılıyordu. Aynı kalıp başka panel sayfalarında da (olay dinleyicileri)
   düzeltildi; birim testi bileşenlerde tanımsız özelliğe atamayı yakalar.

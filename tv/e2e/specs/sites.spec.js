@@ -58,7 +58,7 @@ test('alt site: panelden kurulur, kendi alan adında ayrı panel ve veriyle aç�
     await other.fill('#login-user', admin.username);
     await other.fill('#login-pass', admin.password);
     await other.click('button[type=submit]');
-    await expect(other.locator('aside nav a[href="/panel/blog"]').first()).toBeVisible({ timeout: 20000 });
+    await expect(other.locator('aside nav a[href="/panel/"]').first()).toBeVisible({ timeout: 20000 });
     await expect(other.locator('aside nav a[href="/panel/siteler"]')).toHaveCount(0);
     // Alt projede seçici yalnızca kendi adını gösterir (diğer projeler ve yeni proje yok).
     await other.locator('aside [data-testid=project-switcher] button').first().click();
@@ -85,7 +85,7 @@ test('alt site: panelden kurulur, kendi alan adında ayrı panel ve veriyle aç�
     await desk.locator('button').first().click();
     await desk.locator(`[data-project="e2e-alt-site-${id}"]`).click();
     await page.waitForURL((url) => url.host === `${domain}:${PORT}` && url.pathname.startsWith('/panel/'));
-    await expect(page.locator('aside nav a[href="/panel/blog"]').first()).toBeVisible({ timeout: 20000 });
+    await expect(page.locator('aside nav a[href="/panel/"]').first()).toBeVisible({ timeout: 20000 });
     expect(page.url()).not.toContain('gecis=');
     await expect(page.locator('#login-user')).toHaveCount(0);
     await page.goto('/panel/siteler');
