@@ -1,0 +1,30 @@
+{{! Template: if analytics or advertising tools are added to the project, customise this text and add a consent banner. }}
+<h2>What is a cookie?</h2>
+<p>Cookies are small text files that a website stores in your browser. Browser storage (localStorage) similarly lets a site keep small pieces of information in your browser. This policy covers both.</p>
+
+<h2>Cookies and storage we use</h2>
+<p>{{site.name}} uses only the following records. All belong to this site and are needed for it to work as you expect:</p>
+<div class="table-wrap">
+  <table>
+    <thead><tr><th>Name</th><th>Type</th><th>Purpose</th><th>Duration</th></tr></thead>
+    <tbody>
+      <tr><td><code>km_lang</code></td><td>Cookie</td><td>Remembers the language you chose in the language switcher.</td><td>1 year</td></tr>
+      <tr><td><code>km_theme</code></td><td>localStorage</td><td>Remembers light or dark theme if you chose one.</td><td>Until you delete it</td></tr>
+      <tr><td><code>km_lang_banner</code></td><td>localStorage</td><td>Remembers that you closed the language suggestion banner.</td><td>Until you delete it</td></tr>
+{{#modules.commerce}}
+      <tr><td><code>km_cart</code></td><td>Cookie (HttpOnly)</td><td>Remembers your cart. It holds only a random key; the cart contents are on our server.</td><td>30 days</td></tr>
+{{/modules.commerce}}
+      <tr><td><code>km_refresh</code></td><td>Cookie (HttpOnly)</td><td>Keeps the session of site administrators signed in to the admin panel only; never set for visitors.</td><td>30 days</td></tr>
+    </tbody>
+  </table>
+</div>
+<p>These records are created only when you use the related feature. As they are strictly necessary, they do not require your consent.</p>
+
+<h2>What we do not use</h2>
+<p>We do not use advertising, retargeting, social media or analytics cookies. Our pages contain no third-party scripts, pixels or embedded content, so we do not show a cookie consent banner.</p>
+
+<h2>Managing cookies</h2>
+<p>You can view and delete cookies and site data in your browser settings at any time. If you do, the site keeps working; only your language and theme preferences{{#modules.commerce}} and your cart{{/modules.commerce}} are forgotten.</p>
+
+<h2>Contact</h2>
+<p>For questions, write to <a href="mailto:{{controller.email}}">{{controller.email}}</a>.{{#links.privacy}} How we process personal data is described in our <a href="{{links.privacy}}">Privacy Policy</a>.{{/links.privacy}}</p>

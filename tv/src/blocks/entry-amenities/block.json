@@ -1,0 +1,18 @@
+{
+  "label": "Olanaklar",
+  "description": "Kaydın olanakları (otel: Wi-Fi, havuz, otopark…).",
+  "category": "entry",
+  "icon": "check-circle",
+  "module": "booking",
+  "scope": "entry",
+  "fields": [
+    {
+      "name": "title",
+      "type": "text",
+      "label": "Başlık",
+      "localized": true,
+      "max": 60,
+      "default": "@shop.booking.amenities"
+    }
+  ]
+}

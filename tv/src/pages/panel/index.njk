@@ -1,0 +1,229 @@
+{#
+  Yönetim paneli (/panel/): giriş, genel bakış, içerik listeleri ve formları,
+  sayfa metinleri, teklif hesaplayıcı, talepler, Jarvis (asistan, domain
+  arama), ayarlar, işlem geçmişi, kullanıcılar, roller ve izinler, güvenlik,
+  profilim. Menü ve sayfalar role göre süzülür ($store.session). Tek sayfa; ekranlar adrese (/panel/…; rota tablosu panel/routes.js) göre çizilir. Mantık
+  src/panel/*.js'te, alan makrosu _fields.njk'de. Türkçe; arama motorlarına
+  kapalıdır (robots + .htaccess X-Robots-Tag).
+
+  Kabuk panel düzeni: solda gruplu lacivert menü (mobilde çekmece),
+  üstte tarih/saat, bildirim zili, tema ve kullanıcı menüsü, mobilde alt menü.
+#}
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Panel · Kodmob</title>
+  <meta name="robots" content="noindex, nofollow">
+  {% include "shell/head.html" %}
+  <script type="application/json" id="km-i18n">{{ clientPayload | json }}</script>
+</head>
+<body class="pn-body" x-data="kmPanel" @signed-in="signedIn($event.detail)" @keydown.escape.window="navOpen = false">
+{% include "shell/icons.html" %}
+<a href="#main" class="sr-only z-[60] rounded-control bg-primary px-4 py-2 text-white focus:not-sr-only focus:fixed focus:top-3 focus:left-3">İçeriğe geç</a>
+
+<template x-if="!authed">
+{% include "pages/panel/_login.njk" %}
+</template>
+
+<template x-if="authed">
+<div class="min-h-dvh lg:pl-sidebar print:pl-0">
+
+  {# ============================================================ menü (masaüstü) #}
+  <aside class="fixed inset-y-0 left-0 z-30 hidden w-sidebar flex-col bg-nav lg:flex print:hidden" aria-label="Panel menüsü">
+    {% include "pages/panel/_nav.njk" %}
+  </aside>
+
+  {# ============================================================ menü (mobil çekmece) #}
+  <div class="fixed inset-0 z-50 lg:hidden" x-show="navOpen" x-cloak>
+    <div class="absolute inset-0 bg-ink/50" x-show="navOpen" x-transition.opacity @click="navOpen = false"></div>
+    <aside class="absolute inset-y-0 left-0 flex w-[86vw] max-w-sidebar flex-col bg-nav pt-[env(safe-area-inset-top)] shadow-pop"
+      x-show="navOpen"
+      x-transition:enter="transition duration-200 ease-out" x-transition:enter-start="-translate-x-full" x-transition:enter-end="translate-x-0"
+      x-transition:leave="transition duration-150 ease-in" x-transition:leave-start="translate-x-0" x-transition:leave-end="-translate-x-full"
+      role="dialog" aria-modal="true" aria-label="Menü" data-tour-drawer>
+      <button type="button" class="btn-icon absolute top-3 right-2 text-nav-ink hover:bg-nav-2 hover:text-white" @click="navOpen = false" aria-label="Menüyü kapat">
+        <svg class="icon" aria-hidden="true"><use href="#i-x"/></svg>
+      </button>
+      {% include "pages/panel/_nav.njk" %}
+    </aside>
+  </div>
+
+  {# ============================================================ üst bar #}
+  {# z-30: üst barın açılır pencereleri (arama, bildirimler, hesap) sayfanın yapışkan çubuğunun (.pn-bar, z-20) üstünde. #}
+  <header class="sticky top-0 z-30 border-b border-line bg-surface/95 pt-[env(safe-area-inset-top)] backdrop-blur print:hidden">
+    <div class="flex h-topbar items-center gap-1 px-2 sm:gap-2 sm:px-4 lg:h-16 lg:gap-4 lg:px-6">
+      <button type="button" class="btn-icon lg:hidden" @click="navOpen = true" aria-label="Menüyü aç">
+        <svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg>
+      </button>
+      <h1 class="min-w-0 flex-1 truncate text-base font-semibold text-ink lg:text-lg" x-text="title"></h1>
+
+      {% include "pages/panel/_search.njk" %}
+
+      <div class="hidden items-center gap-4 text-sm text-ink-2 xl:flex">
+        <span class="flex items-center gap-1.5"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-calendar"/></svg><span x-text="fmt.longDate(now)"></span></span>
+        <span class="num flex items-center gap-1.5"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-clock"/></svg><span x-text="fmt.time(now)"></span></span>
+      </div>
+
+      {# Tüm İşlemler: paneldeki bütün işler ve Hızlı İşlemler (menüde değil). #}
+      <a :href="$href('other')" class="btn-icon" title="Tüm İşlemler" aria-label="Tüm İşlemler" data-tour="all-ops" data-testid="all-ops">
+        <svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg>
+      </a>
+
+      <a :href="$href('jarvis')" class="btn btn-secondary btn-sm hidden md:inline-flex" title="Jarvis'e sor" x-show="$store.session.can('km_use_jarvis')" data-tour="jarvis">
+        <svg class="icon icon-sm text-primary" aria-hidden="true"><use href="#i-sparkles"/></svg> Jarvis
+      </a>
+
+      {# Bildirimler #}
+      <div class="relative" x-data="kmNotifications" @click.outside="open = false" @keydown.escape.window="open = false" data-tour="notifications">
+        <button type="button" class="btn-icon relative" @click="toggle()" :aria-expanded="open" :aria-label="count ? count + ' okunmamış bildirim' : 'Bildirimler'">
+          <svg class="icon" aria-hidden="true"><use href="#i-bell"/></svg>
+          <span class="num absolute top-1.5 right-1.5 min-w-4.5 rounded-full bg-danger px-1 text-center text-[0.625rem] leading-4.5 font-semibold text-white" x-show="count > 0" x-cloak x-text="count > 99 ? '99+' : count"></span>
+        </button>
+        <div class="fixed inset-x-2 top-[calc(var(--spacing-topbar)+env(safe-area-inset-top)+0.25rem)] z-50 rounded-card border border-line bg-surface shadow-pop sm:absolute sm:inset-x-auto sm:top-full sm:right-0 sm:mt-2 sm:w-96"
+          x-show="open" x-cloak x-transition.opacity.duration.100ms role="dialog" aria-label="Bildirimler">
+          <div class="flex items-center justify-between border-b border-line px-4 py-3">
+            <p class="font-semibold text-ink">Bildirimler</p>
+            <button type="button" class="text-sm font-medium text-primary hover:underline disabled:text-muted disabled:no-underline" @click="markAll()" :disabled="!count">Tümünü okundu say</button>
+          </div>
+          <div class="max-h-[60vh] overflow-y-auto">
+            <template x-if="loading && !loadedOnce">
+              <div class="space-y-3 p-4"><div class="skeleton h-10"></div><div class="skeleton h-10"></div></div>
+            </template>
+            <template x-if="loadedOnce && !items.length">
+              <p class="p-6 text-center text-sm text-ink-2">Yeni bildiriminiz yok.</p>
+            </template>
+            <template x-for="n in items" :key="n.id">
+              <button type="button" class="flex w-full gap-3 border-b border-line px-4 py-3 text-left last:border-b-0 hover:bg-surface-subtle" :class="!n.is_read && 'bg-primary-soft/60'" @click="openItem(n)">
+                <span class="mt-1.5 h-2 w-2 shrink-0 rounded-full" :class="n.is_read ? 'bg-transparent' : 'bg-primary'"></span>
+                <span class="min-w-0 flex-1">
+                  <span class="block text-sm font-medium text-ink" x-text="n.title"></span>
+                  <span class="mt-0.5 block text-sm text-ink-2" x-show="n.message" x-text="n.message"></span>
+                  <span class="mt-1 block text-xs text-muted" x-text="fmt.relative(n.created_at)"></span>
+                </span>
+                <svg class="icon icon-sm mt-1 shrink-0 text-muted" x-show="n.url" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+              </button>
+            </template>
+          </div>
+        </div>
+      </div>
+
+      {# Kullanıcı #}
+      <div class="relative" x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false" data-tour="user">
+        <button type="button" class="flex min-h-11 items-center gap-2 rounded-control px-1.5 hover:bg-surface-subtle" @click="open = !open" :aria-expanded="open" aria-label="Kullanıcı menüsü">
+          <span class="grid h-9 w-9 place-items-center rounded-full bg-primary-strong text-sm font-semibold text-white" x-text="initials"></span>
+          <span class="hidden min-w-0 flex-col text-left leading-tight lg:flex">
+            <span class="max-w-40 truncate text-sm font-semibold text-ink" x-text="$store.panel.user?.name || ''"></span>
+            <span class="max-w-40 truncate text-xs text-muted" x-text="$store.session.role.label || ''"></span>
+          </span>
+          <svg class="icon icon-sm hidden text-muted lg:block" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+        </button>
+        <div class="absolute top-full right-0 z-50 mt-2 w-64 rounded-card border border-line bg-surface p-1.5 shadow-pop" x-show="open" x-cloak x-transition.opacity.duration.100ms role="menu">
+          <div class="border-b border-line px-3 pt-1.5 pb-2.5">
+            <p class="truncate font-semibold text-ink" x-text="$store.panel.user?.name || ''"></p>
+            <p class="truncate text-xs text-muted" x-text="$store.panel.user?.email || ''"></p>
+            <p class="mt-1"><span class="badge badge-primary" x-text="$store.session.role.label" x-show="$store.session.role.label"></span></p>
+          </div>
+          <a :href="$href('profile')" class="menu-item mt-1 min-h-11" role="menuitem" @click="open = false"><svg class="icon" aria-hidden="true"><use href="#i-user"/></svg> Profilim</a>
+          <a :href="$href('history')" class="menu-item min-h-11" role="menuitem" @click="open = false"><svg class="icon" aria-hidden="true"><use href="#i-history"/></svg> İşlemlerim</a>
+          <a :href="$href('guide')" class="menu-item min-h-11" role="menuitem" @click="open = false"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg> Kullanım Kılavuzu</a>
+          <a href="/" target="_blank" rel="noopener" class="menu-item min-h-11" role="menuitem"><svg class="icon" aria-hidden="true"><use href="#i-external"/></svg> Siteyi aç</a>
+          <button type="button" class="menu-item min-h-11" role="menuitem" x-data="kmTheme" @click="cycle()" data-system="Tema: sistem" data-light="Tema: açık" data-dark="Tema: koyu">
+            <svg class="icon" aria-hidden="true"><use :href="icon" href="#i-monitor"/></svg>
+            <span x-text="$el.closest('button').dataset[mode]">Tema</span>
+          </button>
+          <button type="button" class="menu-item min-h-11 text-danger hover:bg-danger-soft" role="menuitem" @click="logout()">
+            <svg class="icon" aria-hidden="true"><use href="#i-logout"/></svg> Çıkış yap
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  {# ============================================================ içerik #}
+  <main class="pn-content pb-[calc(var(--spacing-bottomnav)+env(safe-area-inset-bottom)+1rem)] outline-none lg:pb-8" id="main" tabindex="-1">
+    {# Yetkiler yüklenene kadar iskelet; yetkisi olmayan sayfa adresle açılırsa uyarı. #}
+    <template x-if="!$store.session.me">
+      <div class="pn-page"><span class="skeleton h-24"></span><span class="skeleton h-64"></span></div>
+    </template>
+    <template x-if="$store.session.me && !allowed">
+      <div class="card pn-empty" data-testid="forbidden">
+        <span class="icon-tile icon-tile-round"><svg class="icon icon-lg" aria-hidden="true"><use href="#i-lock"/></svg></span>
+        <p class="font-semibold text-ink">Bu sayfayı görme yetkiniz yok.</p>
+        <p class="max-w-md text-sm text-ink-2">Rolünüz (<span x-text="$store.session.role.label"></span>) bu sayfayı açmıyor. Gerekirse Yönetici'den yetki isteyin.</p>
+        <a :href="homeUrl" class="btn btn-primary btn-sm">Ana sayfaya dön</a>
+      </div>
+    </template>
+    <template x-if="$store.session.me && allowed && !viewReady">
+      <div class="space-y-3" aria-busy="true"><div class="skeleton h-10 w-64"></div><div class="skeleton h-64"></div></div>
+    </template>
+    <template x-for="r in ($store.session.me && allowed && viewReady ? [route] : [])" :key="r.key">
+      <div>
+        <template x-if="r.view === 'overview'">{% include "pages/panel/_overview.njk" %}</template>
+        <template x-if="r.view === 'other'">{% include "pages/panel/_other.njk" %}</template>
+        <template x-if="r.view === 'list'">{% include "pages/panel/_list.njk" %}</template>
+        <template x-if="r.view === 'editor'">{% include "pages/panel/_editor.njk" %}</template>
+        <template x-if="r.view === 'texts'">{% include "pages/panel/_texts.njk" %}</template>
+        <template x-if="r.view === 'languages'">{% include "pages/panel/_languages.njk" %}</template>
+        <template x-if="r.view === 'builder'">{% include "pages/panel/_builder.njk" %}</template>
+        <template x-if="r.view === 'estimate'">{% include "pages/panel/_estimate.njk" %}</template>
+        <template x-if="r.view === 'briefs'">{% include "pages/panel/_briefs.njk" %}</template>
+        <template x-if="r.view === 'orders'">{% include "pages/panel/_orders.njk" %}</template>
+        <template x-if="r.view === 'coupons'">{% include "pages/panel/_coupons.njk" %}</template>
+        <template x-if="r.view === 'newsletter'">{% include "pages/panel/_newsletter.njk" %}</template>
+        <template x-if="r.view === 'legal'">{% include "pages/panel/_legal.njk" %}</template>
+        <template x-if="r.view === 'bookings'">{% include "pages/panel/_bookings.njk" %}</template>
+        <template x-if="r.view === 'jarvis'">{% include "pages/panel/_jarvis.njk" %}</template>
+        <template x-if="r.view === 'domains'">{% include "pages/panel/_domains.njk" %}</template>
+        <template x-if="r.view === 'projectSettings'">{% include "pages/panel/_project-settings.njk" %}</template>
+        <template x-if="r.view === 'settings'">{% include "pages/panel/_settings.njk" %}</template>
+        <template x-if="r.view === 'seo'">{% include "pages/panel/_seo.njk" %}</template>
+        <template x-if="r.view === 'history'">{% include "pages/panel/_history.njk" %}</template>
+        <template x-if="r.view === 'users'">{% include "pages/panel/_users.njk" %}</template>
+        <template x-if="r.view === 'roles'">{% include "pages/panel/_roles.njk" %}</template>
+        <template x-if="r.view === 'sites'">{% include "pages/panel/_sites.njk" %}</template>
+        <template x-if="r.view === 'health'">{% include "pages/panel/_health.njk" %}</template>
+        <template x-if="r.view === 'tools'">{% include "pages/panel/_tools.njk" %}</template>
+        <template x-if="r.view === 'security'">{% include "pages/panel/_security.njk" %}</template>
+        <template x-if="r.view === 'profile'">{% include "pages/panel/_profile.njk" %}</template>
+        <template x-if="r.view === 'guide'">{% include "pages/panel/_guide.njk" %}</template>
+        <template x-if="r.view === 'notFound'">{% include "pages/panel/_not-found.njk" %}</template>
+        {# Projenin özel sayfaları (profilin panel.js PAGES; şablon profil klasöründen). #}
+        {% for p in panelPages %}
+        <template x-if="r.view === '{{ p.key }}'">{% include p.template %}</template>
+        {% endfor %}
+      </div>
+    </template>
+  </main>
+
+  {# ============================================================ mobil alt menü #}
+  <nav class="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-surface/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden print:hidden" aria-label="Alt menü">
+    <ul class="grid h-bottomnav grid-cols-5">
+      <template x-for="item in bottomNav" :key="item.label">
+        <li class="flex">
+          <template x-if="item.href">
+            <a :href="item.href" class="relative flex flex-1 flex-col items-center justify-center gap-0.5 text-[0.6875rem] font-medium" :class="isActive(item) ? 'text-primary' : 'text-ink-2'" :aria-current="isActive(item) ? 'page' : null">
+              <svg class="icon" aria-hidden="true"><use :href="'#i-' + item.icon"/></svg>
+              <span x-text="item.label"></span>
+              <span class="absolute top-2 left-1/2 ml-2 h-2 w-2 rounded-full bg-danger" x-show="badgeFor(item)" x-cloak></span>
+            </a>
+          </template>
+          <template x-if="!item.href">
+            <button type="button" class="flex flex-1 flex-col items-center justify-center gap-0.5 text-[0.6875rem] font-medium text-ink-2" @click="runBottom(item)">
+              <svg class="icon" aria-hidden="true"><use :href="'#i-' + item.icon"/></svg>
+              <span x-text="item.label"></span>
+            </button>
+          </template>
+        </li>
+      </template>
+    </ul>
+  </nav>
+</div>
+</template>
+
+{% include "pages/panel/_media.njk" %}
+{% include "shell/overlays.html" %}
+<script type="module" src="{{ page.script }}"></script>
+</body>
+</html>

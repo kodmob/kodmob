@@ -1,0 +1,15 @@
+{# Açılır dil seçici. `switcher`: her dil için bu sayfanın karşılığı (yoksa o dilin ana sayfası).
+   Kayıt sayfasında hedef kaydın çevirisidir ($store.km.alt). #}
+{% set panelId = langPanelId or "lang-panel" %}
+<div class="lang-menu" x-data="kmLangSwitch" @click.outside="close()" @keydown.escape="close()">
+  <button type="button" class="lang-trigger" @click="toggle()" :aria-expanded="open" aria-haspopup="true" aria-controls="{{ panelId }}" aria-label="{{ t('nav.chooseLanguage', { current: localeInfo.label }) }}">
+    <svg class="icon icon-sm text-primary" aria-hidden="true"><use href="#i-globe"/></svg>
+    <span>{{ localeInfo.short }}</span>
+    <svg class="icon icon-sm chevron" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+  </button>
+  <div id="{{ panelId }}" class="lang-panel" x-show="open" x-cloak x-transition.origin.top.right>
+{% for item in switcher %}
+    <a href="{{ item.href }}"{% if page.dynamic or page.name == 'notFound' %} :href="$store.km.alt('{{ item.locale }}', '{{ item.href }}')"{% endif %} x-show="on('{{ item.locale }}')" hreflang="{{ item.locale }}" lang="{{ item.locale }}" class="menu-item"{% if item.current %} aria-current="true"{% endif %} @click="choose($event)"><img class="flag" src="{{ item.flag }}" alt="" width="24" height="16"> {{ item.label }}</a>
+{% endfor %}
+  </div>
+</div>

@@ -1,0 +1,163 @@
+{# Profilim. Mantık: panel/profile.js. #}
+<div class="pn-page" x-data="kmProfile">
+  <div class="card card-body flex flex-wrap items-center gap-4">
+    <span class="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-primary-strong text-lg font-semibold text-white" x-text="fmt.initials(me.display_name || 'K')"></span>
+    <div class="min-w-0 flex-1">
+      <p class="truncate text-lg font-bold text-ink" x-text="me.display_name"></p>
+      <p class="text-sm text-ink-2"><span class="code" x-text="me.username"></span> · <span x-text="me.role?.label"></span></p>
+    </div>
+    <a :href="$href('history')" class="btn btn-secondary btn-sm"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-history"/></svg> İşlemlerim</a>
+  </div>
+
+  <div class="grid items-start gap-5 xl:grid-cols-2">
+    {# Bilgiler #}
+    <form class="card pn-group-card" @submit.prevent="save()" data-testid="profile-form" data-setting="profile.info">
+      <h3 class="pn-group-title">Bilgilerim</h3>
+      <label class="field">
+        <span class="field-label">Ad soyad</span>
+        <input class="input" x-model="form.display_name" autocomplete="name" :aria-invalid="!!errors.display_name">
+        <span class="field-error" x-show="errors.display_name" x-text="errors.display_name"></span>
+      </label>
+      <div class="grid gap-4 sm:grid-cols-2">
+        <label class="field">
+          <span class="field-label">E-posta</span>
+          <input class="input" type="email" x-model="form.email" autocomplete="email" :aria-invalid="!!errors.email">
+          <span class="field-error" x-show="errors.email" x-text="errors.email"></span>
+        </label>
+        <label class="field">
+          <span class="field-label">Telefon</span>
+          <input class="input" type="tel" x-model="form.phone" autocomplete="tel">
+        </label>
+      </div>
+      <div class="flex gap-2">
+        <button type="submit" class="btn btn-primary" :disabled="!dirty || saving">Kaydet</button>
+        <button type="button" class="btn btn-ghost" x-show="dirty" @click="fill(me)">Vazgeç</button>
+      </div>
+    </form>
+
+    {# Şifre #}
+    <form class="card pn-group-card" @submit.prevent="changePassword()" data-testid="password-form" data-setting="profile.password">
+      <h3 class="pn-group-title">Şifre</h3>
+      <p class="text-sm text-ink-2" x-text="me.password_changed_at ? 'Son değişiklik: ' + fmt.dateTime(me.password_changed_at) + '. Değişince bu cihaz dışındaki oturumlarınız kapanır.' : 'Değişince bu cihaz dışındaki oturumlarınız kapanır.'"></p>
+      <input type="text" class="hidden" autocomplete="username" :value="me.username" aria-hidden="true" tabindex="-1">
+      <label class="field">
+        <span class="field-label">Şu anki şifre</span>
+        <input class="input" :type="showPw ? 'text' : 'password'" x-model="pw.current_password" autocomplete="current-password" required :aria-invalid="!!pwErrors.current_password">
+        <span class="field-error" x-show="pwErrors.current_password" x-text="pwErrors.current_password"></span>
+      </label>
+      <label class="field">
+        <span class="field-label">Yeni şifre</span>
+        <input class="input" :type="showPw ? 'text' : 'password'" x-model="pw.password" autocomplete="new-password" required :aria-invalid="!!pwErrors.password">
+        <template x-if="strength">
+          <span class="flex items-center gap-2">
+            <span class="progress flex-1"><span :class="{ '!bg-danger': strength.tone === 'danger', '!bg-warning': strength.tone === 'warning', '!bg-success': strength.tone === 'success' }" :style="{ width: strength.width + '%' }"></span></span>
+            <span class="text-xs font-medium" :class="{ 'text-danger': strength.tone === 'danger', 'text-warning-ink': strength.tone === 'warning', 'text-success-ink': strength.tone === 'success' }" x-text="strength.label"></span>
+          </span>
+        </template>
+        <span class="field-help" x-text="'En az ' + (me.password_min || 10) + ' karakter; harf ve rakam içersin, kullanıcı adınızı içermesin.'"></span>
+        <span class="field-error" x-show="pwErrors.password" x-text="pwErrors.password"></span>
+      </label>
+      <label class="field">
+        <span class="field-label">Yeni şifre (tekrar)</span>
+        <input class="input" :type="showPw ? 'text' : 'password'" x-model="pw.password_confirmation" autocomplete="new-password" required :aria-invalid="!!pwErrors.password_confirmation">
+        <span class="field-error" x-show="pwErrors.password_confirmation" x-text="pwErrors.password_confirmation"></span>
+      </label>
+      <label class="flex items-center gap-2 text-sm text-ink-2"><input type="checkbox" class="h-4.5 w-4.5 accent-primary" x-model="showPw"> Şifreleri göster</label>
+      <div><button type="submit" class="btn btn-primary" :disabled="pwSaving || !pw.current_password || !pw.password">Şifreyi değiştir</button></div>
+    </form>
+
+    {# İki adımlı doğrulama (panel/two-factor.js) #}
+    <section class="card pn-group-card" x-data="kmTwoFactor" data-testid="two-factor" data-setting="profile.two_factor">
+      <div class="flex flex-wrap items-center gap-3">
+        <h3 class="pn-group-title flex-1">İki adımlı doğrulama</h3>
+        <span class="badge" :class="state.enabled ? 'badge-success' : 'badge-neutral'" x-text="state.enabled ? 'Açık' : 'Kapalı'" data-testid="two-factor-state"></span>
+      </div>
+      <p class="text-sm text-ink-2" x-show="step === 'idle' && !state.enabled">Girişte şifreden sonra telefonunuzdaki doğrulama uygulamasının (Google Authenticator, Microsoft Authenticator, 1Password…) ürettiği kod da istenir. Şifreniz ele geçse bile hesabınıza girilemez.</p>
+      <p class="text-sm text-ink-2" x-show="step === 'idle' && state.enabled" x-text="'Girişte uygulamanızdaki kod isteniyor. Kalan yedek kod: ' + state.recovery_left + '.'"></p>
+      <div class="flex flex-wrap gap-2" x-show="step === 'idle'">
+        <button type="button" class="btn btn-primary" x-show="!state.enabled" @click="ask('setup')" data-testid="two-factor-enable">Aç</button>
+        <button type="button" class="btn btn-secondary" x-show="state.enabled" @click="ask('recovery')">Yeni yedek kodlar</button>
+        <button type="button" class="btn btn-ghost text-danger" x-show="state.enabled" @click="ask('disable')" data-testid="two-factor-disable">Kapat</button>
+      </div>
+
+      {# Şifre onayı #}
+      <form class="flex flex-wrap items-end gap-2" x-show="step === 'password'" x-cloak @submit.prevent="submitPassword()">
+        <label class="field min-w-60 flex-1">
+          <span class="field-label" x-text="action === 'disable' ? 'Kapatmak için şifreniz' : 'Devam etmek için şifreniz'"></span>
+          <input class="input" type="password" x-model="password" autocomplete="current-password" :aria-invalid="!!errors.password" data-testid="two-factor-password">
+          <span class="field-error" x-show="errors.password" x-text="errors.password"></span>
+        </label>
+        <button type="submit" class="btn btn-primary min-h-11" :disabled="busy || !password" x-text="action === 'disable' ? 'Kapat' : 'Devam'"></button>
+        <button type="button" class="btn btn-ghost min-h-11" @click="reset()">Vazgeç</button>
+      </form>
+
+      {# QR ve ilk kod #}
+      <div class="flex flex-col gap-4 sm:flex-row" x-show="step === 'scan'" x-cloak>
+        <div class="h-44 w-44 shrink-0 rounded-tile border border-line bg-white p-1" x-html="qr" data-testid="two-factor-qr"></div>
+        <form class="flex min-w-0 flex-1 flex-col gap-3" @submit.prevent="confirm()">
+          <p class="text-sm text-ink-2">1. Doğrulama uygulamasında "hesap ekle" ile QR kodunu okutun. Okutamıyorsanız anahtarı elle girin:</p>
+          <code class="break-all rounded bg-surface-subtle px-2 py-1 font-mono text-sm" x-text="secretGroups" data-testid="two-factor-secret"></code>
+          <label class="field max-w-60">
+            <span class="field-label">2. Uygulamadaki 6 haneli kod</span>
+            <input class="input font-mono tracking-widest" x-model="code" inputmode="numeric" autocomplete="one-time-code" maxlength="8" :aria-invalid="!!errors.code" data-testid="two-factor-code">
+            <span class="field-error" x-show="errors.code" x-text="errors.code"></span>
+          </label>
+          <div class="flex gap-2">
+            <button type="submit" class="btn btn-primary" :disabled="busy || code.trim().length < 6" data-testid="two-factor-confirm">Doğrula ve aç</button>
+            <button type="button" class="btn btn-ghost" @click="reset()">Vazgeç</button>
+          </div>
+        </form>
+      </div>
+
+      {# Yedek kodlar (bir kez gösterilir) #}
+      <div class="flex flex-col gap-3" x-show="step === 'codes'" x-cloak data-testid="two-factor-codes">
+        <p class="text-sm text-ink-2"><strong class="text-ink">Yedek kodlarınızı saklayın.</strong> Telefonunuzu kaybederseniz bunlarla girersiniz; her biri bir kez geçer ve bir daha gösterilmez.</p>
+        <ul class="grid grid-cols-2 gap-x-6 gap-y-1 rounded-tile bg-surface-subtle p-3 font-mono text-sm sm:grid-cols-4">
+          <template x-for="c in codes" :key="c"><li x-text="c"></li></template>
+        </ul>
+        <div class="flex flex-wrap gap-2">
+          <button type="button" class="btn btn-secondary" @click="downloadCodes()">İndir</button>
+          <button type="button" class="btn btn-secondary" @click="copyCodes()">Kopyala</button>
+          <button type="button" class="btn btn-primary" @click="reset()" data-testid="two-factor-done">Sakladım</button>
+        </div>
+      </div>
+    </section>
+
+    {# Oturumlarım #}
+    <section class="card" data-testid="my-sessions" data-setting="profile.sessions">
+      <div class="card-header">
+        <h3 class="card-title">Oturumlarım</h3>
+        <button type="button" class="btn btn-ghost btn-sm text-danger" x-show="sessions.length > 1" @click="endOthers()">Diğerlerini kapat</button>
+      </div>
+      <ul class="divide-y divide-line">
+        <template x-for="s in sessions" :key="s.id">
+          <li class="flex items-center gap-3 px-4 py-3 md:px-5">
+            <span class="icon-tile icon-tile-sm" :class="s.current && '!bg-success-soft !text-success-ink'"><svg class="icon icon-sm" aria-hidden="true"><use :href="/iPhone|iPad|Android/.test(s.device) ? '#i-smartphone' : '#i-monitor'"/></svg></span>
+            <span class="min-w-0 flex-1 text-sm">
+              <span class="block font-medium text-ink"><span x-text="s.device"></span> <span class="badge badge-success ml-1" x-show="s.current">Bu cihaz</span></span>
+              <span class="block text-xs text-muted" x-text="s.ip + ' · son etkinlik ' + fmt.relative(s.last_seen_at || s.started_at) + ' · giriş ' + fmt.dateTime(s.started_at)"></span>
+            </span>
+            <button type="button" class="btn btn-ghost btn-sm" x-show="!s.current" @click="endSession(s)">Kapat</button>
+          </li>
+        </template>
+        <li class="px-5 py-6 text-sm text-muted" x-show="!sessions.length">Oturum bilgisi yükleniyor…</li>
+      </ul>
+    </section>
+
+    {# Yetkilerim #}
+    <section class="card">
+      <div class="card-header"><h3 class="card-title">Yetkilerim</h3><span class="badge badge-primary" x-text="me.role?.label"></span></div>
+      <div class="card-body flex flex-col gap-3">
+        <template x-for="g in capabilityGroups" :key="g.label">
+          <div>
+            <p class="text-xs font-semibold tracking-wide text-muted uppercase" x-text="g.label"></p>
+            <ul class="mt-1 flex flex-col gap-1">
+              <template x-for="c in g.items" :key="c"><li class="flex items-start gap-2 text-sm text-ink"><svg class="icon icon-sm mt-0.5 shrink-0 text-success" aria-hidden="true"><use href="#i-check"/></svg><span x-text="c"></span></li></template>
+            </ul>
+          </div>
+        </template>
+        <p class="text-xs text-muted">Rolünüzü ve yetkilerinizi Yönetici değiştirir.</p>
+      </div>
+    </section>
+  </div>
+</div>

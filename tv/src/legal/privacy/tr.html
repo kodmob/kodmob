@@ -1,0 +1,92 @@
+{{! Şablon: hukuki görüş değildir; yayından önce sitenin gerçek veri işleme durumuna göre bir hukukçuya kontrol ettirin. }}
+<h2>Kısaca</h2>
+<ul>
+  <li>{{site.name}} sitesini gezmek için üye olmanız ya da bilgi vermeniz gerekmez.</li>
+  <li>Reklam, yeniden hedefleme ya da analitik amaçlı takip aracı kullanmıyoruz. Yazı tipleri dahil sayfalarımız kendi sunucumuzdan yüklenir.</li>
+  <li>Kişisel verilerinizi yalnızca bize ilettiğiniz amaç için işliyoruz; satmıyor, pazarlama için başkalarıyla paylaşmıyoruz.</li>
+</ul>
+
+<h2>Veri sorumlusu</h2>
+<p>Bu politika, aşağıda bilgileri yer alan veri sorumlusunun {{site.name}} sitesinde kişisel verileri nasıl işlediğini açıklar:</p>
+{{{controllerCard}}}
+
+<h2>Siteyi ziyaret ettiğinizde</h2>
+<p>Sayfalarımızı açtığınızda, her web sitesinde olduğu gibi tarayıcınız sunucumuza IP adresinizi, tarayıcı bilgisini ve istenen sayfayı iletir. Bu bilgiler sitenin çalışması ve güvenliği için sunucu kayıtlarında kısa süre tutulabilir. Ziyaretlerinizi kişi bazında izlemiyor, profil çıkarmıyoruz.</p>
+<p>Güvenlik sistemimiz yalnızca saldırı ya da kötüye kullanım şüphesiyle engellediği isteklerin IP adresini ve istek özetini kaydeder. Bu kayıtlar {{retention.security}} gün sonra silinir.</p>
+<p>Dil ve tema tercihiniz tarayıcınızda saklanır{{#modules.commerce}}; sepetinizi hatırlamak için bir çerez kullanılır{{/modules.commerce}}.{{#links.cookies}} Ayrıntılar <a href="{{links.cookies}}">Çerez Politikası</a>'ndadır.{{/links.cookies}}</p>
+
+{{#modules.briefs}}
+<h2>Bize yazdığınızda</h2>
+<p>İletişim ya da talep formunu gönderdiğinizde adınızı, e-posta adresinizi, isteğe bağlı telefonunuzu ve mesajınızı alırız. Spam'i önlemek için IP adresinizin kendisini değil, geri döndürülemez bir özetini ve tarayıcı bilgisini talebinizle birlikte saklarız.</p>
+<p>Bu bilgileri yalnızca talebinizi değerlendirmek ve size dönüş yapmak için kullanırız. Talepler {{retention.briefs}} ay sonra sistemimizden otomatik ve kalıcı olarak silinir.{{#links.contactNotice}} Ayrıntılar: <a href="{{links.contactNotice}}">İletişim ve Talep Formu Aydınlatma Metni</a>.{{/links.contactNotice}}</p>
+{{/modules.briefs}}
+
+{{#modules.newsletter}}
+<h2>Bültenimize abone olduğunuzda</h2>
+<p>Bülten için e-posta adresinizi, isteğe bağlı adınızı, abone olduğunuz sayfanın dilini ve onayınızın kaydını (tarih ve IP adresinizin özeti) işleriz. Abonelik, e-postanıza gönderdiğimiz bağlantıyı onayladığınızda başlar; her bültendeki bağlantıyla tek tıkla ayrılabilirsiniz.{{#links.newsletterConsent}} Ayrıntılar: <a href="{{links.newsletterConsent}}">Bülten Aydınlatma Metni ve Ticari İleti Onayı</a>.{{/links.newsletterConsent}}</p>
+{{/modules.newsletter}}
+
+{{#modules.commerce}}
+<h2>Alışveriş yaptığınızda</h2>
+<p>Sipariş verirken adınızı, e-posta adresinizi, telefonunuzu, teslimat ve fatura adresinizi, siparişinizin içeriğini, tutarını ve ödeme yöntemini işleriz. Bu bilgiler siparişinizi hazırlamak, teslim etmek, faturalamak ve yasal yükümlülüklerimizi yerine getirmek için gereklidir.</p>
+{{#modules.booking}}
+<p>Rezervasyonlarda ayrıca rezervasyon tarihini, kişi sayılarını ve seçtiğiniz paketi ya da odayı işleriz.</p>
+{{/modules.booking}}
+<p>Kart bilgileriniz sunucularımıza ulaşmaz ve tarafımızca saklanmaz.{{#modules.stripe}} Kartla ödemeler Stripe'ın güvenli ödeme sayfasında yapılır.{{/modules.stripe}}{{#modules.paytr}} Kartla ödemeler PayTR'nin güvenli ödeme sayfasında yapılır.{{/modules.paytr}}{{#links.orderNotice}} Ayrıntılar: <a href="{{links.orderNotice}}">Müşteri Aydınlatma Metni</a>.{{/links.orderNotice}}</p>
+{{/modules.commerce}}
+
+<h2>Hizmet sağlayıcılar ve aktarım</h2>
+<p>Kişisel verilerinizi pazarlama amacıyla üçüncü kişilerle paylaşmıyoruz. Verileriniz yalnızca amacın gerektirdiği ölçüde şu alıcılara aktarılabilir:</p>
+<ul>
+  <li><strong>Barındırma (hosting) ve e-posta altyapısı:</strong> sitemizin ve veritabanımızın bulunduğu sunucu ile e-postaların gönderildiği altyapının sağlayıcısı.</li>
+{{#modules.commerce}}
+  <li><strong>Kargo ve lojistik firmaları:</strong> fiziksel ürünlerin teslimatı için ad, adres ve telefon.</li>
+{{/modules.commerce}}
+{{#modules.stripe}}
+  <li><strong>Stripe:</strong> kartla ödemenin alınması için ödeme tutarı, e-posta adresi ve sipariş numarası. Stripe'ın sunucuları yurt dışındadır.</li>
+{{/modules.stripe}}
+{{#modules.paytr}}
+  <li><strong>PayTR:</strong> kartla ödemenin alınması için ad, e-posta, telefon, adres, ödeme tutarı ve sipariş numarası.</li>
+{{/modules.paytr}}
+  <li><strong>Yetkili kurum ve kuruluşlar:</strong> mevzuat gereği talep edilmesi hâlinde yetkili kamu kurumları ve yargı mercileri.</li>
+</ul>
+<p>Yurt dışına aktarım gerektiğinde, 6698 sayılı Kanun'un 9. maddesinde öngörülen usul ve güvencelere uygun hareket ederiz.</p>
+
+<h2>Dış hizmetler ve bağlantılar</h2>
+<p>Sayfalarımızda sosyal medya, mesajlaşma (ör. WhatsApp) ve harita gibi dış hizmetlere yalnızca bağlantılar bulunur. Bu bağlantılar siz tıklayana kadar o hizmetlere bilgi göndermez; tıkladığınızda ilgili hizmetin kendi gizlilik koşulları geçerlidir.</p>
+
+<h2>Verilerinizi nasıl koruyoruz</h2>
+<ul>
+  <li>Site yalnızca şifreli bağlantı (HTTPS) üzerinden sunulur.</li>
+  <li>Kişisel verilere yalnızca yetkili site yöneticileri erişebilir; yönetim paneli ziyaretçilere kapalıdır, iki adımlı doğrulamayla korunabilir ve yapılan işlemler kayıt altındadır.</li>
+  <li>IP adresleri form kayıtlarında açık olarak tutulmaz; formlar hız sınırı ve otomatik spam korumasıyla korunur.</li>
+  <li>Sayfalarımız katı bir içerik güvenliği politikasıyla (CSP) sunulur; dış kaynaklardan kod çalıştırılmaz.</li>
+</ul>
+
+<h2>Saklama süreleri</h2>
+<p>Kişisel verilerinizi işleme amacının gerektirdiği süre kadar saklarız:</p>
+<ul>
+  <li>Güvenlik kayıtları: {{retention.security}} gün.</li>
+{{#modules.briefs}}
+  <li>İletişim ve talep formları: {{retention.briefs}} ay.</li>
+{{/modules.briefs}}
+{{#modules.newsletter}}
+  <li>Bülten aboneliği: abonelikten çıkana kadar; onay ve ret kayıtları ispat için mevzuattaki süre boyunca.</li>
+{{/modules.newsletter}}
+{{#modules.commerce}}
+  <li>Sipariş ve fatura kayıtları: Türk Ticaret Kanunu ve Vergi Usul Kanunu'nda öngörülen süreler boyunca (10 yıla kadar).</li>
+{{/modules.commerce}}
+</ul>
+<p>Süre dolduğunda veriler silinir, yok edilir ya da anonim hâle getirilir.</p>
+
+<h2>Haklarınız</h2>
+<p>Hakkınızda hangi bilgileri sakladığımızı öğrenme, düzeltilmesini ya da silinmesini isteme haklarına sahipsiniz.{{#links.kvkk}} Haklarınızın tam listesi ve başvuru yöntemi <a href="{{links.kvkk}}">KVKK Aydınlatma Metni</a>'nde yer alır.{{/links.kvkk}} Avrupa Birliği'nden yazıyorsanız Genel Veri Koruma Tüzüğü'nden (GDPR) doğan haklarınızı (erişim, düzeltme, silme, işlemenin kısıtlanması, veri taşınabilirliği, itiraz ve denetim makamına şikâyet) da aynı yolla kullanabilirsiniz.</p>
+
+<h2>Çocukların gizliliği</h2>
+<p>Sitemiz 18 yaşından küçüklere yönelik değildir ve onlardan bilerek kişisel veri toplamayız. Böyle bir veri bize ulaştıysa bize yazın, sileriz.</p>
+
+<h2>Bu politikadaki değişiklikler</h2>
+<p>Sitemiz ya da veri işleme yöntemlerimiz değişirse bu politikayı güncelleriz. Güncel sürüm her zaman bu sayfadadır; son güncelleme tarihi sayfanın başında yazar.</p>
+
+<h2>İletişim</h2>
+<p>Gizlilikle ilgili sorularınız için <a href="mailto:{{controller.email}}">{{controller.email}}</a> adresine yazabilirsiniz.</p>

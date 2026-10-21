@@ -1,0 +1,30 @@
+{{! Şablon: projeye analitik ya da reklam aracı eklenirse bu metni özelleştirin ve onay bandı ekleyin. }}
+<h2>Çerez nedir?</h2>
+<p>Çerezler, ziyaret ettiğiniz sitenin tarayıcınıza kaydettiği küçük metin dosyalarıdır. Tarayıcı depolaması (localStorage) da benzer şekilde sitenin tarayıcınızda küçük bilgiler saklamasını sağlar. Bu politikada ikisini birlikte anlatıyoruz.</p>
+
+<h2>Kullandığımız çerezler ve kayıtlar</h2>
+<p>{{site.name}} yalnızca aşağıdaki kayıtları kullanır. Hepsi bu siteye aittir ve sitenin istediğiniz şekilde çalışması için gereklidir:</p>
+<div class="table-wrap">
+  <table>
+    <thead><tr><th>Ad</th><th>Tür</th><th>Amaç</th><th>Süre</th></tr></thead>
+    <tbody>
+      <tr><td><code>km_lang</code></td><td>Çerez</td><td>Dil seçiciyle seçtiğiniz dili hatırlar.</td><td>1 yıl</td></tr>
+      <tr><td><code>km_theme</code></td><td>localStorage</td><td>Açık ya da koyu temayı kendiniz seçtiyseniz bu seçimi hatırlar.</td><td>Siz silene kadar</td></tr>
+      <tr><td><code>km_lang_banner</code></td><td>localStorage</td><td>Dil önerisi bandını kapattığınızı hatırlar.</td><td>Siz silene kadar</td></tr>
+{{#modules.commerce}}
+      <tr><td><code>km_cart</code></td><td>Çerez (HttpOnly)</td><td>Sepetinizi hatırlar. Yalnızca rastgele bir anahtar içerir; sepetin içeriği sunucumuzdadır.</td><td>30 gün</td></tr>
+{{/modules.commerce}}
+      <tr><td><code>km_refresh</code></td><td>Çerez (HttpOnly)</td><td>Yalnızca yönetim paneline giriş yapan site yöneticilerinin oturumunu sürdürür; ziyaretçilere kaydedilmez.</td><td>30 gün</td></tr>
+    </tbody>
+  </table>
+</div>
+<p>Bu kayıtlar ancak ilgili özelliği kullandığınızda oluşur. Zorunlu oldukları için onayınıza bağlı değildir.</p>
+
+<h2>Kullanmadıklarımız</h2>
+<p>Reklam, yeniden hedefleme, sosyal medya ya da analitik çerezi kullanmıyoruz. Sayfalarımızda üçüncü taraf betik, piksel ya da gömülü içerik yoktur; bu yüzden çerez onay bandı göstermiyoruz.</p>
+
+<h2>Çerezleri nasıl yönetirsiniz?</h2>
+<p>Çerezleri ve site verilerini tarayıcınızın ayarlarından istediğiniz zaman görüntüleyip silebilirsiniz. Silerseniz site çalışmaya devam eder; yalnızca dil ve tema tercihiniz{{#modules.commerce}} ve sepetiniz{{/modules.commerce}} unutulur.</p>
+
+<h2>İletişim</h2>
+<p>Sorularınız için <a href="mailto:{{controller.email}}">{{controller.email}}</a> adresine yazabilirsiniz.{{#links.privacy}} Kişisel verilerinizin nasıl işlendiğini <a href="{{links.privacy}}">Gizlilik Politikası</a>'nda bulabilirsiniz.{{/links.privacy}}</p>

@@ -1,0 +1,217 @@
+{#
+  Panel bileşen vitrini (/_ui/panel/). Yalnızca geliştirme derlemesinde (routes.config.js → dev: true).
+  Panelin stil paketi (styles/panel/) ve bileşenleriyle; veriler örnektir, sunucuya istek gitmez.
+  Site bileşenleri /_ui/'de. Mantık: main.js.
+#}
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Panel bileşenleri · Kodmob</title>
+  <meta name="robots" content="noindex, nofollow">
+  {% include "shell/head.html" %}
+  <script type="application/json" id="km-i18n">{{ clientPayload | json }}</script>
+</head>
+<body class="pn-body" x-data="uiPanel">
+{% include "shell/icons.html" %}
+
+<main class="pn-content flex flex-col gap-8 pb-24">
+  <header class="flex flex-wrap items-start justify-between gap-4">
+    <div>
+      <p class="text-xs font-semibold tracking-wider text-primary uppercase">Tasarım sistemi · panel</p>
+      <h1 class="h2 mt-1">Panel bileşenleri</h1>
+      <p class="mt-1 max-w-3xl text-ink-2">Yönetim panelinde (/panel/) kullanılan bütün bileşenler, bütün durumlarıyla; açık ve koyu tema. Site bileşenleri <a href="/_ui/" class="text-primary hover:underline">/_ui/</a>'de.</p>
+    </div>
+    <div class="flex items-center gap-2">
+      <span class="badge badge-warning"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-info"/></svg> Yalnızca geliştirme derlemesinde</span>
+      <button type="button" class="btn btn-secondary btn-sm" x-data="kmTheme" @click="cycle()" data-system="Tema: sistem" data-light="Tema: açık" data-dark="Tema: koyu">
+        <svg class="icon icon-sm" aria-hidden="true"><use :href="icon" href="#i-monitor"/></svg>
+        <span x-text="$el.closest('button').dataset[mode]">Tema</span>
+      </button>
+    </div>
+  </header>
+  <nav class="flex flex-wrap gap-2" aria-label="Bölümler">
+    <template x-for="item in toc" :key="item.id"><a :href="'#' + item.id" class="chip" x-text="item.label"></a></template>
+  </nav>
+
+  {# ============================================================ düğmeler #}
+  <section id="dugmeler" class="card card-body flex flex-col gap-4">
+    <h2 class="h3">Düğmeler</h2>
+    <div class="flex flex-wrap items-center gap-2">
+      <button type="button" class="btn btn-primary"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-plus"/></svg> Yeni kullanıcı</button>
+      <button type="button" class="btn btn-secondary">İkincil</button>
+      <button type="button" class="btn btn-ghost">Hayalet</button>
+      <button type="button" class="btn btn-danger"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-trash"/></svg> Sil</button>
+      <button type="button" class="btn btn-primary" disabled>Pasif</button>
+      <button type="button" class="btn btn-primary"><svg class="icon icon-sm animate-spin" aria-hidden="true"><use href="#i-loader"/></svg> Kaydediliyor…</button>
+    </div>
+    <div class="flex flex-wrap items-center gap-2">
+      <button type="button" class="btn btn-primary btn-sm">Küçük</button>
+      <button type="button" class="btn btn-secondary btn-sm">Küçük ikincil</button>
+      <button type="button" class="btn-icon" aria-label="Düzenle"><svg class="icon" aria-hidden="true"><use href="#i-pencil"/></svg></button>
+      <button type="button" class="btn-icon text-danger" aria-label="Sil"><svg class="icon" aria-hidden="true"><use href="#i-trash"/></svg></button>
+      <a href="#dugmeler" class="link-arrow">Bağlantı <svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+    </div>
+  </section>
+
+  {# ============================================================ rozetler #}
+  <section id="rozetler" class="card card-body flex flex-col gap-4">
+    <h2 class="h3">Rozetler ve durumlar <span class="text-sm font-normal text-muted">(domain/status.js — renk tek başına anlam taşımaz: metin + ikon)</span></h2>
+    <div class="flex flex-wrap gap-2">
+      <span class="badge badge-primary">Birincil</span><span class="badge badge-success">Başarılı</span><span class="badge badge-warning">Uyarı</span><span class="badge badge-danger">Tehlike</span><span class="badge badge-neutral">Nötr</span>
+    </div>
+    <template x-for="(values, kind) in status" :key="kind">
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="code w-20 text-xs text-muted" x-text="kind"></span>
+        <template x-for="(s, key) in values" :key="key">
+          <span class="badge" :class="'badge-' + s.tone"><svg class="icon icon-sm" aria-hidden="true"><use :href="'#i-' + s.icon"/></svg><span x-text="s.label"></span></span>
+        </template>
+      </div>
+    </template>
+  </section>
+
+  {# ============================================================ form #}
+  <section id="form" class="card pn-group-card">
+    <h2 class="h3">Form</h2>
+    <div class="grid gap-4 md:grid-cols-2">
+      <label class="field"><span class="field-label">Ad soyad <span class="req">*</span></span><input class="input" value="Ayşe Demir"><span class="field-help">Yardım metni alanın altında.</span></label>
+      <label class="field"><span class="field-label">E-posta</span><input class="input" value="ayse@" aria-invalid="true"><span class="field-error">Geçerli bir e-posta adresi yazın.</span></label>
+      <label class="field"><span class="field-label">Rol</span><select class="input"><option>Editör</option><option>Yazar</option><option>Satış</option></select></label>
+      <div class="field">
+        <span class="field-label">Şifre</span>
+        <div class="flex gap-2"><input class="input code flex-1" :value="password" readonly><button type="button" class="btn btn-secondary btn-sm" @click="newPassword()">Üret</button></div>
+      </div>
+      <div class="field"><span class="field-label">Süre</span><div class="pn-number"><input class="input" type="number" value="15"><span class="pn-unit">dk</span></div></div>
+      <label class="field"><span class="field-label">Açıklama</span><textarea class="input min-h-20">Çok satırlı metin.</textarea></label>
+    </div>
+    <div class="flex flex-wrap items-center gap-6">
+      <label class="pn-switch"><input type="checkbox" class="peer sr-only" x-model="toggle"><span class="pn-switch-track" aria-hidden="true"></span><span class="field-label" x-text="toggle ? 'Açık' : 'Kapalı'"></span></label>
+      <label class="flex items-center gap-2 text-sm"><input type="checkbox" class="h-4.5 w-4.5 accent-primary" checked> Onay kutusu</label>
+      <div class="segmented" role="group" aria-label="Görünüm">
+        <template x-for="s in [['pages', 'Sayfalar'], ['caps', 'İşlem yetkileri'], ['menu', 'Yan Menü']]" :key="s[0]"><button type="button" :aria-pressed="segment === s[0]" @click="segment = s[0]" x-text="s[1]"></button></template>
+      </div>
+      <div class="pn-chips">
+        <template x-for="c in ['web', 'mobile', 'ai']" :key="c"><button type="button" class="pn-chip" :aria-pressed="chips.includes(c)" @click="chips = chips.includes(c) ? chips.filter((x) => x !== c) : [...chips, c]"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"/></svg><span x-text="c"></span></button></template>
+      </div>
+    </div>
+  </section>
+
+  {# ============================================================ sekmeler #}
+  <section id="sekmeler" class="flex flex-col gap-3">
+    <h2 class="h3">Sekmeler ve araç çubuğu</h2>
+    <div class="pn-toolbar">
+      <div class="pn-tabs" role="tablist" aria-label="Örnek">
+        <button type="button" role="tab" class="pn-tab" :aria-selected="tab === 'all'" @click="tab = 'all'"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-user"/></svg> İşlemlerim</button>
+        <button type="button" role="tab" class="pn-tab" :aria-selected="tab === 'team'" @click="tab = 'team'"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-users"/></svg> Tüm İşlemler <span>128</span></button>
+      </div>
+      <p class="pn-hint md:ml-auto"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-info"/></svg> İpucu satırı (pn-hint).</p>
+    </div>
+    <div class="pn-savebar !static"><span class="flex-1 text-sm font-medium text-ink">3 değişiklik (yapışkan kaydet çubuğu)</span><button type="button" class="btn btn-ghost">Vazgeç</button><button type="button" class="btn btn-primary">Kaydet</button></div>
+  </section>
+
+  {# ============================================================ göstergeler #}
+  <section id="gostergeler" class="flex flex-col gap-3">
+    <h2 class="h3">Göstergeler</h2>
+    <div class="pn-stats">
+      <div class="card pn-stat"><span class="pn-stat-label">Son 7 gün</span><span><span class="pn-stat-value">1.284</span><span class="pn-stat-sub">+12% önceki 7 güne göre</span></span></div>
+      <div class="card pn-stat"><span class="icon-tile"><svg class="icon icon-lg" aria-hidden="true"><use href="#i-briefcase"/></svg></span><span class="pn-stat-label">Projeler</span><span><span class="pn-stat-value">24</span><span class="pn-stat-sub">18 yayında · 6 taslak</span></span></div>
+      <div class="card pn-stat"><span class="pn-stat-label">Hatalı giriş (24 sa)</span><span><span class="pn-stat-value text-warning-ink">17</span><span class="pn-stat-sub">2 kilitli giriş</span></span></div>
+      <div class="card pn-stat"><span class="pn-stat-label">İlerleme</span><span class="progress"><span style="width: 64%"></span></span><span class="pn-stat-sub">%64 · 1.920 / 3.000 ad</span></div>
+    </div>
+  </section>
+
+  {# ============================================================ kartlar #}
+  <section id="kartlar" class="grid gap-5 lg:grid-cols-2">
+    <div class="card">
+      <div class="card-header"><h2 class="card-title">Kart başlığı</h2><button type="button" class="btn btn-ghost btn-sm">İşlem</button></div>
+      <ul class="pn-list">
+        <template x-for="i in 3" :key="i">
+          <li class="pn-list-row">
+            <a href="#kartlar" class="pn-list-main"><span class="pn-thumb"><svg class="icon" aria-hidden="true"><use href="#i-pencil"/></svg></span><span class="min-w-0 flex-1"><span class="block truncate font-semibold text-ink" x-text="'Liste satırı ' + i"></span><span class="block truncate text-sm text-muted">Alt başlık · 12 Eki 2026</span></span></a>
+            <span class="badge badge-success">Yayında</span>
+            <span class="pn-row-actions"><button type="button" class="btn-icon" aria-label="Düzenle"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-pencil"/></svg></button></span>
+          </li>
+        </template>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="pn-empty"><span class="icon-tile icon-tile-round"><svg class="icon icon-lg" aria-hidden="true"><use href="#i-inbox"/></svg></span><p class="font-semibold text-ink">Boş durum</p><p class="text-sm text-ink-2">Kayıt yokken ne yapılacağını söyler.</p><button type="button" class="btn btn-primary btn-sm">Yeni kayıt</button></div>
+      <div class="flex flex-col gap-3 border-t border-line p-5"><span class="skeleton h-6 w-2/3"></span><span class="skeleton h-14"></span><span class="skeleton h-14"></span></div>
+    </div>
+  </section>
+
+  {# ============================================================ tablo #}
+  <section id="tablo" class="flex flex-col gap-3">
+    <div class="flex flex-wrap items-end justify-between gap-3">
+      <div>
+        <h2 class="h3">Tablo (dfGrid · ui/grid)</h2>
+        <p class="max-w-3xl text-sm text-ink-2">Bütün özellikler: durum sekmeleri (sayılarıyla), arama, Filtreler paneli (seçim + tarih aralığı) ve çipler, hücreye tıklayıp süzme (Rol), "Seç" → Toplu İşlem (Aktifleştir, Seçilenleri Sil), satır menüsü, genel Sil ve Silinenler (yerel), gruplama, toplamlar, Görünüm (sütun seçimi), CSV, telefonda kart görünümü, canlı güncelleme şeridi.</p>
+      </div>
+      <div class="flex gap-2">
+        <button type="button" class="btn btn-secondary btn-sm" @click="toggleGroup()" :aria-pressed="grouped"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-layers"/></svg> <span x-text="grouped ? 'Role göre gruplu' : 'Grupla'"></span></button>
+        <button type="button" class="btn btn-secondary btn-sm" @click="bumpLive()"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-refresh"/></svg> Başkası kayıt ekledi</button>
+      </div>
+    </div>
+    <div x-data="kmGrid(grid)" @grid-open="$store.toast.info($event.detail.row.display_name + ' açılır (vitrin).')" @grid-action="onGrid($event)" @grid-bulk="onGrid($event, true)">
+      {% include "ui/grid/grid.html" %}
+    </div>
+  </section>
+
+  {# ============================================================ menü #}
+  <section id="menu" class="grid gap-5 lg:grid-cols-[16rem_minmax(0,1fr)]">
+    <div class="rounded-card bg-nav p-3">
+      <template x-for="g in groups" :key="g.key">
+        <div class="mt-3 first:mt-0">
+          <p class="px-2 py-1 text-[0.6875rem] font-semibold tracking-wider text-nav-muted uppercase" x-text="g.label"></p>
+          <template x-for="p in pages.filter((x) => x.group === g.key)" :key="p.key">
+            <span class="flex min-h-10 items-center gap-3 rounded-control px-3 text-[0.875rem] font-medium text-nav-ink" :class="p.view === 'history' && 'bg-primary-strong text-white'">
+              <svg class="icon" aria-hidden="true"><use :href="'#i-' + p.icon"/></svg><span class="flex-1" x-text="p.label"></span>
+              <span class="pn-nav-badge" x-show="p.badge === 'briefs'">3</span>
+            </span>
+          </template>
+        </div>
+      </template>
+    </div>
+    <div class="card card-body flex flex-col gap-3">
+      <h2 class="h3">Menü ve sayfa kataloğu</h2>
+      <p class="text-sm text-ink-2">Soldaki koyu menü, panelin varsayılan yan menüsüdür (panel/meta.js PAGES). Her sayfanın görünmesi için gereken yetki aşağıda; rolün kendi menüsü Roller ve İzinler &gt; Yan Menü'den kurulur.</p>
+      <ul class="divide-y divide-line rounded-control border border-line">
+        <template x-for="p in pages" :key="p.key">
+          <li class="flex flex-wrap items-center gap-3 px-3 py-2 text-sm"><svg class="icon icon-sm text-muted" aria-hidden="true"><use :href="'#i-' + p.icon"/></svg><span class="w-40 font-medium text-ink" x-text="p.label"></span><span class="code text-xs text-ink-2" x-text="p.href"></span><span class="code ml-auto text-xs text-muted" x-text="p.can || 'herkes'"></span></li>
+        </template>
+      </ul>
+    </div>
+  </section>
+
+  {# ============================================================ katmanlar #}
+  <section id="katmanlar" class="card card-body flex flex-col gap-4">
+    <h2 class="h3">Yan panel, onay penceresi, bildirim</h2>
+    <div class="flex flex-wrap gap-2">
+      <button type="button" class="btn btn-secondary" @click="drawer = true">Yan paneli aç</button>
+      <button type="button" class="btn btn-secondary" @click="confirmDemo()">Onay penceresi</button>
+      <button type="button" class="btn btn-secondary" @click="toastDemo('success')">Başarılı</button>
+      <button type="button" class="btn btn-secondary" @click="toastDemo('info')">Bilgi</button>
+      <button type="button" class="btn btn-secondary" @click="toastDemo('warning')">Uyarı</button>
+      <button type="button" class="btn btn-secondary" @click="toastDemo('error')">Hata</button>
+      <button type="button" class="btn btn-secondary" @click="toastDemo('action')">"Geri Al" düğmeli</button>
+    </div>
+  </section>
+
+  <div class="pn-drawer-backdrop" x-show="drawer" x-transition.opacity x-cloak @click="drawer = false"></div>
+  <aside class="pn-drawer flex flex-col" x-show="drawer" x-cloak x-transition:enter="transition duration-200 ease-out" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0" x-transition:leave="transition duration-150 ease-in" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full" @keydown.escape.window="drawer = false" aria-label="Örnek yan panel">
+    <div class="pn-drawer-head">
+      <div class="min-w-0 flex-1"><p class="text-lg font-bold text-ink">Yan panel</p><p class="text-sm text-muted">Detay ve düzenleme formları burada açılır.</p></div>
+      <button type="button" class="btn-icon" @click="drawer = false" aria-label="Kapat"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button>
+    </div>
+    <div class="pn-drawer-body">
+      <dl class="pn-dl"><dt>Kayıt</dt><dd>Proje · Harman</dd><dt>Kullanıcı</dt><dd>Ayşe Demir</dd><dt>Zaman</dt><dd x-text="fmt.dateTime(new Date())"></dd><dt>IP</dt><dd class="code">203.0.113.7</dd></dl>
+    </div>
+    <div class="pn-drawer-foot"><button type="button" class="btn btn-primary" @click="drawer = false">Tamam</button><button type="button" class="btn btn-ghost" @click="drawer = false">Vazgeç</button></div>
+  </aside>
+</main>
+
+{% include "shell/overlays.html" %}
+<script type="module" src="{{ page.script }}"></script>
+</body>
+</html>

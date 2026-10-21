@@ -1,0 +1,37 @@
+{
+    "_": "SMS metin ve numara kuralları: PHP App\\Core\\Sms\\SmsText ve tv/src/domain/sms.js aynı sonucu vermeli. `repeat` metni o kadar tekrarlar.",
+    "texts": [
+        { "text": "Merhaba", "clean": "Merhaba", "encoding": "", "length": 7, "parts": 1, "unsupported": [] },
+        { "text": "Toplantı yarın", "clean": "Toplantı yarın", "encoding": "tr", "length": 14, "parts": 1, "unsupported": [] },
+        { "text": "Çok güzel", "clean": "Çok güzel", "encoding": "", "length": 9, "parts": 1, "unsupported": [] },
+        { "text": "çay", "clean": "çay", "encoding": "tr", "length": 3, "parts": 1, "unsupported": [] },
+        { "text": "“Tırnak” — test…", "clean": "\"Tırnak\" - test...", "encoding": "tr", "length": 18, "parts": 1, "unsupported": [] },
+        { "text": "kâr ve kür", "clean": "kar ve kür", "encoding": "", "length": 10, "parts": 1, "unsupported": [] },
+        { "text": "  boşluk\t", "clean": "boşluk", "encoding": "tr", "length": 6, "parts": 1, "unsupported": [] },
+        { "text": "{x} €5", "clean": "{x} €5", "encoding": "", "length": 9, "parts": 1, "unsupported": [] },
+        { "text": "Selam 😀 ✓", "clean": "Selam 😀 ✓", "encoding": "", "length": 7, "parts": 1, "unsupported": ["😀", "✓"] },
+        { "text": "", "clean": "", "encoding": "", "length": 0, "parts": 0, "unsupported": [] },
+        { "repeat": "a", "count": 160, "encoding": "", "length": 160, "parts": 1 },
+        { "repeat": "a", "count": 161, "encoding": "", "length": 161, "parts": 2 },
+        { "repeat": "ş", "count": 155, "encoding": "tr", "length": 155, "parts": 1 },
+        { "repeat": "ş", "count": 156, "encoding": "tr", "length": 156, "parts": 2 },
+        { "repeat": "a", "count": 918, "encoding": "", "length": 918, "parts": 6 },
+        { "repeat": "a", "count": 919, "encoding": "", "length": 919, "parts": 7 }
+    ],
+    "numbers": [
+        ["5321234567", "5321234567"],
+        ["0532 123 45 67", "5321234567"],
+        ["+90 (532) 123-45-67", "5321234567"],
+        ["905321234567", "5321234567"],
+        ["00905321234567", "5321234567"],
+        ["+49 151 23456789", "004915123456789"],
+        ["0212 123 45 67", null],
+        ["532 123 45", null],
+        ["", null],
+        ["telefon yok", null]
+    ],
+    "masks": [
+        ["5321234567", "532*****67"],
+        ["004915123456789", "004**********89"]
+    ]
+}

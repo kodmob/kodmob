@@ -1,0 +1,14 @@
+{# Merhaba aracı (panel/merhaba.js kmMerhaba). #}
+<div class="pn-page" x-data="kmMerhaba" data-testid="tool-merhaba">
+  <div class="pn-bar">
+    <div class="min-w-0 flex-1">
+      <p class="pn-bar-title">Merhaba</p>
+      <p class="pn-bar-meta"><span>Karşılama metni Proje Ayarları'ndan değişir.</span></p>
+    </div>
+  </div>
+  <section class="card">
+    <div class="card-body">
+      <p class="text-ink" x-text="loading ? 'Yükleniyor…' : message" data-testid="tool-merhaba-message"></p>
+    </div>
+  </section>
+</div>

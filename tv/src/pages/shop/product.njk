@@ -1,0 +1,63 @@
+{% extends "layouts/base.njk" %}
+{% import "macros/ui.njk" as ui %}
+{% import "macros/live.njk" as live %}
+
+{#
+  Ürün sayfası: her dilde tek kabuk, ürün ziyaret anında ($store.km.entry). Başlık, açıklama, canonical,
+  hreflang ve JSON-LD (Product + Offer) sunucunun (ProductType::structuredData); <!--km:…--> işaretlerini
+  EntrySsr doldurur. "Sepete ekle" features/shop.js shopAdd.
+#}
+{% block content %}
+<template x-if="$store.km.notFound">
+  <section class="container-site grid min-h-[50vh] place-items-center py-20">
+    <div class="card w-full max-w-md p-8 text-center">
+      <h1 class="h2">{{ t('notFound.title') }}</h1>
+      <a href="{{ url('shop') }}" class="btn btn-primary mt-6">{{ t('shop.backToShop') }}</a>
+    </div>
+  </section>
+</template>
+
+<template x-if="$store.km.entry" data-km-ssr>
+<div x-data="{ p: $store.km.entry }">
+<article class="container-site grid gap-10 py-10 lg:grid-cols-2 lg:py-16">
+  <div class="flex flex-col gap-3">
+    <div class="overflow-hidden rounded-card">
+      {{ live.img('p.cover', '(min-width: 1024px) 560px, 100vw', 'aspect-square w-full object-cover', eager=true, alt='p.title') }}
+    </div>
+    <div class="grid grid-cols-4 gap-3" x-show="p.gallery?.length">
+      <template x-for="(g, i) in p.gallery" :key="i">
+        <div class="overflow-hidden rounded-control">{{ live.img('g', '140px', 'aspect-square w-full object-cover', alt='p.title') }}</div>
+      </template>
+    </div>
+  </div>
+
+  <div>
+    <nav class="breadcrumb mb-6" aria-label="{{ t('common.breadcrumb') }}">
+      <a href="{{ url('shop') }}">{{ t('shop.meta.title') }}</a>{{ ui.icon('chevron-right', 'icon icon-sm') }}
+      <span aria-current="page" x-text="p.title"><!--km:e:title--></span>
+    </nav>
+    <span class="category" x-show="p.category" x-text="p.category"></span>
+    <h1 class="display mt-3 text-[2rem] sm:text-[2.5rem]" x-text="p.title"><!--km:e:title--></h1>
+    <p class="mt-5 flex flex-wrap items-baseline gap-3">
+      <strong class="text-3xl text-ink" x-text="p.priceText" data-testid="product-price"><!--km:e:priceText--></strong>
+      <s class="text-lg text-muted" x-show="p.comparePrice" x-text="p.comparePriceText"></s>
+    </p>
+    <p class="mt-1 text-sm text-muted">{{ t('shop.taxIncluded') }}<span x-show="p.digital"> · {{ t('shop.digital') }}</span></p>
+    <p class="lead mt-6" x-text="p.summary"><!--km:e:summary--></p>
+
+    <form class="mt-8 flex flex-wrap items-end gap-3" x-data="shopAdd(p.id)" @submit.prevent="add()" x-show="p.inStock">
+      <div class="field w-28">
+        <label class="field-label" for="shop-qty">{{ t('shop.quantity') }}</label>
+        <input id="shop-qty" class="input" type="number" min="1" max="999" x-model.number="quantity">
+      </div>
+      <button type="submit" class="btn btn-primary btn-lg" :disabled="busy" data-testid="add-to-cart">{{ ui.icon('cart', 'icon icon-sm') }} {{ t('shop.addToCart') }}</button>
+      <a href="{{ url('cart') }}" class="btn btn-outline btn-lg">{{ t('shop.viewCart') }}</a>
+    </form>
+    <p class="badge badge-neutral mt-8" x-show="!p.inStock">{{ t('shop.outOfStock') }}</p>
+
+    <div class="prose mt-10" x-html="p.body"><!--km:h:body--></div>
+  </div>
+</article>
+</div>
+</template>
+{% endblock %}

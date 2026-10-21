@@ -1,0 +1,29 @@
+# Kodmob
+
+> Kurumsal site ve çok kullanıcılı yönetim paneli çatısı (Laravel 12 API + Vite / Alpine / Tailwind ön yüz). Paylaşımlı
+> hostinge sunucuda derleme gerekmeden kurulur; tek kurulumdan çok proje; SQLite, MySQL, PostgreSQL. Belgeler Türkçe.
+
+Kurallar ve komutlar için önce kökteki CLAUDE.md okunur. Proje dosyaları ile çatı dosyaları ayrıdır; çatıya dokunmadan
+kayıtlar ve kancalarla eklenir.
+
+## Geliştirici belgeleri
+
+- [Dizin](gelistirici/README.md): okuma sırası ve Kodmob'un verdikleri
+- [01 Kurulum](gelistirici/01-kurulum.md): gerekenler, kodmob:install, yerel site, testler
+- [02 Mimari](gelistirici/02-mimari.md): çatı / proje / paket, istek akışı, modüller, çok proje, veritabanı, güvenlik
+- [03 Modül ve içerik türü](gelistirici/03-modul.md): kodmob:module, ContentType kancaları, Module kancaları
+- [04 Sayfalar](gelistirici/04-sayfalar.md): site sayfası (profil, rota, şablon, metin), projenin panel sayfası
+- [05 Ayar, yetki, uç](gelistirici/05-ayar-yetki.md): SettingDefinition, yetkiler, uç kuralları, işlem geçmişi
+- [06 Yayın](gelistirici/06-yayin.md): paket, paylaşımlı hostinge kurulum, cron, alt projeler
+- [07 Güncelleme](gelistirici/07-guncelleme.md): kodmob.json, kodmob:lock, kodmob:upgrade
+- [08 Bloklar](gelistirici/08-bloklar.md): sayfa düzenleyici, bölgeler (zone), blok yazmak, şablon dili
+- [09 Yasal belgeler](gelistirici/09-yasal-belgeler.md): tv/src/legal, modüle göre belgeler, Module::legal(), panelden özelleştirme
+- [Araç paketi](arac-paketi.md): kodmob:tool new, kodmob:add, katalog ve katkı kontrol listesi
+
+## Ek
+
+- [Değişiklikler](../CHANGELOG.md): sürümler ve yükseltme adımları
+- [Bilinen sınırlar](dikkat.md): "yapıldı, ama…" listesi
+- [Etki analizi şablonu](sablonlar/etki-analizi.md): büyük değişiklikten önce
+- [Proje CLAUDE.md şablonu](sablonlar/CLAUDE.proje.md)
+- [Yol haritası](acik-kaynak-raporu.md), [panel yapısı](done-panel-yapisi-raporu.md)

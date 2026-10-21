@@ -1,0 +1,179 @@
+{
+  "meta": {
+    "siteName": "Yeni Site",
+    "titleSuffix": " · Yeni Site",
+    "description": "Kodmob ile kurulmuş yeni bir site."
+  },
+  "nav": {
+    "home": "Ana Sayfa",
+    "blog": "Blog",
+    "contact": "İletişim",
+    "cta": "Bize Yazın",
+    "skip": "İçeriğe geç",
+    "menuOpen": "Menüyü aç",
+    "menuClose": "Menüyü kapat",
+    "mainMenu": "Ana menü",
+    "mobileMenu": "Mobil menü",
+    "language": "Dil",
+    "chooseLanguage": "Dil seçin: {current}",
+    "homeAria": "Ana sayfa",
+    "brand": "yeni",
+    "brandSub": "site",
+    "search": "Ara",
+    "theme": "Tema",
+    "themeLight": "Açık tema",
+    "themeDark": "Koyu tema",
+    "themeSystem": "Sistem teması"
+  },
+  "footer": {
+    "tagline": "Sitenizi bir cümleyle anlatan kısa bir tanıtım.",
+    "corporate": "Sayfalar",
+    "contact": "İletişim",
+    "rights": "© {year} Yeni Site. Tüm hakları saklıdır.",
+    "legal": "Yasal",
+    "privacy": "Gizlilik",
+    "cookies": "Çerezler",
+    "kvkk": "KVKK",
+    "social": "Sosyal medya",
+    "rss": "Blog RSS"
+  },
+  "home": {
+    "meta": {
+      "title": "Yeni Site",
+      "description": "Kodmob ile kurulmuş yeni bir site."
+    },
+    "hero": {
+      "eyebrow": "Hoş geldiniz",
+      "title": "Yeni siteniz",
+      "titleAccent": "yayında.",
+      "lead": "Bu bölümleri panelde Sayfa düzenleyici'den değiştirin: yazıya tıklayıp yazın, bölümleri sürükleyip sıralayın. Renkler ve logo Proje Ayarları › Kimlik'te.",
+      "ctaPrimary": "Bize Yazın",
+      "ctaSecondary": "Blog"
+    },
+    "features": {
+      "eyebrow": "Neler sunuyoruz",
+      "title": "Üç cümlede",
+      "titleAccent": "işiniz.",
+      "items": [
+        {
+          "icon": "zap",
+          "title": "Birinci özellik",
+          "text": "Müşterinizin sizi seçmesi için ilk neden. Kısa ve somut yazın."
+        },
+        {
+          "icon": "shield-check",
+          "title": "İkinci özellik",
+          "text": "Güven veren bir bilgi: deneyim, belge, garanti ya da süreç."
+        },
+        {
+          "icon": "globe",
+          "title": "Üçüncü özellik",
+          "text": "Sizi rakiplerinizden ayıran şey. Bir cümle yeter."
+        }
+      ]
+    },
+    "process": {
+      "eyebrow": "Nasıl çalışıyoruz",
+      "title": "Dört adımda",
+      "titleAccent": "sonuca.",
+      "steps": [
+        {
+          "icon": "compass",
+          "title": "Tanışma",
+          "text": "İhtiyacınızı dinliyoruz."
+        },
+        {
+          "icon": "pen-tool",
+          "title": "Plan",
+          "text": "Yol haritasını birlikte çıkarıyoruz."
+        },
+        {
+          "icon": "code",
+          "title": "Uygulama",
+          "text": "İşi zamanında yapıyoruz."
+        },
+        {
+          "icon": "rocket",
+          "title": "Teslim",
+          "text": "Sonucu birlikte değerlendiriyoruz."
+        }
+      ]
+    },
+    "blog": {
+      "eyebrow": "Blog",
+      "title": "Son yazılar",
+      "cta": "Tüm yazılar"
+    },
+    "cta": {
+      "title": "Bir sorunuz mu var?",
+      "titleAccent": "Yazın, dönelim.",
+      "lead": "İletişim formundan bize ulaşın; en kısa sürede yanıt veriyoruz.",
+      "primary": "İletişime geçin"
+    }
+  },
+  "blog": {
+    "meta": {
+      "title": "Blog",
+      "description": "Duyurular ve yazılar."
+    },
+    "hero": {
+      "eyebrow": "Blog",
+      "title": "Duyurular",
+      "titleAccent": "ve yazılar.",
+      "lead": "Haberlerimizi ve deneyimlerimizi burada paylaşıyoruz."
+    },
+    "filterLabel": "Kategori",
+    "all": "Tümü",
+    "categories": {
+      "genel": "Genel",
+      "duyuru": "Duyurular"
+    },
+    "readTime": "{min} dk okuma",
+    "empty": "Bu dilde henüz yazı yok.",
+    "rss": "RSS ile takip et"
+  },
+  "post": {
+    "toc": "İçindekiler",
+    "back": "Tüm yazılar",
+    "related": "İlgili yazılar",
+    "share": "Paylaş",
+    "copyLink": "Bağlantıyı kopyala",
+    "author": "Yazar",
+    "updated": "Güncellendi"
+  },
+  "contact": {
+    "meta": {
+      "title": "İletişim",
+      "description": "Bize yazın; en kısa sürede dönüş yapalım."
+    },
+    "hero": {
+      "eyebrow": "İletişim",
+      "title": "Bize",
+      "titleAccent": "yazın.",
+      "lead": "Sorunuzu ya da talebinizi formdan iletin; en kısa sürede dönüş yapalım."
+    },
+    "info": {
+      "title": "Doğrudan iletişim",
+      "email": "E-posta",
+      "phone": "Telefon",
+      "address": "Adres"
+    }
+  },
+  "notFound": {
+    "title": "Sayfa bulunamadı",
+    "text": "Adres yanlış yazılmış ya da sayfa taşınmış olabilir.",
+    "back": "Ana sayfaya dön",
+    "search": "Aradığınızı bulamadıysanız sitede arayın.",
+    "goneTitle": "İçerik kaldırıldı",
+    "goneText": "Aradığınız içerik yayından kaldırılmış.",
+    "available": "Bu sayfa şu dillerde mevcut:",
+    "didYouMean": "Bunu mu demek istediniz?",
+    "popular": "Sık ziyaret edilenler"
+  },
+  "brief": {
+    "reply": {
+      "subject": "Mesajınızı aldık",
+      "body": "Merhaba {name},\n\nMesajınız bize ulaştı, teşekkür ederiz. En kısa sürede size dönüş yapacağız.\n\nEklemek istedikleriniz olursa bu e-postayı yanıtlayabilirsiniz."
+    }
+  }
+}

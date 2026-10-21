@@ -1,0 +1,33 @@
+{{! Vorlage: türkische Fernabsatzverordnung Art. 5 (vorvertragliche Informationen). Keine Rechtsberatung. }}
+<h2>Verkäufer</h2>
+{{{controllerCard}}}
+
+<h2>Wesentliche Merkmale</h2>
+<p>Die wesentlichen Merkmale der bestellten Waren{{#modules.booking}} und Leistungen{{/modules.booking}} stehen auf der Produktseite; Menge und Optionen sehen Sie im Warenkorb und im Bestellvorgang.</p>
+
+<h2>Preis, Steuern und Zusatzkosten</h2>
+<ul>
+  <li>Preise in{{#commerce.currency}} {{commerce.currency}}{{/commerce.currency}}; der Gesamtbetrag einschließlich Steuern wird im Bestellvorgang angezeigt.</li>
+{{#commerce.shippingFee}}
+  <li>Versandkosten: {{commerce.shippingFee}}{{#commerce.freeOver}}; ab {{commerce.freeOver}} versandkostenfrei{{/commerce.freeOver}}.</li>
+{{/commerce.shippingFee}}
+{{#commerce.codFee}}
+  <li>Nachnahmegebühr: {{commerce.codFee}}.</li>
+{{/commerce.codFee}}
+  <li>Weitere Kosten fallen nicht an.</li>
+</ul>
+
+<h2>Zahlung</h2>
+<p>Zahlungsarten: {{commerce.payments}}. Bei Kartenzahlung geben Sie Ihre Kartendaten auf der sicheren Seite des Zahlungsdienstleisters ein; wir sehen und speichern sie nicht.</p>
+
+<h2>Lieferung und Leistung</h2>
+<p>Die Ware wird innerhalb der zugesagten Frist, spätestens 30 Tage nach Bestellbestätigung, an Ihre Adresse geliefert. Digitale Waren werden nach Zahlungsbestätigung elektronisch bereitgestellt.{{#modules.booking}} Gebuchte Leistungen werden am gebuchten Termin erbracht.{{/modules.booking}}</p>
+
+<h2>Widerrufsrecht</h2>
+<p>Sie können binnen 14 Tagen ab Lieferung ohne Angabe von Gründen und ohne Vertragsstrafe widerrufen. Senden Sie den Widerruf mit Ihrer Bestellnummer an <a href="mailto:{{controller.email}}">{{controller.email}}</a>; der Betrag wird binnen 14 Tagen nach Eingang auf Ihr Zahlungsmittel erstattet. Kein Widerrufsrecht besteht bei personalisierten Waren, geöffneten Hygieneartikeln, digitalen Inhalten und termingebundenen Leistungen wie Unterkunft, Touren und Aktivitäten.{{#links.returns}} Einzelheiten: <a href="{{links.returns}}">Stornierung, Rückgabe und Widerruf</a>.{{/links.returns}}</p>
+
+<h2>Beschwerden</h2>
+<p>Beschwerden richten Sie an <a href="mailto:{{controller.email}}">{{controller.email}}</a>. Bei Streitigkeiten können Sie sich innerhalb der vom Handelsministerium festgelegten Wertgrenzen an Verbraucherschiedsstellen, darüber hinaus an Verbrauchergerichte wenden.</p>
+
+<h2>Bestätigung</h2>
+<p>Diese Informationen erhalten Sie vor der Bestätigung Ihrer Bestellung; Sie akzeptieren sie im Bestellvorgang. Eine Kopie erhalten Sie mit der Bestätigungs-E-Mail.{{#links.shopTerms}} Verkaufsbedingungen: <a href="{{links.shopTerms}}">Fernabsatzvertrag</a>.{{/links.shopTerms}}</p>

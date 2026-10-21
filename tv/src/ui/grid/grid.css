@@ -1,0 +1,48 @@
+/*
+ * Ortak tablo (ui/grid) stilleri: hem site (styles/app.css) hem panel (styles/panel/index.css)
+ * paketine girer. Geri kalan her şey Tailwind sınıflarıyla grid.html'dedir.
+ */
+@layer components {
+  /* Canlı güncelleme şeridi (`live`, auto değilken) */
+  .grid-live-bar {
+    @apply flex min-h-11 w-full items-center gap-2 border-t border-warning/30 bg-warning-soft px-3 text-left text-sm text-warning-ink
+      hover:bg-warning/15 md:px-4;
+  }
+  .grid-live-dot { @apply h-2 w-2 shrink-0 rounded-full bg-warning; animation: grid-live-dot 1.6s ease-in-out infinite; }
+
+  /* Sürükle-bırak sıralama: tutamak, bırakılacak yer, kapalıyken ipucu */
+  .grid-handle {
+    @apply grid h-9 w-8 cursor-grab place-items-center rounded-control text-muted transition-colors
+      hover:bg-surface-subtle hover:text-ink focus-visible:bg-primary-soft focus-visible:text-primary focus-visible:outline-none active:cursor-grabbing disabled:cursor-wait disabled:opacity-50;
+  }
+  .grid-drop-target { box-shadow: inset 0 2px 0 var(--color-primary); }
+  .grid-hint { @apply flex flex-wrap items-center gap-2 border-t border-line bg-surface-subtle px-3 py-2 text-sm text-ink-2 md:px-4; }
+
+  /* Gruplama: başlıklı grubun satırları içeriden başlar */
+  tr.grid-member > td:nth-child(1 of :not([style*="display: none"])) { box-shadow: inset 3px 0 0 var(--color-line); }
+  li.grid-member { box-shadow: inset 3px 0 0 var(--color-line); }
+
+  /* Çip sütunu (ör. dil rozetleri) */
+  .grid-chip { @apply inline-flex items-center rounded-md border px-1.5 py-0.5 text-[0.6875rem] leading-tight font-bold whitespace-nowrap; }
+  .grid-chip.is-neutral { @apply border-line text-ink-2; }
+  .grid-chip.is-muted { @apply border-dashed border-line text-muted opacity-70; }
+  .grid-chip.is-success { @apply border-success/30 bg-success-soft text-success-ink; }
+  .grid-chip.is-warning { @apply border-warning/40 bg-warning-soft text-warning-ink; }
+  .grid-chip.is-danger { @apply border-danger/30 bg-danger-soft text-danger-ink; }
+  .grid-chip.is-primary { @apply border-primary/30 bg-primary-soft text-primary-ink; }
+}
+
+@keyframes grid-live-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+@keyframes row-fresh {
+  from { background-color: color-mix(in srgb, var(--color-warning) 30%, transparent); }
+  to { background-color: transparent; }
+}
+.row-fresh { animation: row-fresh 3.4s ease-out 1 both; }
+@media (prefers-reduced-motion: reduce) {
+  .grid-live-dot { animation: none; }
+  .row-fresh {
+    animation: none;
+    background-color: color-mix(in srgb, var(--color-warning) 14%, transparent);
+    box-shadow: inset 4px 0 0 var(--color-warning);
+  }
+}

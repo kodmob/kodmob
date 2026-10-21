@@ -1,0 +1,26 @@
+{
+  "label": "Dahil olanlar",
+  "description": "Fiyata dahil olanlar ve olmayanlar, yan yana.",
+  "category": "entry",
+  "icon": "check",
+  "module": "booking",
+  "scope": "entry",
+  "fields": [
+    {
+      "name": "includesTitle",
+      "type": "text",
+      "label": "Dahil olanlar başlığı",
+      "localized": true,
+      "max": 60,
+      "default": "@shop.booking.includes"
+    },
+    {
+      "name": "excludesTitle",
+      "type": "text",
+      "label": "Dahil olmayanlar başlığı",
+      "localized": true,
+      "max": 60,
+      "default": "@shop.booking.excludes"
+    }
+  ]
+}

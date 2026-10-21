@@ -1,0 +1,30 @@
+{{! Şablon: Talepler modülünün formları (iletişim, proje brifi, teklif hesaplayıcı). }}
+<h2>Veri sorumlusu</h2>
+<p>Sitemizdeki iletişim ve talep formlarıyla bize ilettiğiniz kişisel veriler, 6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") uyarınca veri sorumlusu sıfatıyla aşağıdaki işletme tarafından işlenir:</p>
+{{{controllerCard}}}
+
+<h2>İşlenen kişisel veriler</h2>
+<ul>
+  <li><strong>Kimlik:</strong> adınız ve soyadınız; isteğe bağlı olarak firmanız.</li>
+  <li><strong>İletişim:</strong> e-posta adresiniz ve isteğe bağlı telefonunuz.</li>
+  <li><strong>Müşteri işlem:</strong> mesajınız, ilgilendiğiniz hizmetler, bütçe ve zaman beklentiniz{{#modules.estimate}}, teklif hesaplayıcıda seçtikleriniz{{/modules.estimate}}, talebin dili ve hangi formdan geldiği.</li>
+  <li><strong>İşlem güvenliği:</strong> talebin tarihi, tarayıcınızın kimlik bilgisi ve IP adresinizin geri döndürülemez bir özeti (IP adresinin kendisi saklanmaz).</li>
+</ul>
+
+<h2>Amaçlar ve hukuki sebepler</h2>
+<ul>
+  <li>Talebinizi değerlendirmek, size dönüş yapmak ve teklif hazırlamak: <strong>sözleşmenin kurulması (KVKK md. 5/2-c)</strong>,</li>
+  <li>talebinizin bize ulaştığını bildiren otomatik yanıt e-postasını göndermek: <strong>sözleşmenin kurulması (md. 5/2-c)</strong>,</li>
+  <li>spam ve kötüye kullanımı önlemek: <strong>meşru menfaat (md. 5/2-f)</strong>,</li>
+  <li>olası uyuşmazlıklarda haklarımızı korumak: <strong>bir hakkın tesisi ve korunması (md. 5/2-e)</strong>.</li>
+</ul>
+<p>Formdaki onay kutusu bu metni okuduğunuzu teyit etmeniz içindir; yukarıdaki işlemler için ayrıca açık rızanızı istemiyoruz. Bilgilerinizi bülten listesine eklemiyor, pazarlama amacıyla kullanmıyoruz.</p>
+
+<h2>Aktarım</h2>
+<p>Verileriniz yalnızca sitemizin barındırıldığı sunucu ve e-postaların gönderildiği altyapı sağlayıcılarıyla, hizmeti sunmaları için gereken ölçüde paylaşılır; talep hâlinde yetkili kamu kurumlarına aktarılabilir.</p>
+
+<h2>Saklama süresi</h2>
+<p>Talepler {{retention.briefs}} ay sonra sistemimizden otomatik ve kalıcı olarak silinir. Talebiniz bir sözleşmeye dönüşürse, sözleşme ve fatura kayıtları mevzuatta öngörülen süreler boyunca saklanır.</p>
+
+<h2>Haklarınız</h2>
+<p>KVKK'nın 11. maddesindeki haklarınızı <a href="mailto:{{controller.email}}">{{controller.email}}</a> adresine yazarak kullanabilirsiniz.{{#links.kvkk}} Haklarınızın tam listesi ve başvuru yolları <a href="{{links.kvkk}}">KVKK Aydınlatma Metni</a>'ndedir.{{/links.kvkk}}</p>

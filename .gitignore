@@ -1,0 +1,23 @@
+# Kodmob tek depo. Alt klasörlerin kendi .gitignore'ları da geçerli (kodmob-api/, tv/).
+
+# Paketler: release/ilk-kurulum/.env canlı anahtarlar içerir; asla git'e girmez.
+/release/
+# Yerel deneme sitesi (npm run deploy:local) ve uçtan uca test ortamı (npm run e2e)
+/.local/
+/.e2e/
+# Testler için yerel PostgreSQL (npm run test:db)
+/.pg/
+/.agents/
+/.claude/
+
+node_modules/
+.DS_Store
+Thumbs.db
+*.log
+
+# Belgeler sitesi (VitePress) önbelleği ve çıktısı
+/docs/.vitepress/cache/
+/docs/.vitepress/dist/
+
+# Bu bilgisayara / kodmob.com'a özgü yapay zekâ notları (CLAUDE.md'nin yanında okunur)
+/CLAUDE.local.md

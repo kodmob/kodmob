@@ -1,0 +1,7 @@
+{
+  "group": "contact",
+  "order": 10,
+  "module": "briefs",
+  "updated": "2026-10-21",
+  "paths": { "tr": "iletisim-aydinlatma-metni", "en": "contact-notice", "de": "kontakt-hinweis" }
+}

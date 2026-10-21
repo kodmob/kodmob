@@ -1,0 +1,2 @@
+Buraya src/ altındaki bir şablonun aynı yoldaki kopyası konur; derleme onu kullanır.
+Örnek: src/shell/site-header.njk dosyasını templates/shell/site-header.njk olarak kopyalayıp düzenleyin.

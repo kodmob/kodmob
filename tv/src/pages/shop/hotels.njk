@@ -1,0 +1,33 @@
+{% extends "layouts/base.njk" %}
+{% import "macros/ui.njk" as ui %}
+{% import "macros/live.njk" as live %}
+
+{#
+  Oteller (Oteller aracı; vite/commerce-routes.js hotelRoutes): $store.km.hotels. Sunucu ilk kopyayı HTML'e yazar
+  (ListSsr).
+#}
+{% block content %}
+{% call ui.pageHero(tx('shop.hotels.hero.eyebrow'), tx('shop.hotels.hero.title'), tx('shop.hotels.hero.titleAccent'), tx('shop.hotels.hero.lead')) %}{% endcall %}
+
+<section class="container-site pb-20">
+  <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3" x-show="$store.km.hotels.length">
+    <template x-for="(p, i) in $store.km.hotels" :key="p.id" data-km-ssr-list="hotels" data-km-ssr-route="hotel">
+      <a :href="p.url" class="card card-hover group flex flex-col overflow-hidden" data-testid="shop-hotel">
+        <div class="aspect-[4/3] overflow-hidden">
+          {{ live.img('p.cover', '(min-width: 1024px) 380px, (min-width: 640px) 50vw, 100vw', 'h-full w-full object-cover', alt='p.title') }}
+        </div>
+        <div class="card-body flex flex-1 flex-col gap-2">
+          <p class="hotel-meta" x-show="p.stars || p.location">
+            <span class="hotel-stars" x-show="p.stars"><template x-for="s in p.stars" :key="s">{{ ui.icon('star', 'icon icon-sm') }}</template></span>
+            <span x-show="p.location" x-text="p.location"></span>
+          </p>
+          <h2 class="h3" x-text="p.title"></h2>
+          <p class="text-sm text-ink-2" x-text="p.summary"></p>
+          <p class="mt-auto flex items-baseline gap-2 pt-2"><span class="text-xs text-muted">{{ t('shop.booking.startingAt') }}</span><strong class="text-lg text-ink" x-text="p.booking?.fromText"></strong><span class="text-sm text-muted">{{ t('shop.booking.perNight') }}</span></p>
+        </div>
+      </a>
+    </template>
+  </div>
+  <p class="card card-body text-ink-2" x-show="!$store.km.hotels.length" x-cloak>{{ tx('shop.hotels.empty') }}</p>
+</section>
+{% endblock %}

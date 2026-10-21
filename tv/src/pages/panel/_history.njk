@@ -1,0 +1,123 @@
+{# İşlem Geçmişi. Mantık: panel/history.js. Tablo: ui/grid (kmGrid). #}
+<div class="pn-page" x-data="kmHistory(r)">
+  <div class="pn-toolbar">
+    <div class="pn-tabs" role="tablist" aria-label="Kimin işlemleri">
+      <button type="button" role="tab" class="pn-tab" :aria-selected="scope === 'mine'" @click="setScope('mine')" data-testid="history-mine">
+        <svg class="icon icon-sm" aria-hidden="true"><use href="#i-user"/></svg> İşlemlerim
+      </button>
+      <button type="button" role="tab" class="pn-tab" :aria-selected="scope === 'all'" @click="setScope('all')" x-show="options.all.available" x-cloak data-testid="history-all">
+        <svg class="icon icon-sm" aria-hidden="true"><use href="#i-users"/></svg> Tüm İşlemler
+      </button>
+    </div>
+    <p class="pn-hint md:ml-auto">
+      <svg class="icon icon-sm" aria-hidden="true"><use href="#i-info"/></svg>
+      <span x-text="scope === 'mine' ? 'Sizin yaptığınız bütün işlemler.' : (options.all.groups === null ? 'Paneldeki herkesin bütün işlemleri.' : 'Sorumlu olduğunuz bölümlerin işlemleri ve sizin işlemleriniz.')"></span>
+    </p>
+  </div>
+
+  {# Göstergeler: son 7 gün #}
+  <div class="pn-stats">
+    <div class="card pn-stat">
+      <span class="pn-stat-label">Son 7 gün</span>
+      <span>
+        <span class="pn-stat-value" x-text="stats ? fmt.number(stats.total.count) : '—'"></span>
+        <span class="pn-stat-sub" x-text="change ? change.text : 'işlem'"></span>
+      </span>
+    </div>
+    <div class="card pn-stat" x-show="scope === 'all'" x-cloak>
+      <span class="pn-stat-label">İşlem yapan kullanıcı</span>
+      <span><span class="pn-stat-value" x-text="stats ? fmt.number(stats.users) : '—'"></span><span class="pn-stat-sub">son 7 gün</span></span>
+    </div>
+    <template x-for="g in topGroups" :key="g.key">
+      <div class="card pn-stat">
+        <span class="pn-stat-label" x-text="g.label"></span>
+        <span><span class="pn-stat-value" x-text="fmt.number(g.n)"></span><span class="pn-stat-sub">işlem · son 7 gün</span></span>
+      </div>
+    </template>
+  </div>
+
+  <template x-if="grid">
+    <div x-data="kmGrid(grid)" @grid-open="show($event.detail.row)" @grid-action="onAction($event.detail)">
+      {% include "ui/grid/grid.html" %}
+    </div>
+  </template>
+
+  {# ============================================================ detay #}
+  <div class="pn-drawer-backdrop" x-show="detail" x-transition.opacity x-cloak @click="detail = null"></div>
+  <aside class="pn-drawer flex flex-col" x-show="detail" x-cloak x-transition:enter="transition duration-200 ease-out" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0" x-transition:leave="transition duration-150 ease-in" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full" @keydown.escape.window="detail = null" aria-label="İşlem detayı" data-testid="history-detail">
+    <template x-if="detail">
+      <div class="flex h-full flex-col">
+        <div class="pn-drawer-head">
+          <div class="min-w-0 flex-1">
+            <p class="truncate text-lg font-bold text-ink" x-text="detail.title || 'İşlem'"></p>
+            <p class="text-sm text-muted" x-text="detail.at ? fmt.dateTime(detail.at) + (detail.user_name ? ' · ' + detail.user_name : '') : ''"></p>
+          </div>
+          <button type="button" class="btn-icon" @click="detail = null" aria-label="Kapat"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button>
+        </div>
+        <div class="pn-drawer-body">
+          <template x-if="detailLoading"><div class="space-y-3"><span class="skeleton block h-6"></span><span class="skeleton block h-24"></span></div></template>
+          <template x-if="!detailLoading">
+            <div class="flex flex-col gap-6">
+              <dl class="pn-dl">
+                <dt>Kayıt</dt>
+                <dd>
+                  <template x-if="detail.subject?.url && canOpen(detail.subject.url)"><a :href="detail.subject.url" class="text-primary hover:underline" x-text="(detail.subject.type_label ? detail.subject.type_label + ' · ' : '') + (detail.subject.label || '—')" @click="detail = null"></a></template>
+                  <template x-if="!(detail.subject?.url && canOpen(detail.subject.url))"><span x-text="(detail.subject?.type_label ? detail.subject.type_label + ' · ' : '') + (detail.subject?.label || '—')"></span></template>
+                </dd>
+                <dt>Bölüm</dt><dd x-text="detail.group_label || '—'"></dd>
+                <dt>Kullanıcı</dt><dd x-text="detail.user_name || 'Sistem'"></dd>
+                <dt>Zaman</dt><dd x-text="fmt.dateTime(detail.at)"></dd>
+                <dt>IP</dt><dd class="code" x-text="detail.ip || '—'"></dd>
+                <dt>İşlem türü</dt><dd class="code text-ink-2" x-text="detail.type"></dd>
+              </dl>
+
+              <template x-if="detail.text">
+                <p class="rounded-control bg-surface-subtle p-3 text-sm text-ink" x-text="detail.text"></p>
+              </template>
+
+              <template x-if="changes.length">
+                <div>
+                  <p class="mb-2 text-sm font-semibold text-ink">Değişiklikler</p>
+                  <div class="overflow-hidden rounded-control border border-line">
+                    <table class="w-full text-sm">
+                      <thead class="bg-surface-subtle text-left text-xs text-ink-2"><tr><th class="px-3 py-2 font-medium">Alan</th><th class="px-3 py-2 font-medium">Önce</th><th class="px-3 py-2 font-medium">Sonra</th></tr></thead>
+                      <tbody>
+                        <template x-for="c in changes" :key="c.label">
+                          <tr class="border-t border-line"><td class="px-3 py-2 text-ink-2" x-text="c.label"></td><td class="px-3 py-2 text-ink-2 line-through decoration-danger/40" x-text="c.from"></td><td class="px-3 py-2 font-medium text-ink" x-text="c.to"></td></tr>
+                        </template>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </template>
+
+              <template x-if="fields.length">
+                <div>
+                  <p class="mb-2 text-sm font-semibold text-ink">Gönderilen alanlar</p>
+                  <div class="flex flex-wrap gap-1.5"><template x-for="f in fields" :key="f"><span class="badge badge-neutral code" x-text="f"></span></template></div>
+                </div>
+              </template>
+
+              <template x-if="detail.subject_events?.length > 1">
+                <div>
+                  <p class="mb-2 text-sm font-semibold text-ink">Bu kaydın işlemleri</p>
+                  <ol class="relative ml-2 border-l border-line">
+                    <template x-for="e in detail.subject_events" :key="e.id">
+                      <li class="relative pb-4 pl-5 last:pb-0">
+                        <span class="absolute top-1.5 -left-[5px] h-2.5 w-2.5 rounded-full" :class="e.current ? 'bg-primary-strong ring-4 ring-primary-soft' : 'bg-line-strong'"></span>
+                        <button type="button" class="text-left" @click="show(e)" :disabled="e.current">
+                          <span class="block text-sm font-medium" :class="e.current ? 'text-primary-ink' : 'text-ink hover:underline'" x-text="e.title"></span>
+                          <span class="block text-xs text-muted" x-text="fmt.dateTime(e.at) + (e.user_name ? ' · ' + e.user_name : '')"></span>
+                        </button>
+                      </li>
+                    </template>
+                  </ol>
+                </div>
+              </template>
+            </div>
+          </template>
+        </div>
+      </div>
+    </template>
+  </aside>
+</div>

@@ -1,0 +1,50 @@
+{#
+  Site alt bilgisi. İletişim ve sosyal medya /panel/'den gelir ($store.km.site);
+  boş olan gösterilmez. Yasal
+  bağlantılar yalnızca o dilde bulunan sayfalar için (KVKK yalnızca TR).
+#}
+{% set socials = [['linkedin', 'LinkedIn'], ['instagram', 'Instagram'], ['youtube', 'YouTube'], ['x', 'X']] %}
+<footer class="site-footer">
+  <div class="container-site">
+    <div class="footer-grid lg:grid-cols-[1.4fr_1fr_1.3fr]">
+      <div class="flex flex-col gap-4">
+        <a href="{{ url('home') }}" class="site-logo" aria-label="{{ t('nav.homeAria') }}">
+          <span class="site-logo-text">{{ t('nav.brand') }}</span><span class="site-logo-sub">{{ t('nav.brandSub') }}</span>
+        </a>
+        <p class="max-w-xs text-sm text-ink-2">{{ t('footer.tagline') }}</p>
+        <ul class="social" aria-label="{{ t('footer.social') }}">
+{% for item in socials %}
+          <li x-show="$store.km.site.social.{{ item[0] }}"><a :href="$store.km.site.social.{{ item[0] }}" target="_blank" rel="noopener" aria-label="{{ item[1] }}"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-{{ 'x-social' if item[0] == 'x' else item[0] }}"/></svg></a></li>
+{% endfor %}
+          <li><a href="{{ url('blog') }}feed.xml" aria-label="{{ t('footer.rss') }}"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-rss"/></svg></a></li>
+        </ul>
+      </div>
+      <nav aria-labelledby="footer-corporate">
+        <h2 id="footer-corporate" class="footer-title">{{ t('footer.corporate') }}</h2>
+        <ul class="footer-links">
+{% for name in ['home', 'blog', 'contact'] %}
+          <li><a href="{{ url(name) }}">{{ t('nav.' + name) }}</a></li>
+{% endfor %}
+        </ul>
+      </nav>
+      <div>
+        <h2 class="footer-title">{{ t('footer.contact') }}</h2>
+        <ul class="footer-links footer-contact">
+          <li x-show="$store.km.site.address"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-map-pin"/></svg><span x-text="$store.km.site.address"></span></li>
+          <li x-show="$store.km.site.phone"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-phone"/></svg><a :href="'tel:' + ($store.km.site.phone || '').replace(/\s/g, '')" x-text="$store.km.site.phone"></a></li>
+          <li x-show="$store.km.site.email"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-mail"/></svg><a :href="'mailto:' + $store.km.site.email" x-text="$store.km.site.email"></a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>{{ t('footer.rights', { year: year }) }}</p>
+      <nav class="flex gap-5" aria-label="{{ t('footer.legal') }}">
+{% for name in ['kvkk', 'privacy', 'cookies', 'legal'] %}
+{% if url(name) %}
+        <a href="{{ url(name) }}" class="hover:text-primary">{{ t('footer.' + name) }}</a>
+{% endif %}
+{% endfor %}
+      </nav>
+    </div>
+  </div>
+</footer>

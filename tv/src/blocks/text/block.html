@@ -1,0 +1,10 @@
+{{! Metin: gövde HTML alanıdır (kayıtta HtmlSanitizer'dan geçer), kaçışsız basılır. }}
+<section class="container-site section-sm km-text is-{{width}}">
+{{#eyebrow}}
+  <span class="eyebrow" data-km-field="eyebrow">{{eyebrow}}</span>
+{{/eyebrow}}
+{{#title}}
+  <h2 class="h2 mt-2" data-km-field="title">{{title}}</h2>
+{{/title}}
+  <div class="prose mt-5">{{{body}}}</div>
+</section>

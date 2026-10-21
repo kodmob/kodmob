@@ -1,0 +1,7 @@
+{
+  "group": "newsletter",
+  "order": 10,
+  "module": "newsletter",
+  "updated": "2026-10-21",
+  "paths": { "tr": "bulten-aydinlatma-ve-onay", "en": "newsletter-consent", "de": "newsletter-einwilligung" }
+}

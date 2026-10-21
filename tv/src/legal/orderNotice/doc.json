@@ -1,0 +1,7 @@
+{
+  "group": "commerce",
+  "order": 50,
+  "module": "commerce",
+  "updated": "2026-10-21",
+  "paths": { "tr": "musteri-aydinlatma-metni", "en": "customer-privacy-notice", "de": "kundendatenschutz" }
+}

@@ -1,0 +1,273 @@
+/*
+ * Temel bileşen sınıfları (düğme, etiket, form, kart, bölüm başlığı).
+ * Site bölümleri (header, kartlar, bantlar) sections.css'tedir. Her sınıfın
+ * canlı örneği /_ui/ sayfasındadır; yeni bileşen önce orada kurulur.
+ */
+@layer components {
+  /* ------------------------------------------------------------ yerleşim */
+  .container-site { @apply mx-auto w-full max-w-site px-4 sm:px-6 lg:px-8; }
+  .section { @apply py-14 sm:py-16 lg:py-20; }
+  .section-sm { @apply py-10 sm:py-12; }
+
+  /* ------------------------------------------------------------ tipografi */
+  .display {
+    @apply text-[2.375rem] leading-[1.08] font-bold tracking-tight text-ink sm:text-5xl lg:text-[3.5rem];
+  }
+  .h2 { @apply text-[1.75rem] leading-tight font-bold tracking-tight text-ink sm:text-[2.125rem]; }
+  .h3 { @apply text-xl leading-snug font-semibold text-ink; }
+  .lead { @apply text-base leading-relaxed text-ink-2 sm:text-lg; }
+  /* Başlıktaki mavi vurgu satırı: "…daha fazlasını <span class="accent">birlikte üretiyoruz.</span>" */
+  .accent { @apply text-primary; }
+
+  /* ------------------------------------------------------------ ikon */
+  .icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex: none;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .icon-sm { width: 1rem; height: 1rem; }
+  .icon-lg { width: 1.5rem; height: 1.5rem; }
+  .icon-xl { width: 1.75rem; height: 1.75rem; }
+  .icon-fill { fill: currentColor; stroke: none; }
+
+  /* Kart ve özellik başlığındaki ikon kutusu */
+  .icon-tile {
+    @apply grid h-12 w-12 shrink-0 place-items-center rounded-tile bg-primary-soft text-primary;
+  }
+  .icon-tile-sm { @apply h-10 w-10 rounded-control; }
+  .icon-tile-round { @apply rounded-full; }
+
+  /* ------------------------------------------------------------ düğme */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-control border px-5 font-semibold
+      transition select-none whitespace-nowrap
+      disabled:cursor-not-allowed disabled:opacity-55;
+    min-height: var(--spacing-control);
+    font-size: 0.9375rem;
+  }
+  .btn .icon { @apply transition-transform; }
+  .btn:hover .icon-arrow { transform: translateX(3px); }
+  .btn-sm { @apply px-4 text-sm; min-height: 2.5rem; }
+  .btn-lg { @apply px-7 text-base; min-height: 3.5rem; }
+  .btn-block { @apply w-full; }
+
+  .btn-primary {
+    @apply border-primary-strong bg-primary-strong text-white hover:border-primary-hover hover:bg-primary-hover;
+    box-shadow: var(--shadow-btn);
+  }
+  .btn-outline { @apply border-primary/40 bg-surface text-primary hover:border-primary hover:bg-primary-soft; }
+  .btn-secondary { @apply border-line bg-surface text-ink hover:border-line-strong hover:bg-surface-subtle; }
+  .btn-ghost { @apply border-transparent bg-transparent text-ink-2 hover:bg-surface-subtle hover:text-ink; }
+  .btn-success { @apply border-success bg-success text-white hover:brightness-95; }
+  .btn-danger { @apply border-danger bg-danger text-white hover:brightness-95; }
+  /* Koyu zemin üstü */
+  .btn-white { @apply border-white bg-white text-primary-ink hover:bg-primary-soft; }
+  .btn-glass { @apply border-white/35 bg-white/5 text-white hover:border-white/70 hover:bg-white/10; }
+
+  /* Yuvarlak ikon düğmesi (kart oku, karusel ileri/geri) */
+  .btn-round {
+    @apply inline-grid h-10 w-10 shrink-0 place-items-center rounded-full border border-line bg-surface text-primary transition
+      hover:border-primary hover:bg-primary hover:text-white disabled:pointer-events-none disabled:opacity-40;
+  }
+  .btn-round-solid { @apply border-primary-strong bg-primary-strong text-white hover:bg-primary-hover; }
+  .btn-round-glass { @apply border-white/30 bg-white/10 text-white backdrop-blur hover:border-white hover:bg-white hover:text-primary; }
+
+  .btn-icon {
+    @apply inline-flex items-center justify-center rounded-control text-ink-2 transition-colors hover:bg-surface-subtle hover:text-ink;
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  /* "Tüm Projeleri Gör →" */
+  .link-arrow {
+    @apply inline-flex items-center gap-1.5 text-sm font-semibold text-primary transition-colors hover:text-primary-hover;
+  }
+  .link-arrow .icon { @apply transition-transform; }
+  .link-arrow:hover .icon { transform: translateX(3px); }
+
+  /* ------------------------------------------------------------ etiketler */
+  /* Bölüm üst etiketi: "HİZMETLERİMİZ" */
+  .eyebrow {
+    @apply inline-flex items-center gap-2 text-xs font-semibold tracking-[0.14em] text-primary uppercase;
+  }
+  .eyebrow-muted { @apply text-ink-2; }
+  /* Hap biçimli üst etiket (hero): nokta + metin */
+  .eyebrow-pill {
+    @apply rounded-full border border-primary/15 bg-surface px-3 py-1.5 text-[0.6875rem] text-ink-2 shadow-card;
+  }
+  .eyebrow-pill::before {
+    content: "";
+    @apply h-1.5 w-1.5 rounded-full bg-primary;
+  }
+  .eyebrow-dark { @apply border-white/15 bg-white/5 text-navy-ink shadow-none; }
+
+  /* Proje ve teknoloji etiketi: "Web Uygulaması" */
+  .tag {
+    @apply inline-flex items-center gap-1 rounded-full border border-primary/15 bg-primary-soft px-2.5 py-1 text-xs font-medium whitespace-nowrap text-primary-ink;
+  }
+  .tag-neutral { @apply border-line bg-surface-subtle text-ink-2; }
+  .tag-dark { @apply border-white/20 bg-white/10 text-white backdrop-blur; }
+
+  /* Görsel üstü kategori: "YAPAY ZEKA" */
+  .category {
+    @apply inline-flex items-center rounded-md bg-primary-strong px-2 py-1 text-[0.625rem] font-bold tracking-wider text-white uppercase;
+  }
+
+  /* Durum rozeti. Renk tek başına anlam taşımaz: rozet her zaman metin içerir. */
+  .badge {
+    @apply inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium whitespace-nowrap;
+  }
+  .badge-neutral { @apply border-line bg-surface-subtle text-ink-2; }
+  .badge-primary { @apply border-primary/20 bg-primary-soft text-primary-ink; }
+  .badge-success { @apply border-success/20 bg-success-soft text-success-ink; }
+  .badge-warning { @apply border-warning/25 bg-warning-soft text-warning-ink; }
+  .badge-danger { @apply border-danger/20 bg-danger-soft text-danger-ink; }
+
+  /* ------------------------------------------------------------ form */
+  .field { @apply flex flex-col gap-1.5; }
+  .field-label { @apply text-sm font-semibold text-ink; }
+  .field-label .req { @apply text-danger; }
+  .field-help { @apply text-xs text-muted; }
+  .field-error { @apply text-xs font-medium text-danger; }
+  .input {
+    @apply w-full rounded-control border border-line bg-surface px-4 text-ink
+      placeholder:text-muted transition-colors
+      hover:border-line-strong focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/12
+      disabled:bg-surface-subtle disabled:text-muted;
+    min-height: var(--spacing-field);
+    font-size: 1rem; /* iOS'ta odakta yakınlaştırma olmasın */
+  }
+  .input[aria-invalid="true"] { @apply border-danger focus:ring-danger/12; }
+  textarea.input { @apply py-3 leading-relaxed; min-height: 8rem; resize: vertical; }
+  select.input {
+    @apply cursor-pointer appearance-none pr-11;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%237A86A1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.875rem center;
+  }
+  /* Soldaki ikonlu alan: <div class="input-icon"><svg class="icon">…</svg><input class="input"></div> */
+  .input-icon { @apply relative; }
+  .input-icon > .icon { @apply pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-muted; }
+  .input-icon > .input { @apply pl-11; }
+
+  /* Onay kutusu ve seçenek düğmesi */
+  .check { @apply inline-flex cursor-pointer items-start gap-3 text-sm text-ink-2; }
+  .check input {
+    @apply mt-0.5 h-5 w-5 shrink-0 cursor-pointer appearance-none rounded-md border border-line-strong bg-surface transition
+      checked:border-primary checked:bg-primary focus-visible:ring-4 focus-visible:ring-primary/15 focus-visible:outline-none;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  .check input[type="radio"] { @apply rounded-full; }
+  .check input[type="checkbox"]:checked {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+  }
+  .check input[type="radio"]:checked { box-shadow: inset 0 0 0 4px var(--color-surface); }
+  .check input[aria-invalid="true"] { @apply border-danger; }
+
+  /* Seçilebilir hap (hizmet seçimi): <button class="choice" :aria-pressed="…"> */
+  .choice {
+    @apply inline-flex items-center gap-2 rounded-full border border-line bg-surface px-4 py-2 text-sm font-medium text-ink-2 transition
+      hover:border-primary/50 hover:text-ink;
+  }
+  .choice[aria-pressed="true"] { @apply border-primary bg-primary-soft text-primary-ink; }
+  .choice[aria-pressed="true"] .icon { @apply text-primary; }
+
+  /* ------------------------------------------------------------ kart */
+  .card {
+    @apply rounded-card border border-line bg-surface;
+    box-shadow: var(--shadow-card);
+  }
+  .card-body { @apply p-5 sm:p-6; }
+  .card-hover { @apply transition duration-200; }
+  .card-hover:hover {
+    @apply border-primary/25;
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lift);
+  }
+  .card-soft { @apply rounded-card bg-surface-subtle; }
+
+  /* ------------------------------------------------------------ bölüm başlığı
+     Solda eyebrow + başlık (+ açıklama), sağda "Tümünü Gör →". */
+  .section-head { @apply mb-8 flex flex-col gap-4 sm:mb-10 sm:flex-row sm:items-end sm:justify-between; }
+  .section-head-center { @apply mx-auto mb-10 flex max-w-2xl flex-col items-center gap-3 text-center; }
+  .section-head .lead, .section-head-center .lead { @apply mt-2 text-base; }
+
+  /* ------------------------------------------------------------ çeşitli */
+  .avatar { @apply h-12 w-12 shrink-0 rounded-full object-cover ring-2 ring-surface; }
+  .avatar-lg { @apply h-20 w-20; }
+  .rating { @apply flex items-center gap-0.5 text-star; }
+
+  /* Görsel yer tutucu: gerçek görsel gelene kadar mavi ızgaralı alan */
+  .media-ph {
+    @apply relative isolate grid place-items-center overflow-hidden text-primary/60;
+    background: radial-gradient(120% 90% at 15% 10%, color-mix(in oklab, var(--color-primary-strong) 16%, white) 0%, var(--color-primary-soft) 45%, var(--color-bg) 100%);
+  }
+  .media-ph::before {
+    content: "";
+    @apply absolute inset-0 -z-10;
+    background-image:
+      linear-gradient(color-mix(in oklab, var(--color-primary-strong) 7%, transparent) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in oklab, var(--color-primary-strong) 7%, transparent) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+  .media-ph-dark {
+    @apply text-white/50;
+    background: radial-gradient(120% 100% at 80% 0%, color-mix(in oklab, var(--color-primary-strong) 94%, white) 0%, var(--color-navy-2) 55%, var(--color-navy) 100%);
+  }
+  .media-ph-dark::before {
+    background-image:
+      linear-gradient(rgb(255 255 255 / 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(255 255 255 / 0.06) 1px, transparent 1px);
+  }
+
+  .skeleton { @apply animate-pulse rounded-control bg-line/70; }
+
+  /* Açılır menü/panel öğesi */
+  .menu-item { @apply flex min-h-10 w-full items-center gap-2.5 rounded-control px-3 text-sm text-ink hover:bg-surface-subtle; }
+  .menu-item[aria-current="true"] { @apply font-semibold text-primary; }
+
+  /* Bildirim ikonları (ui/toast/toasts.html) */
+  .tone-icon { @apply grid h-10 w-10 shrink-0 place-items-center rounded-control; }
+  .tone-primary { @apply bg-primary-soft text-primary; }
+  .tone-success { @apply bg-success-soft text-success; }
+  .tone-warning { @apply bg-warning-soft text-warning; }
+  .tone-danger { @apply bg-danger-soft text-danger; }
+  .tone-info { @apply bg-info-soft text-info; }
+  .tone-neutral { @apply bg-surface-subtle text-ink-2; }
+
+  /* Pencere (ui/sheet) alt çubuğu: kaydırılan gövdenin altında sabit. */
+  .sheet-body { @apply flex flex-col; }
+  .sheet-body > :not(.sheet-footer) { @apply shrink-0; }
+  .sheet-body > :has(+ .sheet-footer) { @apply mb-5; }
+  .sheet-footer {
+    @apply sticky bottom-0 -mx-4 mt-auto flex flex-col-reverse gap-2 border-t border-line bg-surface px-4 py-3
+      sm:-mx-5 sm:flex-row sm:items-center sm:justify-end sm:px-5;
+    padding-bottom: calc(env(safe-area-inset-bottom) + 0.75rem);
+  }
+  .sheet-footer .btn { @apply w-full sm:w-auto; }
+
+  /* Eylemli bildirimde kalan süre */
+  .toast-timer { @apply h-1 overflow-hidden rounded-full bg-line; }
+  .toast-timer > span { @apply block h-full origin-left rounded-full bg-success; animation: toast-timer linear forwards; }
+}
+
+@keyframes toast-timer { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+@media (prefers-reduced-motion: reduce) { .toast-timer > span { animation: none; } }
+
+/* Koyu temada açık renkli görsel yer tutucusu koyu tonlara döner. */
+@layer components {
+  :root.theme-dark .media-ph:not(.media-ph-dark) {
+    background: radial-gradient(120% 90% at 15% 10%, color-mix(in oklab, var(--color-primary-strong) 24%, #0F1729) 0%, color-mix(in oklab, var(--color-primary-strong) 10%, #0F1729) 45%, #0F1729 100%);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not(.theme-light) .media-ph:not(.media-ph-dark) {
+      background: radial-gradient(120% 90% at 15% 10%, color-mix(in oklab, var(--color-primary-strong) 24%, #0F1729) 0%, color-mix(in oklab, var(--color-primary-strong) 10%, #0F1729) 45%, #0F1729 100%);
+    }
+  }
+}

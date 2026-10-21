@@ -1,0 +1,49 @@
+{% extends "layouts/base.njk" %}
+{% import "macros/ui.njk" as ui %}
+
+{#
+  Yasal belgeler (tv/src/legal/<ad>/; vite/legal.js). Özet sayfası (`doc` boş) bütün açık belgeleri gruplarıyla
+  listeler; belge sayfası gövdeyi, içindekileri ve güncelleme tarihini gösterir. Hepsini sunucu yazar (kodmob-api
+  Site\Legal\LegalSsr): açık modüllerin belgeleri, Proje Ayarları › Yasal'daki bilgiler, panelde özelleştirildiyse o
+  metin. İşaretler (`<!--km:legal-…-->`) derlemede boş kalır.
+#}
+{% if doc %}
+{% set crumbs = [{ label: t('nav.home'), url: url('home') }, { label: t('legal.title'), url: url('legal') }, { label: t('legal.' + doc + '.title') }] %}
+{% else %}
+{% set crumbs = [{ label: t('nav.home'), url: url('home') }, { label: t('legal.title') }] %}
+{% endif %}
+
+{% block content %}
+<article class="pb-20" data-testid="legal-page" data-doc="{{ doc }}">
+  <header class="hero pt-8 pb-10 sm:pt-12">
+    <div class="container-site max-w-6xl">
+      <div class="fade-up mb-6">{{ ui.breadcrumb(crumbs) }}</div>
+      <span class="eyebrow eyebrow-pill fade-up">{{ t('legal.eyebrow') }}</span>
+      <h1 class="display fade-up fade-up-1 mt-5 text-[2rem] sm:text-[2.75rem]">{{ t('legal.' + doc + '.title') if doc else t('legal.title') }}</h1>
+      <p class="lead fade-up fade-up-2 mt-4 max-w-2xl">{{ t('legal.' + doc + '.lead') if doc else t('legal.lead') }}</p>
+{% if doc %}
+      <p class="fade-up fade-up-2 mt-5 text-sm text-muted">{{ t('legal.updated') }}: <!--km:legal-updated--><!--/km:legal-updated--></p>
+{% endif %}
+    </div>
+  </header>
+
+  <div class="container-site grid max-w-6xl gap-10 lg:grid-cols-[16rem_1fr]">
+    {# Telefonda belge listesi metnin altında; geniş ekranda solda, yapışkan. #}
+    <nav class="legal-nav order-last lg:order-none lg:sticky lg:top-24 lg:self-start" aria-label="{{ t('legal.all') }}">
+      <p class="mb-3 text-sm font-semibold text-ink">{{ t('legal.all') }}</p>
+      <!--km:legal-nav--><!--/km:legal-nav-->
+    </nav>
+    <div class="min-w-0">
+{% if doc %}
+      <nav class="legal-toc mb-8" aria-label="{{ t('legal.toc') }}">
+        <p class="mb-3 text-sm font-semibold text-ink">{{ t('legal.toc') }}</p>
+        <!--km:legal-toc--><!--/km:legal-toc-->
+      </nav>
+      <div class="prose legal-body max-w-none" data-testid="legal-body"><!--km:legal-body--><!--/km:legal-body--></div>
+{% else %}
+      <div data-testid="legal-index"><!--km:legal-index--><!--/km:legal-index--></div>
+{% endif %}
+    </div>
+  </div>
+</article>
+{% endblock %}

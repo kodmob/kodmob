@@ -1,0 +1,73 @@
+{# Mağaza › Siparişler. Mantık: panel/orders.js. Tablo: ui/grid (kmGrid). #}
+<div class="pn-page" x-data="kmOrders(r.id)" data-testid="orders">
+  <template x-if="grid">
+    <div x-data="kmGrid(grid)" @grid-open="show($event.detail.row)">
+      {% include "ui/grid/grid.html" %}
+    </div>
+  </template>
+
+  {# ============================================================ sipariş #}
+  <div class="pn-drawer-backdrop" x-show="sale" x-transition.opacity x-cloak @click="sale = null"></div>
+  <aside class="pn-drawer" x-show="sale" x-cloak x-transition:enter="transition duration-200 ease-out" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0" x-transition:leave="transition duration-150 ease-in" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full" @keydown.escape.window="sale = null" aria-label="Sipariş" data-testid="order">
+    <template x-if="sale">
+      <div class="flex h-full flex-col">
+        <div class="pn-drawer-head">
+          <div class="min-w-0 flex-1">
+            <p class="flex items-center gap-2 text-lg font-bold text-ink">
+              <span x-text="sale.number"></span>
+              <span class="badge" :class="status('order', sale.status).cls" x-text="status('order', sale.status).label" data-testid="order-status"></span>
+            </p>
+            <p class="text-sm text-muted"><span x-text="sale.customer_name"></span> · <span x-text="relative((sale.created_at || '').replace(' ', 'T'))"></span></p>
+          </div>
+          <button type="button" class="btn-icon" @click="sale = null" aria-label="Kapat"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button>
+        </div>
+        <div class="pn-drawer-body">
+          <template x-if="saleLoading"><div class="flex flex-col gap-3"><span class="skeleton h-24"></span><span class="skeleton h-40"></span></div></template>
+          <div x-show="!saleLoading">
+            <dl class="pn-dl">
+              <dt>E-posta</dt><dd><a :href="'mailto:' + sale.customer_email" class="text-primary" x-text="sale.customer_email"></a></dd>
+              <dt>Telefon</dt><dd x-text="sale.customer_phone || '—'"></dd>
+              <dt>Adres</dt><dd x-text="address(sale.address) || '— (dijital)'"></dd>
+              <dt>Ödeme</dt><dd><span x-text="payment(sale.payment_method)"></span> · <span x-text="sale.payment_status === 'paid' ? 'ödendi' : (sale.payment_status === 'refunded' ? 'iade' : 'ödenmedi')"></span></dd>
+              <template x-if="sale.coupon"><dt>Kupon</dt></template>
+              <template x-if="sale.coupon"><dd class="font-mono" x-text="sale.coupon"></dd></template>
+            </dl>
+
+            <p class="mt-6 mb-2 text-sm font-semibold text-ink">Ürünler</p>
+            <ul class="flex flex-col divide-y divide-line rounded-control border border-line">
+              <template x-for="(item, i) in sale.items" :key="i">
+                <li class="flex items-center gap-3 px-3 py-2 text-sm">
+                  <span class="min-w-0 flex-1"><span class="font-medium text-ink" x-text="item.title"></span> <span class="text-muted" x-show="item.sku" x-text="'· ' + item.sku"></span></span>
+                  <span class="text-muted" x-text="item.quantity + ' × ' + item.unitText"></span>
+                  <span class="w-28 text-right font-medium text-ink" x-text="item.totalText"></span>
+                </li>
+              </template>
+            </ul>
+
+            <dl class="pn-dl mt-4" x-show="sale.totals">
+              <dt>Ara toplam</dt><dd x-text="sale.totals?.subtotal"></dd>
+              <template x-if="sale.amounts?.discount"><dt>İndirim</dt></template>
+              <template x-if="sale.amounts?.discount"><dd x-text="'− ' + sale.totals.discount"></dd></template>
+              <dt>Kargo</dt><dd x-text="sale.amounts?.shipping ? sale.totals.shipping : 'yok'"></dd>
+              <template x-if="sale.amounts?.fee"><dt>Ödeme ücreti</dt></template>
+              <template x-if="sale.amounts?.fee"><dd x-text="sale.totals.fee"></dd></template>
+              <dt>KDV</dt><dd x-text="sale.totals?.tax"></dd>
+              <dt class="font-semibold text-ink">Toplam</dt><dd class="font-bold text-ink" x-text="sale.totals?.total"></dd>
+            </dl>
+
+            <template x-if="sale.note">
+              <div><p class="mt-6 mb-2 text-sm font-semibold text-ink">Müşterinin notu</p><div class="pn-message" x-text="sale.note"></div></div>
+            </template>
+          </div>
+        </div>
+        <div class="pn-drawer-foot flex-wrap" x-show="canManage && sale.next?.length">
+          <template x-for="target in sale.next" :key="target">
+            <button type="button" class="btn" :class="next(target).tone" @click="move(target)" :disabled="busy" :data-status="target">
+              <svg class="icon icon-sm" aria-hidden="true"><use :href="'#i-' + next(target).icon"/></svg> <span x-text="next(target).label"></span>
+            </button>
+          </template>
+        </div>
+      </div>
+    </template>
+  </aside>
+</div>

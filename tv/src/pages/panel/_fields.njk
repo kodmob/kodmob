@@ -1,0 +1,208 @@
+{#
+  Panel form alanı — şemadaki her tür için tek makro. `f`: alan tanımı (x-for
+  değişkeni). `target`: değeri tutan nesnenin JS ifadesi ('item' ya da
+  'item.i18n[tab]'), `errPath`: hata yolu ifadesi, `scope`: kimlik öneki.
+#}
+{% macro control(target, errPath, scope) %}
+{% set v = target + '[f.name]' %}
+<div class="pn-field" :class="'pn-w-' + (f.width || 'full')">
+  <template x-if="f.type !== 'bool'">
+    <label class="field-label" :for="fieldId(f, '{{ scope }}')"><span x-text="f.label"></span><span class="req" x-show="f.required"> *</span></label>
+  </template>
+
+  <template x-if="f.type === 'text' || f.type === 'url'">
+    <input class="input" :id="fieldId(f, '{{ scope }}')" :type="f.type === 'url' ? 'url' : 'text'" x-model="{{ v }}" :maxlength="f.max || null" :placeholder="f.type === 'url' ? 'https://' : ''" :aria-invalid="!!err({{ errPath }})" autocomplete="off">
+  </template>
+
+  <template x-if="f.type === 'int'">
+    <input class="input" type="number" step="1" :min="f.min ?? null" :id="fieldId(f, '{{ scope }}')" x-model.number="{{ v }}" :aria-invalid="!!err({{ errPath }})">
+  </template>
+
+  {# Para: kuruş saklanır, ondalıklı yazılır ("149,90"); birim alanın `unit`'i. #}
+  <template x-if="f.type === 'money'">
+    <div class="flex items-center gap-2">
+      <input class="input" inputmode="decimal" :id="fieldId(f, '{{ scope }}')" :value="moneyText({{ v }})" @change="{{ v }} = moneyValue($event.target.value); $event.target.value = moneyText({{ v }})" :aria-invalid="!!err({{ errPath }})" autocomplete="off">
+      <span class="text-sm text-muted" x-show="f.unit" x-text="f.unit"></span>
+    </div>
+  </template>
+
+  <template x-if="f.type === 'slug'">
+    <div class="pn-slug">
+      <span class="pn-slug-prefix" x-show="slugPrefix({{ 'tab' if scope == 'l-' else 'item.locale' }})" x-text="slugPrefix({{ 'tab' if scope == 'l-' else 'item.locale' }})"></span>
+      <input class="input" :id="fieldId(f, '{{ scope }}')" x-model="{{ v }}" placeholder="otomatik" :aria-invalid="!!err({{ errPath }})" autocomplete="off" spellcheck="false">
+    </div>
+  </template>
+
+  <template x-if="f.type === 'textarea'">
+    <div class="pn-textarea">
+      <textarea class="input" :id="fieldId(f, '{{ scope }}')" x-model="{{ v }}" :rows="f.max && f.max <= 400 ? 3 : 7" :maxlength="f.max || null" :aria-invalid="!!err({{ errPath }})"></textarea>
+      <span class="pn-count" x-show="f.max" x-text="({{ v }} || '').length + ' / ' + f.max"></span>
+    </div>
+  </template>
+
+  <template x-if="f.type === 'html'">
+    <div class="rte" x-data="kmRichText(() => {{ v }}, (value) => {{ v }} = value, () => item.locale || $store.media.altLocale)">
+      <div class="rte-toolbar" role="toolbar" aria-label="Biçimlendirme">
+        <button type="button" class="rte-btn" :class="is('heading', { level: 2 }) && 'is-active'" @click="run('toggleHeading', { level: 2 })" title="Başlık">H2</button>
+        <button type="button" class="rte-btn" :class="is('heading', { level: 3 }) && 'is-active'" @click="run('toggleHeading', { level: 3 })" title="Alt başlık">H3</button>
+        <span class="rte-sep" aria-hidden="true"></span>
+        <button type="button" class="rte-btn font-bold" :class="is('bold') && 'is-active'" @click="run('toggleBold')" title="Kalın (Ctrl+B)">B</button>
+        <button type="button" class="rte-btn italic" :class="is('italic') && 'is-active'" @click="run('toggleItalic')" title="İtalik (Ctrl+I)">I</button>
+        <button type="button" class="rte-btn" :class="is('link') && 'is-active'" @click="link()" title="Bağlantı"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-link"/></svg></button>
+        <span class="rte-sep" aria-hidden="true"></span>
+        <button type="button" class="rte-btn" :class="is('bulletList') && 'is-active'" @click="run('toggleBulletList')" title="Madde listesi"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-list"/></svg></button>
+        <button type="button" class="rte-btn" :class="is('orderedList') && 'is-active'" @click="run('toggleOrderedList')" title="Numaralı liste">1.</button>
+        <button type="button" class="rte-btn" :class="is('blockquote') && 'is-active'" @click="run('toggleBlockquote')" title="Alıntı"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-quote"/></svg></button>
+        <button type="button" class="rte-btn" :class="is('codeBlock') && 'is-active'" @click="run('toggleCodeBlock')" title="Kod"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-code"/></svg></button>
+        <button type="button" class="rte-btn" @click="image()" title="Görsel ekle"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-image"/></svg></button>
+        <span class="rte-sep" aria-hidden="true"></span>
+        <button type="button" class="rte-btn" @click="run('undo')" :disabled="!can('undo')" title="Geri al (Ctrl+Z)"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-rotate-ccw"/></svg></button>
+        <button type="button" class="rte-btn" @click="run('redo')" :disabled="!can('redo')" title="Yinele (Ctrl+Y)"><svg class="icon icon-sm -scale-x-100" aria-hidden="true"><use href="#i-rotate-ccw"/></svg></button>
+      </div>
+      <div x-ref="area" class="rte-area"></div>
+    </div>
+  </template>
+
+  <template x-if="f.type === 'bool'">
+    <label class="pn-switch">
+      <input type="checkbox" class="peer sr-only" x-model="{{ v }}">
+      <span class="pn-switch-track" aria-hidden="true"></span>
+      <span class="field-label" x-text="f.label"></span>
+    </label>
+  </template>
+
+  <template x-if="f.type === 'select'">
+    <select class="input" :id="fieldId(f, '{{ scope }}')" x-model="{{ v }}">
+      <template x-for="o in f.options" :key="o.value"><option :value="o.value" x-text="o.label" :selected="o.value === {{ v }}"></option></template>
+    </select>
+  </template>
+
+  <template x-if="f.type === 'multiselect'">
+    <div class="pn-chips" role="group" :aria-label="f.label">
+      <template x-for="o in f.options" :key="o.value">
+        <button type="button" class="pn-chip" :aria-pressed="{{ v }}.includes(o.value)" @click="toggleIn({{ v }}, o.value)"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"/></svg><span x-text="o.label"></span></button>
+      </template>
+    </div>
+  </template>
+
+  <template x-if="f.type === 'icon'">
+    <div class="pn-iconpick" x-data="{ open: false }" @click.outside="open = false" @keydown.escape="open = false">
+      <button type="button" class="pn-iconpick-btn" @click="open = !open" :aria-expanded="open" :id="fieldId(f, '{{ scope }}')">
+        <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use :href="'#i-' + {{ v }}"/></svg></span>
+        <span class="flex-1 text-left" x-text="{{ v }}"></span>
+        <svg class="icon icon-sm text-muted" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+      </button>
+      <div class="pn-iconpick-grid" x-show="open" x-cloak x-transition.origin.top.left>
+        <template x-for="o in f.options" :key="o.value">
+          <button type="button" class="pn-iconpick-item" :class="o.value === {{ v }} && 'is-active'" @click="{{ v }} = o.value; open = false" :title="o.value" :aria-label="o.value"><svg class="icon" aria-hidden="true"><use :href="'#i-' + o.value"/></svg></button>
+        </template>
+      </div>
+    </div>
+  </template>
+
+  <template x-if="f.type === 'image'">
+    <div class="pn-image" x-data="{ over: false }" :class="over && 'is-over'" @dragover.prevent="over = true" @dragleave.self="over = false" @drop.prevent="over = false; pickImage({{ target }}, f.name, $event.dataTransfer.files)">
+      <template x-if="{{ v }}">
+        <div class="pn-image-preview">
+          <button type="button" class="pn-image-hit" @click="pickImage({{ target }}, f.name)" aria-label="Görseli değiştir ya da alt metnini düzenle"><img :src="{{ v }}.src" :alt="{{ v }}.alts?.[$store.media.altLocale] || ''"></button>
+          <p class="pn-alt-line" :class="missingAlt({{ v }}) && 'is-missing'">
+            <svg class="icon icon-sm shrink-0" aria-hidden="true"><use :href="missingAlt({{ v }}) ? '#i-alert-circle' : '#i-check-circle'"/></svg>
+            <span class="min-w-0 flex-1 truncate" x-text="missingAlt({{ v }}) ? 'Alt metni eksik' : 'Alt: ' + {{ v }}.alts[$store.media.altLocale]"></span>
+          </p>
+          <div class="pn-image-actions">
+            <button type="button" class="btn btn-secondary btn-sm" @click="pickImage({{ target }}, f.name)"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-pencil"/></svg> Değiştir / alt metin</button>
+            <button type="button" class="btn btn-ghost btn-sm" @click="{{ v }} = null"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-trash"/></svg> Kaldır</button>
+          </div>
+        </div>
+      </template>
+      <template x-if="!{{ v }}">
+        <button type="button" class="pn-drop" @click="pickImage({{ target }}, f.name)">
+          <svg class="icon icon-lg" aria-hidden="true"><use href="#i-image"/></svg>
+          <span>Görsel seçin ya da buraya <span class="text-primary underline">sürükleyin</span></span>
+          <small>Kitaplık, yükleme ya da adres · JPG, PNG, WebP</small>
+        </button>
+      </template>
+    </div>
+  </template>
+
+  <template x-if="f.type === 'gallery'">
+    <div class="pn-gallery" x-data="{ over: false }" :class="over && 'is-over'" @dragover.prevent="over = true" @dragleave.self="over = false" @drop.prevent="over = false; addToGallery(f, $event.dataTransfer.files)">
+      <template x-for="(img, i) in {{ v }}" :key="img.id + '-' + i">
+        <figure class="pn-gallery-item" :class="missingAlt(img) && 'is-missing'">
+          <button type="button" class="pn-image-hit h-full" @click="editGalleryAlt(f, i)" :aria-label="(i + 1) + '. görselin alt metnini düzenle'"><img :src="img.thumb || img.src" :alt="img.alts?.[$store.media.altLocale] || ''" loading="lazy"></button>
+          <span class="pn-gallery-no" x-text="i + 1"></span>
+          <span class="pn-gallery-warn" x-show="missingAlt(img)" title="Alt metni eksik"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-alert-circle"/></svg></span>
+          <div class="pn-gallery-tools">
+            <button type="button" @click="moveInGallery(f, i, -1)" :disabled="i === 0" aria-label="Öne al"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chevron-left"/></svg></button>
+            <button type="button" @click="moveInGallery(f, i, 1)" :disabled="i === {{ v }}.length - 1" aria-label="Arkaya al"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>
+            <button type="button" @click="removeFromGallery(f, i)" aria-label="Kaldır" class="is-danger"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-trash"/></svg></button>
+          </div>
+        </figure>
+      </template>
+      <button type="button" class="pn-gallery-add" @click="addToGallery(f)">
+        <svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>
+        <span>Görsel ekle</span>
+      </button>
+    </div>
+  </template>
+
+  <template x-if="f.type === 'list'">
+
+    <div class="pn-tags" x-data="{ draft: '' }" @click="$refs.tag.focus()">
+      <template x-for="(tag, i) in {{ v }}" :key="i + tag">
+        <span class="pn-tag"><span x-text="tag"></span><button type="button" @click.stop="{{ v }}.splice(i, 1)" :aria-label="'Kaldır: ' + tag"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-x"/></svg></button></span>
+      </template>
+      <input x-ref="tag" class="pn-tags-input" :id="fieldId(f, '{{ scope }}')" x-model="draft" @keydown.enter.prevent="draft = pushTag({{ v }}, draft, f.max)" @keydown.comma.prevent="draft = pushTag({{ v }}, draft, f.max)" @keydown.backspace="!draft && {{ v }}.length && {{ v }}.pop()" @blur="draft = pushTag({{ v }}, draft, f.max)" :placeholder="{{ v }}.length ? '' : 'Yazıp Enter\'a basın'">
+    </div>
+  </template>
+
+  <template x-if="f.type === 'rows'">
+    <div class="pn-rows">
+      {# Her hücrenin üstünde sütunun adı (değer yazılınca yer tutucu kaybolur); 4'ten çok sütun ızgarada alt satıra kayar. #}
+      <template x-for="(row, i) in {{ v }}" :key="i">
+        <div class="pn-row" :class="f.columns.length > 4 && 'is-wide'">
+          <span class="pn-row-no" x-text="i + 1"></span>
+          <div class="pn-row-cells">
+          <template x-for="c in f.columns" :key="c.name">
+            <div class="pn-row-cell" :class="'pn-row-' + c.type">
+              <span class="pn-row-label" x-text="c.label" :title="c.label" aria-hidden="true"></span>
+              <template x-if="c.type === 'icon'">
+                <div class="pn-row-icon">
+                  <svg class="icon icon-sm text-primary" aria-hidden="true"><use :href="'#i-' + row[c.name]"/></svg>
+                  <select class="input" x-model="row[c.name]" :aria-label="c.label">
+                    <template x-for="o in c.options" :key="o.value"><option :value="o.value" x-text="o.label" :selected="o.value === row[c.name]"></option></template>
+                  </select>
+                </div>
+              </template>
+              {# Para: kayıtta kuruş, formda "1500,00" (üst düzey para alanıyla aynı dönüşüm). #}
+              <template x-if="c.type === 'money'"><input class="input" inputmode="decimal" :value="moneyText(row[c.name])" @change="row[c.name] = moneyValue($event.target.value); $event.target.value = moneyText(row[c.name])" :aria-label="c.label" autocomplete="off"></template>
+              <template x-if="c.type !== 'icon' && c.type !== 'money'"><input class="input" x-model="row[c.name]" :aria-label="c.label" :maxlength="c.max || null" :inputmode="c.type === 'int' ? 'numeric' : null"></template>
+            </div>
+          </template>
+          </div>
+          <div class="pn-row-tools">
+            <button type="button" class="btn-icon" @click="moveRow({{ v }}, i, -1)" :disabled="i === 0" aria-label="Yukarı"><svg class="icon icon-sm -rotate-90" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>
+            <button type="button" class="btn-icon" @click="moveRow({{ v }}, i, 1)" :disabled="i === {{ v }}.length - 1" aria-label="Aşağı"><svg class="icon icon-sm rotate-90" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>
+            <button type="button" class="btn-icon text-danger" @click="{{ v }}.splice(i, 1)" aria-label="Satırı sil"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-trash"/></svg></button>
+          </div>
+        </div>
+      </template>
+      <button type="button" class="btn btn-ghost btn-sm self-start" @click="addRow({{ v }}, f)" :disabled="f.max && {{ v }}.length >= f.max"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-plus"/></svg> Satır ekle</button>
+    </div>
+  </template>
+
+  <template x-if="f.type === 'date'">
+    <input type="datetime-local" class="input" :id="fieldId(f, '{{ scope }}')" x-model="{{ v }}">
+  </template>
+
+  <template x-if="f.type === 'post'">
+    <select class="input" :id="fieldId(f, '{{ scope }}')" x-model.number="{{ v }}">
+      <option value="0">— Yok —</option>
+      <template x-for="o in (options[f.postType] || [])" :key="o.value"><option :value="o.value" x-text="o.label + (o.status === 'draft' ? ' (taslak)' : '')" :selected="o.value === {{ v }}"></option></template>
+    </select>
+  </template>
+
+  <p class="field-help" x-show="f.help && !err({{ errPath }})" x-text="f.help"></p>
+  <p class="field-error" x-show="err({{ errPath }})" x-text="err({{ errPath }})"></p>
+</div>
+{% endmacro %}

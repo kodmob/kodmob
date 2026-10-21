@@ -1,0 +1,18 @@
+{
+  "label": "Program",
+  "description": "Gün gün ya da saat saat program; adımlar açılır kapanır.",
+  "category": "entry",
+  "icon": "list",
+  "module": "booking",
+  "scope": "entry",
+  "fields": [
+    {
+      "name": "title",
+      "type": "text",
+      "label": "Başlık",
+      "localized": true,
+      "max": 60,
+      "default": "@shop.booking.itinerary"
+    }
+  ]
+}

@@ -1,0 +1,695 @@
+{
+  "common": {
+    "close": "Schließen",
+    "prev": "Zurück",
+    "next": "Weiter",
+    "prevImage": "Vorheriges Bild",
+    "nextImage": "Nächstes Bild",
+    "viewAll": "Alle ansehen",
+    "readMore": "Weiterlesen",
+    "zoom": "{name} vergrößern",
+    "breadcrumb": "Brotkrümelnavigation"
+  },
+  "search": {
+    "open": "Website durchsuchen",
+    "placeholder": "Seiten oder Artikel suchen…",
+    "empty": "Keine Ergebnisse gefunden.",
+    "hint": "Zum Suchen tippen",
+    "types": {
+      "page": "Seite",
+      "post": "Artikel"
+    }
+  },
+  "whatsapp": {
+    "label": "Per WhatsApp schreiben",
+    "message": "Hallo, ich möchte mich über mein Projekt informieren.",
+    "online": "Online · antwortet meist schnell",
+    "offline": "Außerhalb der Geschäftszeiten · Antwort am nächsten Werktag"
+  },
+  "langBanner": {
+    "text": "Diese Seite gibt es auch auf Deutsch.",
+    "switch": "Auf Deutsch lesen",
+    "dismiss": "Schließen"
+  },
+  "client": {
+    "contact": {
+      "nameRequired": "Bitte geben Sie Ihren Namen ein.",
+      "emailInvalid": "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+      "messageShort": "Bitte schreiben Sie mindestens 20 Zeichen.",
+      "consentRequired": "Bitte bestätigen Sie die Datenschutzhinweise.",
+      "invalid": "Einige Felder fehlen oder sind ungültig."
+    },
+    "toast": {
+      "done": "Erledigt.",
+      "error": "Ein unerwarteter Fehler ist aufgetreten."
+    },
+    "confirm": {
+      "ok": "Bestätigen",
+      "cancel": "Abbrechen"
+    },
+    "errors": {
+      "network": "Der Server ist nicht erreichbar. Prüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
+      "timeout": "Der Server hat nicht rechtzeitig geantwortet. Bitte versuchen Sie es gleich noch einmal.",
+      "unauthenticated": "Ihre Sitzung wurde beendet. Bitte melden Sie sich erneut an.",
+      "sessionExpired": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",
+      "forbidden": "Dafür fehlt Ihnen die Berechtigung.",
+      "internal": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+      "conflict": "Der Datensatz wurde zwischenzeitlich geändert. Laden Sie die Seite neu und versuchen Sie es erneut.",
+      "rateLimited": "Zu viele Anfragen in kurzer Zeit. Bitte versuchen Sie es später erneut.",
+      "httpFailed": "Die Anfrage ist fehlgeschlagen (HTTP {status})."
+    },
+    "brief": {
+      "nameRequired": "Bitte geben Sie Ihren Namen ein.",
+      "emailInvalid": "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+      "servicesRequired": "Bitte wählen Sie mindestens eine Leistung.",
+      "messageShort": "Bitte beschreiben Sie Ihr Projekt in mindestens 20 Zeichen.",
+      "consentRequired": "Bitte akzeptieren Sie die Datenschutzhinweise.",
+      "invalid": "Einige Felder fehlen oder sind ungültig.",
+      "sent": "Danke! Wir melden uns innerhalb eines Werktags."
+    },
+    "post": {
+      "copied": "Link kopiert."
+    },
+    "search": {
+      "loading": "Suche läuft…"
+    },
+    "shop": {
+      "added": "In den Warenkorb gelegt.",
+      "updated": "Warenkorb aktualisiert.",
+      "couponApplied": "Gutschein eingelöst.",
+      "invalid": "Bitte korrigieren Sie die markierten Felder.",
+      "terms": "Bitte akzeptieren Sie die Bedingungen.",
+      "error": "Etwas ist schiefgelaufen; bitte erneut versuchen.",
+      "booking": {
+        "group": "Gruppenrabatt",
+        "season": "Saisonaufschlag",
+        "early": "Frühbucherrabatt",
+        "left": "Plätze frei",
+        "groupTier": "ab {min} Personen",
+        "days": "{n} Tag(e)",
+        "persons": "Personen",
+        "adults": "Erwachsene",
+        "adultsHint": "Ab 12 Jahren",
+        "children": "Kinder",
+        "childrenHint": "2–12 Jahre",
+        "infants": "Kleinkinder",
+        "infantsHint": "0–2 Jahre",
+        "quantity": "Anzahl",
+        "maxPersons": "Bis zu {max} Personen",
+        "perPerson": "pro Person",
+        "perDay": "pro Tag",
+        "perBooking": "pro Buchung",
+        "rooms": "Zimmer",
+        "roomsHint": "Anzahl der Zimmer",
+        "perNight": "pro Nacht",
+        "nights": "{n} Nacht/Nächte",
+        "roomFor": "für {n}",
+        "childrenStayHint": "Unter 12 Jahren",
+        "boards": {
+          "ro": "Nur Übernachtung",
+          "bb": "Übernachtung mit Frühstück",
+          "hb": "Halbpension",
+          "fb": "Vollpension",
+          "ai": "All inclusive"
+        }
+      }
+    },
+    "newsletter": {
+      "emailInvalid": "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+      "consentRequired": "Bitte setzen Sie das Häkchen, um fortzufahren.",
+      "rateLimited": "Zu viele Versuche; bitte versuchen Sie es etwas später erneut.",
+      "error": "Konnte nicht gesendet werden; bitte erneut versuchen."
+    }
+  },
+  "contactForm": {
+    "name": "Ihr Name",
+    "email": "E-Mail",
+    "phone": "Telefon",
+    "optional": "optional",
+    "message": "Ihre Nachricht",
+    "messagePlaceholder": "Wie können wir Ihnen helfen?",
+    "consent": "Ich habe die {link} gelesen und bin einverstanden, dass meine Angaben zur Beantwortung meiner Anfrage verarbeitet werden.",
+    "consentLink": "Datenschutzhinweise",
+    "submit": "Senden",
+    "sending": "Wird gesendet…",
+    "doneTitle": "Ihre Nachricht ist angekommen",
+    "doneText": "Wir haben eine Bestätigung an {email} gesendet. Wir melden uns bald.",
+    "doneAgain": "Neue Nachricht schreiben"
+  },
+  "ui": {
+    "title": "Komponenten"
+  },
+  "shop": {
+    "meta": {
+      "title": "Shop",
+      "description": "Unsere Produkte: Preise, Verfügbarkeit und sichere Bestellung."
+    },
+    "hero": {
+      "eyebrow": "Shop",
+      "title": "Unsere Produkte",
+      "titleAccent": "",
+      "lead": "Auswählen, in den Warenkorb legen und in wenigen Schritten bestellen."
+    },
+    "empty": "Derzeit sind keine Produkte im Angebot.",
+    "addToCart": "In den Warenkorb",
+    "quantity": "Menge",
+    "outOfStock": "Ausverkauft",
+    "taxIncluded": "inkl. MwSt.",
+    "taxExcluded": "zzgl. MwSt.",
+    "digital": "Digitales Produkt",
+    "backToShop": "Zurück zum Shop",
+    "viewCart": "Zum Warenkorb",
+    "cart": {
+      "title": "Warenkorb",
+      "empty": "Ihr Warenkorb ist leer.",
+      "remove": "Entfernen",
+      "coupon": "Gutscheincode",
+      "applyCoupon": "Einlösen",
+      "removeCoupon": "Gutschein entfernen",
+      "checkout": "Zur Kasse",
+      "continue": "Weiter einkaufen"
+    },
+    "totals": {
+      "subtotal": "Zwischensumme",
+      "discount": "Rabatt",
+      "shipping": "Versand",
+      "free": "Kostenlos",
+      "fee": "Zahlungsgebühr",
+      "tax": "MwSt.",
+      "total": "Gesamt"
+    },
+    "checkout": {
+      "title": "Kasse",
+      "contact": "Kontakt",
+      "delivery": "Lieferadresse",
+      "payment": "Zahlungsart",
+      "note": "Bestellnotiz (optional)",
+      "name": "Vor- und Nachname",
+      "email": "E-Mail",
+      "phone": "Telefon",
+      "line": "Adresse",
+      "district": "Bezirk",
+      "city": "Stadt",
+      "postal": "Postleitzahl",
+      "country": "Land",
+      "terms": "Ich habe den {link} und die {info} gelesen und akzeptiere sie.",
+      "termsLink": "Fernabsatzvertrag",
+      "submit": "Bestellung abschicken",
+      "sending": "Bestellung wird gesendet…",
+      "noPayment": "Derzeit ist keine Zahlungsart verfügbar; bitte kontaktieren Sie uns.",
+      "infoLink": "vorvertraglichen Informationen"
+    },
+    "order": {
+      "title": "Ihre Bestellung",
+      "thanks": "Vielen Dank, wir haben Ihre Bestellung erhalten.",
+      "number": "Bestellnr.",
+      "status": "Status",
+      "payment": "Zahlung",
+      "items": "Artikel",
+      "transfer": "Überweisungsdaten",
+      "notFound": "Bestellung nicht gefunden. Bitte nutzen Sie den Link in der E-Mail.",
+      "mail": "Die Details wurden auch an Ihre E-Mail-Adresse gesendet.",
+      "payNow": "Zahlung abschließen",
+      "unpaid": "Ihre Bestellung wartet auf Zahlung.",
+      "cancelled": "Die Zahlung wurde nicht abgeschlossen. Sie können es erneut versuchen.",
+      "processing": "Ihre Zahlung wird verarbeitet; nach Bestätigung erhalten Sie eine E-Mail."
+    },
+    "booking": {
+      "meta": {
+        "title": "Touren und Aktivitäten",
+        "description": "Datum wählen, Personenzahl eingeben und in wenigen Schritten buchen."
+      },
+      "hero": {
+        "eyebrow": "Buchung",
+        "title": "Touren und Aktivitäten",
+        "titleAccent": "",
+        "lead": "Datum wählen, Personenzahl eingeben und in wenigen Schritten Ihren Platz reservieren."
+      },
+      "empty": "Derzeit sind keine Touren buchbar.",
+      "perPerson": "pro Person",
+      "from": "ab",
+      "date": "Datum",
+      "adults": "Erwachsene",
+      "children": "Kinder (2–12)",
+      "infants": "Kleinkinder (0–2)",
+      "total": "Gesamt",
+      "book": "Jetzt buchen",
+      "duration": "Dauer",
+      "includes": "Inklusive",
+      "meeting": "Treffpunkt",
+      "back": "Zurück zu den Touren",
+      "soldOut": "An diesem Datum sind keine Plätze frei",
+      "left": "Plätze frei",
+      "startingAt": "Ab",
+      "perDay": "pro Tag",
+      "perBooking": "pro Buchung",
+      "packages": "Paket",
+      "pickup": "Abholdatum",
+      "return": "Rückgabedatum",
+      "quantity": "Anzahl",
+      "persons": "Personen",
+      "maxPersons": "Bis zu {max} Personen",
+      "groupTitle": "Gruppenrabatt",
+      "listPrice": "Listenpreis",
+      "saving": "Sie sparen",
+      "close": "Schließen",
+      "increase": "Erhöhen",
+      "decrease": "Verringern",
+      "highlights": "Höhepunkte",
+      "itinerary": "Ablauf",
+      "excludes": "Nicht inbegriffen",
+      "faq": "Häufige Fragen",
+      "guideLanguages": "Führungssprachen",
+      "details": "Details",
+      "checkIn": "Anreise",
+      "checkOut": "Abreise",
+      "perNight": "pro Nacht",
+      "roomsTitle": "Zimmer und Verpflegung",
+      "amenities": "Ausstattung",
+      "checkInTime": "Check-in",
+      "checkOutTime": "Check-out",
+      "location": "Lage"
+    },
+    "hotels": {
+      "meta": {
+        "title": "Hotels",
+        "description": "Wählen Sie Ihre Reisedaten, Zimmer und Verpflegung und buchen Sie in wenigen Schritten."
+      },
+      "hero": {
+        "eyebrow": "Unterkünfte",
+        "title": "Hotels und Pensionen",
+        "titleAccent": "",
+        "lead": "Reisedaten wählen, Zimmer und Verpflegung bestimmen; der Preis erscheint sofort."
+      },
+      "empty": "Derzeit sind keine Hotels buchbar.",
+      "back": "Zurück zu den Hotels"
+    }
+  },
+  "blocks": {
+    "marquee": {
+      "label": "Ausgewählte Themen",
+      "row1": [
+        {
+          "text": "Kulturreisen",
+          "url": "",
+          "filled": false
+        },
+        {
+          "text": "Ausland",
+          "url": "",
+          "filled": true
+        },
+        {
+          "text": "Ferienanlagen",
+          "url": "",
+          "filled": false
+        },
+        {
+          "text": "Flüge",
+          "url": "",
+          "filled": true
+        },
+        {
+          "text": "Hotels",
+          "url": "",
+          "filled": false
+        },
+        {
+          "text": "Frühbucher",
+          "url": "",
+          "filled": true
+        }
+      ],
+      "row2": [
+        {
+          "text": "Balkanreisen",
+          "badge": "Beliebt",
+          "url": ""
+        },
+        {
+          "text": "Bosnien",
+          "badge": "Neu",
+          "url": ""
+        },
+        {
+          "text": "Mostar",
+          "badge": "Angebot",
+          "url": ""
+        },
+        {
+          "text": "Rafting",
+          "badge": "Abenteuer",
+          "url": ""
+        },
+        {
+          "text": "Hotels in Antalya",
+          "badge": "All inclusive",
+          "url": ""
+        },
+        {
+          "text": "Reisen ohne Visum",
+          "badge": "Einfach",
+          "url": ""
+        }
+      ],
+      "row3": [
+        {
+          "text": "Reiseführer",
+          "url": ""
+        },
+        {
+          "text": "Urlaubsangebote",
+          "url": ""
+        },
+        {
+          "text": "Geführte Touren",
+          "url": ""
+        },
+        {
+          "text": "Reiseversicherung",
+          "url": ""
+        },
+        {
+          "text": "VIP-Transfer",
+          "url": ""
+        },
+        {
+          "text": "Hochzeitsreise-Hotels",
+          "url": ""
+        },
+        {
+          "text": "Stadthotels",
+          "url": ""
+        }
+      ],
+      "footer": "Zum Anhalten darüberfahren; Schlagwort anklicken, um die Seite zu öffnen."
+    },
+    "letters": {
+      "line1": "Ihr Traumurlaub",
+      "line2": "ist nur eine Nachricht entfernt"
+    },
+    "hero": {
+      "eyebrow": "Willkommen",
+      "title": "Ihre neue Website",
+      "titleAccent": "ist online.",
+      "lead": "Ändern Sie diesen Abschnitt im Seiteneditor des Panels: Text anklicken und tippen, Abschnitte per Ziehen ordnen.",
+      "primary": "Schreiben Sie uns",
+      "secondary": "Blog"
+    },
+    "features": {
+      "eyebrow": "Was wir bieten",
+      "title": "Ihr Geschäft",
+      "titleAccent": "in drei Sätzen.",
+      "items": [
+        {
+          "icon": "zap",
+          "title": "Erstes Merkmal",
+          "text": "Der erste Grund, warum Kunden Sie wählen. Kurz und konkret."
+        },
+        {
+          "icon": "shield-check",
+          "title": "Zweites Merkmal",
+          "text": "Etwas, das Vertrauen schafft: Erfahrung, Zertifikate, Garantien oder Ablauf."
+        },
+        {
+          "icon": "globe",
+          "title": "Drittes Merkmal",
+          "text": "Was Sie von der Konkurrenz unterscheidet. Ein Satz genügt."
+        }
+      ]
+    },
+    "steps": {
+      "eyebrow": "So arbeiten wir",
+      "title": "In vier Schritten",
+      "titleAccent": "zum Ergebnis.",
+      "steps": [
+        {
+          "icon": "compass",
+          "title": "Kennenlernen",
+          "text": "Wir hören Ihnen zu."
+        },
+        {
+          "icon": "pen-tool",
+          "title": "Planen",
+          "text": "Wir erstellen gemeinsam den Fahrplan."
+        },
+        {
+          "icon": "code",
+          "title": "Umsetzen",
+          "text": "Wir liefern pünktlich."
+        },
+        {
+          "icon": "rocket",
+          "title": "Übergeben",
+          "text": "Wir bewerten das Ergebnis gemeinsam."
+        }
+      ]
+    },
+    "posts": {
+      "eyebrow": "Blog",
+      "title": "Neueste Beiträge",
+      "cta": "Alle Beiträge"
+    },
+    "cta": {
+      "title": "Haben Sie eine Frage?",
+      "titleAccent": "Schreiben Sie uns.",
+      "lead": "Erreichen Sie uns über das Kontaktformular; wir antworten so schnell wie möglich.",
+      "button": "Kontakt aufnehmen"
+    },
+    "text": {
+      "title": "Überschrift",
+      "body": "<p>Schreiben Sie hier Ihren Text. Sie können <strong>Fett</strong>, <em>Kursiv</em>, Links und Listen verwenden.</p>"
+    },
+    "stats": {
+      "eyebrow": "In Zahlen",
+      "title": "Bisher",
+      "items": [
+        {
+          "value": "10+",
+          "label": "Jahre Erfahrung"
+        },
+        {
+          "value": "250+",
+          "label": "Zufriedene Kunden"
+        },
+        {
+          "value": "98 %",
+          "label": "Zufriedenheit"
+        },
+        {
+          "value": "24/7",
+          "label": "Support"
+        }
+      ]
+    },
+    "logos": {
+      "eyebrow": "Marken, mit denen wir arbeiten",
+      "items": [
+        {
+          "name": "Marke A",
+          "image": 0
+        },
+        {
+          "name": "Marke B",
+          "image": 0
+        },
+        {
+          "name": "Marke C",
+          "image": 0
+        },
+        {
+          "name": "Marke D",
+          "image": 0
+        },
+        {
+          "name": "Marke E",
+          "image": 0
+        }
+      ]
+    },
+    "testimonials": {
+      "eyebrow": "Stimmen",
+      "title": "Was unsere Kunden sagen",
+      "items": [
+        {
+          "quote": "Der Ablauf war von Anfang bis Ende klar und schnell; wir wussten immer, was als Nächstes kommt.",
+          "name": "Ayşe Yılmaz",
+          "role": "Inhaberin"
+        },
+        {
+          "quote": "Unsere Fragen wurden sofort beantwortet. Das Ergebnis hat unsere Erwartungen übertroffen.",
+          "name": "Mehmet Kaya",
+          "role": "Marketingleiter"
+        },
+        {
+          "quote": "Danke für die Sorgfalt und Aufmerksamkeit; wir arbeiten gern wieder zusammen.",
+          "name": "Elif Demir",
+          "role": "Gründerin"
+        }
+      ]
+    },
+    "faq": {
+      "eyebrow": "Häufige Fragen",
+      "title": "Was Sie wissen möchten",
+      "items": [
+        {
+          "q": "Wie fangen wir an?",
+          "a": "Schreiben Sie uns über das Kontaktformular; wir hören zu und planen gemeinsam."
+        },
+        {
+          "q": "Wie lange dauert es?",
+          "a": "Je nach Umfang; im ersten Gespräch nennen wir einen klaren Zeitplan."
+        },
+        {
+          "q": "Wie wird bezahlt?",
+          "a": "Per Überweisung oder Karte; auch Ratenzahlung nach Projektphasen ist möglich."
+        }
+      ]
+    },
+    "badges": {
+      "items": [
+        {
+          "icon": "lock",
+          "title": "Sichere Zahlung",
+          "text": "Ihre Daten sind verschlüsselt."
+        },
+        {
+          "icon": "rotate-ccw",
+          "title": "Einfache Stornierung",
+          "text": "Kostenlos bis vor dem Termin."
+        },
+        {
+          "icon": "message",
+          "title": "24/7-Support",
+          "text": "Wir sind für jede Frage da."
+        },
+        {
+          "icon": "star",
+          "title": "Top bewertet",
+          "text": "4,9 / 5 von unseren Kunden."
+        }
+      ]
+    },
+    "split": {
+      "eyebrow": "Über uns",
+      "title": "Ein kleines Team mit großer Sorgfalt",
+      "text": "Erzählen Sie in wenigen Sätzen, wer Sie sind und was Sie warum tun. Zeigen Sie mit konkreten Beispielen, warum man Ihnen vertrauen kann.",
+      "button": "Kennenlernen"
+    },
+    "tours": {
+      "eyebrow": "Touren",
+      "title": "Ausgewählte Touren",
+      "cta": "Alle Touren"
+    },
+    "products": {
+      "eyebrow": "Shop",
+      "title": "Ausgewählte Produkte",
+      "cta": "Alle Produkte"
+    },
+    "newsletter": {
+      "eyebrow": "Newsletter",
+      "title": "Erfahren Sie Neuigkeiten als Erste",
+      "lead": "Angebote, neue Inhalte und Ankündigungen in Ihrem Postfach. Abmeldung jederzeit mit einem Klick.",
+      "placeholder": "Ihre E-Mail-Adresse",
+      "name": "Ihr Name",
+      "button": "Abonnieren",
+      "consent": "Ich möchte Angebote und Ankündigungen per E-Mail erhalten.",
+      "privacyLabel": "Datenschutzhinweis",
+      "done": "Fast geschafft: Bestätigen Sie Ihr Abonnement über den Link, den wir Ihnen gesendet haben."
+    }
+  },
+  "newsletter": {
+    "meta": {
+      "title": "Newsletter",
+      "description": "Abonnieren Sie unseren E-Mail-Newsletter: Angebote, neue Inhalte und Ankündigungen."
+    },
+    "confirming": "Ihr Abonnement wird bestätigt…",
+    "activeTitle": "Abonnement bestätigt",
+    "activeText": "Danke! Unser Newsletter kommt jetzt in Ihr Postfach.",
+    "unsubscribeTitle": "Newsletter abbestellen?",
+    "unsubscribeText": "Wenn Sie bestätigen, erhält diese Adresse keinen Newsletter mehr.",
+    "unsubscribeButton": "Abmelden",
+    "unsubscribedTitle": "Sie haben sich abgemeldet",
+    "unsubscribedText": "Sie erhalten unseren Newsletter nicht mehr. Wenn Sie es sich anders überlegen, können Sie sich erneut anmelden.",
+    "invalidTitle": "Ungültiger Link",
+    "invalidText": "Der Link ist abgelaufen oder unvollständig kopiert. Unten können Sie sich erneut anmelden.",
+    "home": "Zur Startseite"
+  },
+  "legal": {
+    "title": "Rechtliche Hinweise",
+    "description": "Datenschutzerklärung, Datenschutzhinweis (KVKK), Cookies, Nutzungsbedingungen und Verträge.",
+    "lead": "Wie wir Ihre personenbezogenen Daten verarbeiten und die Bedingungen unserer Leistungen – an einem Ort.",
+    "eyebrow": "Rechtliches",
+    "updated": "Zuletzt aktualisiert",
+    "toc": "Auf dieser Seite",
+    "all": "Rechtliche Dokumente",
+    "open": "Lesen",
+    "groups": {
+      "general": "Allgemein",
+      "contact": "Kontakt",
+      "newsletter": "Newsletter",
+      "commerce": "Einkauf",
+      "booking": "Buchungen"
+    },
+    "privacy": {
+      "title": "Datenschutzerklärung",
+      "description": "Welche personenbezogenen Daten wir auf unserer Website verarbeiten, warum und wie.",
+      "lead": "Wir erklären verständlich, welche Daten wir verarbeiten, warum, an wen wir sie weitergeben und welche Rechte Sie haben."
+    },
+    "kvkk": {
+      "title": "Datenschutzhinweis (KVKK)",
+      "description": "Informationspflicht nach dem türkischen Datenschutzgesetz Nr. 6698 (KVKK).",
+      "lead": "Als Verantwortlicher informieren wir Sie gemäß Artikel 10 des türkischen Datenschutzgesetzes Nr. 6698."
+    },
+    "cookies": {
+      "title": "Cookie-Richtlinie",
+      "description": "Cookies und Browserspeicher auf unserer Website.",
+      "lead": "Welche Cookies und Browserspeicher wir nutzen, warum und wie Sie sie verwalten."
+    },
+    "terms": {
+      "title": "Nutzungsbedingungen",
+      "description": "Nutzungsbedingungen unserer Website.",
+      "lead": "Die Regeln, die bei der Nutzung unserer Website gelten."
+    },
+    "contactNotice": {
+      "title": "Datenschutzhinweis zu Kontakt- und Anfrageformularen",
+      "description": "Informationen zu personenbezogenen Daten in unseren Kontakt- und Anfrageformularen.",
+      "lead": "Wie Ihre Daten verarbeitet werden, wenn Sie uns über unsere Formulare schreiben."
+    },
+    "newsletterConsent": {
+      "title": "Newsletter-Hinweis und Werbeeinwilligung",
+      "description": "E-Mail-Newsletter: Einwilligung in kommerzielle elektronische Nachrichten und Datenverarbeitung.",
+      "lead": "Ihre Einwilligung bei der Newsletter-Anmeldung und die Verarbeitung Ihrer Daten."
+    },
+    "shopTerms": {
+      "title": "Fernabsatzvertrag",
+      "description": "Der Fernabsatzvertrag für Einkäufe auf unserer Website.",
+      "lead": "Der Vertrag, der beim Einkauf auf unserer Website zwischen Ihnen und uns zustande kommt."
+    },
+    "preInformation": {
+      "title": "Vorvertragliche Informationen",
+      "description": "Vorvertragliche Informationen nach der türkischen Fernabsatzverordnung.",
+      "lead": "Was Sie vor der Bestätigung Ihrer Bestellung wissen sollten."
+    },
+    "delivery": {
+      "title": "Lieferung und Versand",
+      "description": "Lieferzeiten, Versandkosten und Lieferbedingungen.",
+      "lead": "Wann, wie und zu welchen Kosten Ihre Bestellung ankommt."
+    },
+    "returns": {
+      "title": "Stornierung, Rückgabe und Widerruf",
+      "description": "Stornierung von Bestellungen, Widerrufsrecht und Rückgabe.",
+      "lead": "Wie Sie eine Bestellung stornieren, widerrufen und Ihr Geld zurückerhalten."
+    },
+    "orderNotice": {
+      "title": "Datenschutzhinweis für Kunden",
+      "description": "Informationen zu personenbezogenen Daten bei Bestellung und Zahlung.",
+      "lead": "Wie Ihre Daten bei einem Einkauf verarbeitet werden."
+    },
+    "bookingTerms": {
+      "title": "Buchungsbedingungen",
+      "description": "Bedingungen für Touren, Aktivitäten und Unterkünfte.",
+      "lead": "Wie Ihre Buchung bestätigt, geändert und storniert wird."
+    }
+  }
+}

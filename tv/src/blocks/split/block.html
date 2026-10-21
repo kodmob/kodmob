@@ -1,0 +1,24 @@
+<section class="container-site section-sm">
+  <div class="km-split is-{{side}}">
+    <div class="km-split-media reveal">
+{{#image}}
+      <img src="{{image.src}}" alt="{{image.alt}}" width="{{image.width}}" height="{{image.height}}" loading="lazy" decoding="async">
+{{/image}}
+{{^image}}
+      <div class="media-ph h-full w-full"><svg class="icon h-10 w-10" aria-hidden="true"><use href="#i-image"/></svg></div>
+{{/image}}
+    </div>
+    <div class="reveal reveal-delay-1">
+{{#eyebrow}}
+      <span class="eyebrow" data-km-field="eyebrow">{{eyebrow}}</span>
+{{/eyebrow}}
+      <h2 class="h2 mt-2" data-km-field="title">{{title}}</h2>
+{{#text}}
+      <p class="lead mt-4 whitespace-pre-line" data-km-field="text">{{text}}</p>
+{{/text}}
+{{#button}}{{#url}}
+      <a href="{{url}}" class="btn btn-primary mt-6"><span data-km-field="button">{{button}}</span> <svg class="icon icon-sm icon-arrow" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+{{/url}}{{/button}}
+    </div>
+  </div>
+</section>

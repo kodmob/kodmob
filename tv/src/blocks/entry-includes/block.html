@@ -1,0 +1,11 @@
+{{! Kayıt sayfası bloğu: dahil olanlar / olmayanlar ($store.km.entry.includes, excludes). }}
+<section class="book-block grid gap-6 sm:grid-cols-2" x-data="{ get e() { return $store.km.entry || {}; } }" x-show="e.includes?.length || e.excludes?.length">
+  <div x-show="e.includes?.length">
+    <h2 class="h4 mb-3" data-km-field="includesTitle">{{includesTitle}}</h2>
+    <ul class="flex flex-col gap-2"><template x-for="(line, i) in e.includes || []" :key="i"><li class="flex gap-2"><svg class="icon icon-sm shrink-0 text-success" aria-hidden="true"><use href="#i-check"/></svg> <span x-text="line"></span></li></template></ul>
+  </div>
+  <div x-show="e.excludes?.length">
+    <h2 class="h4 mb-3" data-km-field="excludesTitle">{{excludesTitle}}</h2>
+    <ul class="flex flex-col gap-2"><template x-for="(line, i) in e.excludes || []" :key="i"><li class="flex gap-2"><svg class="icon icon-sm shrink-0 text-danger" aria-hidden="true"><use href="#i-x"/></svg> <span x-text="line"></span></li></template></ul>
+  </div>
+</section>

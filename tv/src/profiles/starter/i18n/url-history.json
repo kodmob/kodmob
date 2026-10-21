@@ -1,0 +1,106 @@
+{
+  "routes": {
+    "home|tr": "/",
+    "home|en": "/en/",
+    "blog|tr": "/blog/",
+    "blog|en": "/en/blog/",
+    "post|tr": "/blog/:slug/",
+    "post|en": "/en/blog/:slug/",
+    "contact|tr": "/iletisim/",
+    "contact|en": "/en/contact/",
+    "shop|tr": "/magaza/",
+    "shop|en": "/en/shop/",
+    "product|tr": "/magaza/:slug/",
+    "product|en": "/en/shop/:slug/",
+    "cart|tr": "/sepet/",
+    "cart|en": "/en/cart/",
+    "checkout|tr": "/odeme/",
+    "checkout|en": "/en/checkout/",
+    "shopOrder|tr": "/siparis/",
+    "shopOrder|en": "/en/order/",
+    "tours|tr": "/turlar/",
+    "tours|en": "/en/tours/",
+    "tour|tr": "/turlar/:slug/",
+    "tour|en": "/en/tours/:slug/",
+    "hotels|tr": "/oteller/",
+    "hotels|en": "/en/hotels/",
+    "hotel|tr": "/oteller/:slug/",
+    "hotel|en": "/en/hotels/:slug/",
+    "notFound|tr": "/404.html",
+    "notFound|en": "/en/404.html",
+    "legal|tr": "/yasal/",
+    "legal|en": "/en/legal/",
+    "privacy|tr": "/yasal/gizlilik-politikasi/",
+    "privacy|en": "/en/legal/privacy-policy/",
+    "kvkk|tr": "/yasal/kvkk-aydinlatma-metni/",
+    "kvkk|en": "/en/legal/kvkk-notice/",
+    "cookies|tr": "/yasal/cerez-politikasi/",
+    "cookies|en": "/en/legal/cookie-policy/",
+    "terms|tr": "/yasal/kullanim-kosullari/",
+    "terms|en": "/en/legal/terms-of-use/",
+    "contactNotice|tr": "/yasal/iletisim-aydinlatma-metni/",
+    "contactNotice|en": "/en/legal/contact-notice/",
+    "newsletterConsent|tr": "/yasal/bulten-aydinlatma-ve-onay/",
+    "newsletterConsent|en": "/en/legal/newsletter-consent/",
+    "shopTerms|tr": "/yasal/mesafeli-satis-sozlesmesi/",
+    "shopTerms|en": "/en/legal/distance-sales-contract/",
+    "preInformation|tr": "/yasal/on-bilgilendirme-formu/",
+    "preInformation|en": "/en/legal/pre-contract-information/",
+    "delivery|tr": "/yasal/teslimat-ve-kargo/",
+    "delivery|en": "/en/legal/delivery-and-shipping/",
+    "returns|tr": "/yasal/iptal-iade-ve-cayma/",
+    "returns|en": "/en/legal/cancellation-and-returns/",
+    "orderNotice|tr": "/yasal/musteri-aydinlatma-metni/",
+    "orderNotice|en": "/en/legal/customer-privacy-notice/",
+    "bookingTerms|tr": "/yasal/rezervasyon-kosullari/",
+    "bookingTerms|en": "/en/legal/booking-terms/",
+    "newsletter|tr": "/bulten/",
+    "newsletter|en": "/en/newsletter/",
+    "page|tr": "/:slug/",
+    "page|en": "/en/:slug/"
+  },
+  "prefixes": {
+    "tr": "",
+    "en": "en"
+  },
+  "legacy": {
+    "prefixes": {},
+    "paths": [
+      {
+        "from": "/gizlilik/",
+        "name": "privacy",
+        "locale": "tr"
+      },
+      {
+        "from": "/en/privacy/",
+        "name": "privacy",
+        "locale": "en"
+      },
+      {
+        "from": "/cerezler/",
+        "name": "cookies",
+        "locale": "tr"
+      },
+      {
+        "from": "/en/cookies/",
+        "name": "cookies",
+        "locale": "en"
+      },
+      {
+        "from": "/kvkk/",
+        "name": "kvkk",
+        "locale": "tr"
+      },
+      {
+        "from": "/satis-sozlesmesi/",
+        "name": "shopTerms",
+        "locale": "tr"
+      },
+      {
+        "from": "/en/terms-of-sale/",
+        "name": "shopTerms",
+        "locale": "en"
+      }
+    ]
+  }
+}

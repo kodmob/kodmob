@@ -1,0 +1,5 @@
+{{! Kayıt sayfası bloğu: olanaklar ($store.km.entry.amenities). }}
+<section class="book-block" x-data="{ get e() { return $store.km.entry || {}; } }" x-show="e.amenities?.length">
+  <h2 class="h4 mb-3" data-km-field="title">{{title}}</h2>
+  <ul class="book-amenities"><template x-for="(line, i) in e.amenities || []" :key="i"><li><svg class="icon icon-sm" aria-hidden="true"><use href="#i-check-circle"/></svg><span x-text="line"></span></li></template></ul>
+</section>

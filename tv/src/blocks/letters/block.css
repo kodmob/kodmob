@@ -1,0 +1,43 @@
+/* Harf animasyonlu başlık (blocks/letters). */
+.km-letters { perspective: 40vw; -webkit-font-smoothing: antialiased; }
+.km-letters.align-center { text-align: center; }
+.km-letters-title { font-size: clamp(1.5rem, 7vw, 5rem); line-height: 1.1; color: var(--color-primary); }
+.km-letters.is-md .km-letters-title { font-size: clamp(1.25rem, 4.5vw, 3rem); }
+.km-letters.is-xl .km-letters-title { font-size: clamp(2rem, 9vw, 7rem); }
+.km-letters.tone-ink .km-letters-title { color: var(--color-ink); }
+.km-letters.tone-red .km-letters-title { color: #cc0000; }
+
+.km-letters-line { display: block; margin-block: 0.2em; }
+.km-letters-strong { font-weight: 900; text-transform: uppercase; }
+.km-letters-light { font-size: 0.7em; font-weight: 200; text-transform: uppercase; }
+
+.km-letters-word { display: inline-block; white-space: nowrap; }
+.km-letter {
+  display: inline-block;
+  transform-origin: 50% 100%;
+  backface-visibility: hidden;
+}
+/* Görünür olunca başlar (block.js `is-in`); ekrandan çıkınca sürekli olan durur. */
+.km-letters.is-in .km-letter {
+  animation: km-letter 6s cubic-bezier(1, 0, 0, 1) 1 both;
+  animation-delay: calc(1s + var(--i, 0) * 66ms);
+  will-change: transform;
+}
+.km-letters.is-loop.is-in .km-letter { animation-iteration-count: infinite; }
+.km-letters.is-paused .km-letter { animation-play-state: paused; }
+
+@keyframes km-letter {
+  20% {
+    transform: translate3d(0, 0.75em, 0) rotateX(75deg) scale3d(0.9, 0.9, 1) rotate(1deg);
+    color: color-mix(in srgb, currentColor 20%, transparent);
+    text-shadow: 0 -0.025em rgb(0 0 0 / 0.2);
+  }
+  35% {
+    transform: none;
+    text-shadow: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .km-letters.is-in .km-letter { animation: none; }
+}

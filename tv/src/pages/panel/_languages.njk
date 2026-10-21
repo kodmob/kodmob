@@ -1,0 +1,250 @@
+{# Çoklu Dil. Mantık: panel/languages.js. Metinler sekmesi ayrı görünüm (_texts.njk). #}
+<div class="pn-page" x-data="kmLanguages(r)">
+  {% include "pages/panel/_languages-tabs.njk" %}
+
+  {# ============================================================ genel bakış #}
+  <template x-if="tab === 'overview'">
+    <div class="flex flex-col gap-5">
+      <section class="card card-body flex flex-wrap items-center gap-4" data-testid="i18n-master" data-setting="i18n.enabled">
+        <span class="icon-tile" :class="enabled ? '!bg-success-soft !text-success-ink' : '!bg-surface-subtle !text-muted'"><svg class="icon icon-lg" aria-hidden="true"><use href="#i-globe"/></svg></span>
+        <div class="min-w-0 flex-1">
+          <p class="text-lg font-semibold text-ink" x-text="enabled ? 'Çoklu dil açık' : 'Tek dilli mod'"></p>
+          <p class="text-sm text-ink-2" x-text="enabled ? 'Yayındaki her dil sitede; dil seçici, hreflang ve öneri bandı açık.' : 'Yalnızca varsayılan dil yayında; diğer dillerin adresleri varsayılan dile yönleniyor. Çeviriler korunuyor.'"></p>
+        </div>
+        <label class="pn-switch">
+          <input type="checkbox" class="peer sr-only" :checked="enabled" @change.prevent="toggleSetting('i18n.enabled')" :disabled="settings.saving" data-testid="i18n-toggle">
+          <span class="pn-switch-track" aria-hidden="true"></span>
+          <span class="field-label" x-text="enabled ? 'Açık' : 'Kapalı'"></span>
+        </label>
+      </section>
+
+      <template x-if="!overview"><div class="pn-stats"><span class="skeleton h-28"></span><span class="skeleton h-28"></span><span class="skeleton h-28"></span></div></template>
+      <template x-if="overview">
+        <div class="flex flex-col gap-5">
+          <div class="pn-stats">
+            <a :href="$href('languages', { tab: 'list' })" class="card card-hover pn-stat">
+              <span class="pn-stat-label">Yayındaki diller</span>
+              <span><span class="pn-stat-value" x-text="overview.languages.filter((l) => l.live).length + ' / ' + overview.languages.length"></span><span class="pn-stat-sub" x-text="overview.languages.filter((l) => l.live).map((l) => l.name).join(', ')"></span></span>
+            </a>
+            <a :href="$href('languages', { tab: 'health' })" class="card card-hover pn-stat" data-testid="i18n-health-stat">
+              <span class="pn-stat-label">Sağlık</span>
+              <span><span class="pn-stat-value" :class="overview.health.errors ? 'text-danger' : overview.health.warnings ? 'text-warning-ink' : 'text-success-ink'" x-text="overview.health.errors + overview.health.warnings || 'Sorun yok'"></span><span class="pn-stat-sub" x-text="overview.health.errors + ' hata · ' + overview.health.warnings + ' uyarı'"></span></span>
+            </a>
+            <a :href="$href('texts')" class="card card-hover pn-stat" x-show="$store.session.can('km_manage_texts')">
+              <span class="pn-stat-label">Sayfa metinleri</span>
+              <span><span class="pn-stat-value" x-text="fmt.number(overview.languages[0]?.texts.total || 0)"></span><span class="pn-stat-sub" x-text="overview.languages.map((l) => l.code.toUpperCase() + ' ' + l.texts.edited + ' değişti').join(' · ')"></span></span>
+            </a>
+            <div class="card pn-stat" data-setting="i18n.banner">
+              <span class="pn-stat-label">Dil önerisi bandı</span>
+              <span class="flex items-center justify-between gap-3">
+                <span><span class="pn-stat-value text-xl" x-text="settings.values['i18n.banner'] && enabled ? 'Açık' : 'Kapalı'"></span><span class="pn-stat-sub">Tarayıcı dili farklı ziyaretçiye öneri</span></span>
+                <label class="pn-switch"><input type="checkbox" class="peer sr-only" :checked="settings.values['i18n.banner']" @change.prevent="toggleSetting('i18n.banner')" :disabled="settings.saving || !enabled" aria-label="Dil önerisi bandı"><span class="pn-switch-track" aria-hidden="true"></span></label>
+              </span>
+            </div>
+          </div>
+
+          <section class="card overflow-hidden">
+            <div class="card-header"><h3 class="card-title">Dil başına içerik</h3><span class="text-sm text-ink-2">Yayındaki kayıtların bu dilde de yayında olanı</span></div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm" data-testid="i18n-coverage">
+                <thead class="text-left text-xs font-semibold tracking-wider text-muted uppercase">
+                  <tr class="border-b border-line"><th class="px-4 py-2.5">Dil</th><template x-for="[type, label] in typesOf(overview)" :key="type"><th class="px-4 py-2.5" x-text="label"></th></template></tr>
+                </thead>
+                <tbody class="divide-y divide-line">
+                  <template x-for="l in overview.languages" :key="l.code">
+                    <tr :class="!l.live && 'opacity-60'">
+                      <td class="px-4 py-3">
+                        <span class="flex items-center gap-2 font-semibold text-ink"><img class="flag" :src="'/assets/img/flags/' + l.code + '.svg'" alt="" width="20" height="14"> <span x-text="l.name"></span>
+                          <span class="badge badge-primary" x-show="l.default">Varsayılan</span><span class="badge badge-neutral" x-show="!l.live" x-text="l.built ? 'Yayında değil' : 'Derlemede yok'"></span></span>
+                      </td>
+                      <template x-for="[type] in typesOf(overview)" :key="type">
+                        <td class="px-4 py-3">
+                          <span class="flex items-center gap-2">
+                            <span class="h-1.5 w-16 overflow-hidden rounded-full bg-surface-subtle"><span class="block h-full rounded-full" :class="coverage(l, type) === 100 ? 'bg-success' : 'bg-warning'" :style="'width:' + coverage(l, type) + '%'"></span></span>
+                            <span class="tabular-nums text-ink-2" x-text="l.content[type].published + ' / ' + (l.content[type].published + l.content[type].missing)"></span>
+                            <span class="badge badge-warning" x-show="l.content[type].stale" x-text="l.content[type].stale + ' güncellenmeli'"></span>
+                          </span>
+                        </td>
+                      </template>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </template>
+    </div>
+  </template>
+
+  {# ============================================================ diller #}
+  <template x-if="tab === 'list'">
+    <div class="flex flex-col gap-3">
+      <p class="pn-hint"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-info"/></svg><span>Adres öneki ve varsayılan dil sitenin derlemesinden gelir (<span class="code">locales.js</span>); değiştirmek için build gerekir. Yeni dil pasif eklenir: içerikte çevirebilir, derlemeye eklenince yayına alabilirsiniz.</span></p>
+      <div class="flex justify-end"><button type="button" class="btn btn-primary" @click="startAdd()" data-testid="language-add"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-plus"/></svg> Dil ekle</button></div>
+      <template x-if="!list"><span class="skeleton h-48"></span></template>
+      <ul class="card divide-y divide-line" x-show="list" data-testid="language-list">
+        <template x-for="(l, i) in list?.items || []" :key="l.code">
+          <li class="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3" :data-code="l.code">
+            <img class="flag" :src="'/assets/img/flags/' + l.code + '.svg'" alt="" width="24" height="16">
+            <span class="min-w-0 flex-1">
+              <span class="flex flex-wrap items-center gap-2"><span class="font-semibold text-ink" x-text="l.name"></span><span class="text-sm text-muted" x-text="l.native + ' · ' + l.code"></span>
+                <span class="badge badge-primary" x-show="l.default">Varsayılan</span>
+                <span class="badge badge-neutral" x-show="!builtIn(l.code)">Derlemede yok</span></span>
+              <span class="block text-xs text-muted" x-text="'Adres: ' + (l.prefix ? '/' + l.prefix + '/' : '/ (öneksiz)') + ' · hreflang ' + l.hreflang + (l.fallback ? ' · yedek dil ' + l.fallback : '')"></span>
+            </span>
+            <label class="pn-switch" :title="l.default ? 'Varsayılan dil her zaman yayında' : (l.active ? 'Yayında' : 'Yayında değil')">
+              <input type="checkbox" class="peer sr-only" :checked="l.active" @change.prevent="toggleActive(l)" :disabled="l.default" :aria-label="l.name + ' yayında'">
+              <span class="pn-switch-track" aria-hidden="true"></span>
+              <span class="text-sm text-ink-2" x-text="l.active ? 'Yayında' : 'Pasif'"></span>
+            </label>
+            <span class="flex items-center">
+              <button type="button" class="btn-icon" @click="move(i, -1)" :disabled="i === 0" aria-label="Yukarı taşı"><svg class="icon icon-sm -rotate-90" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>
+              <button type="button" class="btn-icon" @click="move(i, 1)" :disabled="i === list.items.length - 1" aria-label="Aşağı taşı"><svg class="icon icon-sm rotate-90" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>
+              <button type="button" class="btn-icon" @click="startEdit(l)" aria-label="Düzenle"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-pencil"/></svg></button>
+              <button type="button" class="btn-icon text-danger" x-show="!l.default && !l.active" @click="remove(l)" aria-label="Sil"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-trash"/></svg></button>
+            </span>
+          </li>
+        </template>
+      </ul>
+    </div>
+  </template>
+
+  {# ============================================================ adresler #}
+  <template x-if="tab === 'urls'">
+    <div class="flex flex-col gap-5">
+      <p class="pn-hint"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-info"/></svg><span>Adres yapısı derlemeye aittir (<span class="code">routes.config.js</span>, <span class="code">locales.js</span>); burada yalnızca gösterilir. Bölüm adı ya da önek değişince eski adresler kendiliğinden 301 olur.</span></p>
+      <template x-if="!urls"><span class="skeleton h-64"></span></template>
+      <template x-if="urls">
+        <div class="flex flex-col gap-5">
+          <section class="card overflow-hidden">
+            <div class="card-header"><h3 class="card-title">Sayfa adresleri</h3><span class="text-sm text-ink-2" x-text="urls.built ? 'Derleme ' + fmt.relative(urls.built) : ''"></span></div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm" data-testid="i18n-urls">
+                <thead class="text-left text-xs font-semibold tracking-wider text-muted uppercase">
+                  <tr class="border-b border-line"><th class="px-4 py-2.5">Sayfa</th><template x-for="(info, code) in urls.locales" :key="code"><th class="px-4 py-2.5" x-text="code.toUpperCase()"></th></template></tr>
+                </thead>
+                <tbody class="divide-y divide-line">
+                  <template x-for="route in urls.routes" :key="route.name">
+                    <tr><td class="px-4 py-2 font-medium text-ink" x-text="route.name"></td><template x-for="(info, code) in urls.locales" :key="code"><td class="px-4 py-2"><span class="code" x-text="route.paths[code] || '—'"></span></td></template></tr>
+                  </template>
+                </tbody>
+              </table>
+            </div>
+          </section>
+          <div class="grid items-start gap-5 xl:grid-cols-2">
+            <section class="card">
+              <div class="card-header"><h3 class="card-title">Eski adresler (301)</h3></div>
+              <ul class="divide-y divide-line text-sm">
+                <template x-for="(list, code) in urls.legacy.prefixes" :key="'p' + code">
+                  <li class="px-4 py-2.5"><span class="code" x-text="list.map((p) => '/' + p + '/…').join(', ')"></span> → <span class="code" x-text="(urls.locales[code]?.prefix ? '/' + urls.locales[code].prefix : '') + '/…'"></span> <span class="text-xs text-muted">kalkan önek</span></li>
+                </template>
+                <template x-for="(p, i) in urls.legacy.paths" :key="'l' + i">
+                  <li class="px-4 py-2.5"><span class="code" x-text="p.from"></span> → <span class="font-medium text-ink" x-text="p.name"></span> <span class="text-xs text-muted" x-text="p.locale.toUpperCase()"></span></li>
+                </template>
+                <li class="px-4 py-2.5 text-muted" x-show="!Object.keys(urls.legacy.prefixes).length && !urls.legacy.paths.length">Eski adres yok.</li>
+              </ul>
+            </section>
+            <section class="card">
+              <div class="card-header"><h3 class="card-title">Adres geçmişi</h3><span class="text-sm text-ink-2" x-text="urls.history_total + ' kayıt'"></span></div>
+              <p class="px-4 pb-1 text-xs text-muted">Adresi değişen kayıtların (yazı, proje…) eski adresleri; sitede yeni adrese 301.</p>
+              <ul class="divide-y divide-line text-sm">
+                <template x-for="(h, i) in urls.history" :key="i">
+                  <li class="flex flex-wrap items-center gap-x-3 px-4 py-2.5"><span class="code min-w-0 truncate" x-text="h.from"></span><a class="text-primary hover:underline" :href="historyLink(h).href" x-text="historyLink(h).label"></a><span class="ml-auto text-xs text-muted" x-text="fmt.relative(h.created_at)"></span></li>
+                </template>
+                <li class="px-4 py-2.5 text-muted" x-show="!urls.history.length">Henüz adres değişmedi.</li>
+              </ul>
+            </section>
+          </div>
+        </div>
+      </template>
+    </div>
+  </template>
+
+  {# ============================================================ ziyaretçi #}
+  <template x-if="tab === 'visitor'">
+    <div class="grid items-start gap-5 xl:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
+      <section class="card card-body flex flex-col gap-4" data-testid="i18n-popular">
+        <div>
+          <h3 class="card-title">404 sayfasında sık ziyaret edilenler</h3>
+          <p class="text-sm text-ink-2">Bulunamayan sayfada gösterilen bağlantılar, dil başına (en fazla 6). Boş bırakılan dilde sitenin ana bölümleri (Hizmetler, Projeler, Blog, İletişim) gösterilir.</p>
+        </div>
+        <template x-for="l in languageList()" :key="l.code">
+          <div class="flex flex-col gap-2 rounded-control border border-line p-3">
+            <p class="flex items-center gap-2 text-sm font-semibold text-ink"><img class="flag" :src="'/assets/img/flags/' + l.code + '.svg'" alt="" width="20" height="14"> <span x-text="l.name"></span></p>
+            <template x-for="(link, i) in linksOf(l.code)" :key="i">
+              <div class="flex items-center gap-2">
+                <input class="input" x-model="link.label" placeholder="Etiket, ör. Hizmetler" maxlength="60" :aria-label="l.name + ' bağlantı etiketi'">
+                <input class="input font-mono text-sm" x-model="link.url" placeholder="/hizmetler/" :aria-label="l.name + ' bağlantı adresi'">
+                <button type="button" class="btn-icon text-danger" @click="linksOf(l.code).splice(i, 1)" aria-label="Kaldır"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-x"/></svg></button>
+              </div>
+            </template>
+            <button type="button" class="btn btn-ghost btn-sm self-start" @click="addLink(l.code)" x-show="linksOf(l.code).length < 6"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-plus"/></svg> Bağlantı ekle</button>
+          </div>
+        </template>
+        <div class="flex justify-end"><button type="button" class="btn btn-primary" @click="savePopular()" :disabled="popularSaving">Kaydet</button></div>
+      </section>
+      <section class="card card-body flex flex-col gap-3 text-sm">
+        <h3 class="card-title">Ziyaretçi davranışı</h3>
+        <p class="flex gap-2"><svg class="icon icon-sm mt-0.5 shrink-0 text-success" aria-hidden="true"><use href="#i-check-circle"/></svg><span><b>Kök adres:</b> varsayılan dil öneksiz olduğundan <span class="code">/</span> doğrudan o dilin ana sayfası; dile göre yönlendirme yapılmaz.</span></p>
+        <p class="flex gap-2"><svg class="icon icon-sm mt-0.5 shrink-0 text-success" aria-hidden="true"><use href="#i-check-circle"/></svg><span><b>Çevirisi olmayan içerik:</b> o dilin listelerinde görünmez; adresi açılırsa 404 sayfasında "şu dillerde mevcut" kutusu çıkar.</span></p>
+        <p class="flex gap-2"><svg class="icon icon-sm mt-0.5 shrink-0 text-success" aria-hidden="true"><use href="#i-check-circle"/></svg><span><b>Dil seçici:</b> yalnızca yayındaki dilleri gösterir; sayfanın o dilde karşılığı yoksa bölüm listesine gider.</span></p>
+        <p class="flex gap-2"><svg class="icon icon-sm mt-0.5 shrink-0" :class="settings.values['i18n.banner'] && enabled ? 'text-success' : 'text-muted'" aria-hidden="true"><use href="#i-check-circle"/></svg><span><b>Öneri bandı:</b> <span x-text="settings.values['i18n.banner'] && enabled ? 'açık' : 'kapalı'"></span> (Genel bakış'tan değişir).</span></p>
+      </section>
+    </div>
+  </template>
+
+  {# ============================================================ sağlık #}
+  <template x-if="tab === 'health'">
+    <div class="flex flex-col gap-3">
+      <template x-if="!health"><span class="skeleton h-48"></span></template>
+      <template x-if="health">
+        <section class="card overflow-hidden" data-testid="i18n-health">
+          <div class="card-header"><h3 class="card-title">Sorunlar</h3><span class="text-sm text-ink-2" x-text="healthCounts.error + ' hata · ' + healthCounts.warning + ' uyarı · ' + healthCounts.info + ' bilgi'"></span></div>
+          <p class="flex items-center gap-2 px-4 py-4 text-sm text-ink-2" x-show="!health.length"><svg class="icon icon-sm text-success" aria-hidden="true"><use href="#i-check-circle"/></svg> Sorun yok.</p>
+          <ul class="divide-y divide-line">
+            <template x-for="item in health" :key="item.key">
+              <li class="flex items-start gap-3 px-4 py-3" :data-key="item.key">
+                <svg class="icon icon-sm mt-0.5 shrink-0" :class="levels[item.level].tone" aria-hidden="true"><use :href="'#i-' + levels[item.level].icon"/></svg>
+                <span class="min-w-0 flex-1 text-sm"><span class="block font-semibold text-ink"><span x-text="item.title"></span> <span class="badge badge-neutral ml-1" x-show="item.count > 1" x-text="item.count"></span></span><span class="block text-ink-2" x-text="item.detail"></span></span>
+                <a class="btn btn-ghost btn-sm" :href="linkOf(item)" x-show="linkOf(item)">Düzelt</a>
+              </li>
+            </template>
+          </ul>
+        </section>
+      </template>
+    </div>
+  </template>
+
+  {# ============================================================ dil ekle / düzenle #}
+  <template x-if="adding || editing">
+    <div>
+      <div class="pn-modal-backdrop" @click="adding = editing = null"></div>
+      <div class="pn-modal-wrap">
+        <section class="pn-modal max-w-xl" role="dialog" aria-modal="true" aria-labelledby="language-form-title" @keydown.escape.window="adding = editing = null" data-testid="language-form">
+          <header class="pn-modal-head">
+            <h2 id="language-form-title" class="h3" x-text="adding ? 'Dil ekle' : (editing.name || editing.code) + ' düzenle'"></h2>
+            <button type="button" class="btn-icon ml-auto" @click="adding = editing = null" aria-label="Kapat"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button>
+          </header>
+          <div class="grid gap-4 overflow-y-auto p-5 sm:grid-cols-2" x-data="{ get form() { return adding || editing }, get errs() { return adding ? addErrors : editErrors } }">
+            <label class="field" x-show="adding"><span class="field-label">Kod</span><input class="input font-mono" x-model="form.code" placeholder="fr" maxlength="10" name="code"><span class="field-error" x-show="errs.code" x-text="errs.code"></span><span class="field-help">ISO kodu: fr, es, pt-br…</span></label>
+            <label class="field"><span class="field-label">Paneldeki adı</span><input class="input" x-model="form.name" placeholder="Fransızca" maxlength="60" name="name"><span class="field-error" x-show="errs.name" x-text="errs.name"></span></label>
+            <label class="field"><span class="field-label">Kendi dilinde adı</span><input class="input" x-model="form.native" placeholder="Français" maxlength="60" name="native"><span class="field-error" x-show="errs.native" x-text="errs.native"></span></label>
+            <label class="field"><span class="field-label">Kısa ad</span><input class="input" x-model="form.short" placeholder="FR" maxlength="8"></label>
+            <label class="field"><span class="field-label">hreflang</span><input class="input font-mono" x-model="form.hreflang" placeholder="fr" maxlength="20"><span class="field-error" x-show="errs.hreflang" x-text="errs.hreflang"></span></label>
+            <label class="field"><span class="field-label">Open Graph</span><input class="input font-mono" x-model="form.og" placeholder="fr_FR" maxlength="10"></label>
+            <label class="field"><span class="field-label">Tarih ve sayı biçimi</span><input class="input font-mono" x-model="form.intl" placeholder="fr-FR" maxlength="20"></label>
+            <label class="field"><span class="field-label">Yedek dil</span>
+              <select class="input" x-model="form.fallback"><option value="">Yok</option><template x-for="l in (list?.items || []).filter((x) => x.code !== form.code)" :key="l.code"><option :value="l.code" x-text="l.name" :selected="form.fallback === l.code"></option></template></select>
+              <span class="field-error" x-show="errs.fallback" x-text="errs.fallback"></span><span class="field-help">Bu dilde metin yoksa kullanılacak dil.</span></label>
+            <label class="field sm:col-span-2"><span class="field-label">Bayrak</span><input class="input font-mono" x-model="form.flag" placeholder="/assets/img/flags/fr.svg" maxlength="190"></label>
+          </div>
+          <footer class="pn-modal-foot">
+            <button type="button" class="btn btn-ghost" @click="adding = editing = null">Vazgeç</button>
+            <button type="button" class="btn btn-primary" @click="adding ? saveAdd() : saveEdit()" :disabled="busy" data-testid="language-form-save">Kaydet</button>
+          </footer>
+        </section>
+      </div>
+    </div>
+  </template>
+</div>

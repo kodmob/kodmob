@@ -1,0 +1,112 @@
+{#
+  Proje brifi sihirbazı (features/brief-wizard.js). İletişim sayfasında ve
+  bileşen vitrininde kullanılır. Bütün etiketler sayfanın dilinde.
+#}
+{% set services = [['web', 'monitor'], ['mobile', 'smartphone'], ['ecommerce', 'cart'], ['ai', 'sparkles'], ['custom', 'code'], ['consulting', 'compass'], ['other', 'chat']] %}
+{% set steps = t('brief.steps') %}
+<form class="brief-card" x-data="briefWizard" @submit.prevent="step < total ? next() : submit()" novalidate>
+  <div x-show="!done">
+    <div class="mb-5 flex items-center justify-between gap-3">
+      <h2 class="h3">{{ t('brief.title') }}</h2>
+      <span class="badge badge-primary" x-text="$el.dataset.template.replace('{step}', step).replace('{total}', total)" data-template="{{ t('brief.stepOf') }}">{{ t('brief.stepOf', { step: 1, total: 3 }) }}</span>
+    </div>
+
+    <ol class="wizard-steps" aria-label="{{ t('brief.title') }}">
+{% for label in steps %}
+      <li class="wizard-step" :class="step > {{ loop.index }} && 'is-done'" :aria-current="step === {{ loop.index }} ? 'step' : null"{% if loop.first %} aria-current="step"{% endif %}>
+        <span class="wizard-step-no">{{ loop.index }}</span><span class="max-sm:hidden">{{ label }}</span>
+      </li>
+{% if not loop.last %}<li class="wizard-step-line" aria-hidden="true"></li>{% endif %}
+{% endfor %}
+    </ol>
+
+    <div x-show="estimate" x-cloak class="badge badge-success mb-5" x-text="estimate && $el.dataset.template.replace('{range}', estimate.range)" data-template="{{ t('brief.estimateAttached') }}"></div>
+
+    {# ------------------------------------------------ 1) hizmet #}
+    <fieldset x-show="step === 1" class="flex flex-col gap-3">
+      <legend class="field-label mb-1" tabindex="-1" data-step-title>{{ t('brief.servicesLabel') }} <span class="req">*</span></legend>
+      <p class="field-help -mt-1">{{ t('brief.servicesHint') }}</p>
+      <div class="flex flex-wrap gap-2">
+{% for s in services %}
+        <button type="button" class="choice" :aria-pressed="has('{{ s[0] }}')" @click="toggle('{{ s[0] }}')"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-{{ s[1] }}"/></svg>{{ t('brief.services.' + s[0]) }}</button>
+{% endfor %}
+      </div>
+      <p class="field-error" x-show="errors.services" x-text="errors.services" role="alert"></p>
+    </fieldset>
+
+    {# ------------------------------------------------ 2) bütçe ve süre #}
+    <div x-show="step === 2" x-cloak class="flex flex-col gap-6">
+      <fieldset>
+        <legend class="field-label mb-3" tabindex="-1" data-step-title>{{ t('brief.budgetLabel') }}</legend>
+        <div class="option-grid">
+{% for b in t('brief.budgets') %}
+          <label class="option"><input type="radio" name="budget" value="{{ b }}" x-model="form.budget"><span class="option-check" aria-hidden="true"></span>{{ b }}</label>
+{% endfor %}
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend class="field-label mb-3">{{ t('brief.timelineLabel') }}</legend>
+        <div class="option-grid">
+{% for tl in t('brief.timelines') %}
+          <label class="option"><input type="radio" name="timeline" value="{{ tl }}" x-model="form.timeline"><span class="option-check" aria-hidden="true"></span>{{ tl }}</label>
+{% endfor %}
+        </div>
+      </fieldset>
+    </div>
+
+    {# ------------------------------------------------ 3) iletişim #}
+    <div x-show="step === 3" x-cloak class="grid gap-4 sm:grid-cols-2">
+      <p class="sr-only" tabindex="-1" data-step-title>{{ steps[2] }}</p>
+      <div class="field">
+        <label class="field-label" for="brief-name">{{ t('brief.name') }} <span class="req">*</span></label>
+        <input id="brief-name" class="input" x-model="form.name" :aria-invalid="!!errors.name" autocomplete="name" maxlength="120">
+        <p class="field-error" x-show="errors.name" x-text="errors.name"></p>
+      </div>
+      <div class="field">
+        <label class="field-label" for="brief-email">{{ t('brief.email') }} <span class="req">*</span></label>
+        <input id="brief-email" type="email" class="input" x-model="form.email" :aria-invalid="!!errors.email" autocomplete="email" maxlength="190">
+        <p class="field-error" x-show="errors.email" x-text="errors.email"></p>
+      </div>
+      <div class="field">
+        <label class="field-label" for="brief-phone">{{ t('brief.phone') }} <span class="text-xs font-normal text-muted">({{ t('brief.optional') }})</span></label>
+        <input id="brief-phone" type="tel" class="input" x-model="form.phone" autocomplete="tel" maxlength="40">
+      </div>
+      <div class="field">
+        <label class="field-label" for="brief-company">{{ t('brief.company') }} <span class="text-xs font-normal text-muted">({{ t('brief.optional') }})</span></label>
+        <input id="brief-company" class="input" x-model="form.company" autocomplete="organization" maxlength="160">
+      </div>
+      <div class="field sm:col-span-2">
+        <label class="field-label" for="brief-message">{{ t('brief.message') }} <span class="req">*</span></label>
+        <textarea id="brief-message" class="input" x-model="form.message" :aria-invalid="!!errors.message" placeholder="{{ t('brief.messagePlaceholder') }}" maxlength="5000"></textarea>
+        <p class="field-error" x-show="errors.message" x-text="errors.message"></p>
+      </div>
+      {# Tuzak alan: insanlar görmez; dolduran bottur. #}
+      <div class="sr-only" aria-hidden="true">
+        <label for="brief-website">Website</label>
+        <input id="brief-website" name="website" tabindex="-1" autocomplete="off" x-model="form.website">
+      </div>
+      <div class="field sm:col-span-2">
+        <label class="check"><input type="checkbox" x-model="form.consent" :aria-invalid="!!errors.consent"> <span>{{ t('brief.consent', { link: '<a href="' + (url('contactNotice') or url('kvkk')) + '" class="font-semibold text-primary" target="_blank">' + t('brief.consentLink') + '</a>' }) | safe }}</span></label>
+        <p class="field-error" x-show="errors.consent" x-text="errors.consent"></p>
+      </div>
+    </div>
+
+    <div class="mt-6 flex items-center justify-between gap-3">
+      <button type="button" class="btn btn-ghost" x-show="step > 1" x-cloak @click="back()"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chevron-left"/></svg> {{ t('brief.back') }}</button>
+      <span x-show="step === 1"></span>
+      <button type="submit" class="btn btn-primary" x-show="step < total">{{ t('brief.next') }} <svg class="icon icon-sm icon-arrow" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
+      <button type="submit" class="btn btn-primary btn-lg" x-show="step === total" x-cloak :disabled="busy">
+        <svg class="icon animate-spin" aria-hidden="true" x-show="busy" x-cloak><use href="#i-loader"/></svg>
+        <span x-text="busy ? $el.dataset.sending : $el.dataset.submit" data-submit="{{ t('brief.submit') }}" data-sending="{{ t('brief.sending') }}">{{ t('brief.submit') }}</span>
+      </button>
+    </div>
+  </div>
+
+  {# ------------------------------------------------ gönderildi #}
+  <div x-show="done" x-cloak class="flex flex-col items-center gap-4 py-8 text-center">
+    <span class="icon-tile icon-tile-round tone-success h-16 w-16"><svg class="icon icon-xl" aria-hidden="true"><use href="#i-check"/></svg></span>
+    <h2 class="h3" tabindex="-1" data-done-title>{{ t('brief.doneTitle') }}</h2>
+    <p class="text-ink-2" x-text="$el.dataset.template.replace('{email}', form.email)" data-template="{{ t('brief.doneText') }}"></p>
+    <button type="button" class="btn btn-secondary" @click="reset()">{{ t('brief.doneAgain') }}</button>
+  </div>
+</form>

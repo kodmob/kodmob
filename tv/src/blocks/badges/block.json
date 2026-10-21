@@ -1,0 +1,14 @@
+{
+  "label": "Güven rozetleri",
+  "description": "İkonlu kısa güvenceler yan yana: güvenli ödeme, ücretsiz iptal, 7/24 destek.",
+  "category": "section",
+  "icon": "shield-check",
+  "fields": [
+    { "name": "items", "type": "rows", "label": "Rozetler", "localized": true, "max": 6, "columns": [
+      { "name": "icon", "type": "icon", "label": "İkon", "default": "check" },
+      { "name": "title", "type": "text", "label": "Başlık", "max": 60 },
+      { "name": "text", "type": "text", "label": "Kısa açıklama", "max": 120 }
+    ], "default": "@blocks.badges.items" },
+    { "name": "tone", "type": "select", "label": "Zemin", "options": { "plain": "Sade", "soft": "Açık" }, "default": "soft" }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "label": "Özellik kartları",
+  "description": "Başlık ve ikonlu kartlar: hizmetler, öne çıkanlar, neden biz.",
+  "category": "section",
+  "icon": "grid",
+  "fields": [
+    { "name": "eyebrow", "type": "text", "label": "Üst etiket", "localized": true, "max": 60, "default": "@blocks.features.eyebrow" },
+    { "name": "title", "type": "text", "label": "Başlık", "localized": true, "max": 120, "default": "@blocks.features.title" },
+    { "name": "titleAccent", "type": "text", "label": "Başlığın vurgulu devamı", "localized": true, "max": 80, "default": "@blocks.features.titleAccent" },
+    { "name": "items", "type": "rows", "label": "Kartlar", "localized": true, "max": 8, "columns": [
+      { "name": "icon", "type": "icon", "label": "İkon", "default": "check" },
+      { "name": "title", "type": "text", "label": "Başlık", "max": 80 },
+      { "name": "text", "type": "textarea", "label": "Metin", "max": 300 }
+    ], "default": "@blocks.features.items" },
+    { "name": "columns", "type": "select", "label": "Sütun", "options": { "2": "2", "3": "3", "4": "4" }, "default": "3" }
+  ]
+}

@@ -1,0 +1,13 @@
+{# İçerik listesi (projeler, hizmetler, referanslar, blog): ortak tablo (ui/grid). Mantık: panel/list.js. #}
+<div class="pn-page" x-data="kmList(r.type)">
+  <div class="flex flex-col gap-3">
+    <div class="flex justify-end">
+      <a :href="$href('editor', { type: type, id: 0 })" class="btn btn-primary"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-plus"/></svg> <span x-text="meta.newLabel"></span></a>
+    </div>
+    <template x-if="grid">
+      <div x-data="kmGrid(grid)" @grid-open="onGridOpen($event.detail.row)" data-testid="content-grid">
+        {% include "ui/grid/grid.html" %}
+      </div>
+    </template>
+  </div>
+</div>

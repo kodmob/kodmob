@@ -1,0 +1,92 @@
+{{! Vorlage: keine Rechtsberatung; vor der Veröffentlichung anhand der tatsächlichen Verarbeitung juristisch prüfen lassen. }}
+<h2>Kurz gesagt</h2>
+<ul>
+  <li>Um {{site.name}} zu besuchen, brauchen Sie kein Konto und müssen keine Daten angeben.</li>
+  <li>Wir verwenden keine Werbe-, Retargeting- oder Analyse-Tracker. Unsere Seiten einschließlich Schriften werden von unserem eigenen Server geladen.</li>
+  <li>Wir verarbeiten Ihre Daten nur für den Zweck, für den Sie sie uns geben; wir verkaufen sie nicht und geben sie nicht zu Werbezwecken weiter.</li>
+</ul>
+
+<h2>Verantwortlicher</h2>
+<p>Diese Erklärung beschreibt, wie der unten genannte Verantwortliche personenbezogene Daten auf {{site.name}} verarbeitet:</p>
+{{{controllerCard}}}
+
+<h2>Beim Besuch der Website</h2>
+<p>Wenn Sie unsere Seiten aufrufen, übermittelt Ihr Browser wie bei jeder Website Ihre IP-Adresse, Browserangaben und die aufgerufene Seite an unseren Server. Diese Angaben können zum Betrieb und zur Sicherheit kurz in Server-Logs gespeichert werden. Wir verfolgen keine Besuche einzelner Personen und erstellen keine Profile.</p>
+<p>Unser Sicherheitssystem speichert IP-Adresse und Anfragezusammenfassung nur für Anfragen, die es wegen Verdachts auf Angriff oder Missbrauch blockiert. Diese Einträge werden nach {{retention.security}} Tagen gelöscht.</p>
+<p>Ihre Sprach- und Designeinstellung wird in Ihrem Browser gespeichert{{#modules.commerce}}; für Ihren Warenkorb wird ein Cookie verwendet{{/modules.commerce}}.{{#links.cookies}} Einzelheiten finden Sie in unserer <a href="{{links.cookies}}">Cookie-Richtlinie</a>.{{/links.cookies}}</p>
+
+{{#modules.briefs}}
+<h2>Wenn Sie uns schreiben</h2>
+<p>Wenn Sie ein Kontakt- oder Anfrageformular senden, erhalten wir Ihren Namen, Ihre E-Mail-Adresse, optional Ihre Telefonnummer und Ihre Nachricht. Zum Schutz vor Spam speichern wir nicht Ihre IP-Adresse, sondern einen nicht umkehrbaren Hashwert sowie Browserangaben zusammen mit Ihrer Anfrage.</p>
+<p>Wir nutzen diese Angaben nur, um Ihre Anfrage zu bearbeiten und Ihnen zu antworten. Anfragen werden nach {{retention.briefs}} Monaten automatisch und endgültig gelöscht.{{#links.contactNotice}} Einzelheiten: <a href="{{links.contactNotice}}">Datenschutzhinweis zu Kontakt- und Anfrageformularen</a>.{{/links.contactNotice}}</p>
+{{/modules.briefs}}
+
+{{#modules.newsletter}}
+<h2>Wenn Sie unseren Newsletter abonnieren</h2>
+<p>Für den Newsletter verarbeiten wir Ihre E-Mail-Adresse, optional Ihren Namen, die Sprache der Seite, auf der Sie sich angemeldet haben, und einen Nachweis Ihrer Einwilligung (Datum und Hashwert Ihrer IP-Adresse). Das Abonnement beginnt, wenn Sie den Link in unserer E-Mail bestätigen (Double-Opt-in); Sie können sich mit einem Klick in jedem Newsletter abmelden.{{#links.newsletterConsent}} Einzelheiten: <a href="{{links.newsletterConsent}}">Newsletter-Hinweis und Werbeeinwilligung</a>.{{/links.newsletterConsent}}</p>
+{{/modules.newsletter}}
+
+{{#modules.commerce}}
+<h2>Wenn Sie bei uns einkaufen</h2>
+<p>Bei einer Bestellung verarbeiten wir Ihren Namen, Ihre E-Mail-Adresse, Telefonnummer, Liefer- und Rechnungsadresse, Inhalt und Betrag der Bestellung sowie die Zahlungsart. Diese Angaben benötigen wir, um Ihre Bestellung vorzubereiten, zu liefern, abzurechnen und gesetzliche Pflichten zu erfüllen.</p>
+{{#modules.booking}}
+<p>Bei Buchungen verarbeiten wir zusätzlich das Datum, die Teilnehmerzahlen und das gewählte Paket oder Zimmer.</p>
+{{/modules.booking}}
+<p>Ihre Kartendaten erreichen unsere Server nicht und werden von uns nicht gespeichert.{{#modules.stripe}} Kartenzahlungen erfolgen auf der sicheren Zahlungsseite von Stripe.{{/modules.stripe}}{{#modules.paytr}} Kartenzahlungen erfolgen auf der sicheren Zahlungsseite von PayTR.{{/modules.paytr}}{{#links.orderNotice}} Einzelheiten: <a href="{{links.orderNotice}}">Datenschutzhinweis für Kunden</a>.{{/links.orderNotice}}</p>
+{{/modules.commerce}}
+
+<h2>Dienstleister und Übermittlung</h2>
+<p>Wir geben Ihre Daten nicht zu Werbezwecken an Dritte weiter. Sie können nur im erforderlichen Umfang an folgende Empfänger übermittelt werden:</p>
+<ul>
+  <li><strong>Hosting und E-Mail-Infrastruktur:</strong> der Anbieter des Servers, auf dem Website und Datenbank liegen, und der Infrastruktur für den E-Mail-Versand.</li>
+{{#modules.commerce}}
+  <li><strong>Versand- und Logistikunternehmen:</strong> Name, Adresse und Telefonnummer für die Lieferung physischer Waren.</li>
+{{/modules.commerce}}
+{{#modules.stripe}}
+  <li><strong>Stripe:</strong> Zahlungsbetrag, E-Mail-Adresse und Bestellnummer für Kartenzahlungen. Die Server von Stripe befinden sich im Ausland.</li>
+{{/modules.stripe}}
+{{#modules.paytr}}
+  <li><strong>PayTR:</strong> Name, E-Mail, Telefon, Adresse, Zahlungsbetrag und Bestellnummer für Kartenzahlungen.</li>
+{{/modules.paytr}}
+  <li><strong>Zuständige Behörden:</strong> Behörden und Gerichte, soweit gesetzlich vorgeschrieben.</li>
+</ul>
+<p>Ist eine Übermittlung ins Ausland erforderlich, beachten wir die Verfahren und Garantien von Artikel 9 des Gesetzes Nr. 6698 und für Besucher aus der EU die DSGVO.</p>
+
+<h2>Externe Dienste und Links</h2>
+<p>Unsere Seiten enthalten zu externen Diensten wie sozialen Medien, Messengern (z. B. WhatsApp) und Karten nur Links. Diese senden keine Daten, bevor Sie sie anklicken; danach gelten die Datenschutzbestimmungen des jeweiligen Dienstes.</p>
+
+<h2>Wie wir Ihre Daten schützen</h2>
+<ul>
+  <li>Die Website wird nur über eine verschlüsselte Verbindung (HTTPS) ausgeliefert.</li>
+  <li>Nur befugte Administratoren haben Zugriff auf personenbezogene Daten; der Verwaltungsbereich ist für Besucher gesperrt, kann mit Zwei-Faktor-Authentifizierung geschützt werden und Vorgänge werden protokolliert.</li>
+  <li>IP-Adressen werden in Formulareinträgen nicht im Klartext gespeichert; Formulare sind durch Ratenbegrenzung und automatischen Spamschutz geschützt.</li>
+  <li>Unsere Seiten werden mit einer strengen Content Security Policy (CSP) ausgeliefert; Code aus fremden Quellen wird nicht ausgeführt.</li>
+</ul>
+
+<h2>Speicherdauer</h2>
+<p>Wir speichern personenbezogene Daten nur so lange, wie der Zweck es erfordert:</p>
+<ul>
+  <li>Sicherheitseinträge: {{retention.security}} Tage.</li>
+{{#modules.briefs}}
+  <li>Kontakt- und Anfrageformulare: {{retention.briefs}} Monate.</li>
+{{/modules.briefs}}
+{{#modules.newsletter}}
+  <li>Newsletter-Abonnement: bis zur Abmeldung; Einwilligungs- und Widerrufsnachweise für die gesetzlich vorgeschriebene Dauer.</li>
+{{/modules.newsletter}}
+{{#modules.commerce}}
+  <li>Bestell- und Rechnungsunterlagen: für die im türkischen Handelsgesetzbuch und Steuerverfahrensgesetz vorgeschriebenen Fristen (bis zu 10 Jahre).</li>
+{{/modules.commerce}}
+</ul>
+<p>Nach Ablauf der Frist werden die Daten gelöscht, vernichtet oder anonymisiert.</p>
+
+<h2>Ihre Rechte</h2>
+<p>Sie haben das Recht zu erfahren, welche Daten wir über Sie speichern, und deren Berichtigung oder Löschung zu verlangen.{{#links.kvkk}} Die vollständige Liste Ihrer Rechte und das Antragsverfahren finden Sie im <a href="{{links.kvkk}}">Datenschutzhinweis (KVKK)</a>.{{/links.kvkk}} Als Besucher aus der EU können Sie Ihre Rechte nach der DSGVO (Auskunft, Berichtigung, Löschung, Einschränkung, Datenübertragbarkeit, Widerspruch und Beschwerde bei einer Aufsichtsbehörde) auf demselben Weg ausüben.</p>
+
+<h2>Datenschutz bei Kindern</h2>
+<p>Unsere Website richtet sich nicht an Personen unter 18 Jahren; wir erheben wissentlich keine Daten von ihnen. Sollten uns solche Daten erreicht haben, schreiben Sie uns, und wir löschen sie.</p>
+
+<h2>Änderungen dieser Erklärung</h2>
+<p>Ändern sich unsere Website oder unsere Verarbeitung, passen wir diese Erklärung an. Die aktuelle Fassung steht immer auf dieser Seite; das Datum der letzten Änderung steht oben.</p>
+
+<h2>Kontakt</h2>
+<p>Bei Fragen zum Datenschutz schreiben Sie an <a href="mailto:{{controller.email}}">{{controller.email}}</a>.</p>

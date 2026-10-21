@@ -1,0 +1,179 @@
+{
+  "meta": {
+    "siteName": "New Site",
+    "titleSuffix": " · New Site",
+    "description": "A new site built with Kodmob."
+  },
+  "nav": {
+    "home": "Home",
+    "blog": "Blog",
+    "contact": "Contact",
+    "cta": "Get in touch",
+    "skip": "Skip to content",
+    "menuOpen": "Open menu",
+    "menuClose": "Close menu",
+    "mainMenu": "Main menu",
+    "mobileMenu": "Mobile menu",
+    "language": "Language",
+    "chooseLanguage": "Choose language: {current}",
+    "homeAria": "Home page",
+    "brand": "new",
+    "brandSub": "site",
+    "search": "Search",
+    "theme": "Theme",
+    "themeLight": "Light theme",
+    "themeDark": "Dark theme",
+    "themeSystem": "System theme"
+  },
+  "footer": {
+    "tagline": "A short introduction that describes your site in one sentence.",
+    "corporate": "Pages",
+    "contact": "Contact",
+    "rights": "© {year} New Site. All rights reserved.",
+    "legal": "Legal",
+    "privacy": "Privacy",
+    "cookies": "Cookies",
+    "kvkk": "KVKK",
+    "social": "Social media",
+    "rss": "Blog RSS"
+  },
+  "home": {
+    "meta": {
+      "title": "New Site",
+      "description": "A new site built with Kodmob."
+    },
+    "hero": {
+      "eyebrow": "Welcome",
+      "title": "Your new site",
+      "titleAccent": "is live.",
+      "lead": "Change these sections in the panel's Page editor: click a text to type, drag sections to reorder. Colours and logo are under Project Settings › Identity.",
+      "ctaPrimary": "Get in touch",
+      "ctaSecondary": "Blog"
+    },
+    "features": {
+      "eyebrow": "What we offer",
+      "title": "Your business",
+      "titleAccent": "in three lines.",
+      "items": [
+        {
+          "icon": "zap",
+          "title": "First feature",
+          "text": "The first reason customers choose you. Keep it short and concrete."
+        },
+        {
+          "icon": "shield-check",
+          "title": "Second feature",
+          "text": "Something that builds trust: experience, certification, guarantee or process."
+        },
+        {
+          "icon": "globe",
+          "title": "Third feature",
+          "text": "What sets you apart. One sentence is enough."
+        }
+      ]
+    },
+    "process": {
+      "eyebrow": "How we work",
+      "title": "Four steps",
+      "titleAccent": "to results.",
+      "steps": [
+        {
+          "icon": "compass",
+          "title": "Meet",
+          "text": "We listen to what you need."
+        },
+        {
+          "icon": "pen-tool",
+          "title": "Plan",
+          "text": "We map the way together."
+        },
+        {
+          "icon": "code",
+          "title": "Build",
+          "text": "We deliver on time."
+        },
+        {
+          "icon": "rocket",
+          "title": "Launch",
+          "text": "We review the result together."
+        }
+      ]
+    },
+    "blog": {
+      "eyebrow": "Blog",
+      "title": "Latest posts",
+      "cta": "All posts"
+    },
+    "cta": {
+      "title": "Have a question?",
+      "titleAccent": "Write to us.",
+      "lead": "Use the contact form and we will get back to you soon.",
+      "primary": "Contact us"
+    }
+  },
+  "blog": {
+    "meta": {
+      "title": "Blog",
+      "description": "News and posts."
+    },
+    "hero": {
+      "eyebrow": "Blog",
+      "title": "News",
+      "titleAccent": "and posts.",
+      "lead": "We share our news and experience here."
+    },
+    "filterLabel": "Category",
+    "all": "All",
+    "categories": {
+      "genel": "General",
+      "duyuru": "News"
+    },
+    "readTime": "{min} min read",
+    "empty": "No posts in this language yet.",
+    "rss": "Follow via RSS"
+  },
+  "post": {
+    "toc": "Contents",
+    "back": "All posts",
+    "related": "Related posts",
+    "share": "Share",
+    "copyLink": "Copy link",
+    "author": "Author",
+    "updated": "Updated"
+  },
+  "contact": {
+    "meta": {
+      "title": "Contact",
+      "description": "Write to us and we will get back to you soon."
+    },
+    "hero": {
+      "eyebrow": "Contact",
+      "title": "Write",
+      "titleAccent": "to us.",
+      "lead": "Send your question or request using the form; we will get back to you soon."
+    },
+    "info": {
+      "title": "Direct contact",
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Address"
+    }
+  },
+  "notFound": {
+    "title": "Page not found",
+    "text": "The address may be mistyped or the page may have moved.",
+    "back": "Back to home",
+    "search": "If you could not find what you were looking for, search the site.",
+    "goneTitle": "Content removed",
+    "goneText": "The content you are looking for has been removed.",
+    "available": "This page is available in:",
+    "didYouMean": "Did you mean?",
+    "popular": "Popular pages"
+  },
+  "brief": {
+    "reply": {
+      "subject": "We received your message",
+      "body": "Hello {name},\n\nThank you, your message has reached us. We will get back to you soon.\n\nIf you would like to add anything, just reply to this email."
+    }
+  }
+}

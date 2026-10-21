@@ -1,0 +1,18 @@
+<!-- km-lightbox penceresi. Kapsayıcı: <div x-data="kmLightbox">. -->
+<template x-teleport="body">
+<div class="lightbox" x-show="open" x-cloak x-transition.opacity.duration.150ms role="dialog" aria-modal="true" :aria-label="current.caption"
+  @keydown.escape.window="open && close()" @keydown.arrow-right.window="open && next()" @keydown.arrow-left.window="open && prev()" @click.self="close()">
+  <div class="lightbox-frame">
+    <img :src="current.src || null" :alt="current.caption" class="max-h-[78vh] w-full object-contain">
+  </div>
+  <div class="flex w-full max-w-5xl items-center justify-between gap-3 text-white">
+    <p class="text-sm font-medium" x-text="current.caption"></p>
+    <div class="flex items-center gap-2">
+      <span class="tabular-nums text-sm text-navy-ink" x-text="`${index + 1} / ${items.length}`"></span>
+      <button type="button" class="btn-round btn-round-glass" @click="prev()" aria-label="{{ t('common.prevImage') }}"><svg class="icon" aria-hidden="true"><use href="#i-chevron-left"/></svg></button>
+      <button type="button" class="btn-round btn-round-glass" @click="next()" aria-label="{{ t('common.nextImage') }}"><svg class="icon" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>
+      <button type="button" class="btn-round btn-round-glass" x-ref="close" @click="close()" aria-label="{{ t('common.close') }}"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button>
+    </div>
+  </div>
+</div>
+</template>

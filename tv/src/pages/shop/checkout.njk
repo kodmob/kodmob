@@ -1,0 +1,78 @@
+{% extends "layouts/base.njk" %}
+{% import "macros/ui.njk" as ui %}
+
+{#
+  Ödeme (features/shop.js shopCheckout): iletişim, teslimat adresi (kargolanan ürün varsa), ödeme yöntemi,
+  not, satış sözleşmesi onayı. Sipariş verilince müşterinin sipariş sayfasına gider (numara + bağlantı anahtarı).
+#}
+{% macro input(model, label, name, type='text', auto='') %}
+<div class="field">
+  <label class="field-label" for="co-{{ name }}">{{ label }}</label>
+  <input id="co-{{ name }}" class="input" type="{{ type }}" x-model="form.{{ model }}" :aria-invalid="!!err('{{ model }}')" {% if auto %}autocomplete="{{ auto }}"{% endif %}>
+  <p class="field-error" x-show="err('{{ model }}')" x-text="err('{{ model }}')"></p>
+</div>
+{% endmacro %}
+
+{% block content %}
+<section class="container-site py-10 lg:py-16" x-data="shopCheckout('{{ url('shopOrder') }}')" data-testid="checkout">
+  <h1 class="h2 mb-8">{{ t('shop.checkout.title') }}</h1>
+  <template x-if="loading"><div class="grid gap-4 lg:grid-cols-[1fr_22rem]"><span class="skeleton h-96"></span><span class="skeleton h-48"></span></div></template>
+
+  <template x-if="!loading && cart && !cart.items.length">
+    <div class="card card-body flex flex-col items-start gap-4">
+      <p class="text-ink-2">{{ t('shop.cart.empty') }}</p>
+      <a href="{{ url('shop') }}" class="btn btn-primary">{{ t('shop.backToShop') }}</a>
+    </div>
+  </template>
+
+  <template x-if="!loading && cart && cart.items.length">
+    <form class="grid gap-8 lg:grid-cols-[1fr_22rem]" @submit.prevent="submit()" novalidate>
+      <div class="flex flex-col gap-8">
+        <fieldset class="card card-body grid gap-4 sm:grid-cols-2">
+          <legend class="h4 mb-2">{{ t('shop.checkout.contact') }}</legend>
+          <div class="sm:col-span-2">{{ input('name', t('shop.checkout.name'), 'name', 'text', 'name') }}</div>
+          {{ input('email', t('shop.checkout.email'), 'email', 'email', 'email') }}
+          {{ input('phone', t('shop.checkout.phone'), 'phone', 'tel', 'tel') }}
+        </fieldset>
+
+        <fieldset class="card card-body grid gap-4 sm:grid-cols-2" x-show="cart.shippable">
+          <legend class="h4 mb-2">{{ t('shop.checkout.delivery') }}</legend>
+          <div class="sm:col-span-2">{{ input('address.line', t('shop.checkout.line'), 'line', 'text', 'street-address') }}</div>
+          {{ input('address.district', t('shop.checkout.district'), 'district') }}
+          {{ input('address.city', t('shop.checkout.city'), 'city', 'text', 'address-level2') }}
+          {{ input('address.postal', t('shop.checkout.postal'), 'postal', 'text', 'postal-code') }}
+          {{ input('address.country', t('shop.checkout.country'), 'country', 'text', 'country-name') }}
+        </fieldset>
+
+        <fieldset class="card card-body flex flex-col gap-3">
+          <legend class="h4 mb-2">{{ t('shop.checkout.payment') }}</legend>
+          <template x-for="m in cart.payments" :key="m.key">
+            <label class="check"><input type="radio" name="payment" :value="m.key" x-model="form.payment" :data-payment="m.key"> <span x-text="m.label"></span></label>
+          </template>
+          <p class="text-sm text-danger" x-show="!cart.payments.length">{{ t('shop.checkout.noPayment') }}</p>
+          <p class="field-error" x-show="err('payment')" x-text="err('payment')"></p>
+        </fieldset>
+
+        <div class="field">
+          <label class="field-label" for="co-note">{{ t('shop.checkout.note') }}</label>
+          <textarea id="co-note" class="input" rows="3" x-model="form.note" maxlength="1000"></textarea>
+        </div>
+      </div>
+
+      <aside class="card card-body flex h-fit flex-col gap-5">
+        <ul class="flex flex-col gap-2 text-sm">
+          <template x-for="item in cart.items" :key="item.key">
+            <li class="flex justify-between gap-3"><span><span x-text="item.quantity"></span> × <span x-text="item.title"></span></span><span x-text="item.totalText"></span></li>
+          </template>
+        </ul>
+        {% set c = 'cart' %}{% include "pages/shop/_totals.njk" %}
+        <label class="check text-sm"><input type="checkbox" x-model="form.terms" data-testid="terms"> <span>{{ t('shop.checkout.terms') | replace('{link}', '<a href="' + url('shopTerms') + '" class="link" target="_blank">' + t('shop.checkout.termsLink') + '</a>') | replace('{info}', '<a href="' + url('preInformation') + '" class="link" target="_blank">' + t('shop.checkout.infoLink') + '</a>') | safe }}</span></label>
+        <p class="field-error" x-show="err('terms')" x-text="err('terms')"></p>
+        <button type="submit" class="btn btn-primary btn-lg w-full justify-center" :disabled="busy || !cart.payments.length" data-testid="place-order">
+          <span x-text="busy ? '{{ t('shop.checkout.sending') }}' : '{{ t('shop.checkout.submit') }}'">{{ t('shop.checkout.submit') }}</span>
+        </button>
+      </aside>
+    </form>
+  </template>
+</section>
+{% endblock %}

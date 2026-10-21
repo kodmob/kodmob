@@ -1,0 +1,337 @@
+{
+    "siteUrl": "https://kodmob.test",
+    "indexable": false,
+    "locales": {
+        "tr": {
+            "prefix": "",
+            "label": "Türkçe",
+            "short": "TR",
+            "intl": "tr-TR",
+            "og": "tr_TR",
+            "flag": "/assets/img/flags/tr.svg"
+        },
+        "en": {
+            "prefix": "en",
+            "label": "English",
+            "short": "EN",
+            "intl": "en-GB",
+            "og": "en_US",
+            "flag": "/assets/img/flags/en.svg"
+        }
+    },
+    "profile": {
+        "modules": ["blog", "briefs", "estimate", "jarvis", "domains", "sms", "sites"],
+        "needs": ["services"]
+    },
+    "vocab": {
+        "projectCategories": {
+            "tr": { "web": "Web Sitesi", "mobile": "Mobil", "ecommerce": "E-Ticaret", "ai": "Yapay Zeka", "custom": "Özel Yazılım", "corporate": "Kurumsal" },
+            "en": { "web": "Website", "mobile": "Mobile", "ecommerce": "E-Commerce", "ai": "AI", "custom": "Custom Software", "corporate": "Corporate" }
+        },
+        "blogCategories": {
+            "tr": { "ai": "Yapay Zeka", "web": "Web", "mobile": "Mobil", "ecommerce": "E-Ticaret", "design": "Tasarım", "business": "Dijital Dönüşüm" },
+            "en": { "ai": "AI", "web": "Web", "mobile": "Mobile", "ecommerce": "E-Commerce", "design": "Design", "business": "Digital Transformation" }
+        },
+        "briefServices": {
+            "tr": { "web": "Web Sitesi", "mobile": "Mobil Uygulama", "ecommerce": "E-Ticaret", "ai": "Yapay Zeka", "custom": "Özel Yazılım", "consulting": "Danışmanlık", "other": "Genel soru" },
+            "en": { "web": "Website", "mobile": "Mobile App", "ecommerce": "E-Commerce", "ai": "AI", "custom": "Custom Software", "consulting": "Consulting", "other": "General question" }
+        }
+    },
+    "strings": {
+        "tr": {
+            "titleSuffix": " · Kodmob",
+            "siteName": "Kodmob",
+            "brand": "kodmob",
+            "brandSub": "yazılım",
+            "home": "Ana Sayfa",
+            "projects": "Projeler",
+            "blog": "Blog",
+            "blogTitle": "Kodmob Blog",
+            "blogDescription": "Yazılar",
+            "description": "Yazılım ajansı",
+            "toc": "İçindekiler",
+            "briefReplySubject": "Talebinizi aldık · Kodmob",
+            "briefReplyBody": "Merhaba {name},\n\nTalebiniz ulaştı."
+        },
+        "en": {
+            "titleSuffix": " · Kodmob",
+            "siteName": "Kodmob",
+            "brand": "kodmob",
+            "brandSub": "software",
+            "home": "Home",
+            "projects": "Projects",
+            "blog": "Blog",
+            "blogTitle": "Kodmob Blog",
+            "blogDescription": "Posts",
+            "description": "Software agency",
+            "toc": "Contents",
+            "briefReplySubject": "We received your request · Kodmob",
+            "briefReplyBody": "Hi {name},\n\nYour request has reached us."
+        }
+    },
+    "routes": [
+        {
+            "name": "home",
+            "locale": "tr",
+            "path": "/",
+            "shell": "tr/index.html",
+            "needs": [
+                "projects"
+            ],
+            "sitemap": true
+        },
+        {
+            "name": "home",
+            "locale": "en",
+            "path": "/en/",
+            "shell": "tr/index.html",
+            "needs": [
+                "projects"
+            ],
+            "sitemap": true
+        },
+        {
+            "name": "projects",
+            "locale": "tr",
+            "path": "/projeler/",
+            "shell": "tr/index.html",
+            "needs": [
+                "projects"
+            ],
+            "sitemap": true
+        },
+        {
+            "name": "blog",
+            "locale": "tr",
+            "path": "/blog/",
+            "shell": "tr/index.html",
+            "needs": [
+                "posts"
+            ],
+            "sitemap": true
+        },
+        {
+            "name": "project",
+            "locale": "tr",
+            "pattern": "/projeler/:slug/",
+            "dynamic": "project",
+            "shell": "tr/projeler/__entry/index.html",
+            "needs": [],
+            "sitemap": false,
+            "fallback": "projects"
+        },
+        {
+            "name": "post",
+            "locale": "tr",
+            "pattern": "/blog/:slug/",
+            "dynamic": "post",
+            "shell": "tr/projeler/__entry/index.html",
+            "needs": [],
+            "sitemap": false,
+            "fallback": "blog"
+        },
+        {"name": "legal", "locale": "tr", "path": "/yasal/", "shell": "tr/yasal/index.html", "needs": [], "sitemap": true},
+        {"name": "privacy", "locale": "tr", "path": "/yasal/gizlilik-politikasi/", "shell": "tr/yasal/index.html", "needs": [], "legal": "privacy", "sitemap": true},
+        {"name": "privacy", "locale": "en", "path": "/en/legal/privacy-policy/", "shell": "tr/yasal/index.html", "needs": [], "legal": "privacy", "sitemap": true},
+        {"name": "newsletterConsent", "locale": "tr", "path": "/yasal/bulten-aydinlatma-ve-onay/", "shell": "tr/yasal/index.html", "needs": [], "module": "newsletter", "legal": "newsletterConsent", "sitemap": true},
+        {"name": "shopTerms", "locale": "tr", "path": "/yasal/mesafeli-satis-sozlesmesi/", "shell": "tr/yasal/index.html", "needs": [], "module": "commerce", "legal": "shopTerms", "sitemap": true},
+        {
+            "name": "notFound",
+            "locale": "tr",
+            "path": "/404.html",
+            "shell": "tr/404.html",
+            "status": 404,
+            "needs": [],
+            "sitemap": false
+        },
+        {
+            "name": "projects",
+            "locale": "en",
+            "path": "/en/projects/",
+            "shell": "tr/index.html",
+            "needs": [
+                "projects"
+            ],
+            "sitemap": true
+        },
+        {
+            "name": "blog",
+            "locale": "en",
+            "path": "/en/blog/",
+            "shell": "tr/index.html",
+            "needs": [
+                "posts"
+            ],
+            "sitemap": true
+        },
+        {
+            "name": "project",
+            "locale": "en",
+            "pattern": "/en/projects/:slug/",
+            "dynamic": "project",
+            "fallback": "projects",
+            "shell": "tr/projeler/__entry/index.html",
+            "needs": [],
+            "sitemap": false
+        },
+        {
+            "name": "post",
+            "locale": "en",
+            "pattern": "/en/blog/:slug/",
+            "dynamic": "post",
+            "fallback": "blog",
+            "shell": "tr/projeler/__entry/index.html",
+            "needs": [],
+            "sitemap": false
+        },
+        {
+            "name": "notFound",
+            "locale": "en",
+            "path": "/en/404.html",
+            "shell": "tr/404.html",
+            "needs": [],
+            "sitemap": false,
+            "status": 404
+        },
+        {
+            "name": "page",
+            "locale": "tr",
+            "pattern": "/:slug/",
+            "dynamic": "page",
+            "fallback": "home",
+            "last": true,
+            "shell": "tr/sayfa/__entry/index.html",
+            "needs": [],
+            "sitemap": false
+        },
+        {
+            "name": "page",
+            "locale": "en",
+            "pattern": "/en/:slug/",
+            "dynamic": "page",
+            "fallback": "home",
+            "last": true,
+            "shell": "tr/sayfa/__entry/index.html",
+            "needs": [],
+            "sitemap": false
+        }
+    ],
+    "texts": {
+        "home.hero.title": {
+            "on": [
+                "home"
+            ],
+            "tr": "Varsayılan başlık",
+            "en": "Default title",
+            "de": "Standardtitel"
+        }
+    },
+    "default": "tr",
+    "legacy": {
+        "prefixes": {
+            "tr": [
+                "tr"
+            ]
+        },
+        "paths": [
+            {
+                "from": "/eski-projeler/:slug/",
+                "name": "project",
+                "locale": "tr"
+            },
+            {
+                "from": "/en/our-work/",
+                "name": "projects",
+                "locale": "en"
+            },
+            {
+                "from": "/tr/blog/:slug/",
+                "name": "post",
+                "locale": "tr"
+            }
+        ]
+    },
+    "panel": {
+        "base": "/panel",
+        "types": {
+            "projects": "projeler",
+            "services": "hizmetler",
+            "references": "referanslar",
+            "posts": "blog",
+            "pages": "blok-sayfalari",
+            "products": "urunler",
+            "tours": "turlar",
+            "hotels": "oteller"
+        },
+        "tabs": {
+            "seo": {
+                "404": "404",
+                "content": "icerik",
+                "ai": "yapay-zeka",
+                "pages": "sayfalar",
+                "redirects": "yonlendirmeler",
+                "robots": "robots",
+                "settings": "ayarlar"
+            },
+            "security": {
+                "sessions": "oturumlar",
+                "events": "kayitlar",
+                "blocks": "ip-engelleri",
+                "lockouts": "kilitli-girisler",
+                "settings": "ayarlar"
+            },
+            "settings": {
+                "mail": "e-posta",
+                "sms": "sms",
+                "ai": "yapay-zeka",
+                "jobs": "arka-plan",
+                "backup": "yedekleme"
+            },
+            "languages": {
+                "list": "liste",
+                "urls": "adresler",
+                "visitor": "ziyaretci",
+                "health": "saglik"
+            },
+            "history": {
+                "all": "tumu"
+            },
+            "tools": {
+                "discover": "kesfet"
+            },
+            "newsletter": {
+                "subscribers": "aboneler"
+            }
+        },
+        "routes": {
+            "overview": "",
+            "other": "diger-islemler",
+            "briefs": "talepler/:id?",
+            "domains": "jarvis/domain-arama/:job?",
+            "jarvis": "jarvis/:id?",
+            "texts": "diller/metinler",
+            "languages": "diller/:tab?",
+            "builder": "sayfa-duzenleyici",
+            "legal": "yasal-belgeler",
+            "estimate": "teklif-hesaplayici",
+            "orders": "siparisler/:id?",
+            "coupons": "kuponlar",
+            "bookings": "rezervasyonlar",
+            "newsletter": "bulten/:tab?",
+            "seo": "seo/:tab?",
+            "projectSettings": "proje-ayarlari/:tab?",
+            "settings": "sistem-ayarlari/:tab?",
+            "history": "islem-gecmisi/:tab?/:id?",
+            "users": "kullanicilar/:id?",
+            "roles": "roller",
+            "security": "guvenlik/:tab?",
+            "sites": "siteler",
+            "tools": "araclar/:tab?",
+            "health": "sistem-sagligi",
+            "profile": "profilim",
+            "guide": "kilavuz",
+            "editor": ":type/:idOrNew",
+            "list": ":type"
+        }
+    }
+}

@@ -1,0 +1,32 @@
+{# Site içi arama penceresi ($store.search). Tür etiketleri sayfanın dilinde. #}
+{% set searchTypes = t('search.types') %}
+<div class="search-overlay" x-data="{ labels: {{ searchTypes | dump }} }" x-show="$store.search.open" x-cloak
+  x-transition.opacity.duration.150ms @keydown.escape.window="$store.search.open && $store.search.hide()" @click.self="$store.search.hide()"
+  role="dialog" aria-modal="true" aria-label="{{ t('search.open') }}">
+  <div class="search-panel" @click.stop>
+    <div class="search-input-wrap">
+      <svg class="icon text-muted" aria-hidden="true"><use href="#i-search"/></svg>
+      <input type="search" class="search-input" placeholder="{{ t('search.placeholder') }}" autocomplete="off" spellcheck="false"
+        x-model="$store.search.query" @input.debounce.80ms="$store.search.run()"
+        @keydown.arrow-down.prevent="$store.search.move(1)" @keydown.arrow-up.prevent="$store.search.move(-1)" @keydown.enter.prevent="$store.search.go()"
+        x-effect="$store.search.open && $nextTick(() => $el.focus())" role="combobox" aria-controls="search-results" aria-autocomplete="list" :aria-expanded="$store.search.results.length > 0">
+      <kbd class="search-kbd">Esc</kbd>
+    </div>
+    <ul id="search-results" class="search-results" role="listbox">
+      <template x-for="(item, index) in $store.search.results" :key="item.url">
+        <li role="option" :aria-selected="index === $store.search.active">
+          <a :href="item.url" class="search-result" :class="index === $store.search.active && 'is-active'" @mouseenter="$store.search.active = index">
+            <span class="search-type" x-text="labels[item.type]"></span>
+            <span class="min-w-0 flex-1">
+              <span class="block truncate font-semibold text-ink" x-text="item.title"></span>
+              <span class="block truncate text-xs text-muted" x-show="item.text" x-text="item.text"></span>
+            </span>
+            <svg class="icon icon-sm text-muted" aria-hidden="true"><use href="#i-arrow-right"/></svg>
+          </a>
+        </li>
+      </template>
+    </ul>
+    <p class="search-empty" x-show="$store.search.loaded && $store.search.query && !$store.search.results.length">{{ t('search.empty') }}</p>
+    <p class="search-footer"><span><kbd class="search-kbd">↑</kbd> <kbd class="search-kbd">↓</kbd> <kbd class="search-kbd">Enter</kbd></span><span>{{ t('search.hint') }}</span></p>
+  </div>
+</div>

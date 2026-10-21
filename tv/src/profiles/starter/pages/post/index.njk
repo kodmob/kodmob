@@ -1,0 +1,73 @@
+{% extends "layouts/base.njk" %}
+{% import "macros/ui.njk" as ui %}
+{% import "macros/live.njk" as live %}
+
+{#
+  Blog yazısı. Her dilde tek kabuk; yazı ziyaret anında gelir ($store.km.entry,
+  gövdesi panelde yazılıp kayıtta temizlenen HTML). Başlık, açıklama,
+  canonical, hreflang, Open Graph ve JSON-LD'yi render.php yazar. Kapak, liste
+  kartından gelirken buraya akar.
+#}
+{% block content %}
+<template x-if="$store.km.notFound">
+  <section class="container-site grid min-h-[50vh] place-items-center py-20">
+    <div class="card w-full max-w-md p-8 text-center">
+      <h1 class="h2">{{ t('notFound.title') }}</h1>
+      <a href="{{ url('blog') }}" class="btn btn-primary mt-6">{{ t('post.back') }}</a>
+    </div>
+  </section>
+</template>
+
+{# Kayıt kapısı ve <!--km:…--> işaretleri: sunucu (render.php, Site\Render\EntrySsr) içeriği HTML'e yazar. #}
+<template x-if="$store.km.entry" data-km-ssr>
+<div x-data="{ post: $store.km.entry }">
+<article class="pb-16">
+  <header class="hero pt-8 pb-10 sm:pt-12">
+    <div class="container-site max-w-3xl">
+      <nav class="breadcrumb fade-up mb-6" aria-label="{{ t('common.breadcrumb') }}">
+        <a href="{{ url('home') }}">{{ t('nav.home') }}</a>{{ ui.icon('chevron-right', 'icon icon-sm') }}
+        <a href="{{ url('blog') }}">{{ t('nav.blog') }}</a>{{ ui.icon('chevron-right', 'icon icon-sm') }}
+        <span aria-current="page" x-text="post.title"><!--km:e:title--></span>
+      </nav>
+      <span class="category fade-up" x-text="$store.km.label('blogCategories', post.category)"></span>
+      <h1 class="display fade-up fade-up-1 mt-4 text-[2rem] sm:text-[2.75rem]" x-text="post.title"><!--km:e:title--></h1>
+      <p class="lead fade-up fade-up-2 mt-4" x-text="post.excerpt"><!--km:e:excerpt--></p>
+      <p class="blog-meta fade-up fade-up-2 mt-5 text-sm">
+        <span x-show="post.author" x-text="post.author"><!--km:e:author--></span>
+        <time :datetime="post.date" x-text="$store.km.date(post.date)"></time>
+        <span x-text="$store.km.readTime(post.minutes)"></span>
+      </p>
+    </div>
+  </header>
+
+  <div class="container-site max-w-4xl">
+    <div class="fade-up fade-up-2 overflow-hidden rounded-card" data-vt-hero>
+      {{ live.img('post.cover', '(min-width: 1024px) 896px, 100vw', 'aspect-[16/9] w-full object-cover', eager=true, alt='post.title') }}
+    </div>
+  </div>
+
+  <div class="container-site mt-10 grid max-w-4xl gap-10 lg:grid-cols-[1fr_10rem]">
+    <div class="prose" x-html="post.html"><!--km:h:html--></div>
+    <aside class="lg:sticky lg:top-24 lg:self-start" x-data="postShare">
+      <p class="mb-3 text-sm font-semibold text-ink">{{ t('post.share') }}</p>
+      <div class="flex gap-2 lg:flex-col">
+        <button type="button" class="btn btn-secondary btn-sm justify-start" @click="copy()">{{ ui.icon('link', 'icon icon-sm') }} {{ t('post.copyLink') }}</button>
+        <a class="btn btn-secondary btn-sm justify-start" :href="'https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(location.href)" target="_blank" rel="noopener" data-no-prerender>{{ ui.icon('linkedin', 'icon icon-sm') }} LinkedIn</a>
+        <a class="btn btn-secondary btn-sm justify-start" :href="'https://x.com/intent/post?url=' + encodeURIComponent(location.href) + '&text=' + encodeURIComponent(post.title)" target="_blank" rel="noopener" data-no-prerender>{{ ui.icon('x-social', 'icon icon-sm') }} X</a>
+      </div>
+      <a href="{{ url('blog') }}" class="link-arrow mt-6">{{ ui.icon('chevron-left', 'icon icon-sm') }} {{ t('post.back') }}</a>
+    </aside>
+  </div>
+</article>
+
+<section class="container-site section-sm pb-20" x-show="$store.km.related.length">
+  {{ ui.sectionHead(t('nav.blog'), t('post.related'), link={ url: url('blog'), label: t('common.viewAll') }) }}
+  <div class="grid gap-5 md:grid-cols-3">
+    <template x-for="(r, i) in $store.km.related" :key="r.id">
+      {{ live.blogCard('r', 3, "'reveal reveal-delay-' + (i + 1)") }}
+    </template>
+  </div>
+</section>
+</div>
+</template><!--/km:ssr-->
+{% endblock %}

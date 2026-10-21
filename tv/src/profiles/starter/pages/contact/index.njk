@@ -1,0 +1,29 @@
+{% extends "layouts/base.njk" %}
+{% import "macros/ui.njk" as ui %}
+
+{#
+  İletişim: solda başlık ve doğrudan iletişim (panel > Ayarlar > İletişim; boş olan gösterilmez), sağda
+  iletişim formu (çatının ui/contact/contact-form.njk bileşeni; talepler modülüne düşer).
+#}
+{% block content %}
+<section class="hero section">
+  <div class="container-site grid gap-10 lg:grid-cols-[1fr_1.1fr] lg:items-start">
+    <div>
+      <span class="eyebrow eyebrow-pill fade-up">{{ tx('contact.hero.eyebrow') }}</span>
+      <h1 class="display fade-up fade-up-1 mt-5">{{ tx('contact.hero.title') }} <span class="accent">{{ tx('contact.hero.titleAccent') }}</span></h1>
+      <p class="lead fade-up fade-up-2 mt-5">{{ tx('contact.hero.lead') }}</p>
+
+      <div class="card fade-up fade-up-3 mt-10 flex flex-col gap-4 p-6" x-show="$store.km.site.email || $store.km.site.phone || $store.km.site.address">
+        <h2 class="h3">{{ tx('contact.info.title') }}</h2>
+        <a :href="'mailto:' + $store.km.site.email" class="flex items-center gap-3" x-show="$store.km.site.email"><span class="icon-tile icon-tile-sm">{{ ui.icon('mail') }}</span><span><span class="meta-label block">{{ tx('contact.info.email') }}</span><span class="meta-value" x-text="$store.km.site.email"></span></span></a>
+        <a :href="'tel:' + ($store.km.site.phone || '').replace(/\s/g, '')" class="flex items-center gap-3" x-show="$store.km.site.phone"><span class="icon-tile icon-tile-sm">{{ ui.icon('phone') }}</span><span><span class="meta-label block">{{ tx('contact.info.phone') }}</span><span class="meta-value" x-text="$store.km.site.phone"></span></span></a>
+        <div class="flex items-center gap-3" x-show="$store.km.site.address"><span class="icon-tile icon-tile-sm">{{ ui.icon('map-pin') }}</span><span><span class="meta-label block">{{ tx('contact.info.address') }}</span><span class="meta-value" x-text="$store.km.site.address"></span></span></div>
+      </div>
+    </div>
+
+    <div class="fade-up fade-up-2 lg:sticky lg:top-24">
+      {% include "ui/contact/contact-form.njk" %}
+    </div>
+  </div>
+</section>
+{% endblock %}

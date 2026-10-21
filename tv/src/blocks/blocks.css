@@ -1,0 +1,57 @@
+/*
+ * Blokların stilleri (styles/app.css içe aktarır). Her bloğun kendi dosyası (block.css) buraya bir satırla eklenir;
+ * Tailwind sınıfları block.html'den kendiliğinden toplanır (app.css `@source`).
+ */
+@import "./marquee/block.css";
+@import "./letters/block.css";
+@import "./newsletter/block.css";
+
+/* Ortak yardımcılar: hizalama ve sütun sayısı alan değerinden (`km-align-{{align}}`, `km-grid-{{columns}}`). */
+.km-align-center { text-align: center; }
+.km-align-center .lead { margin-inline: auto; }
+.km-align-center .hero-actions { justify-content: center; }
+
+@media (min-width: 768px) {
+  .km-grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .km-grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .km-grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 1024px) {
+  .km-grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+.km-text.is-narrow { max-width: 48rem; }
+
+/* Rakamlar: lacivert zeminde band-dark gibi */
+.km-stats.is-navy { padding: 2.5rem; border-radius: var(--radius-card); background: var(--color-navy); color: #fff; }
+.km-stats.is-navy .h2 { color: #fff; }
+.km-stats.is-navy .stat-value { color: #fff; }
+.km-stats.is-navy .stat-label { color: var(--color-navy-ink); }
+.km-stats.is-navy .eyebrow { color: var(--color-navy-ink); }
+
+/* Güven rozetleri */
+.km-badges { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); }
+.km-badges.is-soft { padding: 1.25rem; border-radius: var(--radius-card); background: var(--color-surface-subtle); }
+.km-badges li { display: flex; gap: 0.75rem; align-items: center; }
+.km-badges li > span:last-child { display: flex; flex-direction: column; }
+.km-badges strong { color: var(--color-ink); }
+.km-badges small { font-size: 0.8125rem; color: var(--color-ink-2); }
+
+/* Görsel ve metin */
+.km-split { display: grid; gap: 2.5rem; align-items: center; }
+.km-split-media { overflow: hidden; aspect-ratio: 4 / 3; border-radius: var(--radius-card); }
+.km-split-media img { width: 100%; height: 100%; object-fit: cover; }
+@media (min-width: 1024px) {
+  .km-split { grid-template-columns: 1fr 1fr; gap: 4rem; }
+  .km-split.is-end .km-split-media { order: 2; }
+}
+
+/* Sık sorulanlar */
+.km-faq { display: flex; flex-direction: column; gap: 0.625rem; }
+.km-faq details { padding: 1rem 1.25rem; border: 1px solid var(--color-line); border-radius: var(--radius-tile); background: var(--color-surface); }
+.km-faq details[open] { box-shadow: var(--shadow-card); }
+.km-faq summary { display: flex; justify-content: space-between; gap: 1rem; cursor: pointer; list-style: none; font-weight: 600; color: var(--color-ink); }
+.km-faq summary::-webkit-details-marker { display: none; }
+.km-faq summary::after { content: "+"; flex-shrink: 0; font-size: 1.375rem; font-weight: 400; line-height: 1; color: var(--color-primary); transition: transform 0.2s; }
+.km-faq details[open] summary::after { transform: rotate(45deg); }
+.km-faq details p { margin-top: 0.625rem; color: var(--color-ink-2); white-space: pre-line; }

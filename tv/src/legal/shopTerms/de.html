@@ -1,0 +1,50 @@
+{{! Vorlage: türkisches Verbraucherschutzgesetz Nr. 6502 und Fernabsatzverordnung. Keine Rechtsberatung. }}
+<h2>Vertragsparteien</h2>
+<p><strong>Verkäufer:</strong></p>
+{{{controllerCard}}}
+<p><strong>Käufer:</strong> die Person, die auf {{site.name}} bestellt und deren Name, Adresse und Kontaktdaten im Bestellformular stehen. Die Angaben des Käufers erscheinen in der Bestellübersicht und der Bestätigungs-E-Mail.</p>
+
+<h2>Gegenstand</h2>
+<p>Dieser Vertrag regelt die Rechte und Pflichten der Parteien beim Verkauf und der Lieferung der Waren{{#modules.booking}} und Leistungen{{/modules.booking}}, die der Käufer auf {{site.name}} elektronisch bestellt, nach dem türkischen Verbraucherschutzgesetz Nr. 6502 und der Fernabsatzverordnung.</p>
+
+<h2>Ware, Preis und Zahlung</h2>
+<p>Wesentliche Merkmale, Menge, Verkaufspreis einschließlich Steuern, etwaige Lieferkosten und Gesamtbetrag der bestellten Waren{{#modules.booking}} und Leistungen{{/modules.booking}} werden im Bestellvorgang und in der Bestätigungs-E-Mail angezeigt; diese Angaben sind Vertragsbestandteil.</p>
+<ul>
+{{#commerce.shippingFee}}
+  <li><strong>Versandkosten:</strong> {{commerce.shippingFee}}{{#commerce.freeOver}}; ab {{commerce.freeOver}} versandkostenfrei{{/commerce.freeOver}}.</li>
+{{/commerce.shippingFee}}
+{{^commerce.shippingFee}}
+  <li><strong>Versandkosten:</strong> keine.</li>
+{{/commerce.shippingFee}}
+  <li><strong>Zahlungsarten:</strong> {{commerce.payments}}.</li>
+</ul>
+<p>Bei Kartenzahlung werden die Kartendaten auf der sicheren Seite des Zahlungsdienstleisters eingegeben; der Verkäufer sieht und speichert sie nicht.</p>
+
+<h2>Lieferung</h2>
+<p>Die Ware wird innerhalb der zugesagten Frist, spätestens jedoch 30 Tage nach Bestellbestätigung (bei Überweisung nach Zahlungseingang), an die angegebene Adresse geliefert. Digitale Waren werden nach Zahlungsbestätigung elektronisch bereitgestellt.{{#links.delivery}} Einzelheiten: <a href="{{links.delivery}}">Lieferung und Versand</a>.{{/links.delivery}}</p>
+
+<h2>Widerrufsrecht</h2>
+<p>Der Käufer kann binnen 14 Tagen ab Lieferung an ihn oder einen von ihm benannten Dritten ohne Angabe von Gründen und ohne Vertragsstrafe widerrufen. Bei Dienstleistungen beginnt die Frist mit Vertragsschluss.</p>
+<p>Der Widerruf erfolgt vor Fristablauf schriftlich an <a href="mailto:{{controller.email}}">{{controller.email}}</a> unter Angabe der Bestellnummer. Der Verkäufer erstattet alle erhaltenen Zahlungen einschließlich etwaiger Lieferkosten binnen 14 Tagen nach Eingang des Widerrufs über das verwendete Zahlungsmittel. Der Käufer sendet die Ware binnen 10 Tagen nach dem Widerruf zurück.{{#links.returns}} Einzelheiten: <a href="{{links.returns}}">Stornierung, Rückgabe und Widerruf</a>.{{/links.returns}}</p>
+
+<h2>Ausschluss des Widerrufsrechts</h2>
+<p>Nach Artikel 15 der Fernabsatzverordnung besteht kein Widerrufsrecht unter anderem bei:</p>
+<ul>
+  <li>Waren, die nach Kundenspezifikation angefertigt oder eindeutig personalisiert sind,</li>
+  <li>schnell verderblichen Waren oder Waren mit kurzem Verfallsdatum,</li>
+  <li>versiegelten Waren, die aus Gesundheits- oder Hygienegründen nach dem Öffnen nicht zur Rückgabe geeignet sind,</li>
+  <li>online sofort erbrachten Leistungen und sofort gelieferten digitalen Inhalten,</li>
+  <li>Unterkunft, Beförderung von Waren, Mietwagen, Verpflegung und Freizeitleistungen zu einem bestimmten Termin oder Zeitraum.</li>
+</ul>
+
+{{#modules.booking}}
+<h2>Buchungen</h2>
+<p>Touren, Aktivitäten{{#modules.hotels}} und Unterkünfte{{/modules.hotels}} zu einem bestimmten Termin fallen unter die obige Ausnahme; statt des Widerrufsrechts gelten die Stornierungs- und Erstattungsregeln der Buchungsbedingungen.{{#links.bookingTerms}} Einzelheiten: <a href="{{links.bookingTerms}}">Buchungsbedingungen</a>.{{/links.bookingTerms}}</p>
+{{/modules.booking}}
+
+<h2>Allgemeine Bestimmungen</h2>
+<p>Im Bestellvorgang bestätigt der Käufer, diesen Vertrag und die{{#links.preInformation}} <a href="{{links.preInformation}}">vorvertraglichen Informationen</a>{{/links.preInformation}} gelesen und akzeptiert zu haben. Der Vertrag kommt mit Abschluss der Bestellung zustande und wird vom Verkäufer gespeichert; eine Kopie erhält der Käufer mit der Bestätigungs-E-Mail.</p>
+<p>Bei mangelhafter Ware bleiben die Rechte des Käufers nach Artikel 11 des Gesetzes Nr. 6502 (Rücktritt, Minderung, kostenlose Reparatur, Ersatzlieferung) unberührt.</p>
+
+<h2>Streitbeilegung</h2>
+<p>Für Streitigkeiten sind innerhalb der jährlich vom Handelsministerium festgelegten Wertgrenzen die Verbraucherschiedsstellen am Wohnsitz des Käufers oder Verkäufers, darüber hinaus die Verbrauchergerichte zuständig. Zwingende Verbraucherschutzvorschriften des Wohnsitzstaates des Käufers bleiben unberührt.</p>

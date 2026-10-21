@@ -1,0 +1,59 @@
+/* Panel temeli (14px gövde, sayı hizası, odak çerçevesi). */
+@layer base {
+  :root {
+    color-scheme: light;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html {
+    font-size: 16px;
+  }
+
+  body {
+    @apply bg-bg text-ink font-sans antialiased;
+    font-size: 0.875rem;
+    line-height: 1.45;
+    font-optical-sizing: auto;
+  }
+
+  @media (max-width: 767px) {
+    body {
+      font-size: 0.9375rem;
+    }
+  }
+
+  img, svg, video {
+    display: block;
+    max-width: 100%;
+  }
+
+  ::selection {
+    @apply bg-primary text-white;
+  }
+
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Kodlar ve alan adları: 0 ile O karışmasın. */
+  .code {
+    font-variant-numeric: tabular-nums slashed-zero;
+    letter-spacing: 0.01em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  input,
+  select,
+  textarea,
+  button {
+    font: inherit;
+  }
+}
+
+[x-cloak] {
+  display: none !important;
+}

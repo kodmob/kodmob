@@ -1,0 +1,16 @@
+{
+  "label": "Öne çıkan ürünler",
+  "description": "Mağazadaki ürünler kartlarla: görsel, fiyat, indirimli fiyat. Ürün yoksa bölüm görünmez.",
+  "category": "commerce",
+  "icon": "cart",
+  "module": "commerce",
+  "needs": ["products"],
+  "fields": [
+    { "name": "eyebrow", "type": "text", "label": "Üst etiket", "localized": true, "max": 60, "default": "@blocks.products.eyebrow" },
+    { "name": "title", "type": "text", "label": "Başlık", "localized": true, "max": 120, "default": "@blocks.products.title" },
+    { "name": "cta", "type": "text", "label": "Bağlantı yazısı", "localized": true, "max": 40, "default": "@blocks.products.cta" },
+    { "name": "ctaUrl", "type": "link", "label": "Bağlantı", "default": "route:shop" },
+    { "name": "soldOut", "type": "text", "label": "Tükendi yazısı", "localized": true, "max": 30, "default": "@shop.outOfStock" },
+    { "name": "count", "type": "select", "label": "Kaç ürün", "options": { "3": "3", "6": "6" }, "default": "3" }
+  ]
+}

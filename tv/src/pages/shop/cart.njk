@@ -1,0 +1,52 @@
+{% extends "layouts/base.njk" %}
+{% import "macros/ui.njk" as ui %}
+
+{# Sepet (features/shop.js shopCart): adet, kaldırma, kupon, tutarlar; hepsi sunucunun hesabı. #}
+{% block content %}
+<section class="container-site py-10 lg:py-16" x-data="shopCart()" data-testid="cart">
+  <h1 class="h2 mb-8">{{ t('shop.cart.title') }}</h1>
+  <template x-if="loading"><div class="grid gap-4 lg:grid-cols-[1fr_22rem]"><span class="skeleton h-48"></span><span class="skeleton h-48"></span></div></template>
+
+  <template x-if="!loading && cart && !cart.items.length">
+    <div class="card card-body flex flex-col items-start gap-4">
+      <p class="text-ink-2">{{ t('shop.cart.empty') }}</p>
+      <a href="{{ url('shop') }}" class="btn btn-primary">{{ t('shop.backToShop') }}</a>
+    </div>
+  </template>
+
+  <template x-if="!loading && cart && cart.items.length">
+    <div class="grid gap-8 lg:grid-cols-[1fr_22rem]">
+      <ul class="card divide-y divide-line">
+        <template x-for="item in cart.items" :key="item.key">
+          <li class="flex flex-wrap items-center gap-4 p-4" data-testid="cart-item">
+            <img :src="item.image" alt="" class="h-16 w-16 rounded-control object-cover" x-show="item.image" loading="lazy">
+            <div class="min-w-0 flex-1">
+              <a :href="item.url || '{{ url('shop') }}'" class="font-medium text-ink" x-text="item.title"></a>
+              <p class="text-sm text-muted" x-text="item.unitText"></p>
+              <p class="text-xs text-danger" x-show="!item.inStock">{{ t('shop.outOfStock') }}</p>
+            </div>
+            <input class="input w-20" type="number" min="0" max="999" :value="item.quantity" @change="setQuantity(item, $event.target.value)" :aria-label="'{{ t('shop.quantity') }}'" :disabled="busy">
+            <strong class="w-28 text-right text-ink" x-text="item.totalText"></strong>
+            <button type="button" class="btn-icon" @click="remove(item)" :disabled="busy" aria-label="{{ t('shop.cart.remove') }}">{{ ui.icon('trash', 'icon icon-sm') }}</button>
+          </li>
+        </template>
+      </ul>
+
+      <aside class="card card-body flex h-fit flex-col gap-5">
+        <form class="flex gap-2" @submit.prevent="applyCoupon()" x-show="!cart.coupon">
+          <input class="input flex-1 uppercase" x-model="code" placeholder="{{ t('shop.cart.coupon') }}" aria-label="{{ t('shop.cart.coupon') }}" autocomplete="off">
+          <button type="submit" class="btn btn-secondary" :disabled="busy || !code.trim()">{{ t('shop.cart.applyCoupon') }}</button>
+        </form>
+        <p class="flex items-center justify-between text-sm" x-show="cart.coupon">
+          <span class="font-mono" x-text="cart.coupon"></span>
+          <button type="button" class="link" @click="removeCoupon()">{{ t('shop.cart.removeCoupon') }}</button>
+        </p>
+        <p class="text-sm text-danger" x-show="cart.couponError" x-text="cart.couponError"></p>
+        {% set c = 'cart' %}{% include "pages/shop/_totals.njk" %}
+        <a href="{{ url('checkout') }}" class="btn btn-primary btn-lg w-full justify-center" data-testid="to-checkout">{{ t('shop.cart.checkout') }}</a>
+        <a href="{{ url('shop') }}" class="link text-center text-sm">{{ t('shop.cart.continue') }}</a>
+      </aside>
+    </div>
+  </template>
+</section>
+{% endblock %}

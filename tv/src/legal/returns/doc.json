@@ -1,0 +1,7 @@
+{
+  "group": "commerce",
+  "order": 40,
+  "module": "commerce",
+  "updated": "2026-10-21",
+  "paths": { "tr": "iptal-iade-ve-cayma", "en": "cancellation-and-returns", "de": "widerruf-und-rueckgabe" }
+}

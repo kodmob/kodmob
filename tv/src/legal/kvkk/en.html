@@ -1,0 +1,101 @@
+{{! Template: Turkish Law No. 6698 Art. 10 and the Communiqué on the Obligation to Inform. Not legal advice. }}
+<h2>Data controller</h2>
+<p>Under the Turkish Personal Data Protection Law No. 6698 ("KVKK"), your personal data is processed by the business below as data controller:</p>
+{{{controllerCard}}}
+<p>This notice covers people who visit {{site.name}}{{#modules.briefs}}, write to us through the site's forms{{/modules.briefs}}{{#modules.newsletter}}, subscribe to our newsletter{{/modules.newsletter}}{{#modules.commerce}} or shop{{#modules.booking}} or book{{/modules.booking}} on our site{{/modules.commerce}}.</p>
+
+<h2>Personal data processed and purposes</h2>
+<div class="table-wrap">
+  <table>
+    <thead><tr><th>Process</th><th>Data categories</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td>Site visit</td><td><strong>Transaction security:</strong> IP address, browser details, request logs</td><td>Running the site, preventing attacks and abuse, information security</td></tr>
+{{#modules.briefs}}
+      <tr><td>Contact and enquiry forms</td><td><strong>Identity:</strong> name · <strong>Contact:</strong> e-mail, phone · <strong>Customer transaction:</strong> message, subject · <strong>Transaction security:</strong> IP hash, browser details</td><td>Assessing and answering your request, preventing spam</td></tr>
+{{/modules.briefs}}
+{{#modules.newsletter}}
+      <tr><td>E-mail newsletter</td><td><strong>Contact:</strong> e-mail · <strong>Identity:</strong> name (optional) · <strong>Marketing:</strong> subscription language, consent and withdrawal records (date, IP hash)</td><td>Sending newsletters and announcements, proving consent</td></tr>
+{{/modules.newsletter}}
+{{#modules.commerce}}
+      <tr><td>Orders and payment</td><td><strong>Identity:</strong> name · <strong>Contact:</strong> e-mail, phone, delivery and billing address · <strong>Customer transaction:</strong> order contents, amount, order history · <strong>Finance:</strong> payment method and the payment provider's transaction number (not card details)</td><td>Concluding and performing the sales contract, delivery, invoicing, returns and complaints, legal obligations</td></tr>
+{{/modules.commerce}}
+{{#modules.booking}}
+      <tr><td>Bookings</td><td><strong>Customer transaction:</strong> booking date, number of adults, children and infants, chosen package{{#modules.hotels}} or room and board{{/modules.hotels}}</td><td>Making the booking, capacity planning, providing the service</td></tr>
+{{/modules.booking}}
+    </tbody>
+  </table>
+</div>
+<p>We do not sell personal data to third parties for marketing and we do not use automated decision-making or profiling. Please do not share special categories of personal data (health, beliefs, etc.) in forms unless necessary.</p>
+
+<h2>Legal grounds</h2>
+<p>Your personal data is processed on the following grounds of Article 5 KVKK:</p>
+<ul>
+  <li><strong>Conclusion or performance of a contract (Art. 5/2-c):</strong> to assess your request{{#modules.commerce}} and to take, deliver and invoice your order{{/modules.commerce}},</li>
+  <li><strong>Legal obligation (Art. 5/2-ç):</strong> record-keeping and reporting duties under tax, commercial and consumer law,</li>
+  <li><strong>Establishing, exercising or protecting a right (Art. 5/2-e):</strong> in possible disputes,</li>
+  <li><strong>Legitimate interest (Art. 5/2-f):</strong> security logs, spam protection and rate limiting (provided your fundamental rights are not harmed).</li>
+{{#modules.newsletter}}
+  <li><strong>Explicit consent (Art. 5/1):</strong> to send newsletters and commercial electronic messages; you may withdraw your consent at any time.</li>
+{{/modules.newsletter}}
+</ul>
+
+<h2>Method of collection</h2>
+<p>Your personal data is collected electronically through the forms on our site{{#modules.commerce}} and the checkout{{/modules.commerce}}, partly by automated means (form submission, security logs). When you write to us directly by e-mail or messaging apps, the information you share reaches us through those channels.</p>
+
+<h2>Transfer of personal data</h2>
+<p>In line with Articles 8 and 9 KVKK, your personal data may be transferred only to the extent required to:</p>
+<ul>
+  <li>the providers of our hosting server and e-mail infrastructure,</li>
+{{#modules.commerce}}
+  <li>shipping and logistics companies (for delivery),</li>
+  <li>accountants and bookkeeping providers (for invoicing and statutory records),</li>
+{{/modules.commerce}}
+{{#modules.stripe}}
+  <li>Stripe (card payments; servers abroad),</li>
+{{/modules.stripe}}
+{{#modules.paytr}}
+  <li>PayTR payment and e-money institution (card payments),</li>
+{{/modules.paytr}}
+  <li>competent public authorities and courts upon request.</li>
+</ul>
+<p>Transfers abroad are made in accordance with the procedures and safeguards of Article 9 KVKK.</p>
+
+<h2>Retention periods</h2>
+<ul>
+  <li><strong>Security records:</strong> {{retention.security}} days.</li>
+{{#modules.briefs}}
+  <li><strong>Contact and enquiry forms:</strong> {{retention.briefs}} months, then automatically and permanently deleted.</li>
+{{/modules.briefs}}
+{{#modules.newsletter}}
+  <li><strong>Newsletter subscription:</strong> until you unsubscribe; consent and withdrawal records for the statutory period (three years) after the consent ends. Unconfirmed subscription requests are deleted after 7 days.</li>
+{{/modules.newsletter}}
+{{#modules.commerce}}
+  <li><strong>Order, invoice and payment records:</strong> for the periods set by the Turkish Commercial Code (10 years) and Tax Procedure Law (5 years).</li>
+{{/modules.commerce}}
+</ul>
+<p>If you ask us to delete your data before the period ends, we do so without delay unless a legal retention duty applies.</p>
+
+<h2>Your rights under KVKK</h2>
+<p>Under Article 11 KVKK you may apply to the data controller to:</p>
+<ul>
+  <li>learn whether your personal data is processed,</li>
+  <li>request information if it has been processed,</li>
+  <li>learn the purpose of processing and whether it is used accordingly,</li>
+  <li>know the third parties in Turkey or abroad to whom it is transferred,</li>
+  <li>request correction if it is incomplete or inaccurate,</li>
+  <li>request deletion or destruction under the conditions of Article 7 KVKK,</li>
+  <li>request that corrections and deletions be notified to the third parties to whom the data was transferred,</li>
+  <li>object to a result against you arising exclusively from automated analysis,</li>
+  <li>claim compensation for damage caused by unlawful processing.</li>
+</ul>
+
+<h2>How to apply</h2>
+<p>Send your application with information that allows us to identify you (name, the e-mail address you shared with us or your order number) and the subject of your request:</p>
+<ul>
+  <li>by e-mail to <a href="mailto:{{controller.email}}">{{controller.email}}</a> from the e-mail address you shared with us,</li>
+{{#controller.kep}}
+  <li>to our registered e-mail (KEP) address <strong>{{controller.kep}}</strong> with a secure electronic or mobile signature,</li>
+{{/controller.kep}}
+  <li>by a signed letter to the address above.</li>
+</ul>
+<p>Under the Communiqué on the Procedures and Principles of Applications to the Data Controller, your application is concluded free of charge within 30 days at the latest; if the process involves an additional cost, the fee set by the Personal Data Protection Board may be charged. If your application is rejected, you find the answer insufficient or no answer is given in time, you may complain to the Personal Data Protection Board. Visitors from the EU may also complain to their local supervisory authority under the GDPR.</p>

@@ -1,0 +1,33 @@
+{{! Şablon: Mesafeli Sözleşmeler Yönetmeliği md. 5 (ön bilgilendirme). Hukuki görüş değildir. }}
+<h2>Satıcı bilgileri</h2>
+{{{controllerCard}}}
+
+<h2>Ürünün temel nitelikleri</h2>
+<p>Siparişinizdeki ürünlerin{{#modules.booking}} ve hizmetlerin{{/modules.booking}} temel nitelikleri ürün sayfasında, adedi ve seçenekleri sepet ve ödeme adımında yer alır.</p>
+
+<h2>Fiyat, vergiler ve ek masraflar</h2>
+<ul>
+  <li>Fiyatlar{{#commerce.currency}} {{commerce.currency}} para biriminde{{/commerce.currency}} gösterilir; vergiler dahil toplam tutar ödeme adımında yer alır.</li>
+{{#commerce.shippingFee}}
+  <li>Kargo ücreti: {{commerce.shippingFee}}{{#commerce.freeOver}}; {{commerce.freeOver}} ve üzeri siparişlerde ücretsiz{{/commerce.freeOver}}.</li>
+{{/commerce.shippingFee}}
+{{#commerce.codFee}}
+  <li>Kapıda ödeme ek ücreti: {{commerce.codFee}}.</li>
+{{/commerce.codFee}}
+  <li>Bunların dışında bir ücret talep edilmez.</li>
+</ul>
+
+<h2>Ödeme</h2>
+<p>Ödeme yöntemleri: {{commerce.payments}}. Kartla ödemelerde kart bilgileriniz ödeme kuruluşunun güvenli sayfasında girilir; tarafımızca görülmez ve saklanmaz.</p>
+
+<h2>Teslimat ve ifa</h2>
+<p>Ürünler siparişin onaylanmasından itibaren taahhüt edilen sürede, her hâlükârda en geç 30 gün içinde bildirdiğiniz adrese teslim edilir. Dijital ürünler ödemenin onaylanmasıyla elektronik ortamda teslim edilir.{{#modules.booking}} Rezervasyonlarda hizmet, rezervasyonda seçtiğiniz tarihte sunulur.{{/modules.booking}}</p>
+
+<h2>Cayma hakkı</h2>
+<p>Malın size teslim edildiği günden itibaren 14 gün içinde gerekçe göstermeden ve cezai şart ödemeden cayma hakkınızı kullanabilirsiniz. Bildirimi <a href="mailto:{{controller.email}}">{{controller.email}}</a> adresine sipariş numaranızla yapabilirsiniz; bedel, bildirimin bize ulaşmasından itibaren 14 gün içinde ödeme aracınıza iade edilir. Kişiye özel ürünler, ambalajı açılmış hijyen ürünleri, dijital içerik ve belirli bir tarihte sunulan konaklama, tur ve etkinlik gibi hizmetlerde cayma hakkı yoktur.{{#links.returns}} Ayrıntılar: <a href="{{links.returns}}">İptal, İade ve Cayma Koşulları</a>.{{/links.returns}}</p>
+
+<h2>Şikâyet ve itiraz</h2>
+<p>Şikâyetlerinizi <a href="mailto:{{controller.email}}">{{controller.email}}</a> adresine iletebilirsiniz. Uyuşmazlıklarda Ticaret Bakanlığınca belirlenen parasal sınırlar dahilinde tüketici hakem heyetlerine, bu sınırları aşan durumlarda tüketici mahkemelerine başvurabilirsiniz.</p>
+
+<h2>Onay</h2>
+<p>Bu ön bilgilendirme, siparişinizi onaylamadan önce size sunulur ve ödeme adımında onaylanır. Bilgilerin bir kopyası sipariş onay e-postasıyla gönderilir.{{#links.shopTerms}} Satış koşulları: <a href="{{links.shopTerms}}">Mesafeli Satış Sözleşmesi</a>.{{/links.shopTerms}}</p>

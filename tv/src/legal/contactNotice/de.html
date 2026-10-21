@@ -1,0 +1,30 @@
+{{! Vorlage: Formulare des Anfragemoduls (Kontakt, Projektanfrage, Preisrechner). }}
+<h2>Verantwortlicher</h2>
+<p>Daten, die Sie uns über die Kontakt- und Anfrageformulare unserer Website senden, verarbeitet das unten genannte Unternehmen als Verantwortlicher nach dem türkischen Datenschutzgesetz Nr. 6698 („KVKK“):</p>
+{{{controllerCard}}}
+
+<h2>Verarbeitete Daten</h2>
+<ul>
+  <li><strong>Identität:</strong> Ihr Name; optional Ihr Unternehmen.</li>
+  <li><strong>Kontakt:</strong> Ihre E-Mail-Adresse und optional Ihre Telefonnummer.</li>
+  <li><strong>Kundenvorgang:</strong> Ihre Nachricht, gewünschte Leistungen, Budget und Zeitrahmen{{#modules.estimate}}, Ihre Auswahl im Preisrechner{{/modules.estimate}}, Sprache der Anfrage und Formular.</li>
+  <li><strong>Transaktionssicherheit:</strong> Datum der Anfrage, Browserangaben und ein nicht umkehrbarer Hashwert Ihrer IP-Adresse (die Adresse selbst wird nicht gespeichert).</li>
+</ul>
+
+<h2>Zwecke und Rechtsgrundlagen</h2>
+<ul>
+  <li>Bearbeitung Ihrer Anfrage, Antwort und Angebot: <strong>Vertragsanbahnung (KVKK Art. 5/2-c)</strong>,</li>
+  <li>automatische Eingangsbestätigung per E-Mail: <strong>Vertragsanbahnung (Art. 5/2-c)</strong>,</li>
+  <li>Schutz vor Spam und Missbrauch: <strong>berechtigtes Interesse (Art. 5/2-f)</strong>,</li>
+  <li>Wahrung unserer Rechte bei Streitigkeiten: <strong>Begründung und Schutz eines Rechts (Art. 5/2-e)</strong>.</li>
+</ul>
+<p>Mit dem Kontrollkästchen im Formular bestätigen Sie, diesen Hinweis gelesen zu haben; für die obige Verarbeitung bitten wir nicht um eine gesonderte Einwilligung. Wir tragen Sie nicht in einen Newsletter ein und nutzen Ihre Daten nicht für Werbung.</p>
+
+<h2>Übermittlung</h2>
+<p>Ihre Daten werden nur an die Anbieter unseres Hosting-Servers und der E-Mail-Infrastruktur im erforderlichen Umfang weitergegeben; auf Anforderung können sie zuständigen Behörden übermittelt werden.</p>
+
+<h2>Speicherdauer</h2>
+<p>Anfragen werden nach {{retention.briefs}} Monaten automatisch und endgültig gelöscht. Wird aus Ihrer Anfrage ein Vertrag, werden Vertrags- und Rechnungsunterlagen für die gesetzlichen Fristen aufbewahrt.</p>
+
+<h2>Ihre Rechte</h2>
+<p>Ihre Rechte nach Artikel 11 KVKK können Sie per E-Mail an <a href="mailto:{{controller.email}}">{{controller.email}}</a> ausüben.{{#links.kvkk}} Die vollständige Liste und das Antragsverfahren finden Sie im <a href="{{links.kvkk}}">Datenschutzhinweis (KVKK)</a>.{{/links.kvkk}}</p>

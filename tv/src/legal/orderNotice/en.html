@@ -1,0 +1,45 @@
+{{! Template: KVKK Art. 10 notice for order and payment processes. Not legal advice. }}
+<h2>Data controller</h2>
+<p>When you shop{{#modules.booking}} or book{{/modules.booking}} on our site, your personal data is processed by the business below as data controller under the Turkish Personal Data Protection Law No. 6698 ("KVKK"):</p>
+{{{controllerCard}}}
+
+<h2>Personal data processed</h2>
+<ul>
+  <li><strong>Identity:</strong> name; for invoicing, where required, Turkish ID or tax number.</li>
+  <li><strong>Contact:</strong> e-mail address, phone, delivery and billing address.</li>
+  <li><strong>Customer transaction:</strong> order contents, amount, coupon, order note, order and return history.</li>
+  <li><strong>Finance:</strong> payment method, payment status and the payment provider's transaction number. Your card details never reach our servers.</li>
+{{#modules.booking}}
+  <li><strong>Booking:</strong> date, number of adults, children and infants, chosen package{{#modules.hotels}}, room type and board{{/modules.hotels}}. We do not ask for special categories of data (health etc.); if needed for the service, we ask for your explicit consent separately.</li>
+{{/modules.booking}}
+  <li><strong>Transaction security:</strong> order date, IP address and browser details.</li>
+</ul>
+
+<h2>Purposes and legal grounds</h2>
+<ul>
+  <li>Taking, preparing and delivering your order{{#modules.booking}} and providing the booked service{{/modules.booking}}, contacting you, returns and complaints: <strong>conclusion and performance of a contract (KVKK Art. 5/2-c)</strong>,</li>
+  <li>invoicing, accounting records and consumer-law obligations: <strong>legal obligation (Art. 5/2-ç)</strong>,</li>
+  <li>protecting our rights in possible disputes: <strong>establishing and protecting a right (Art. 5/2-e)</strong>,</li>
+  <li>preventing fraud and abuse: <strong>legitimate interest (Art. 5/2-f)</strong>.</li>
+</ul>
+<p>We do not use your order data for marketing. Sending you promotional e-mails requires your separate marketing consent.</p>
+
+<h2>Transfers</h2>
+<ul>
+  <li><strong>Shipping and logistics companies:</strong> name, address and phone to deliver physical goods.</li>
+{{#modules.stripe}}
+  <li><strong>Stripe:</strong> payment amount, e-mail address and order number for card payments. Stripe's servers are abroad; the transfer follows the procedures and safeguards of Article 9 KVKK.</li>
+{{/modules.stripe}}
+{{#modules.paytr}}
+  <li><strong>PayTR payment and e-money institution:</strong> name, e-mail, phone, address, payment amount and order number for card payments.</li>
+{{/modules.paytr}}
+  <li><strong>Accountants and bookkeeping providers:</strong> for invoicing and statutory records.</li>
+  <li><strong>Hosting and e-mail infrastructure providers:</strong> to provide the service.</li>
+  <li><strong>Competent authorities and courts:</strong> upon request.</li>
+</ul>
+
+<h2>Retention</h2>
+<p>Order, invoice and payment records are kept for the periods set by the Turkish Commercial Code (10 years) and Tax Procedure Law (5 years), then deleted or anonymised. Abandoned carts are deleted after 30 days.</p>
+
+<h2>Your rights</h2>
+<p>You can exercise your rights under Article 11 KVKK by writing to <a href="mailto:{{controller.email}}">{{controller.email}}</a> with your order number.{{#links.kvkk}} The full list of rights and how to apply are in our <a href="{{links.kvkk}}">Personal Data Notice (KVKK)</a>.{{/links.kvkk}}</p>

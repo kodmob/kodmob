@@ -1,0 +1,45 @@
+{{! Template: customise the cancellation and refund rules for your business in the panel. }}
+<h2>Scope</h2>
+<p>These terms apply to tour, activity{{#modules.hotels}} and accommodation{{/modules.hotels}} bookings made on {{site.name}}. The service is provided by:</p>
+{{{controllerCard}}}
+<p>Bookings are also subject to the{{#links.shopTerms}} <a href="{{links.shopTerms}}">Distance Sales Contract</a>{{/links.shopTerms}}; the specific provisions here take precedence.</p>
+
+<h2>Confirmation</h2>
+<p>Your booking is confirmed once payment is complete (for bank transfers, when the payment reaches our account) and we notify you by e-mail. Availability is re-checked at payment; if there are no places left, no payment is taken or it is refunded in full.</p>
+
+<h2>Prices</h2>
+<ul>
+  <li>Prices are shown on the booking page and include taxes; the total at checkout applies.</li>
+  <li>For per-person services, child and infant prices and age ranges are shown on the booking page. The person booking is responsible for stating ages correctly.</li>
+{{#modules.hotels}}
+  <li>Accommodation is priced per room and night, by room type and board. Check-in and check-out times are on the property page.</li>
+{{/modules.hotels}}
+  <li>Group, seasonal and early-booking discounts apply only at the time of booking.</li>
+</ul>
+
+<h2>Right of withdrawal</h2>
+<p>Under Article 15 of the Turkish Distance Contracts Regulation there is no right of withdrawal for tours, activities{{#modules.hotels}} and accommodation{{/modules.hotels}} provided on a specific date. The cancellation terms below apply instead.</p>
+
+<h2>Cancellations by you</h2>
+<p>Send your cancellation in writing with your booking number to <a href="mailto:{{controller.email}}">{{controller.email}}</a>. Unless the booking page states otherwise:</p>
+<ul>
+  <li>cancellations 7 or more days before the service date are refunded in full,</li>
+  <li>cancellations less than 7 days before the service date and no-shows are not refunded.</li>
+</ul>
+<p>Date changes are considered subject to availability and price.</p>
+
+<h2>Cancellations and changes by us</h2>
+<p>If we must cancel because of insufficient participants, weather, force majeure or safety, we inform you immediately; if you do not accept another date, you receive a full refund within 14 days. Minor necessary programme changes may occur; for a significant change you may cancel free of charge.</p>
+
+<h2>Participants' responsibilities</h2>
+<ul>
+  <li>Participants are responsible for ID, passport, visa and health requirements.</li>
+  <li>Please arrive at the meeting point on time; services missed due to lateness are not refunded.</li>
+  <li>Participants must follow the safety instructions of staff during the service.</li>
+</ul>
+
+<h2>Refunds</h2>
+<p>Refunds go to the card used, or for bank transfers to the bank account you give us.</p>
+
+<h2>Complaints and disputes</h2>
+<p>Send complaints to <a href="mailto:{{controller.email}}">{{controller.email}}</a>. Disputes are handled by consumer arbitration committees within the monetary limits set by the Ministry of Trade, and by consumer courts above them.</p>

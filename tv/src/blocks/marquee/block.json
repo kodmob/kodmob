@@ -1,0 +1,27 @@
+{
+  "label": "Kayan etiketler",
+  "description": "Ters yönlerde sonsuz kayan üç satır etiket: büyük kontur yazılar, rozetli etiketler ve küçük alt etiketler. Üstüne gelince durur; bağlantı verilebilir.",
+  "category": "animation",
+  "icon": "layers",
+  "library": false,
+  "fields": [
+    { "name": "label", "type": "text", "label": "Bölümün adı (ekran okuyucular için)", "localized": true, "max": 120, "default": "@blocks.marquee.label" },
+    { "name": "row1", "type": "rows", "label": "1. satır: büyük yazılar", "localized": true, "max": 16, "help": "Dolu: içi dolu yazı; boşsa kontur.", "columns": [
+      { "name": "text", "type": "text", "label": "Yazı", "max": 60 },
+      { "name": "url", "type": "link", "label": "Bağlantı" },
+      { "name": "filled", "type": "bool", "label": "Dolu" }
+    ], "default": "@blocks.marquee.row1" },
+    { "name": "row2", "type": "rows", "label": "2. satır: rozetli etiketler", "localized": true, "max": 16, "columns": [
+      { "name": "text", "type": "text", "label": "Yazı", "max": 60 },
+      { "name": "badge", "type": "text", "label": "Rozet", "max": 30 },
+      { "name": "url", "type": "link", "label": "Bağlantı" }
+    ], "default": "@blocks.marquee.row2" },
+    { "name": "row3", "type": "rows", "label": "3. satır: küçük etiketler", "localized": true, "max": 20, "columns": [
+      { "name": "text", "type": "text", "label": "Yazı", "max": 60 },
+      { "name": "url", "type": "link", "label": "Bağlantı" }
+    ], "default": "@blocks.marquee.row3" },
+    { "name": "footer", "type": "text", "label": "Alt not", "localized": true, "max": 160, "default": "@blocks.marquee.footer" },
+    { "name": "speed", "type": "select", "label": "Hız", "options": { "slow": "Yavaş", "normal": "Normal", "fast": "Hızlı" }, "default": "normal" },
+    { "name": "tone", "type": "select", "label": "Zemin", "options": { "plain": "Sade", "soft": "Açık", "navy": "Lacivert" }, "default": "plain" }
+  ]
+}

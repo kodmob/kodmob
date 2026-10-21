@@ -1,0 +1,514 @@
+{# Sistem Ayarları. Mantık: panel/settings.js (sekmeler, Genel), panel/system.js, panel/backup.js (yedekleme). #}
+<div class="pn-page" x-data="kmSettings(r)" @keydown.window.ctrl.s.prevent="save()" @keydown.window.meta.s.prevent="save()">
+  <div class="-mx-1 overflow-x-auto px-1" x-show="tabs.filter((t) => visible(t)).length > 1">
+    <div class="pn-tabs w-max" role="tablist" aria-label="Sistem Ayarları">
+      <template x-for="t in tabs" :key="t.key">
+        <button type="button" role="tab" class="pn-tab" :aria-selected="tab === t.key" @click="show(t.key)" x-show="visible(t)" :data-tab="t.key">
+          <svg class="icon icon-sm" aria-hidden="true"><use :href="'#i-' + t.icon"/></svg> <span x-text="t.label"></span>
+        </button>
+      </template>
+    </div>
+  </div>
+
+  {# ============================================================ genel (sistem kapsamlı ayarlar) #}
+  {% include "pages/panel/_settings-form.njk" %}
+
+  {# ============================================================ e-posta (panel/system.js kmMail) #}
+  <template x-if="tab === 'mail'">
+    <div class="flex flex-col gap-5" x-data="kmMail" data-testid="mail">
+      <template x-if="loading">
+        <div class="flex flex-col gap-4"><span class="skeleton h-48"></span><span class="skeleton h-32"></span></div>
+      </template>
+      <section class="card pn-group-card" x-show="!loading" x-cloak data-setting="mail">
+        <h3 class="pn-group-title">Gönderim</h3>
+        <p class="text-sm text-ink-2">Talep bildirimleri ve ziyaretçilere giden yanıtlar bu yolla gider. Hostinger e-posta hesabı için: SMTP, <span class="font-mono">smtp.hostinger.com</span>, 465, SSL; kullanıcı adı e-posta adresinin kendisi.</p>
+        <div class="pn-grid">
+          <label class="pn-field pn-w-half" data-setting="mail.mailer">
+            <span class="field-label">Gönderim yöntemi</span>
+            <select class="input" x-model="form.mailer" data-testid="mail-mailer">
+              <template x-for="(label, value) in view?.mailers || {}" :key="value"><option :value="value" x-text="label" :selected="value === form.mailer"></option></template>
+            </select>
+            <span class="text-xs text-muted" x-show="form.mailer === 'env'" x-text="'.env: ' + envSummary"></span>
+            <span class="field-error" x-show="errors.mailer" x-text="errors.mailer"></span>
+          </label>
+          <template x-if="smtp">
+            <div class="contents">
+              <label class="pn-field pn-w-half" data-setting="mail.host">
+                <span class="field-label">SMTP sunucusu</span>
+                <input class="input" x-model.trim="form.host" placeholder="smtp.hostinger.com" autocomplete="off" :aria-invalid="!!errors.host" data-testid="mail-host">
+                <span class="field-error" x-show="errors.host" x-text="errors.host"></span>
+              </label>
+              <label class="pn-field pn-w-half" data-setting="mail.encryption">
+                <span class="field-label">Şifreleme</span>
+                <select class="input" :value="form.encryption" @change="setEncryption($event.target.value)">
+                  <template x-for="(label, value) in view?.encryptions || {}" :key="value"><option :value="value" x-text="label" :selected="value === form.encryption"></option></template>
+                </select>
+              </label>
+              <label class="pn-field pn-w-half" data-setting="mail.port">
+                <span class="field-label">Port</span>
+                <input class="input" type="number" min="1" max="65535" x-model.number="form.port" :aria-invalid="!!errors.port">
+                <span class="field-error" x-show="errors.port" x-text="errors.port"></span>
+              </label>
+              <label class="pn-field pn-w-half" data-setting="mail.username">
+                <span class="field-label">Kullanıcı adı</span>
+                <input class="input" x-model.trim="form.username" autocomplete="off" placeholder="info@alanadi.com">
+              </label>
+              <label class="pn-field pn-w-half" data-setting="mail.password">
+                <span class="field-label">Şifre</span>
+                <input class="input" type="password" x-model="password" autocomplete="new-password" :placeholder="view?.password_set ? '•••••••• (kayıtlı; değiştirmek için yazın)' : ''" data-testid="mail-password">
+                <span class="text-xs text-muted" x-show="view?.password_set">Şifre şifreli saklanıyor ve panele gösterilmiyor. <button type="button" class="font-medium text-primary hover:underline" @click="clearPassword()">Sil</button></span>
+              </label>
+            </div>
+          </template>
+          <label class="pn-field pn-w-half" data-setting="mail.from_address">
+            <span class="field-label">Gönderen adresi</span>
+            <input class="input" type="email" x-model.trim="form.from_address" :placeholder="view?.env?.from_address || ''" :aria-invalid="!!errors.from_address">
+            <span class="text-xs text-muted">Boşsa .env'deki. SMTP'de hesabın kendi adresi olmalı, yoksa sunucu reddedebilir.</span>
+            <span class="field-error" x-show="errors.from_address" x-text="errors.from_address"></span>
+          </label>
+          <label class="pn-field pn-w-half" data-setting="mail.from_name">
+            <span class="field-label">Gönderen adı</span>
+            <input class="input" x-model.trim="form.from_name" :placeholder="view?.env?.from_name || ''">
+          </label>
+        </div>
+        <div class="flex flex-wrap justify-end gap-2">
+          <button type="button" class="btn btn-primary" @click="save()" :disabled="saving" data-testid="mail-save">
+            <svg class="icon icon-sm animate-spin" aria-hidden="true" x-show="saving" x-cloak><use href="#i-loader"/></svg>
+            <span x-text="saving ? 'Kaydediliyor…' : 'Kaydet'">Kaydet</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="card pn-group-card" x-show="!loading" x-cloak data-setting="mail.test">
+        <h3 class="pn-group-title">Deneme</h3>
+        <p class="text-sm text-ink-2">Kayıtlı ayarlarla hemen bir deneme e-postası gönderir. Gönderilemezse sunucunun verdiği hata burada görünür.</p>
+        <div class="flex flex-wrap items-end gap-2">
+          <label class="field min-w-60 flex-1">
+            <span class="field-label">Alıcı</span>
+            <input class="input" type="email" x-model.trim="testTo" :aria-invalid="!!errors.to" data-testid="mail-test-to">
+            <span class="field-error" x-show="errors.to" x-text="errors.to"></span>
+          </label>
+          <button type="button" class="btn btn-secondary min-h-11" @click="test()" :disabled="testing || !testTo" data-testid="mail-test">
+            <svg class="icon icon-sm" :class="testing && 'animate-spin'" aria-hidden="true"><use :href="testing ? '#i-loader' : '#i-send'"/></svg>
+            <span x-text="testing ? 'Gönderiliyor…' : 'Deneme gönder'">Deneme gönder</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="card pn-group-card" x-show="!loading" x-cloak data-setting="mail.log">
+        <h3 class="pn-group-title">Son gönderimler</h3>
+        <p class="rounded-tile border border-dashed border-line px-4 py-6 text-center text-sm text-muted" x-show="!log.length">Henüz gönderim yok.</p>
+        <ul class="divide-y divide-line" x-show="log.length" data-testid="mail-log">
+          <template x-for="row in log" :key="row.id">
+            <li class="flex flex-wrap items-center gap-x-3 gap-y-1 py-2.5 text-sm">
+              <span class="badge" :class="row.status === 'sent' ? 'badge-success' : 'badge-danger'" x-text="row.status === 'sent' ? 'Gitti' : 'Gitmedi'"></span>
+              <span class="min-w-0 flex-1">
+                <span class="block truncate font-medium text-ink" x-text="row.subject"></span>
+                <span class="block truncate text-xs text-muted" x-text="kindLabel(row.kind) + ' · ' + row.recipient + ' · ' + relative(row.created_at) + (row.attempts > 1 ? ' · ' + row.attempts + '. deneme' : '')"></span>
+                <span class="block text-xs text-danger" x-show="row.error" x-text="row.error"></span>
+              </span>
+            </li>
+          </template>
+        </ul>
+      </section>
+    </div>
+  </template>
+
+  {# ============================================================ SMS (panel/system.js kmSms) #}
+  <template x-if="tab === 'sms'">
+    <div class="flex flex-col gap-5" x-data="kmSms" data-testid="sms">
+      <template x-if="loading">
+        <div class="flex flex-col gap-4"><span class="skeleton h-48"></span><span class="skeleton h-32"></span></div>
+      </template>
+      <section class="card pn-group-card" x-show="!loading" x-cloak data-setting="sms">
+        <h3 class="pn-group-title">Sağlayıcı</h3>
+        <p class="text-sm text-ink-2">Kullanıcılar sayfasındaki SMS düğmeleri bu ayarla çalışır. NetGSM için: abone numaranız (ya da API izni verilmiş alt kullanıcı), API şifresi ve NetGSM'de onaylı gönderici başlığı. NetGSM panelinde IP kısıtlaması açıksa sitenin sunucu IP'sini izinli listeye ekleyin.</p>
+        <div class="pn-grid">
+          <label class="pn-field pn-w-half" data-setting="sms.provider">
+            <span class="field-label">Sağlayıcı</span>
+            <select class="input" x-model="form.provider" data-testid="sms-provider">
+              <template x-for="(label, value) in view?.providers || {}" :key="value"><option :value="value" x-text="label" :selected="value === form.provider"></option></template>
+            </select>
+            <span class="text-xs text-muted" x-show="form.provider === 'log'">SMS gönderilmez; sunucu günlüğüne yazılır. Deneme ve test için.</span>
+            <span class="field-error" x-show="errors.provider" x-text="errors.provider"></span>
+          </label>
+          <template x-if="netgsm">
+            <div class="contents">
+              <label class="pn-field pn-w-half" data-setting="sms.username">
+                <span class="field-label">Kullanıcı adı</span>
+                <input class="input" x-model.trim="form.username" autocomplete="off" placeholder="850xxxxxxx" :aria-invalid="!!errors.username" data-testid="sms-username">
+                <span class="field-error" x-show="errors.username" x-text="errors.username"></span>
+              </label>
+              <label class="pn-field pn-w-half" data-setting="sms.password">
+                <span class="field-label">API şifresi</span>
+                <input class="input" type="password" x-model="password" autocomplete="new-password" :placeholder="view?.password_set ? '•••••••• (kayıtlı; değiştirmek için yazın)' : ''" data-testid="sms-password">
+                <span class="text-xs text-muted" x-show="view?.password_set">Şifre şifreli saklanıyor ve panele gösterilmiyor. <button type="button" class="font-medium text-primary hover:underline" @click="clearPassword()">Sil</button></span>
+              </label>
+              <label class="pn-field pn-w-half" data-setting="sms.sender">
+                <span class="field-label">Gönderici başlığı</span>
+                <input class="input" x-model.trim="form.sender" maxlength="20" autocomplete="off" placeholder="FIRMAADI" :aria-invalid="!!errors.sender" data-testid="sms-sender">
+                <span class="text-xs text-muted">NetGSM'de onaylandığı gibi (büyük-küçük harf ve boşluk dahil). "Bağlantıyı dene" onaylı başlıkları getirir.</span>
+                <span class="field-error" x-show="errors.sender" x-text="errors.sender"></span>
+              </label>
+              <label class="pn-field pn-w-half" data-setting="sms.iys_filter">
+                <span class="field-label">İleti türü (İYS)</span>
+                <select class="input" x-model="form.iys_filter">
+                  <template x-for="(label, value) in view?.iys_filters || {}" :key="value"><option :value="value" x-text="label" :selected="value === form.iys_filter"></option></template>
+                </select>
+                <span class="text-xs text-muted">Ekibe giden duyuru ve bildirimler bilgilendirmedir. Ticari ileti yalnızca İYS'de onayı olan alıcıya gider.</span>
+              </label>
+              <label class="pn-field pn-w-half" data-setting="sms.app_name">
+                <span class="field-label">Uygulama adı <span class="font-normal text-muted">(isteğe bağlı)</span></span>
+                <input class="input" x-model.trim="form.app_name" maxlength="100" autocomplete="off">
+                <span class="text-xs text-muted">NetGSM geliştirici hesabındaki uygulama adı (appname); yoksa boş bırakın.</span>
+              </label>
+            </div>
+          </template>
+        </div>
+        <p class="rounded-control bg-warning-soft p-3 text-sm text-warning-ink" x-show="view?.problem" x-text="view?.problem"></p>
+        <div class="flex flex-wrap items-center gap-2" x-show="senders.length" data-testid="sms-senders">
+          <span class="text-sm text-muted">Onaylı başlıklar:</span>
+          <template x-for="s in senders" :key="s">
+            <button type="button" class="badge" :class="s === form.sender ? 'badge-success' : 'badge-neutral hover:bg-line'" @click="useSender(s)" :title="s === form.sender ? 'Kullanılan başlık' : 'Bu başlığı kullan'" x-text="s"></button>
+          </template>
+        </div>
+        <div class="flex flex-wrap justify-end gap-2">
+          <button type="button" class="btn btn-secondary" @click="check()" :disabled="checking || saving || form.provider === 'off'" x-show="form.provider !== 'off'" data-testid="sms-check">
+            <svg class="icon icon-sm" :class="checking && 'animate-spin'" aria-hidden="true"><use :href="checking ? '#i-loader' : '#i-refresh'"/></svg>
+            <span>Bağlantıyı dene</span>
+          </button>
+          <button type="button" class="btn btn-primary" @click="save()" :disabled="saving" data-testid="sms-save">
+            <svg class="icon icon-sm animate-spin" aria-hidden="true" x-show="saving" x-cloak><use href="#i-loader"/></svg>
+            <span x-text="saving ? 'Kaydediliyor…' : 'Kaydet'">Kaydet</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="card pn-group-card" x-show="!loading && form.provider !== 'off'" x-cloak data-setting="sms.test">
+        <h3 class="pn-group-title">Deneme</h3>
+        <p class="text-sm text-ink-2">Kayıtlı ayarlarla hemen bir SMS gönderir (NetGSM'de kredi harcar). Gönderilemezse NetGSM'in verdiği hata burada görünür.</p>
+        <div class="grid gap-3 sm:grid-cols-[minmax(0,14rem)_minmax(0,1fr)]">
+          <label class="field">
+            <span class="field-label">Cep telefonu</span>
+            <input class="input" type="tel" x-model.trim="testTo" placeholder="0532 123 45 67" :aria-invalid="!!errors.to" data-testid="sms-test-to">
+            <span class="field-error" x-show="errors.to" x-text="errors.to"></span>
+          </label>
+          <label class="field">
+            <span class="field-label">Mesaj <span class="font-normal text-muted">(boşsa hazır deneme metni)</span></span>
+            <input class="input" x-model="testMessage" maxlength="900" :aria-invalid="!!errors.message">
+            <span class="field-help" x-show="testMessage" x-text="info.length + ' karakter · ' + info.parts + ' SMS' + (info.encoding ? ' · Türkçe karakterli' : '')"></span>
+            <span class="field-error" x-show="errors.message" x-text="errors.message"></span>
+          </label>
+        </div>
+        <div class="flex justify-end">
+          <button type="button" class="btn btn-secondary" @click="test()" :disabled="testing || !testTo" data-testid="sms-test">
+            <svg class="icon icon-sm" :class="testing && 'animate-spin'" aria-hidden="true"><use :href="testing ? '#i-loader' : '#i-send'"/></svg>
+            <span x-text="testing ? 'Gönderiliyor…' : 'Deneme gönder'">Deneme gönder</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="card pn-group-card" x-show="!loading" x-cloak data-setting="sms.log">
+        <h3 class="pn-group-title">Son gönderimler</h3>
+        <p class="text-sm text-muted">Mesaj metni ve numaranın tamamı saklanmaz.</p>
+        <p class="rounded-tile border border-dashed border-line px-4 py-6 text-center text-sm text-muted" x-show="!log.length">Henüz gönderim yok.</p>
+        <ul class="divide-y divide-line" x-show="log.length" data-testid="sms-log">
+          <template x-for="row in log" :key="row.id">
+            <li class="flex flex-wrap items-center gap-x-3 gap-y-1 py-2.5 text-sm">
+              <span class="badge" :class="row.status === 'sent' ? 'badge-success' : 'badge-danger'" x-text="row.status === 'sent' ? 'Gitti' : 'Gitmedi'"></span>
+              <span class="min-w-0 flex-1">
+                <span class="block truncate font-medium text-ink"><span x-text="row.name || row.recipient"></span> <span class="font-mono text-xs text-muted" x-show="row.name" x-text="row.recipient"></span></span>
+                <span class="block truncate text-xs text-muted" x-text="kindLabel(row.kind) + ' · ' + row.parts + ' SMS · ' + relative(row.created_at) + (row.job ? ' · iş ' + row.job : '')"></span>
+                <span class="block text-xs text-danger" x-show="row.error" x-text="row.error"></span>
+              </span>
+            </li>
+          </template>
+        </ul>
+      </section>
+    </div>
+  </template>
+
+  {# ============================================================ yapay zekâ (panel/system.js kmAi) #}
+  <template x-if="tab === 'ai'">
+    <div class="flex flex-col gap-5" x-data="kmAi" data-testid="ai">
+      <template x-if="loading">
+        <div class="flex flex-col gap-4"><span class="skeleton h-32"></span><span class="skeleton h-48"></span></div>
+      </template>
+
+      <section class="card pn-group-card" x-show="!loading" x-cloak data-setting="ai">
+        <h3 class="pn-group-title">Etkin sağlayıcı</h3>
+        <p class="text-sm text-ink-2">Jarvis sohbeti ve içerik çevirisi bu sağlayıcıyla çalışır. Sohbet ortasında değiştirilebilir; geçmiş korunur. Talep sahiplerinin kişisel verisi hiçbir sağlayıcıya gönderilmez.</p>
+        <div class="grid gap-2 sm:grid-cols-3" role="radiogroup" aria-label="Etkin yapay zekâ sağlayıcısı">
+          <template x-for="p in providers" :key="p.key">
+            <label class="flex cursor-pointer items-start gap-3 rounded-control border p-3 transition-colors" :class="form.provider === p.key ? 'border-primary bg-primary-soft' : 'border-line hover:border-primary/40'">
+              <input type="radio" class="mt-1 h-4 w-4 accent-primary" name="ai-provider" :value="p.key" x-model="form.provider" :data-testid="'ai-provider-' + p.key">
+              <span class="min-w-0">
+                <span class="block font-semibold text-ink" x-text="p.label"></span>
+                <span class="block text-xs" :class="p.configured ? 'text-success-ink' : 'text-muted'" x-text="p.configured ? 'Anahtar kayıtlı · ' + p.model : 'Anahtar yok'"></span>
+              </span>
+            </label>
+          </template>
+        </div>
+        <p class="rounded-control bg-warning-soft p-3 text-sm text-warning-ink" x-show="active && !active.configured">Etkin sağlayıcının anahtarı yok: aşağıdan ekleyin ya da anahtarı olan bir sağlayıcı seçin.</p>
+      </section>
+
+      <template x-for="p in providers" :key="p.key">
+        <section class="card pn-group-card" x-show="!loading" :data-setting="'ai.' + p.key" :data-testid="'ai-card-' + p.key">
+          <div class="flex flex-wrap items-center gap-2">
+            <h3 class="flex-1 font-semibold text-ink" x-text="p.label"></h3>
+            <span class="badge" :class="p.key === form.provider ? 'badge-primary' : 'badge-neutral'" x-show="p.key === form.provider">Etkin</span>
+            <span class="badge" :class="p.configured ? 'badge-success' : 'badge-neutral'" x-text="p.configured ? 'Anahtar kayıtlı' : 'Anahtar yok'"></span>
+          </div>
+          <div class="pn-grid">
+            <label class="pn-field pn-w-half">
+              <span class="field-label">API anahtarı</span>
+              <input class="input code" type="password" x-model="keys[p.key]" autocomplete="new-password" :placeholder="p.configured ? 'Kayıtlı (' + p.key_hint + '); değiştirmek için yeni anahtar' : p.key_placeholder" :aria-invalid="!!fieldError(p, 'api_key')" :data-testid="'ai-key-' + p.key">
+              <span class="text-xs text-muted" x-show="p.configured">Anahtar şifreli saklanıyor ve panele gösterilmiyor. <button type="button" class="font-medium text-primary hover:underline" @click="clearKey(p)">Sil</button></span>
+              <span class="field-error" x-show="fieldError(p, 'api_key')" x-text="fieldError(p, 'api_key')"></span>
+            </label>
+            <label class="pn-field pn-w-half">
+              <span class="field-label">Model</span>
+              <input class="input code" x-model.trim="form.models[p.key]" :list="'ai-models-' + p.key" autocomplete="off" spellcheck="false" :aria-invalid="!!fieldError(p, 'model')" :data-testid="'ai-model-' + p.key">
+              <datalist :id="'ai-models-' + p.key">
+                <template x-for="m in modelOptions(p)" :key="m.id"><option :value="m.id" x-text="m.label"></option></template>
+              </datalist>
+              <span class="text-xs text-muted" x-text="(modelOptions(p).find((m) => m.id === form.models[p.key])?.label || 'Listede yok; sağlayıcının model adı olarak gönderilir.')"></span>
+              <span class="field-error" x-show="fieldError(p, 'model')" x-text="fieldError(p, 'model')"></span>
+            </label>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button type="button" class="btn btn-secondary btn-sm" @click="test(p)" :disabled="!!busy || (!p.configured && !keys[p.key])" :data-testid="'ai-test-' + p.key">
+              <svg class="icon icon-sm" :class="busy === 'test:' + p.key && 'animate-spin'" aria-hidden="true"><use :href="busy === 'test:' + p.key ? '#i-loader' : '#i-send'"/></svg> Deneme isteği
+            </button>
+            <button type="button" class="btn btn-ghost btn-sm" @click="fetchModels(p)" :disabled="!!busy || (!p.configured && !keys[p.key])">
+              <svg class="icon icon-sm" :class="busy === 'models:' + p.key && 'animate-spin'" aria-hidden="true"><use :href="busy === 'models:' + p.key ? '#i-loader' : '#i-refresh'"/></svg> Modelleri getir
+            </button>
+            <span class="text-sm" :class="tests[p.key]?.ok ? 'text-success-ink' : 'text-danger'" x-show="tests[p.key]" x-text="tests[p.key]?.text"></span>
+          </div>
+        </section>
+      </template>
+
+      <section class="card pn-group-card" x-show="!loading" x-cloak data-setting="ai.behavior">
+        <h3 class="pn-group-title">Davranış</h3>
+        <div class="pn-grid">
+          <label class="pn-field pn-w-third" x-show="active?.supports?.effort">
+            <span class="field-label">Düşünme düzeyi</span>
+            <select class="input" x-model="form.effort">
+              <template x-for="e in view?.efforts || []" :key="e"><option :value="e" x-text="{ low: 'Düşük (hızlı)', medium: 'Orta', high: 'Yüksek', xhigh: 'Çok yüksek', max: 'En yüksek' }[e] || e" :selected="e === form.effort"></option></template>
+            </select>
+          </label>
+          <label class="pn-field pn-w-third">
+            <span class="field-label">Jarvis araç turu sınırı</span>
+            <input class="input" type="number" min="1" max="25" x-model.number="form.max_steps">
+            <span class="text-xs text-muted">Bir yanıtta en çok kaç beceri çağrısı.</span>
+          </label>
+          <label class="pn-field pn-w-third flex-row items-center gap-2 pt-7" x-show="active?.supports?.web_search">
+            <input type="checkbox" class="h-4.5 w-4.5 accent-primary" x-model="form.web_search"> <span class="text-sm">Web araması (güncel bilgi)</span>
+          </label>
+        </div>
+        <p class="text-xs text-muted" x-show="active && !active.supports.web_search">Bu sağlayıcıda web araması ve düşünme düzeyi kullanılmıyor (modelin varsayılanı).</p>
+        <div class="flex flex-wrap justify-end gap-2">
+          <button type="button" class="btn btn-primary" @click="save()" :disabled="saving || !dirty" data-testid="ai-save">
+            <svg class="icon icon-sm animate-spin" aria-hidden="true" x-show="saving" x-cloak><use href="#i-loader"/></svg>
+            <span x-text="saving ? 'Kaydediliyor…' : 'Kaydet'">Kaydet</span>
+          </button>
+        </div>
+      </section>
+    </div>
+  </template>
+
+  {# ============================================================ arka plan (panel/system.js kmJobs) #}
+  <template x-if="tab === 'jobs'">
+    <div class="flex flex-col gap-5" x-data="kmJobs" data-testid="jobs">
+      <template x-if="loading">
+        <div class="flex flex-col gap-4"><span class="skeleton h-32"></span><span class="skeleton h-32"></span></div>
+      </template>
+      <section class="card pn-group-card" x-show="!loading && data" x-cloak data-setting="jobs.cron">
+        <h3 class="pn-group-title">Zamanlanmış görevler ve kuyruk</h3>
+        <div class="flex flex-wrap gap-x-8 gap-y-3 text-sm">
+          <p class="flex items-center gap-2" data-testid="jobs-cron">
+            <svg class="icon icon-sm" :class="data?.cron?.alive ? 'text-success' : 'text-warning'" aria-hidden="true"><use :href="data?.cron?.alive ? '#i-check-circle' : '#i-alert-circle'"/></svg>
+            <span><span class="text-muted">Cron: </span><span x-text="cronText"></span></span>
+          </p>
+          <p><span class="text-muted">Kuyrukta bekleyen: </span><span class="num font-semibold" x-text="data?.pending ?? 0"></span></p>
+          <p><span class="text-muted">Başarısız: </span><span class="num font-semibold" :class="data?.failed && 'text-danger'" x-text="data?.failed ?? 0"></span></p>
+        </div>
+        <p class="text-sm text-ink-2" x-show="!data?.cron?.alive">Cron çalışmıyorken işler (e-postalar) yanıt gönderildikten sonra aynı istekte çalışır: kaybolmazlar ama başarısız olurlarsa yeniden denenmezler. Hostinger &gt; Cron Jobs: her dakika <span class="font-mono text-xs">php …/kodmob-core/artisan schedule:run</span>.</p>
+        <p class="text-sm text-ink-2" x-show="data?.cron?.alive">İşler kuyruktan dakikada bir çalışır; başarısız olan 1 ve 5 dakika sonra yeniden denenir, üçüncüde aşağıya düşer.</p>
+      </section>
+
+      <section class="card pn-group-card" x-show="!loading && data" x-cloak data-setting="jobs.failed">
+        <h3 class="pn-group-title">Başarısız işler</h3>
+        <p class="rounded-tile border border-dashed border-line px-4 py-6 text-center text-sm text-muted" x-show="!data?.failed_jobs?.length">Başarısız iş yok.</p>
+        <ul class="divide-y divide-line" x-show="data?.failed_jobs?.length" data-testid="jobs-failed">
+          <template x-for="job in data?.failed_jobs || []" :key="job.uuid">
+            <li class="flex flex-wrap items-center gap-x-3 gap-y-1 py-2.5 text-sm">
+              <span class="min-w-0 flex-1">
+                <span class="block font-medium text-ink" x-text="job.name"></span>
+                <span class="block truncate text-xs text-muted" x-text="fmt.dateTime(job.failed_at) + ' · ' + relative(job.failed_at)"></span>
+                <span class="block text-xs text-danger" x-text="job.error"></span>
+              </span>
+              <button type="button" class="btn btn-ghost btn-sm" @click="retry(job)" :disabled="!!busy">
+                <svg class="icon icon-sm" aria-hidden="true"><use href="#i-rotate-ccw"/></svg> Yeniden dene
+              </button>
+              <button type="button" class="btn btn-ghost btn-sm" @click="forget(job)" :disabled="!!busy" aria-label="Sil">
+                <svg class="icon icon-sm" aria-hidden="true"><use href="#i-trash"/></svg>
+              </button>
+            </li>
+          </template>
+        </ul>
+      </section>
+    </div>
+  </template>
+
+  {# ============================================================ yedekleme #}
+  <template x-if="tab === 'backup'">
+    <div class="flex flex-col gap-5" x-data="kmBackup" data-testid="backup">
+      {# Otomatik yedek (panel/auto-backup.js) #}
+      <section class="card pn-group-card" x-data="kmAutoBackup" data-testid="auto-backup" data-setting="backup.auto">
+        <div class="flex flex-wrap items-center gap-3">
+          <h3 class="pn-group-title flex-1">Otomatik yedek</h3>
+          <label class="pn-switch">
+            <input type="checkbox" class="peer sr-only" x-model="form.enabled" data-testid="auto-backup-enabled">
+            <span class="pn-switch-track" aria-hidden="true"></span>
+            <span class="field-label" x-text="form.enabled ? 'Açık' : 'Kapalı'"></span>
+          </label>
+        </div>
+        <template x-if="loading"><span class="skeleton h-24"></span></template>
+        <div class="flex flex-col gap-4" x-show="!loading" x-cloak>
+          <p class="text-sm text-ink-2">İçerik, ayarlar ve görsellerin asılları tek zip dosyasında sunucuda saklanır; isteğe bağlı olarak başka bir depoya da gönderilir (sunucuyla birlikte yedek de kaybolmasın). Zamanlama için cron gerekir (Ayarlar &gt; Arka plan).</p>
+          <p class="text-sm" :class="view?.last_status === 'failed' ? 'text-danger' : 'text-ink-2'" x-text="lastText" data-testid="auto-backup-last"></p>
+          <div class="pn-grid">
+            <label class="pn-field pn-w-third" data-setting="backup.auto.frequency">
+              <span class="field-label">Sıklık</span>
+              <select class="input" x-model="form.frequency"><option value="daily">Her gün</option><option value="weekly">Haftada bir</option></select>
+            </label>
+            <label class="pn-field pn-w-third" data-setting="backup.auto.keep">
+              <span class="field-label">Saklanan yedek</span>
+              <input class="input" type="number" min="1" max="60" x-model.number="form.keep">
+            </label>
+            <label class="pn-field pn-w-third flex-row items-center gap-2 pt-7">
+              <input type="checkbox" class="h-4.5 w-4.5 accent-primary" x-model="form.media"> <span class="text-sm">Görselleri de ekle</span>
+            </label>
+          </div>
+          <label class="flex items-center gap-2 text-sm font-medium text-ink"><input type="checkbox" class="h-4.5 w-4.5 accent-primary" x-model="form.remote" data-testid="auto-backup-remote"> Uzak depoya da gönder (S3 uyumlu)</label>
+          <div class="pn-grid" x-show="form.remote" x-cloak data-setting="backup.remote">
+            <label class="pn-field pn-w-half">
+              <span class="field-label">Uç adresi</span>
+              <input class="input" x-model.trim="form.endpoint" placeholder="https://<hesap>.r2.cloudflarestorage.com" :aria-invalid="!!errors.endpoint">
+              <span class="field-error" x-show="errors.endpoint" x-text="errors.endpoint"></span>
+            </label>
+            <label class="pn-field pn-w-third">
+              <span class="field-label">Kova (bucket)</span>
+              <input class="input" x-model.trim="form.bucket">
+            </label>
+            <label class="pn-field pn-w-third">
+              <span class="field-label">Bölge</span>
+              <input class="input" x-model.trim="form.region" placeholder="auto">
+            </label>
+            <label class="pn-field pn-w-third">
+              <span class="field-label">Klasör</span>
+              <input class="input" x-model.trim="form.prefix" placeholder="kodmob">
+            </label>
+            <label class="pn-field pn-w-half">
+              <span class="field-label">Erişim anahtarı</span>
+              <input class="input font-mono" x-model.trim="form.key" autocomplete="off">
+            </label>
+            <label class="pn-field pn-w-half">
+              <span class="field-label">Gizli anahtar</span>
+              <input class="input font-mono" type="password" x-model="secret" autocomplete="new-password" :placeholder="view?.secret_set ? '•••••••• (kayıtlı; değiştirmek için yazın)' : ''">
+            </label>
+            <label class="pn-field flex-row items-center gap-2"><input type="checkbox" class="h-4.5 w-4.5 accent-primary" x-model="form.path_style"> <span class="text-sm">Yol biçimli adres (R2, B2, MinIO için açık)</span></label>
+            <label class="pn-field" data-setting="backup.passphrase">
+              <span class="field-label">Yedek şifresi</span>
+              <input class="input" type="password" x-model="passphrase" autocomplete="new-password" :placeholder="view?.passphrase_set ? '•••••••• (kayıtlı; değiştirmek için yazın)' : 'En az 12 karakter'" :aria-invalid="!!errors.passphrase" data-testid="auto-backup-passphrase">
+              <span class="field-error" x-show="errors.passphrase" x-text="errors.passphrase"></span>
+              <span class="field-help">Uzak depoya giden yedek bu şifreyle şifrelenir (AES-256); yedekte siparişler, talepler ve aboneler de var. Şifreyi başka bir yerde saklayın: kaybolursa uzak yedek açılamaz.</span>
+            </label>
+          </div>
+          <div class="flex flex-wrap justify-end gap-2">
+            <button type="button" class="btn btn-ghost" x-show="form.remote && view?.remote" @click="test()" :disabled="!!busy">Bağlantıyı dene</button>
+            <button type="button" class="btn btn-secondary" @click="runNow()" :disabled="!!busy" data-testid="auto-backup-run">
+              <svg class="icon icon-sm" :class="busy === 'run' && 'animate-spin'" aria-hidden="true"><use :href="busy === 'run' ? '#i-loader' : '#i-download'"/></svg>
+              <span x-text="busy === 'run' ? 'Yedekleniyor…' : 'Şimdi yedekle'"></span>
+            </button>
+            <button type="button" class="btn btn-primary" @click="save()" :disabled="!!busy" data-testid="auto-backup-save">Kaydet</button>
+          </div>
+          <ul class="pn-snapshots" x-show="view?.items?.length" data-testid="auto-backup-list">
+            <template x-for="item in view?.items || []" :key="item.name">
+              <li>
+                <svg class="icon text-muted" aria-hidden="true"><use href="#i-database"/></svg>
+                <span class="min-w-0 flex-1">
+                  <span class="block truncate text-sm font-medium text-ink"><span x-text="item.name"></span><span class="badge badge-neutral ml-2" x-show="item.encrypted">Şifreli</span></span>
+                  <span class="block truncate text-xs text-muted" x-text="fmt.dateTime(item.created) + ' · ' + relative(item.created) + ' · ' + size(item.size)"></span>
+                </span>
+                <button type="button" class="btn btn-ghost btn-sm" @click="download(item.name)" :disabled="!!busy"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-download"/></svg><span class="max-sm:sr-only">İndir</span></button>
+                <button type="button" class="btn btn-ghost btn-sm" @click="restore(item)" :disabled="!!busy"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-rotate-ccw"/></svg><span class="max-sm:sr-only">Geri yükle</span></button>
+              </li>
+            </template>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card pn-group-card" data-setting="backup.export">
+        <h3 class="pn-group-title">Yedek al</h3>
+        <p class="text-sm text-ink-2">Bütün içerik (projeler, hizmetler, referanslar, blog), ayarlar, sayfa metinleri, SEO bilgileri ve görsellerin alt metinleri tek bir JSON dosyasına yazılır. Görsel dosyaları sunucuda kalır; başka bir siteye taşırken adreslerinden indirilir. Otomatik yedeğin zip'i ya da uzak depodaki şifreli kopyası (.kmbak) da buradan geri yüklenir.</p>
+        <label class="flex items-start gap-2 text-sm text-ink" x-show="personal.length" x-cloak>
+          <input type="checkbox" class="mt-0.5 h-4.5 w-4.5 shrink-0 accent-primary" x-model="withPersonal" data-testid="backup-personal">
+          <span><span class="font-medium">Kişisel kayıtları da ekle</span><span class="block text-xs text-muted" x-text="personal.join(', ') + ': müşterilerin kişisel verisi. Dosyayı güvenli yerde saklayın.'"></span></span>
+        </label>
+        <div class="flex flex-wrap gap-2">
+          <button type="button" class="btn btn-primary" @click="download()" :disabled="!!busy" data-testid="backup-download">
+            <svg class="icon icon-sm" aria-hidden="true" x-show="busy !== 'download'"><use href="#i-download"/></svg>
+            <svg class="icon icon-sm animate-spin" aria-hidden="true" x-show="busy === 'download'" x-cloak><use href="#i-loader"/></svg>
+            Yedeği indir
+          </button>
+          <label class="btn btn-secondary" :class="busy && 'pointer-events-none opacity-60'" data-setting="backup.restore">
+            <svg class="icon icon-sm" aria-hidden="true" x-show="busy !== 'restore'"><use href="#i-upload"/></svg>
+            <svg class="icon icon-sm animate-spin" aria-hidden="true" x-show="busy === 'restore'" x-cloak><use href="#i-loader"/></svg>
+            <span x-text="busy === 'restore' ? 'Geri yükleniyor…' : 'Dosyadan geri yükle'"></span>
+            <input type="file" accept="application/json,.json,.zip,.kmbak" class="sr-only" @change="restore($event.target.files); $event.target.value = ''">
+          </label>
+        </div>
+        <template x-if="report">
+          <div class="pn-report">
+            <p class="font-semibold text-ink">Son geri yükleme: <span x-text="summary(report.counts)"></span></p>
+            <p class="text-sm text-ink-2">Görseller: <span x-text="report.media.reused"></span> eşleşti, <span x-text="report.media.downloaded"></span> indirildi<span x-show="report.media.failed.length" x-text="', ' + report.media.failed.length + ' bulunamadı: ' + report.media.failed.join(', ')"></span>.</p>
+            <p class="text-sm text-ink-2" x-show="report.records?.restored?.length || report.records?.skipped?.length" x-text="report.records?.restored?.length ? 'Kişisel kayıtlar geri yüklendi: ' + report.records.restored.join(', ') + '.' : 'Kişisel kayıtlar değişmedi: ' + report.records.skipped.join(', ') + '.'"></p>
+            <p class="text-xs text-muted">Önceki durum aşağıdaki listeye kaydedildi: <span class="font-mono" x-text="report.snapshot"></span></p>
+          </div>
+        </template>
+      </section>
+
+      <section class="card pn-group-card">
+        <h3 class="pn-group-title">Yedek listesi</h3>
+        <p class="text-sm text-ink-2">Her geri yüklemeden önce sitenin o anki hali sunucuda otomatik olarak saklanır (son 10). Buradan indirebilir ya da o hale geri dönebilirsiniz.</p>
+        <template x-if="loadingList">
+          <div class="flex flex-col gap-2"><span class="skeleton h-12"></span><span class="skeleton h-12"></span></div>
+        </template>
+        <p class="rounded-tile border border-dashed border-line px-4 py-6 text-center text-sm text-muted" x-show="!loadingList && !snapshots.length" x-cloak>Henüz yedek yok. İlk geri yüklemede önceki durum burada görünür.</p>
+        <ul class="pn-snapshots" x-show="!loadingList && snapshots.length" x-cloak>
+          <template x-for="s in snapshots" :key="s.name">
+            <li>
+              <svg class="icon text-muted" aria-hidden="true"><use href="#i-database"/></svg>
+              <span class="min-w-0 flex-1">
+                <span class="block truncate text-sm font-medium text-ink" x-text="label(s.name)"></span>
+                <span class="block truncate text-xs text-muted" x-text="fmt.dateTime(s.created) + ' · ' + relative(s.created) + ' · ' + size(s.size)"></span>
+              </span>
+              <button type="button" class="btn btn-ghost btn-sm" @click="downloadSnapshot(s.name)" :disabled="!!busy" :aria-label="'İndir: ' + s.name">
+                <svg class="icon icon-sm" aria-hidden="true" x-show="busy !== s.name"><use href="#i-download"/></svg>
+                <svg class="icon icon-sm animate-spin" aria-hidden="true" x-show="busy === s.name" x-cloak><use href="#i-loader"/></svg>
+                <span class="max-sm:sr-only">İndir</span>
+              </button>
+              <button type="button" class="btn btn-ghost btn-sm" @click="restoreSnapshot(s.name)" :disabled="!!busy" :aria-label="'Geri yükle: ' + s.name">
+                <svg class="icon icon-sm" aria-hidden="true" x-show="busy !== 'load:' + s.name"><use href="#i-rotate-ccw"/></svg>
+                <svg class="icon icon-sm animate-spin" aria-hidden="true" x-show="busy === 'load:' + s.name" x-cloak><use href="#i-loader"/></svg>
+                <span class="max-sm:sr-only">Geri yükle</span>
+              </button>
+            </li>
+          </template>
+        </ul>
+      </section>
+    </div>
+  </template>
+</div>

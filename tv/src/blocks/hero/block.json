@@ -1,0 +1,17 @@
+{
+  "label": "Karşılama",
+  "description": "Sayfanın başındaki büyük başlık: üst etiket, vurgulu başlık, kısa açıklama ve iki düğme.",
+  "category": "section",
+  "icon": "home",
+  "fields": [
+    { "name": "eyebrow", "type": "text", "label": "Üst etiket", "localized": true, "max": 60, "default": "@blocks.hero.eyebrow" },
+    { "name": "title", "type": "text", "label": "Başlık", "localized": true, "max": 120, "default": "@blocks.hero.title" },
+    { "name": "titleAccent", "type": "text", "label": "Başlığın vurgulu devamı", "localized": true, "max": 80, "default": "@blocks.hero.titleAccent" },
+    { "name": "lead", "type": "textarea", "label": "Açıklama", "localized": true, "max": 400, "default": "@blocks.hero.lead" },
+    { "name": "primary", "type": "text", "label": "Ana düğme", "localized": true, "max": 40, "default": "@blocks.hero.primary" },
+    { "name": "primaryUrl", "type": "link", "label": "Ana düğmenin bağlantısı", "default": "route:contact" },
+    { "name": "secondary", "type": "text", "label": "İkinci düğme", "localized": true, "max": 40, "default": "@blocks.hero.secondary" },
+    { "name": "secondaryUrl", "type": "link", "label": "İkinci düğmenin bağlantısı", "default": "route:blog" },
+    { "name": "align", "type": "select", "label": "Hizalama", "options": { "center": "Ortada", "start": "Solda" }, "default": "center" }
+  ]
+}

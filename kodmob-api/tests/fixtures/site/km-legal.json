@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "groups": {
+    "general": { "tr": "Genel", "en": "General" },
+    "newsletter": { "tr": "Bülten", "en": "Newsletter" },
+    "commerce": { "tr": "Alışveriş", "en": "Shopping" }
+  },
+  "docs": {
+    "privacy": {
+      "group": "general",
+      "order": 10,
+      "module": null,
+      "updated": "2026-10-21",
+      "titles": { "tr": "Gizlilik politikası", "en": "Privacy policy" },
+      "descriptions": { "tr": "Kişisel verileri nasıl işlediğimiz.", "en": "How we process personal data." },
+      "templates": {
+        "tr": "<h2>Veri sorumlusu</h2>\n{{{controllerCard}}}\n<h2>Ziyaret</h2>\n<p>Güvenlik kayıtları {{retention.security}} gün.</p>\n{{#modules.briefs}}<h2>Bize yazdığınızda</h2>\n<p>Talepler {{retention.briefs}} ay.</p>{{/modules.briefs}}\n{{#modules.commerce}}<h2>Alışveriş</h2>\n<p>Ödeme: {{commerce.payments}}{{#modules.stripe}} · Stripe{{/modules.stripe}}</p>{{#links.shopTerms}}<p><a href=\"{{links.shopTerms}}\">Sözleşme</a></p>{{/links.shopTerms}}{{/modules.commerce}}\n<h2>Haklar</h2>\n<div class=\"table-wrap\"><table><tr><td>a</td></tr></table></div>\n<p>Mahkeme: {{controller.court}}</p>",
+        "en": "<h2>Data controller</h2>\n{{{controllerCard}}}\n<h2>Rights</h2>\n<p>Write to {{controller.email}}.</p>"
+      }
+    },
+    "newsletterConsent": {
+      "group": "newsletter",
+      "order": 10,
+      "module": "newsletter",
+      "updated": "2026-10-21",
+      "titles": { "tr": "Bülten onayı", "en": "Newsletter consent" },
+      "descriptions": { "tr": "Ticari ileti onayı.", "en": "Marketing consent." },
+      "templates": { "tr": "<h2>Onay</h2><p>{{site.name}} bülteni.</p>" }
+    },
+    "shopTerms": {
+      "group": "commerce",
+      "order": 10,
+      "module": "commerce",
+      "updated": "2026-10-20",
+      "titles": { "tr": "Mesafeli satış sözleşmesi", "en": "Distance sales contract" },
+      "descriptions": { "tr": "Satış koşulları.", "en": "Terms of sale." },
+      "templates": { "tr": "<h2>Taraflar</h2>{{{controllerCard}}}<h2>Fiyat</h2><p>Kargo: {{commerce.shippingFee}}{{^commerce.shippingFee}}ücretsiz{{/commerce.shippingFee}}</p>" }
+    }
+  }
+}

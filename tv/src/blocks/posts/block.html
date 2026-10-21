@@ -1,0 +1,31 @@
+{{! Son yazılar: liste Alpine'da ($store.km.posts; blok `needs: posts`), sunucu ilk N kartı JavaScript'siz okuyucular için yazar (ListSsr). }}
+<section class="container-site section-sm" x-show="$store.km.posts?.length">
+  <div class="section-head reveal">
+    <div>
+{{#eyebrow}}
+      <span class="eyebrow" data-km-field="eyebrow">{{eyebrow}}</span>
+{{/eyebrow}}
+      <h2 class="h2 mt-2" data-km-field="title">{{title}}</h2>
+    </div>
+{{#cta}}{{#ctaUrl}}
+    <a href="{{ctaUrl}}" class="link-arrow"><span data-km-field="cta">{{cta}}</span> <svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+{{/ctaUrl}}{{/cta}}
+  </div>
+  <div class="grid gap-5 md:grid-cols-3">
+    <template x-for="(post, i) in ($store.km.posts || []).slice(0, {{count}})" :key="post.id" data-km-ssr-list="posts" data-km-ssr-route="post" data-km-ssr-limit="{{count}}">
+      <article class="blog-card card-hover" :class="'reveal reveal-delay-' + (i % 3 + 1)">
+        <a :href="post.url" class="flex h-full flex-col">
+          <div class="blog-card-media" data-vt-media>
+            <template x-if="post.cover?.src"><img :src="post.cover.src" :srcset="post.cover.srcset || false" sizes="(min-width: 768px) 33vw, 100vw" :width="post.cover.width" :height="post.cover.height" :alt="post.cover.alt || post.title" class="h-full w-full object-cover" decoding="async" loading="lazy"></template>
+            <template x-if="!post.cover?.src"><div class="media-ph h-full w-full object-cover"><svg class="icon h-10 w-10" aria-hidden="true"><use href="#i-image"/></svg></div></template>
+            <span class="category" x-text="$store.km.label('blogCategories', post.category)"></span>
+          </div>
+          <div class="blog-card-body">
+            <h3 class="blog-card-title" x-text="post.title"></h3>
+            <p class="blog-meta mt-auto"><time :datetime="post.date" x-text="$store.km.date(post.date)"></time><span x-text="$store.km.readTime(post.minutes)"></span></p>
+          </div>
+        </a>
+      </article>
+    </template>
+  </div>
+</section>

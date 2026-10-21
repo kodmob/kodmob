@@ -1,0 +1,33 @@
+{{! Template: Turkish Distance Contracts Regulation Art. 5 (pre-contract information). Not legal advice. }}
+<h2>Seller</h2>
+{{{controllerCard}}}
+
+<h2>Main characteristics</h2>
+<p>The main characteristics of the goods{{#modules.booking}} and services{{/modules.booking}} in your order are on the product page; quantity and options are shown in the cart and at checkout.</p>
+
+<h2>Price, taxes and additional costs</h2>
+<ul>
+  <li>Prices are in{{#commerce.currency}} {{commerce.currency}}{{/commerce.currency}} and the total including taxes is shown at checkout.</li>
+{{#commerce.shippingFee}}
+  <li>Shipping: {{commerce.shippingFee}}{{#commerce.freeOver}}; free for orders of {{commerce.freeOver}} or more{{/commerce.freeOver}}.</li>
+{{/commerce.shippingFee}}
+{{#commerce.codFee}}
+  <li>Cash on delivery fee: {{commerce.codFee}}.</li>
+{{/commerce.codFee}}
+  <li>No other charges apply.</li>
+</ul>
+
+<h2>Payment</h2>
+<p>Payment methods: {{commerce.payments}}. For card payments your card details are entered on the payment provider's secure page; we neither see nor store them.</p>
+
+<h2>Delivery and performance</h2>
+<p>Goods are delivered to your address within the promised time and in any case within 30 days of order confirmation. Digital goods are delivered electronically once payment is confirmed.{{#modules.booking}} For bookings, the service is provided on the date you booked.{{/modules.booking}}</p>
+
+<h2>Right of withdrawal</h2>
+<p>You may withdraw within 14 days of delivery of the goods without giving reasons or paying a penalty. Send your notice with your order number to <a href="mailto:{{controller.email}}">{{controller.email}}</a>; the price is refunded to your payment method within 14 days of our receiving it. The right of withdrawal does not apply to personalised goods, unsealed hygiene products, digital content, or services provided on a specific date such as accommodation, tours and activities.{{#links.returns}} Details: <a href="{{links.returns}}">Cancellation, Returns and Withdrawal</a>.{{/links.returns}}</p>
+
+<h2>Complaints</h2>
+<p>You can send complaints to <a href="mailto:{{controller.email}}">{{controller.email}}</a>. In disputes you may apply to consumer arbitration committees within the monetary limits set by the Ministry of Trade, and to consumer courts above them.</p>
+
+<h2>Confirmation</h2>
+<p>This information is provided before you confirm your order and is accepted at checkout. A copy is sent with the order confirmation e-mail.{{#links.shopTerms}} Terms of sale: <a href="{{links.shopTerms}}">Distance Sales Contract</a>.{{/links.shopTerms}}</p>

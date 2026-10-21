@@ -1,0 +1,92 @@
+{# Yasal belgeler. Mantık: panel/legal.js; kodmob-api Modules\Site\Legal. #}
+<div class="pn-page" x-data="kmLegal" data-testid="legal">
+  <div class="pn-bar">
+    <div class="min-w-0 flex-1">
+      <p class="pn-bar-title">Yasal belgeler</p>
+      <p class="pn-bar-meta"><span>Projede açık modüllere göre belgeler; modül açılınca belgeleri ve metinlerdeki bölümleri kendiliğinden gelir.</span></p>
+    </div>
+    <a class="btn btn-secondary" :href="hub" target="_blank" rel="noopener" x-show="hub"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-external"/></svg> Sitede gör</a>
+  </div>
+
+  <p class="pn-alert" role="alert" x-show="missing.length" x-cloak data-testid="legal-missing">
+    Belgelerde eksik bilgi: <strong x-text="missing.join(', ')"></strong>. Metinlerde köşeli parantezli uyarı görünür;
+    <a class="link" :href="settingsHref">Proje Ayarları › Yasal</a>'dan doldurun.
+  </p>
+  <p class="mb-4 text-sm text-muted">Şablonlar hukuki görüş değildir; yayından önce işletmenizin gerçek durumuna göre bir hukukçuya kontrol ettirin.</p>
+
+  <template x-if="loading"><div class="flex flex-col gap-3"><span class="skeleton h-24"></span><span class="skeleton h-24"></span></div></template>
+
+  <template x-for="group in groups" :key="group.key">
+    <section class="mb-6" :data-group="group.key">
+      <h2 class="mb-3 text-sm font-semibold tracking-wide text-muted uppercase" x-text="group.label"></h2>
+      <div class="grid grid-cols-1 gap-3 lg:grid-cols-2">
+        <template x-for="item in group.items" :key="item.name">
+          <article class="card card-body flex flex-col gap-3" :data-legal="item.name" data-testid="legal-doc">
+            <div>
+              <p class="font-semibold text-ink" x-text="item.title"></p>
+              <p class="mt-1 text-sm text-ink-2" x-text="item.description"></p>
+            </div>
+            <ul class="flex flex-col gap-1.5">
+              <template x-for="code in locales" :key="code">
+                <li class="flex flex-wrap items-center gap-2 text-sm" :data-locale="code">
+                  <span class="w-20 shrink-0 text-ink-2" x-text="langLabel(code)"></span>
+                  <span class="badge" :class="item.locales[code].customized ? 'badge-warning' : 'badge-neutral'" x-text="item.locales[code].customized ? 'Özelleştirildi' : 'Şablon'" data-testid="legal-state"></span>
+                  <span class="text-xs text-muted" x-text="fmt.date(item.locales[code].updated)"></span>
+                  <span class="ml-auto flex gap-1">
+                    <a class="btn-icon" :href="item.locales[code].url" target="_blank" rel="noopener" x-show="item.locales[code].url" aria-label="Sitede aç" title="Sitede aç"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-external"/></svg></a>
+                    <button type="button" class="btn btn-secondary btn-sm" @click="open(item, code)" :disabled="busy !== null" data-testid="legal-edit"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-pencil"/></svg> Düzenle</button>
+                  </span>
+                </li>
+              </template>
+            </ul>
+          </article>
+        </template>
+      </div>
+    </section>
+  </template>
+
+  {# ============================================================ düzenleme penceresi #}
+  <template x-if="editing">
+    <div>
+      <div class="pn-modal-backdrop" @click="busy || (editing = false)"></div>
+      <div class="pn-modal-wrap">
+        <form class="pn-modal max-w-4xl" role="dialog" aria-modal="true" aria-labelledby="legal-title" @submit.prevent="save()" @keydown.escape.window="busy || (editing = false)" data-testid="legal-form">
+          <header class="pn-modal-head">
+            <h2 id="legal-title" class="h3"><span x-text="form.title"></span> · <span x-text="form.locale.toUpperCase()"></span></h2>
+            <button type="button" class="btn-icon ml-auto" @click="editing = false" :disabled="busy" aria-label="Kapat"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button>
+          </header>
+          <div class="flex flex-col gap-3 p-5">
+            <p class="text-sm text-ink-2" x-show="!form.customized">Bu metin şablondan çiziliyor: firma bilgileri ve açık modüllerin bölümleri kendiliğinden güncellenir. Kaydederseniz bu dilde sabitlenir.</p>
+            <p class="pn-alert" x-show="form.customized">Bu dilde özelleştirilmiş: sonradan açılan modüllerin bölümleri ve değişen firma bilgileri bu metne eklenmez. Güncel şablona dönmek için "Şablona dön".</p>
+            <div class="rte" x-data="kmRichText(() => form.body, (value) => form.body = value, () => form.locale)" data-testid="legal-body-editor">
+              <div class="rte-toolbar" role="toolbar" aria-label="Biçimlendirme">
+                <button type="button" class="rte-btn" :class="is('heading', { level: 2 }) && 'is-active'" @click="run('toggleHeading', { level: 2 })" title="Bölüm başlığı">H2</button>
+                <button type="button" class="rte-btn" :class="is('heading', { level: 3 }) && 'is-active'" @click="run('toggleHeading', { level: 3 })" title="Alt başlık">H3</button>
+                <span class="rte-sep" aria-hidden="true"></span>
+                <button type="button" class="rte-btn font-bold" :class="is('bold') && 'is-active'" @click="run('toggleBold')" title="Kalın (Ctrl+B)">B</button>
+                <button type="button" class="rte-btn italic" :class="is('italic') && 'is-active'" @click="run('toggleItalic')" title="İtalik (Ctrl+I)">I</button>
+                <button type="button" class="rte-btn" :class="is('link') && 'is-active'" @click="link()" title="Bağlantı"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-link"/></svg></button>
+                <span class="rte-sep" aria-hidden="true"></span>
+                <button type="button" class="rte-btn" :class="is('bulletList') && 'is-active'" @click="run('toggleBulletList')" title="Madde listesi"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-list"/></svg></button>
+                <button type="button" class="rte-btn" :class="is('orderedList') && 'is-active'" @click="run('toggleOrderedList')" title="Numaralı liste">1.</button>
+                <span class="rte-sep" aria-hidden="true"></span>
+                <button type="button" class="rte-btn" @click="run('undo')" :disabled="!can('undo')" title="Geri al (Ctrl+Z)"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-rotate-ccw"/></svg></button>
+                <button type="button" class="rte-btn" @click="run('redo')" :disabled="!can('redo')" title="Yinele (Ctrl+Y)"><svg class="icon icon-sm -scale-x-100" aria-hidden="true"><use href="#i-rotate-ccw"/></svg></button>
+              </div>
+              <div x-ref="area" class="rte-area"></div>
+            </div>
+            <p class="field-error" x-show="errors.body" x-text="errors.body"></p>
+          </div>
+          <footer class="pn-modal-foot flex-wrap">
+            <button type="button" class="btn btn-ghost text-danger mr-auto" x-show="form.customized" @click="reset()" :disabled="busy" data-testid="legal-reset"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-rotate-ccw"/></svg> Şablona dön</button>
+            <a class="btn btn-ghost" :href="form.url" target="_blank" rel="noopener" x-show="form.url">Sitede aç</a>
+            <button type="button" class="btn btn-ghost" @click="editing = false" :disabled="busy">Vazgeç</button>
+            <button type="submit" class="btn btn-primary" :disabled="busy" data-testid="legal-save">
+              <svg class="icon icon-sm animate-spin" aria-hidden="true" x-show="busy === 'save'" x-cloak><use href="#i-loader"/></svg> Kaydet (özelleştir)
+            </button>
+          </footer>
+        </form>
+      </div>
+    </div>
+  </template>
+</div>

@@ -1,0 +1,32 @@
+{{! Şablon: teslim süresi, bölge ve kargo firmasını işletmenize göre özelleştirin. }}
+<h2>Genel</h2>
+<p>{{site.name}} üzerinden verilen siparişler, siparişin onaylanmasından sonra hazırlanır ve kargoya verilir. Havale / EFT ile ödemelerde hazırlık, ödemenin hesabımıza ulaşmasıyla başlar. Siparişin durumu sipariş onay e-postasındaki bağlantıdan izlenebilir; kargoya verildiğinde ayrıca e-posta gönderilir.</p>
+
+<h2>Teslim süresi</h2>
+<p>Ürünler taahhüt edilen sürede ve her hâlükârda siparişin onaylanmasından itibaren en geç 30 gün içinde teslim edilir. Bu süre içinde teslim edilemeyecek bir durum olursa sizi bilgilendiririz; dilerseniz siparişinizi iptal edip ödediğiniz tutarın tamamını geri alabilirsiniz.</p>
+
+<h2>Kargo ücreti</h2>
+{{#commerce.shippingFee}}
+<p>Kargo ücreti: {{commerce.shippingFee}}{{#commerce.freeOver}}; {{commerce.freeOver}} ve üzeri siparişlerde kargo ücretsizdir{{/commerce.freeOver}}. Ücret ödeme adımında toplam tutara eklenir.</p>
+{{/commerce.shippingFee}}
+{{^commerce.shippingFee}}
+<p>Kargo ücreti alınmaz.</p>
+{{/commerce.shippingFee}}
+{{#commerce.cod}}
+<p>Kapıda ödemede{{#commerce.codFee}} {{commerce.codFee}} ek ücret alınır ve{{/commerce.codFee}} ödeme teslimat sırasında kargo görevlisine yapılır.</p>
+{{/commerce.cod}}
+
+<h2>Teslim alırken</h2>
+<p>Paketi teslim alırken dış ambalajı kontrol edin. Hasarlı, ezik ya da açılmış paketi kargo görevlisine tutanak tutturarak teslim almanızı ya da teslim almamanızı öneririz. Hasarlı ulaşan ürünler için bizimle iletişime geçin; ürün ücretsiz olarak değiştirilir ya da bedeli iade edilir.</p>
+<p>Adreste bulunamamanız hâlinde kargo firması bilgilendirme bırakır; belirtilen sürede teslim alınmayan gönderiler bize geri döner. Bu durumda sizinle iletişime geçeriz.</p>
+
+<h2>Dijital ürünler</h2>
+<p>Dijital ürünler ödemenin onaylanmasıyla birlikte e-posta ya da sipariş sayfası üzerinden elektronik ortamda teslim edilir; kargo ücreti alınmaz.</p>
+
+{{#modules.booking}}
+<h2>Rezervasyonlar</h2>
+<p>Tur, etkinlik{{#modules.hotels}} ve konaklama{{/modules.hotels}} rezervasyonlarında fiziksel teslimat yoktur. Rezervasyonunuzun bilgileri onay e-postasıyla gönderilir ve hizmet seçtiğiniz tarihte sunulur.{{#links.bookingTerms}} Ayrıntılar: <a href="{{links.bookingTerms}}">Rezervasyon Koşulları</a>.{{/links.bookingTerms}}</p>
+{{/modules.booking}}
+
+<h2>İletişim</h2>
+<p>Teslimatla ilgili sorularınız için sipariş numaranızla birlikte <a href="mailto:{{controller.email}}">{{controller.email}}</a> adresine yazabilirsiniz.</p>

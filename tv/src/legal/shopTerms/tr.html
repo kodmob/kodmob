@@ -1,0 +1,50 @@
+{{! Şablon: 6502 s. Tüketicinin Korunması Hakkında Kanun ve Mesafeli Sözleşmeler Yönetmeliği. Hukuki görüş değildir. }}
+<h2>Taraflar</h2>
+<p><strong>Satıcı:</strong></p>
+{{{controllerCard}}}
+<p><strong>Alıcı:</strong> {{site.name}} üzerinden sipariş veren ve sipariş formunda adı, adresi ve iletişim bilgileri yer alan kişi. Alıcının bilgileri sipariş özetinde ve sipariş onay e-postasında yer alır.</p>
+
+<h2>Konu</h2>
+<p>Bu sözleşme, Alıcı'nın {{site.name}} üzerinden elektronik ortamda sipariş verdiği ürün{{#modules.booking}} ve hizmetlerin{{/modules.booking}} satışı ve teslimi ile ilgili olarak 6502 sayılı Tüketicinin Korunması Hakkında Kanun ve Mesafeli Sözleşmeler Yönetmeliği uyarınca tarafların hak ve yükümlülüklerini düzenler.</p>
+
+<h2>Ürün, fiyat ve ödeme</h2>
+<p>Siparişe konu ürünlerin{{#modules.booking}} ve hizmetlerin{{/modules.booking}} temel nitelikleri, adedi, vergiler dahil satış fiyatı, varsa teslimat ücreti ve toplam tutar ödeme adımında ve sipariş onay e-postasında gösterilir; bu bilgiler sözleşmenin parçasıdır.</p>
+<ul>
+{{#commerce.shippingFee}}
+  <li><strong>Kargo ücreti:</strong> {{commerce.shippingFee}}{{#commerce.freeOver}}; {{commerce.freeOver}} ve üzeri siparişlerde ücretsiz{{/commerce.freeOver}}.</li>
+{{/commerce.shippingFee}}
+{{^commerce.shippingFee}}
+  <li><strong>Kargo ücreti:</strong> alınmaz.</li>
+{{/commerce.shippingFee}}
+  <li><strong>Ödeme yöntemleri:</strong> {{commerce.payments}}.</li>
+</ul>
+<p>Kartla ödemelerde kart bilgileri ödeme kuruluşunun güvenli sayfasında girilir; Satıcı kart bilgilerini görmez ve saklamaz.</p>
+
+<h2>Teslimat</h2>
+<p>Ürünler, siparişin onaylanmasından (havale / EFT'de ödemenin ulaşmasından) itibaren taahhüt edilen sürede ve her hâlükârda en geç 30 gün içinde Alıcı'nın bildirdiği adrese teslim edilir. Dijital ürünler ödeme onayıyla birlikte elektronik ortamda teslim edilir.{{#links.delivery}} Ayrıntılar: <a href="{{links.delivery}}">Teslimat ve Kargo Koşulları</a>.{{/links.delivery}}</p>
+
+<h2>Cayma hakkı</h2>
+<p>Alıcı, hiçbir gerekçe göstermeksizin ve cezai şart ödemeksizin, malın kendisine ya da gösterdiği üçüncü kişiye teslim edildiği günden itibaren 14 gün içinde cayma hakkını kullanabilir. Hizmet sözleşmelerinde bu süre sözleşmenin kurulduğu gün başlar.</p>
+<p>Cayma bildirimi, süre dolmadan <a href="mailto:{{controller.email}}">{{controller.email}}</a> adresine sipariş numarası belirtilerek yazılı olarak yapılır. Satıcı, bildirimin kendisine ulaştığı tarihten itibaren 14 gün içinde, varsa teslimat masrafları dahil tahsil edilen tüm ödemeleri Alıcı'nın kullandığı ödeme aracıyla iade eder. Alıcı, cayma bildiriminden itibaren 10 gün içinde malı geri gönderir.{{#links.returns}} Ayrıntılar: <a href="{{links.returns}}">İptal, İade ve Cayma Koşulları</a>.{{/links.returns}}</p>
+
+<h2>Cayma hakkının kullanılamayacağı durumlar</h2>
+<p>Mesafeli Sözleşmeler Yönetmeliği'nin 15. maddesi uyarınca, diğerlerinin yanında şu sözleşmelerde cayma hakkı kullanılamaz:</p>
+<ul>
+  <li>Alıcı'nın istekleri ya da kişisel ihtiyaçları doğrultusunda hazırlanan mallar,</li>
+  <li>çabuk bozulabilen ya da son kullanma tarihi geçebilecek mallar,</li>
+  <li>teslimden sonra ambalajı açılmış; iadesi sağlık ve hijyen açısından uygun olmayan mallar,</li>
+  <li>elektronik ortamda anında ifa edilen hizmetler ve tüketiciye anında teslim edilen gayri maddi mallar (dijital içerik),</li>
+  <li>belirli bir tarihte veya dönemde yapılması gereken konaklama, eşya taşıma, araç kiralama, yiyecek-içecek tedariki ve eğlence veya dinlenme amaçlı boş zamanın değerlendirilmesine ilişkin sözleşmeler.</li>
+</ul>
+
+{{#modules.booking}}
+<h2>Rezervasyonlar</h2>
+<p>Belirli bir tarihte sunulan tur, etkinlik{{#modules.hotels}} ve konaklama{{/modules.hotels}} hizmetleri yukarıdaki istisna kapsamındadır; bunlarda cayma hakkı yerine rezervasyon koşullarındaki iptal ve iade kuralları uygulanır.{{#links.bookingTerms}} Ayrıntılar: <a href="{{links.bookingTerms}}">Rezervasyon Koşulları</a>.{{/links.bookingTerms}}</p>
+{{/modules.booking}}
+
+<h2>Genel hükümler</h2>
+<p>Alıcı, ödeme adımında bu sözleşmeyi ve{{#links.preInformation}} <a href="{{links.preInformation}}">Ön Bilgilendirme Formu</a>'nu{{/links.preInformation}} okuyup onayladığını kabul eder. Sözleşme, siparişin tamamlanmasıyla kurulur ve Satıcı tarafından saklanır; bir örneği sipariş onay e-postasıyla Alıcı'ya iletilir.</p>
+<p>Ayıplı mallarda Alıcı'nın 6502 sayılı Kanun'un 11. maddesindeki seçimlik hakları (sözleşmeden dönme, bedel indirimi, ücretsiz onarım, ayıpsız misliyle değişim) saklıdır.</p>
+
+<h2>Uyuşmazlıkların çözümü</h2>
+<p>Bu sözleşmeden doğan uyuşmazlıklarda, Ticaret Bakanlığınca her yıl belirlenen parasal sınırlar dahilinde Alıcı'nın veya Satıcı'nın yerleşim yerindeki tüketici hakem heyetleri, bu sınırları aşan durumlarda tüketici mahkemeleri yetkilidir.</p>

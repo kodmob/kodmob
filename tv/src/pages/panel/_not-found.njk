@@ -1,0 +1,19 @@
+{# Bilinmeyen panel adresi (rota tablosunda yok). Öneriler kmPanel.suggestions'dan: menüdeki benzer sayfalar. #}
+<div class="card pn-empty" data-testid="not-found">
+  <span class="icon-tile icon-tile-round"><svg class="icon icon-lg" aria-hidden="true"><use href="#i-search"/></svg></span>
+  <p class="font-semibold text-ink">Sayfa bulunamadı</p>
+  <p class="max-w-md text-sm text-ink-2">
+    <span class="code" x-text="r.path"></span> adresinde bir panel sayfası yok. Bağlantı eski ya da hatalı yazılmış olabilir.
+  </p>
+  <template x-if="suggestions.length">
+    <div class="flex flex-col items-center gap-2">
+      <p class="text-xs font-semibold tracking-wide text-muted uppercase">Bunu mu arıyordunuz?</p>
+      <div class="flex flex-wrap justify-center gap-2">
+        <template x-for="p in suggestions" :key="p.key">
+          <a :href="p.href" class="btn btn-secondary btn-sm"><svg class="icon icon-sm" aria-hidden="true"><use :href="'#i-' + p.icon"/></svg> <span x-text="p.label"></span></a>
+        </template>
+      </div>
+    </div>
+  </template>
+  <a :href="homeUrl" class="btn btn-primary btn-sm">Ana sayfaya dön</a>
+</div>

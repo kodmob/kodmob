@@ -1,0 +1,58 @@
+{
+  "label": "Bilgiler",
+  "description": "Kaydın kısa bilgileri: konum, giriş / çıkış saati, süre, rehberlik dilleri, buluşma noktası (doluysa).",
+  "category": "entry",
+  "icon": "info",
+  "module": "booking",
+  "scope": "entry",
+  "fields": [
+    {
+      "name": "locationLabel",
+      "type": "text",
+      "label": "Konum etiketi",
+      "localized": true,
+      "max": 60,
+      "default": "@shop.booking.location"
+    },
+    {
+      "name": "checkInLabel",
+      "type": "text",
+      "label": "Giriş saati etiketi",
+      "localized": true,
+      "max": 60,
+      "default": "@shop.booking.checkInTime"
+    },
+    {
+      "name": "checkOutLabel",
+      "type": "text",
+      "label": "Çıkış saati etiketi",
+      "localized": true,
+      "max": 60,
+      "default": "@shop.booking.checkOutTime"
+    },
+    {
+      "name": "durationLabel",
+      "type": "text",
+      "label": "Süre etiketi",
+      "localized": true,
+      "max": 60,
+      "default": "@shop.booking.duration"
+    },
+    {
+      "name": "languagesLabel",
+      "type": "text",
+      "label": "Rehberlik dilleri etiketi",
+      "localized": true,
+      "max": 60,
+      "default": "@shop.booking.guideLanguages"
+    },
+    {
+      "name": "meetingLabel",
+      "type": "text",
+      "label": "Buluşma noktası etiketi",
+      "localized": true,
+      "max": 60,
+      "default": "@shop.booking.meeting"
+    }
+  ]
+}

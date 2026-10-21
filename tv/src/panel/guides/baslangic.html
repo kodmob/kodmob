@@ -1,0 +1,74 @@
+<p class="lead">Panelde gün içinde en çok yapılan işler: kayıt eklemek, yayına almak, çevirmek ve aradığınızı bulmak. Gördüğünüz sayfalar ve düğmeler rolünüze göredir; bir şey eksikse Yönetici'den yetki isteyin.</p>
+
+<h2 id="menu">Menü, arama ve Tüm İşlemler</h2>
+<ul>
+  <li><strong>Sol menü</strong> rolünüzün menüsüdür ve sadedir: en üstte Genel bakış; <strong>Temel</strong> (her projede olanlar: Blog, Talepler, Sayfalar ve Diller, SEO); <strong>Proje modülleri</strong> (bu projenin türleri, sayfaları ve araçları); <strong>Proje Ayarları</strong>; en altta <strong>Sistem</strong> (Sistem Ayarları, Kullanıcılar ve Roller, Sistem Sağlığı). Seyrek kullanılanlar (roller, güvenlik, işlem geçmişi…) Tüm İşlemler'de. Grup başlığına basınca grup kapanır ya da açılır; tercihiniz bu tarayıcıda saklanır. Telefonda menü sol üstteki düğmeyle açılır, en sık sayfalar alttaki çubuktadır.</li>
+  <li><strong>Arama</strong> (üst bar): sayfa, ayar ya da kayıt adını yazın. Projeler, yazılar, talepler, kullanıcılar ve ayarlar bulunur; bir ayar seçince sayfası açılır ve alan vurgulanır. Kısayol: <kbd>Ctrl</kbd> <kbd>K</kbd> ya da <kbd>/</kbd>.</li>
+  <li><a data-route="other">Tüm İşlemler</a> (üst bardaki ızgara simgesi): paneldeki bütün işler gruplu kartlarda, menüde olmayanlar da. Üstteki <strong>Hızlı İşlemler</strong> size özeldir: satırdaki yıldızla ekleyin ya da satırı alana sürükleyin; Düzenle ile sıralayın. Seçiminiz her cihazda aynıdır.</li>
+  <li><strong>Bildirimler</strong> (zil): yeni talepler ve biten arka plan işleri. Bildirime basınca ilgili kayıt açılır.</li>
+</ul>
+
+<h2 id="kayit">Kayıt eklemek ve düzenlemek</h2>
+<ol class="steps">
+  <li>Menüden içerik türünü açın (Projeler, Hizmetler, Referanslar, Blog) ve <strong>Yeni …</strong> düğmesine basın. Genel bakıştaki "Yeni proje" ve "Yeni yazı" da aynı formu açar.</li>
+  <li>Başlığı ve alanları doldurun, görselleri ekleyin. Kaydedilmemiş değişiklik varsa başlığın yanında <strong>● Kaydedilmedi</strong> yazar.</li>
+  <li><strong>Kaydet</strong> ya da <kbd>Ctrl</kbd> <kbd>S</kbd>. Kaydetmeden sayfadan çıkmak isterseniz panel sorar; değişiklikler habersiz kaybolmaz.</li>
+  <li>Yayındaki kaydı sitede görmek için <strong>Sitede gör</strong>.</li>
+</ol>
+
+<h2 id="liste">Listeler: arama, sıralama, silinenler</h2>
+<ul>
+  <li>Listenin üstünde arama, durum sekmeleri (Yayında, Taslak…) ve süzgeçler (dil, çeviri durumu, kategori) vardır. Dil rozetleri kaydın hangi dillerde olduğunu gösterir.</li>
+  <li><strong>Projeler, Hizmetler, Referanslar</strong> satırın solundaki tutamaktan sürüklenerek sıralanır; sıra sitedeki sıradır. Blog yayın tarihine göre sıralanır.</li>
+  <li><strong>Sil</strong> kaydı hemen kaldırmaz, <strong>Silinenler</strong>'e taşır; yetkiniz varsa oradan geri yüklersiniz. Silindikten hemen sonra çıkan bildirimdeki <strong>Geri Al</strong> da kaydı geri getirir.</li>
+  <li>Liste CSV olarak indirilebilir.</li>
+</ul>
+
+<h2 id="yayin">Taslak, yayın ve zamanlama</h2>
+<div class="table-wrap"><table>
+  <thead><tr><th>Durum</th><th>Sitede</th><th>Ne zaman</th></tr></thead>
+  <tbody>
+    <tr><td>Taslak</td><td>Görünmez</td><td>Hazırlanan kayıt; panelde düzenlemeye devam edilir.</td></tr>
+    <tr><td>Yayında</td><td>Görünür</td><td>Kaydedince anında; önbellek kendiliğinden yenilenir.</td></tr>
+    <tr><td>Zamanlandı</td><td>Tarihi gelince</td><td>Blog yazısında ileri bir yayın tarihi seçilince.</td></tr>
+  </tbody>
+</table></div>
+<p class="note note-info">Yayınlama yetkiniz yoksa (ör. Yazar rolü) kaydettikleriniz taslak kalır; Editör ya da Yönetici gözden geçirip yayına alır.</p>
+
+<h2 id="ceviri">Çeviriler</h2>
+<p>Her kayıt dil dil tutulur. Düzenleyicinin <strong>Diller</strong> bölümünde kaydın hangi dillerde olduğu ve her dilin yayın durumu görünür.</p>
+<ul>
+  <li><strong>Dil ekle</strong> üç yoldan biriyle başlar: <em>Bu yazıdan kopyala</em> (metinleri siz çevirirsiniz), <em>Jarvis ile çevir</em> (yapay zekâ çevirir, siz gözden geçirirsiniz) ya da <em>Boş başla</em>. Yeni dil taslak olarak eklenir.</li>
+  <li><strong>Güncellenmeli</strong>: kaynak dildeki kayıt bu çeviriden sonra değişti. "Jarvis ile güncelle" ya da elle düzeltin, sonra "Güncel say".</li>
+  <li>Çevirmene vermek için <strong>JSON</strong> ile dışa aktarın; çevrilmiş dosyayı içe aktarınca hedef dildeki boş alanlar dolar.</li>
+  <li>Var olan iki yazı birbirinin çevirisiyse <em>Var olan yazıyı bağla</em> ile bağlayın: sitedeki dil değiştirici iki yazı arasında geçer.</li>
+</ul>
+<p class="note note-warn">Kayıt yayındayken yalnızca açık dillerdeki karşılıkları sitede görünür. Sitenin dillerini Sayfalar ve Diller sayfası yönetir.</p>
+
+<h2 id="gorsel">Görseller ve alt metin</h2>
+<ul>
+  <li>Görsel alanına basınca kitaplık açılır: var olanı seçin, yeni dosyayı sürükleyip bırakın ya da adresten ekleyin. Kitaplıkta arama vardır.</li>
+  <li><strong>Alt metin</strong>, görseli göremeyenler ve arama motorları içindir: görselde ne olduğunu kısa ve somut yazın (ör. "Harman mobil uygulamasının ana ekranı"). Alt metni eksik görsel kitaplıkta işaretlidir.</li>
+  <li>Aynı görsel birden çok kayıtta kullanılabilir; dosya bir kez yüklenir.</li>
+</ul>
+
+<h2 id="seo-kutusu">SEO kutusu</h2>
+<p>Düzenleyicideki <strong>SEO</strong> kutusu kaydın arama sonucundaki görünüşünü önizler ve puanlar.</p>
+<ul>
+  <li><strong>SEO başlığı</strong> boşsa kayıt başlığı kullanılır; sekmede sonuna site adı eklenir. <strong>Açıklama</strong> arama sonucundaki iki satırdır.</li>
+  <li><strong>Odak kelime</strong>: bu sayfanın aranmasını istediğiniz ifade. Analiz başlıkta, açıklamada, adreste ve metinde arar; puan yazdıkça güncellenir.</li>
+  <li>Gelişmiş: arama motorlarından gizleme (noindex), canonical adres, paylaşım görseli (boşsa kapak görseli). SEO değişiklikleri kayıtla birlikte kaydedilir.</li>
+</ul>
+
+<h2 id="gecmis">İşlem geçmişi</h2>
+<p><a data-route="history">İşlem Geçmişi</a> kim, ne zaman, neyi değiştirdi gösterir: kayıt, bölüm, alan, önceki ve sonraki değer. Herkes kendi işlemlerini görür; yetkisi olan <strong>Tüm İşlemler</strong>'de herkesinkini kişiye ve türe göre süzer. İşlem detayındaki <em>Bu kaydın işlemleri</em> o kaydın bütün geçmişini gösterir.</p>
+
+<h2 id="hesap">Hesabınız ve güvenlik</h2>
+<p><a data-route="profile">Profilim</a> sayfasında:</p>
+<ul>
+  <li><strong>Bilgilerim</strong> (ad, e-posta, telefon) ve <strong>Şifre</strong> değişikliği.</li>
+  <li><strong>İki adımlı doğrulama</strong>: girişte şifreden sonra telefonunuzdaki doğrulama uygulamasının (Google Authenticator, Microsoft Authenticator, 1Password…) kodu da istenir. Açarken verilen <strong>yedek kodları</strong> saklayın; telefonu kaybederseniz bunlarla girersiniz.</li>
+  <li><strong>Oturumlarım</strong>: hangi cihazlarda açık olduğunuz. Tanımadığınız bir oturum görürseniz <em>Diğerlerini kapat</em> ve şifrenizi değiştirin.</li>
+  <li><strong>Yetkilerim</strong>: rolünüz ve yapabildikleriniz. Rolü Yönetici değiştirir.</li>
+</ul>
+<p>Tema (sistem, açık, koyu) ve çıkış sağ üstteki hesap menüsündedir.</p>

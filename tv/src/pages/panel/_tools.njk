@@ -1,0 +1,155 @@
+{# Araç Pazarı. Mantık: panel/tools.js; araçlar kodmob-api Core\Modules'ten ve araç paketlerinden (GET /system/tools). #}
+<div class="pn-page" x-data="kmTools(r)" data-testid="tools">
+  <div class="pn-bar">
+    <div class="min-w-0 flex-1">
+      <p class="pn-bar-title">Araç Pazarı</p>
+      <p class="pn-bar-meta"><span>Bu projede açık araçlar ve eklenebilecekler. Araç kapatılınca menüsü ve işlemleri kalkar, verisi silinmez.</span></p>
+    </div>
+    <button type="button" class="btn btn-secondary" @click="openapi()" :disabled="busy !== null" title="Geliştiriciler için: uçlar, yetkiler, istek şemaları (yalnızca yetkili yöneticiye)" data-testid="openapi"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-download"/></svg> API belgesi</button>
+  </div>
+
+  <div class="pn-tabs w-max" role="tablist" aria-label="Araç Pazarı">
+    <template x-for="t in tabs" :key="t.key">
+      <button type="button" role="tab" class="pn-tab" :aria-selected="tab === t.key" @click="show(t.key)" :data-tab="t.key">
+        <svg class="icon icon-sm" aria-hidden="true"><use :href="'#i-' + t.icon"/></svg> <span x-text="t.label"></span>
+        <span class="text-xs text-muted" x-text="'(' + (t.key === 'installed' ? installed.length : discoverCount) + ')'" x-show="!loading"></span>
+      </button>
+    </template>
+  </div>
+
+  {# Klasörde olup yüklenemeyen paketler (tanım bozuk, sürüm uyumsuz, anahtar çakışıyor). #}
+  <template x-for="p in problems" :key="p.key">
+    <p class="pn-alert" role="alert" data-testid="tool-problem"><strong x-text="p.key"></strong>: <span x-text="p.message"></span></p>
+  </template>
+
+  <template x-if="loading">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3"><div class="skeleton h-36"></div><div class="skeleton h-36"></div><div class="skeleton h-36"></div></div>
+  </template>
+
+  {# ============================================================ kurulu #}
+  <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3" x-show="!loading && tab === 'installed'">
+    <template x-for="t in installed" :key="t.key">
+      <section class="card flex flex-col" :data-tool="t.key">
+        <div class="card-body flex flex-1 items-start gap-3">
+          <span class="icon-tile shrink-0" :class="!t.enabled && '!bg-surface-subtle !text-muted'"><svg class="icon" aria-hidden="true"><use :href="'#i-' + icon(t)"/></svg></span>
+          <div class="min-w-0 flex-1">
+            <p class="flex flex-wrap items-center gap-2 font-semibold text-ink">
+              <span x-text="t.label"></span>
+              <span class="badge" :class="t.kind === 'base' ? 'badge-neutral' : 'badge-primary'" x-text="t.kind === 'base' ? 'Temel' : 'Araç'"></span>
+              <span class="badge badge-info" x-show="t.source === 'extension'" title="Araç paketi (kodmob-api/extensions)">Topluluk</span>
+            </p>
+            <p class="mt-1 text-sm text-ink-2" x-text="t.description"></p>
+            <p class="mt-1 text-xs text-muted" x-show="t.source === 'extension'" x-text="meta(t)"></p>
+            <p class="mt-1 text-xs text-muted" x-show="t.requires.length" x-text="labels(t.requires) + ' aracına takılır'"></p>
+            <p class="mt-2 text-xs" :class="t.enabled ? 'text-success' : (t.waiting ? 'text-warning' : 'text-muted')" x-text="state(t)" data-testid="tool-state"></p>
+            <button type="button" class="link mt-1 text-xs" x-show="t.added" @click="uninstall(t)" :disabled="busy !== null" data-testid="tool-uninstall">Projeden çıkar</button>
+          </div>
+          <span class="shrink-0 text-xs text-muted" x-show="t.kind === 'base'" title="Temel yapılar projenin profilinden açılıp kapanır">Profilden</span>
+          <label class="pn-switch shrink-0" x-show="t.kind !== 'base'" :title="t.enabled ? 'Kapat' : 'Aç'">
+            <input type="checkbox" class="peer sr-only" :checked="switchedOn(t)" @change.prevent="toggle(t)" :disabled="busy !== null" :aria-label="t.label" data-testid="tool-toggle">
+            <span class="pn-switch-track" aria-hidden="true"></span>
+          </label>
+        </div>
+      </section>
+    </template>
+    <p class="text-sm text-muted md:col-span-2 xl:col-span-3" x-show="!installed.length">Bu projede kurulu araç yok. Keşfet sekmesinden ekleyin.</p>
+  </div>
+
+  {# ============================================================ keşfet #}
+  <div class="flex flex-col gap-4" x-show="!loading && tab === 'discover'">
+    {# Süzgeç: araçlar ve blok kategorileri (Animasyon, Bölümler…). #}
+    <div class="flex flex-wrap gap-2" role="group" aria-label="Kategori" x-show="blocks.length">
+      <template x-for="f in filters" :key="f.key">
+        <button type="button" class="chip" :aria-pressed="filter === f.key" @click="filter = f.key" x-text="f.label" :data-filter="f.key"></button>
+      </template>
+    </div>
+
+    {# ------------------------------------------------------------ bloklar #}
+    <template x-if="blocks.length && filter !== 'tools'">
+      <section class="flex flex-col gap-3">
+        <h3 class="pn-group-title" x-text="filter === 'all' ? 'Sayfa blokları' : categoryLabel(filter)"></h3>
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+          <template x-for="b in shownBlocks" :key="b.type">
+            <section class="card flex flex-col overflow-hidden" :data-block="b.type" data-testid="block-card">
+              <div class="tools-block-media" :class="'cat-' + b.category">
+                <template x-if="b.preview"><img :src="b.preview" alt=""></template>
+                <template x-if="!b.preview"><span class="icon-tile"><svg class="icon icon-lg" aria-hidden="true"><use :href="'#i-' + b.icon"/></svg></span></template>
+              </div>
+              <div class="card-body flex flex-1 flex-col gap-1">
+                <p class="flex flex-wrap items-center gap-2 font-semibold text-ink">
+                  <span x-text="b.label"></span>
+                  <span class="badge badge-neutral" x-text="categoryLabel(b.category)"></span>
+                  <span class="badge badge-success" x-show="b.inLibrary" data-testid="block-in-library">Kitaplıkta</span>
+                </p>
+                <p class="text-sm text-ink-2" x-text="b.description"></p>
+              </div>
+              <div class="flex items-center gap-2 border-t border-line px-5 py-3">
+                <template x-if="!b.core">
+                  <button type="button" class="btn btn-sm" :class="b.inLibrary ? 'btn-ghost' : 'btn-primary'" @click="toggleBlock(b)" :disabled="busy !== null" data-testid="block-toggle">
+                    <svg class="icon icon-sm" aria-hidden="true"><use :href="b.inLibrary ? '#i-minus' : '#i-plus'"/></svg> <span x-text="b.inLibrary ? 'Kitaplıktan çıkar' : 'Kitaplığa ekle'"></span>
+                  </button>
+                </template>
+                <span class="text-xs text-muted" x-show="b.core">Her projede hazır</span>
+                <a class="link ml-auto text-sm" :href="$href('builder')" x-show="b.inLibrary">Düzenleyicide kullan</a>
+              </div>
+            </section>
+          </template>
+        </div>
+      </section>
+    </template>
+
+    <h3 class="pn-group-title" x-show="blocks.length && filter === 'all'">Araçlar</h3>
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3" x-show="filter === 'all' || filter === 'tools'">
+      <template x-for="t in available" :key="t.key">
+        <section class="card flex flex-col" :data-tool="t.key">
+          <div class="card-body flex flex-1 items-start gap-3">
+            <span class="icon-tile shrink-0"><svg class="icon" aria-hidden="true"><use :href="'#i-' + icon(t)"/></svg></span>
+            <div class="min-w-0 flex-1">
+              <p class="flex flex-wrap items-center gap-2 font-semibold text-ink"><span x-text="t.label"></span><span class="badge badge-success">Resmi</span></p>
+              <p class="mt-1 text-sm text-ink-2" x-text="t.description"></p>
+              <p class="mt-1 text-xs text-muted" x-show="missingRequires(t).length" x-text="labels(missingRequires(t)) + ' aracına takılır; birlikte eklenir'"></p>
+              <p class="mt-1 text-xs text-muted" x-show="pagesNote(t)" x-text="pagesNote(t)"></p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 border-t border-line px-5 py-3">
+            <button type="button" class="btn btn-primary btn-sm" @click="install(t)" :disabled="busy !== null" data-testid="tool-install">
+              <svg class="icon icon-sm" :class="busy === 'install:' + t.key && 'animate-spin'" aria-hidden="true"><use :href="busy === 'install:' + t.key ? '#i-loader' : '#i-plus'"/></svg> Projeye ekle
+            </button>
+            <span class="text-xs text-muted">Derleme gerekmez</span>
+          </div>
+        </section>
+      </template>
+    </div>
+    <p class="text-sm text-muted" x-show="!available.length && (filter === 'all' || filter === 'tools')">Çatının bütün araçları bu projede kurulu.</p>
+
+    {# Topluluk kataloğu (kodmob-api resources/marketplace/catalog.json): kurulum komutla. #}
+    <h3 class="pn-group-title mt-2" x-show="filter === 'all' || filter === 'tools'">Topluluk araçları</h3>
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3" x-show="catalog.length && (filter === 'all' || filter === 'tools')">
+      <template x-for="t in catalog" :key="t.key">
+        <section class="card flex flex-col" :data-tool="t.key" data-testid="tool-catalog">
+          <div class="card-body flex flex-1 items-start gap-3">
+            <span class="icon-tile shrink-0"><svg class="icon" aria-hidden="true"><use href="#i-package"/></svg></span>
+            <div class="min-w-0 flex-1">
+              <p class="flex flex-wrap items-center gap-2 font-semibold text-ink">
+                <span x-text="t.label"></span>
+                <span class="badge badge-success" x-show="t.verified" title="İncelenen sürüm">Doğrulanmış</span>
+                <span class="badge badge-warning" x-show="!t.compatible" :title="'Uyumlu çatı: ' + t.kodmob">Bu sürümle uyumsuz</span>
+              </p>
+              <p class="mt-1 text-sm text-ink-2" x-text="t.description"></p>
+              <p class="mt-1 text-xs text-muted" x-text="meta(t)"></p>
+            </div>
+          </div>
+          <div class="border-t border-line px-5 py-3 text-xs text-ink-2">
+            Kurmak için geliştirme bilgisayarında <span class="code" x-text="'php artisan kodmob:add ' + t.key"></span>, sonra derleyip yükleyin.
+            <a class="link" :href="t.repository" target="_blank" rel="noopener" x-show="t.repository">Kaynak kodu</a>
+          </div>
+        </section>
+      </template>
+    </div>
+    <p class="text-sm text-muted" x-show="!catalog.length && (filter === 'all' || filter === 'tools')">Katalogda henüz araç yok.</p>
+    <p class="pn-hint">
+      <svg class="icon icon-sm" aria-hidden="true"><use href="#i-info"/></svg>
+      <span>Kendi aracınızı yazmak için <span class="code">php artisan kodmob:tool new &lt;ad&gt;</span>; paket biçimi ve kataloğa ekleme kuralları <span class="code">docs/arac-paketi.md</span>'de.</span>
+    </p>
+  </div>
+</div>

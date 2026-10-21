@@ -1,0 +1,269 @@
+{# Jarvis → Domain arama. Mantık: panel/domains.js. Sonuç tablosu: ui/grid (kmGrid). #}
+<div class="page" x-data="kmDomains(r.job)">
+  <div class="page-header">
+    <div>
+      <p class="page-title">Domain arama</p>
+      <p class="page-subtitle">Boşluk, DNS ön elemesi ve kayıt kuruluşunun resmî RDAP servisiyle kontrol edilir (ücretsiz, anahtarsız). Sonuçlar 24 saat önbellekte kalır.</p>
+    </div>
+    <a :href="$href('jarvis')" class="btn btn-secondary"><svg class="icon icon-sm text-primary" aria-hidden="true"><use href="#i-sparkles"/></svg> Jarvis'e sor</a>
+  </div>
+
+  <div class="grid items-start gap-4 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-5">
+    {# ============================================================ hızlı kontrol #}
+    <section class="card">
+      <div class="card-header">
+        <div><p class="card-title">Hızlı kontrol</p><p class="text-xs text-muted">En çok 100 ad · beklemeden sonuç</p></div>
+        <span class="tone-icon tone-primary h-9 w-9"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-zap"/></svg></span>
+      </div>
+      <div class="card-body flex flex-col gap-3">
+        <div class="field">
+          <label class="field-label" for="quick-names">Adlar</label>
+          <textarea id="quick-names" class="input code min-h-28 text-sm" rows="4" x-model="quick.names" placeholder="kodmob&#10;jarvis&#10;ornek.com.tr" @keydown.ctrl.enter="check()" @keydown.meta.enter="check()"></textarea>
+          <p class="field-help">Her satıra (ya da virgülle) bir ad. Uzantısız ad seçili uzantılarla denenir.</p>
+        </div>
+        <div class="field">
+          <span class="field-label">Uzantılar</span>
+          <div class="flex flex-wrap gap-1.5">
+            <template x-for="t in (options?.tlds || [{ tld: 'si', rdap: true }])" :key="t.tld">
+              <button type="button" class="chip" :aria-pressed="quick.tlds.includes(t.tld)" @click="toggleTld(quick.tlds, t.tld)" :title="t.rdap ? 'RDAP ile kesin kontrol' : 'Bu uzantıda RDAP yok: yalnızca DNS (kesin değil)'">
+                <span x-text="'.' + t.tld"></span><span class="text-warning" x-show="!t.rdap" x-cloak>*</span>
+              </button>
+            </template>
+          </div>
+        </div>
+        <button type="button" class="btn btn-primary self-start" @click="check()" :disabled="quick.busy">
+          <svg class="icon icon-sm" :class="quick.busy && 'animate-spin'" aria-hidden="true"><use :href="quick.busy ? '#i-loader' : '#i-search'"/></svg>
+          <span x-text="quick.busy ? 'Kontrol ediliyor…' : 'Kontrol et'"></span>
+        </button>
+
+        <template x-if="quick.result">
+          <div class="flex flex-col gap-2 border-t border-line pt-3">
+            <div class="flex flex-wrap items-center gap-2">
+              <template x-for="(n, key) in quick.result.counts" :key="key">
+                <span class="badge" :class="status('domain', key).cls"><span x-text="status('domain', key).label + ' ' + n"></span></span>
+              </template>
+              <button type="button" class="btn btn-ghost btn-sm ml-auto" x-show="quickFree.length" @click="copy(quickFree)"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg> Boşları kopyala</button>
+            </div>
+            <ul class="max-h-80 divide-y divide-line overflow-y-auto rounded-control border border-line">
+              <template x-for="item in quick.result.items" :key="item.domain">
+                <li class="flex items-center gap-3 px-3 py-2">
+                  <span class="code min-w-0 flex-1 truncate font-medium text-ink" x-text="item.domain"></span>
+                  <span class="hidden truncate text-xs text-muted sm:block sm:max-w-48" x-text="item.expires_at ? 'bitiş ' + fmt.date(item.expires_at) : (item.note || '')"></span>
+                  <span class="badge" :class="status('domain', item.status).cls"><svg class="icon icon-sm" aria-hidden="true"><use :href="status('domain', item.status).href"/></svg><span x-text="status('domain', item.status).label"></span></span>
+                </li>
+              </template>
+            </ul>
+          </div>
+        </template>
+      </div>
+    </section>
+
+    {# ============================================================ tarama #}
+    <section class="card">
+      <div class="card-header">
+        <div><p class="card-title">Tarama başlat</p><p class="text-xs text-muted">Binlerce aday arka planda taranır; bitince bildirim gelir</p></div>
+        <span class="tone-icon tone-info h-9 w-9"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-layers"/></svg></span>
+      </div>
+      <div class="card-body flex flex-col gap-4">
+        <div class="segmented" role="group" aria-label="Tarama türü">
+          <template x-for="m in modes" :key="m.key">
+            <button type="button" :aria-pressed="spec.mode === m.key" @click="spec.mode = m.key" x-text="m.label"></button>
+          </template>
+        </div>
+        <p class="-mt-2 text-xs text-ink-2" x-text="modeHint"></p>
+
+        <div class="field">
+          <span class="field-label">Uzantılar</span>
+          <div class="flex flex-wrap gap-1.5">
+            <template x-for="t in (options?.tlds || [{ tld: 'si', rdap: true }])" :key="t.tld">
+              <button type="button" class="chip" :aria-pressed="spec.tlds.includes(t.tld)" @click="toggleTld(spec.tlds, t.tld)"><span x-text="'.' + t.tld"></span><span class="text-warning" x-show="!t.rdap" x-cloak>*</span></button>
+            </template>
+          </div>
+          <p class="field-error" x-show="errors.tlds" x-text="errors.tlds"></p>
+        </div>
+
+        {# --- kısa #}
+        <template x-if="spec.mode === 'short'">
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div class="field">
+              <span class="field-label">Uzunluk</span>
+              <div class="flex flex-wrap gap-1.5">
+                <template x-for="n in [2, 3, 4, 5]" :key="n">
+                  <button type="button" class="chip num" :aria-pressed="spec.lengths.includes(n)" @click="toggleIn(spec.lengths, n)" x-text="n + ' karakter'"></button>
+                </template>
+              </div>
+              <p class="field-error" x-show="errors.lengths" x-text="errors.lengths"></p>
+            </div>
+            <div class="field">
+              <span class="field-label">Karakterler</span>
+              <div class="segmented">
+                <template x-for="c in charsets" :key="c.key">
+                  <button type="button" :aria-pressed="spec.charset === c.key" @click="spec.charset = c.key" x-text="c.label"></button>
+                </template>
+              </div>
+            </div>
+            <div class="field">
+              <label class="field-label" for="sp-prefix">Ön ek (isteğe bağlı)</label>
+              <input id="sp-prefix" class="input code" x-model="spec.prefix" placeholder="ör. go" maxlength="20" autocomplete="off">
+            </div>
+            <div class="field">
+              <label class="field-label" for="sp-suffix">Son ek (isteğe bağlı)</label>
+              <input id="sp-suffix" class="input code" x-model="spec.suffix" placeholder="ör. ai" maxlength="20" autocomplete="off">
+            </div>
+          </div>
+        </template>
+
+        {# --- kalıp #}
+        <template x-if="spec.mode === 'pattern'">
+          <div class="flex flex-col gap-4">
+            <div class="field">
+              <span class="field-label">Kalıplar</span>
+              <div class="flex flex-wrap gap-1.5">
+                <template x-for="p in (options?.patterns || [])" :key="p.pattern">
+                  <button type="button" class="chip code" :aria-pressed="spec.patterns.includes(p.pattern)" @click="toggleIn(spec.patterns, p.pattern)" :title="p.example" x-text="p.pattern"></button>
+                </template>
+                <template x-for="p in spec.patterns.filter((x) => !(options?.patterns || []).some((o) => o.pattern === x))" :key="'c' + p">
+                  <button type="button" class="chip code" aria-pressed="true" @click="toggleIn(spec.patterns, p)" x-text="p + ' ×'"></button>
+                </template>
+              </div>
+              <div class="mt-1 flex gap-2">
+                <input class="input code min-h-10 max-w-48 text-sm" x-model="spec.customPattern" placeholder="Kendi kalıbınız: CVCio" @keydown.enter.prevent="addPattern()" aria-label="Kendi kalıbınız">
+                <button type="button" class="btn btn-secondary btn-sm" @click="addPattern()">Ekle</button>
+              </div>
+              <p class="field-help">C ünsüz · V ünlü · L harf · D rakam · A harf ya da rakam · küçük harf/rakam sabit</p>
+              <p class="field-error" x-show="errors.patterns" x-text="errors.patterns"></p>
+            </div>
+            <div class="grid gap-4 sm:grid-cols-2">
+              <div class="field">
+                <label class="field-label" for="sp-limit">Örneklem (en çok aday)</label>
+                <input id="sp-limit" type="number" min="0" step="1000" class="input num" x-model.number="spec.limit">
+                <p class="field-help">0 = kalıpların bütün kombinasyonları.</p>
+              </div>
+              <label class="check self-end pb-3"><input type="checkbox" x-model="spec.shuffle"> <span>Karışık sırayla (örneklem alfabenin başına yığılmasın)</span></label>
+            </div>
+          </div>
+        </template>
+
+        {# --- jenerik #}
+        <template x-if="spec.mode === 'words'">
+          <div class="flex flex-col gap-4">
+            <div class="field">
+              <span class="field-label">Kelime listeleri</span>
+              <div class="flex flex-wrap gap-1.5">
+                <template x-for="w in (options?.wordsets || [])" :key="w.key">
+                  <button type="button" class="chip" :aria-pressed="spec.wordsets.includes(w.key)" @click="toggleIn(spec.wordsets, w.key)">
+                    <span x-text="w.title"></span><span class="num text-xs text-muted" x-text="w.count"></span>
+                  </button>
+                </template>
+              </div>
+            </div>
+            <div class="field">
+              <label class="field-label" for="sp-words">Kendi kelimeleriniz</label>
+              <textarea id="sp-words" class="input min-h-20 text-sm" rows="3" x-model="spec.words" placeholder="kod, bulut, yazılım…"></textarea>
+              <p class="field-error" x-show="errors.words" x-text="errors.words"></p>
+            </div>
+            <div class="grid gap-4 sm:grid-cols-2">
+              <label class="check"><input type="checkbox" x-model="spec.affixes"> <span>Yaygın ön ve son ekleri de dene (get…, …hub, …ly)</span></label>
+              <div class="field">
+                <label class="field-label" for="sp-max">En çok karakter</label>
+                <input id="sp-max" type="number" min="0" max="63" class="input num" x-model.number="spec.max_length">
+              </div>
+            </div>
+            <p class="field-help">"Domain hilesi · .si" listesi tek başına seçilirse kelimeler uzantıyla bölünür: kahvesi → <span class="code">kahve.si</span>.</p>
+          </div>
+        </template>
+
+        {# --- liste #}
+        <template x-if="spec.mode === 'list'">
+          <div class="flex flex-col gap-3">
+            <div class="field">
+              <label class="field-label" for="sp-names">Adlar</label>
+              <textarea id="sp-names" class="input code min-h-32 text-sm" rows="6" x-model="spec.names" placeholder="kodmob&#10;jarvis&#10;kahvesi"></textarea>
+              <p class="field-error" x-show="errors.names" x-text="errors.names"></p>
+            </div>
+            <label class="check"><input type="checkbox" x-model="spec.hack"> <span>Domain hilesi: uzantıyla biten kelimeyi böl (kahvesi + .si → kahve.si)</span></label>
+          </div>
+        </template>
+
+        <div class="field">
+          <label class="field-label" for="sp-title">Tarama adı (isteğe bağlı)</label>
+          <input id="sp-title" class="input" x-model="spec.title" placeholder="Boşsa tariften üretilir" maxlength="190">
+        </div>
+
+        {# --- önizleme #}
+        <div class="rounded-control border border-line bg-surface-subtle p-3" aria-live="polite">
+          <template x-if="preview">
+            <div class="flex flex-col gap-2">
+              <p class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                <span class="num text-lg font-semibold text-ink" x-text="fmt.number(preview.total) + ' aday'"></span>
+                <span class="text-sm text-ink-2" x-text="eta"></span>
+                <svg class="icon icon-sm animate-spin text-muted" x-show="previewBusy" aria-hidden="true"><use href="#i-loader"/></svg>
+              </p>
+              <p class="text-xs text-muted" x-text="preview.title"></p>
+              <p class="code flex flex-wrap gap-x-2 gap-y-0.5 text-xs text-ink-2"><template x-for="s in preview.sample" :key="s"><span x-text="s"></span></template><span>…</span></p>
+            </div>
+          </template>
+          <p class="text-sm text-danger" x-show="!preview && previewError" x-text="previewError"></p>
+          <p class="text-sm text-muted" x-show="!preview && !previewError">Önizleme hazırlanıyor…</p>
+        </div>
+
+        <button type="button" class="btn btn-primary self-start" @click="start()" :disabled="!preview || starting">
+          <svg class="icon icon-sm" :class="starting && 'animate-spin'" aria-hidden="true"><use :href="starting ? '#i-loader' : '#i-rocket'"/></svg>
+          <span x-text="starting ? 'Başlatılıyor…' : 'Taramayı başlat'"></span>
+        </button>
+      </div>
+    </section>
+  </div>
+
+  {# ============================================================ taramalar #}
+  <section class="card">
+    <div class="card-header">
+      <p class="card-title">Taramalar</p>
+      <button type="button" class="btn btn-ghost btn-sm" x-show="selectedJob" @click="selectJob(null)">Tüm sonuçlar</button>
+    </div>
+    <template x-if="jobsLoading">
+      <div class="space-y-3 p-4"><div class="skeleton h-12"></div><div class="skeleton h-12"></div></div>
+    </template>
+    <template x-if="!jobsLoading && !jobs.length">
+      <p class="p-6 text-center text-sm text-ink-2">Henüz tarama yok. Yukarıdan bir tarama başlatın ya da Jarvis'ten isteyin.</p>
+    </template>
+    <ul class="divide-y divide-line">
+      <template x-for="job in jobs" :key="job.id">
+        <li class="flex flex-col gap-3 px-4 py-3 md:flex-row md:items-center md:px-5" :class="selectedJob === job.id && 'bg-primary-soft/50'">
+          <div class="min-w-0 flex-1">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="badge" :class="jobBadge(job).cls"><svg class="icon icon-sm" :class="job.status === 'running' && 'animate-spin'" aria-hidden="true"><use :href="jobBadge(job).href"/></svg><span x-text="jobBadge(job).label"></span></span>
+              <button type="button" class="min-w-0 truncate text-left font-medium text-ink hover:text-primary" @click="selectJob(job.id)" x-text="'#' + job.id + ' · ' + job.title"></button>
+            </div>
+            <div class="mt-2 flex items-center gap-3">
+              <div class="progress flex-1" :class="job.status === 'done' && 'is-done'"><span :style="{ width: job.progress + '%' }"></span></div>
+              <span class="num w-12 shrink-0 text-right text-xs text-ink-2" x-text="'%' + fmt.number(job.progress, 1)"></span>
+            </div>
+            <p class="num mt-1 text-xs text-muted">
+              <span x-text="fmt.number(job.processed) + ' / ' + fmt.number(job.total) + ' ad'"></span> ·
+              <strong class="text-success-ink" x-text="fmt.number(job.found) + ' boş'"></strong>
+              <span x-show="job.failed" x-text="' · ' + fmt.number(job.failed) + ' belirsiz'"></span>
+              <span x-show="job.waiting_until" x-cloak x-text="' · hız sınırı: ' + fmt.time(job.waiting_until) + ' sonrası devam (DNS elemesi sürüyor)'"></span>
+              <span x-show="job.error" class="text-danger" x-text="' · ' + job.error"></span>
+              · <span x-text="fmt.relative(job.created_at)"></span>
+            </p>
+          </div>
+          <div class="flex shrink-0 flex-wrap gap-1.5">
+            <button type="button" class="btn btn-secondary btn-sm" @click="selectJob(job.id)">Sonuçlar</button>
+            <button type="button" class="btn btn-ghost btn-sm" x-show="job.status === 'running' || job.status === 'queued'" @click="control(job, 'pause')">Duraklat</button>
+            <button type="button" class="btn btn-ghost btn-sm" x-show="job.status === 'paused' || job.status === 'failed'" @click="control(job, 'resume')" :title="job.status === 'failed' ? 'Kaldığı yerden devam eder' : ''">Sürdür</button>
+            <button type="button" class="btn btn-ghost btn-sm" x-show="job.found > 0 && ['done', 'cancelled', 'failed'].includes(job.status)" @click="control(job, 'verify')" title="Boş ve düşen adları yeniden sorar; hareketli uzantılarda sonuç günler içinde eskir">Boşları yeniden doğrula</button>
+            <button type="button" class="btn btn-ghost btn-sm" x-show="job.failed > 0 && ['done', 'cancelled', 'failed'].includes(job.status)" @click="control(job, 'retry')" title="Hız sınırı ya da bağlantı yüzünden sonuçlanamayan adları yeniden sorar">Belirsizleri yeniden dene</button>
+            <button type="button" class="btn btn-ghost btn-sm text-danger" x-show="['running', 'queued', 'paused'].includes(job.status)" @click="control(job, 'cancel')">Durdur</button>
+            <button type="button" class="btn-icon h-9 w-9 text-danger" x-show="!['running', 'queued'].includes(job.status)" @click="remove(job)" aria-label="Taramayı sil" title="Sil"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-trash"/></svg></button>
+          </div>
+        </li>
+      </template>
+    </ul>
+  </section>
+
+  {# ============================================================ sonuçlar #}
+  <div x-data="kmGrid(grid)" @grid-action="onGrid($event)" @grid-bulk="onGrid($event)">
+    {% include "ui/grid/grid.html" %}
+  </div>
+</div>

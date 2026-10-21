@@ -1,0 +1,19 @@
+<section class="hero section km-align-{{align}}">
+  <div class="container-site max-w-3xl">
+{{#eyebrow}}
+    <span class="eyebrow eyebrow-pill fade-up" data-km-field="eyebrow">{{eyebrow}}</span>
+{{/eyebrow}}
+    <h1 class="display fade-up fade-up-1 mt-5"><span data-km-field="title">{{title}}</span>{{#titleAccent}}&#32;<span class="accent" data-km-field="titleAccent">{{titleAccent}}</span>{{/titleAccent}}</h1>
+{{#lead}}
+    <p class="lead fade-up fade-up-2 mt-5 max-w-xl" data-km-field="lead">{{lead}}</p>
+{{/lead}}
+    <div class="hero-actions fade-up fade-up-3">
+{{#primary}}{{#primaryUrl}}
+      <a href="{{primaryUrl}}" class="btn btn-primary btn-lg"><span data-km-field="primary">{{primary}}</span> <svg class="icon icon-arrow" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+{{/primaryUrl}}{{/primary}}
+{{#secondary}}{{#secondaryUrl}}
+      <a href="{{secondaryUrl}}" class="btn btn-outline btn-lg" data-km-field="secondary">{{secondary}}</a>
+{{/secondaryUrl}}{{/secondary}}
+    </div>
+  </div>
+</section>

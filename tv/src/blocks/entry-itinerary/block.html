@@ -1,0 +1,15 @@
+{{! Kayıt sayfası bloğu: program ($store.km.entry.itinerary). }}
+<section class="book-block" x-data="{ get e() { return $store.km.entry || {}; } }" x-show="e.itinerary?.length">
+  <h2 class="h4 mb-3" data-km-field="title">{{title}}</h2>
+  <ol class="book-itinerary">
+    <template x-for="(step, i) in e.itinerary || []" :key="i">
+      <li>
+        <span class="book-itinerary-no" x-text="i + 1"></span>
+        <details :open="i === 0">
+          <summary x-text="step.title"></summary>
+          <p x-text="step.text"></p>
+        </details>
+      </li>
+    </template>
+  </ol>
+</section>

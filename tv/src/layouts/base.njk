@@ -1,0 +1,80 @@
+{#
+  Bütün sayfaların iskeleti. Sayfa şablonu:
+
+    {% extends "layouts/base.njk" %}
+    {% block content %}…{% endblock %}
+
+  Bloklar: head (ek <head> etiketleri), jsonld (sayfaya özel yapılandırılmış veri),
+  bodyAttrs (body öznitelikleri; varsayılan boş x-data — içerik şablonları bir
+  Alpine kapsamında olmalı, kendi bileşenini veren sayfa bunu ezer), content (ana içerik). Başlık, açıklama, canonical, hreflang ve dil
+  seçici verileri vite/i18n-pages.js'ten gelir.
+
+  İçerik ziyaret anında gelir: render.php `#km-data`'yı doldurur (yoksa tarayıcı
+  ister). Kayıt sayfası kabuğunda (page.dynamic) açıklama, canonical, hreflang ve
+  Open Graph etiketlerini render.php kayda göre `<!--km:head-->` yerine yazar.
+#}
+<!doctype html>
+<html lang="{{ locale }}" dir="{{ localeInfo.dir or 'ltr' }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{{ title }}{% if page.name != 'home' %}{{ t('meta.titleSuffix') }}{% endif %}</title>
+  <meta name="robots" content="{{ robots }}">
+{% if page.dynamic %}
+  <!--km:head-->
+{% else %}
+  <meta name="description" content="{{ description }}">
+  <link rel="canonical" href="{{ canonical }}">
+{% for alt in alternates %}
+  <link rel="alternate" hreflang="{{ alt.locale }}" href="{{ alt.abs }}">
+{% endfor %}
+{# x-default: sayfanın varsayılan dildeki (öneksiz) karşılığı. #}
+{% if alternates | length > 1 %}{% for alt in alternates %}{% if alt.locale == defaultLocale %}
+  <link rel="alternate" hreflang="x-default" href="{{ alt.abs }}">
+{% endif %}{% endfor %}{% endif %}
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="{{ t('meta.siteName') }}">
+  <meta property="og:title" content="{{ title }}">
+  <meta property="og:description" content="{{ description }}">
+  <meta property="og:url" content="{{ canonical }}">
+  <meta property="og:locale" content="{{ localeInfo.og }}">
+{% for alt in alternates %}{% if alt.locale != locale %}
+  <meta property="og:locale:alternate" content="{{ locales[alt.locale].og }}">
+{% endif %}{% endfor %}
+{% endif %}
+  {% include "shell/head.html" %}
+{% if url('blog') %}
+  <link rel="alternate" type="application/rss+xml" title="{{ t('nav.blog') }} · {{ t('meta.siteName') }}" href="{{ url('blog') }}feed.xml">
+{% endif %}
+  <script type="application/ld+json">{{ organization | json }}</script>
+  {% block jsonld %}{% endblock %}
+  <script type="application/json" id="km-i18n">{{ clientPayload | json }}</script>
+  {# Anında açılma: bağlantının üstünde durulunca sayfa arka planda hazırlanır (Chromium).
+     CSP'de 'inline-speculation-rules' izni gerekir (public/.htaccess). #}
+  <script type="speculationrules">
+  {"prerender": [{"where": {"and": [{"href_matches": "/*"}, {"not": {"href_matches": "/api/*"}}, {"not": {"href_matches": "/_ui/*"}}, {"not": {"href_matches": "/panel/*"}}, {"not": {"selector_matches": "[rel~=nofollow], [data-no-prerender]"}}]}, "eagerness": "moderate"}]}
+  </script>
+  {% block head %}{% endblock %}
+</head>
+<body data-route="{{ page.name }}" data-needs="{{ page.needs | join(',') }}"{% if page.dynamic %} data-dynamic="{{ page.dynamic }}"{% endif %} {% block bodyAttrs %}x-data{% endblock %}>
+{% include "shell/icons.html" %}
+{% include "shell/site-header.njk" %}
+
+<main id="main">
+{# Sayfa düzenleyicinin bölgeleri (panel › Sayfa düzenleyici): bütün sayfalarda ve bu sayfada, içeriğin üstü ve altı. #}
+{{ zone('site.top', 'Bütün sayfalar · üstte') }}
+{# Sayfanın kendi üst / alt bölgesi; içeriği zaten bloklardan oluşan sayfa (blok sayfası) bu blokları boşaltır. #}
+{% block zoneTop %}{{ zone(page.name + '.top', 'Bu sayfa · üstte') }}{% endblock %}
+{% block content %}{% endblock %}
+{% block zoneBottom %}{{ zone(page.name + '.bottom', 'Bu sayfa · altta') }}{% endblock %}
+{{ zone('site.bottom', 'Bütün sayfalar · altta') }}
+</main>
+
+{% include "shell/site-footer.njk" %}
+{% include "shell/contact-dock.njk" %}
+{% include "ui/search/search.njk" %}
+{% include "shell/overlays.html" %}
+<script type="application/json" id="km-data">null</script>
+<script type="module" src="{{ page.script }}"></script>
+</body>
+</html>

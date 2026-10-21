@@ -1,0 +1,46 @@
+{% extends "layouts/base.njk" %}
+
+{#
+  Bülten sayfası (araç `newsletter`; kodmob-api Modules\Newsletter). E-postadaki onay (`?confirm=`) ve abonelikten
+  çıkma (`?unsubscribe=`) bağlantıları buraya gelir; sayfa sunucuya POST eder (e-posta tarayıcılarının bağlantı ön
+  izlemesi işlem yapmasın: onay sayfa açılınca, çıkma düğmeyle). Bağlantısız açılınca abonelik formu: bölge
+  `newsletter.main` (ilk bloğu Bülten aboneliği; Sayfa düzenleyiciden değişir).
+#}
+{% block content %}
+<div x-data="newsletterPage" data-newsletter-page data-testid="newsletter-page">
+  <h1 class="sr-only">{{ t('newsletter.meta.title') }}</h1>
+  <section class="container-site max-w-2xl py-10 lg:py-16" x-show="state && state !== 'invalid'" x-cloak>
+    <div class="card card-body flex flex-col items-start gap-4" role="status" data-testid="newsletter-state" :data-state="state">
+      <p class="text-ink-2" x-show="state === 'loading'">{{ t('newsletter.confirming') }}</p>
+      <template x-if="state === 'active'">
+        <div class="flex flex-col items-start gap-3">
+          <h2 class="h3">{{ t('newsletter.activeTitle') }}</h2>
+          <p class="text-ink-2">{{ t('newsletter.activeText') }}</p>
+          <a href="{{ url('home') }}" class="btn btn-secondary">{{ t('newsletter.home') }}</a>
+        </div>
+      </template>
+      <template x-if="state === 'ask'">
+        <div class="flex flex-col items-start gap-3">
+          <h2 class="h3">{{ t('newsletter.unsubscribeTitle') }}</h2>
+          <p class="text-ink-2">{{ t('newsletter.unsubscribeText') }}</p>
+          <button type="button" class="btn btn-primary" @click="unsubscribe()" :disabled="busy" data-testid="newsletter-unsubscribe">{{ t('newsletter.unsubscribeButton') }}</button>
+        </div>
+      </template>
+      <template x-if="state === 'unsubscribed'">
+        <div class="flex flex-col items-start gap-3">
+          <h2 class="h3">{{ t('newsletter.unsubscribedTitle') }}</h2>
+          <p class="text-ink-2">{{ t('newsletter.unsubscribedText') }}</p>
+          <a href="{{ url('home') }}" class="btn btn-secondary">{{ t('newsletter.home') }}</a>
+        </div>
+      </template>
+    </div>
+  </section>
+  <section class="container-site max-w-2xl pt-10" x-show="state === 'invalid'" x-cloak>
+    <div class="card card-body" role="alert" data-testid="newsletter-invalid">
+      <h2 class="h3">{{ t('newsletter.invalidTitle') }}</h2>
+      <p class="mt-2 text-ink-2">{{ t('newsletter.invalidText') }}</p>
+    </div>
+  </section>
+  <div x-show="!state || state === 'invalid'">{{ zone('newsletter.main', 'Bülten sayfası', ['newsletter']) }}</div>
+</div>
+{% endblock %}

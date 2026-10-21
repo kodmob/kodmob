@@ -1,0 +1,98 @@
+{# Medya kitaplığı penceresi ($store.media, src/panel/media.js). Panelde tektir; görsel alanları, galeri ve blog editörü açar. #}
+<div class="pn-modal-backdrop" x-show="$store.media.open" x-transition.opacity x-cloak @keydown.escape.window="$store.media.open && $store.media.close()"></div>
+<div class="pn-modal-wrap" x-show="$store.media.open" x-cloak x-transition:enter="transition duration-200 ease-out" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
+  <section class="pn-modal pn-media" role="dialog" aria-modal="true" aria-labelledby="media-title" x-data
+    @dragover.prevent="$store.media.over = true" @dragleave.self="$store.media.over = false" @drop.prevent="$store.media.over = false; $store.media.uploadFiles($event.dataTransfer.files)">
+    <header class="pn-modal-head">
+      <h2 id="media-title" class="h3" x-text="$store.media.multiple ? 'Görsel seçin (birden fazla)' : 'Görsel seçin'"></h2>
+      <span class="text-sm text-muted" x-text="$store.media.total + ' görsel'"></span>
+      <button type="button" class="btn-icon ml-auto" @click="$store.media.close()" aria-label="Kapat"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button>
+    </header>
+
+    <div class="pn-media-body">
+      {# ============================================================ kitaplık #}
+      <div class="pn-media-lib">
+        <div class="pn-media-tools">
+          <form class="input-icon min-w-0 flex-1" @submit.prevent="$store.media.load()">
+            <svg class="icon icon-sm" aria-hidden="true"><use href="#i-search"/></svg>
+            <input class="input" type="search" x-model="$store.media.search" placeholder="Kitaplıkta ara" aria-label="Kitaplıkta ara" @search="$store.media.load()">
+          </form>
+          <label class="btn btn-primary">
+            <svg class="icon icon-sm" aria-hidden="true" x-show="!$store.media.uploading"><use href="#i-upload"/></svg>
+            <svg class="icon icon-sm animate-spin" aria-hidden="true" x-show="$store.media.uploading" x-cloak><use href="#i-loader"/></svg>
+            <span x-text="$store.media.uploading ? 'Yükleniyor…' : 'Yükle'"></span>
+            <input type="file" accept="image/jpeg,image/png,image/webp" class="sr-only" :multiple="$store.media.multiple" @change="$store.media.uploadFiles($event.target.files); $event.target.value = ''">
+          </label>
+        </div>
+        <form class="pn-media-url" @submit.prevent="$store.media.importUrl()">
+          <svg class="icon icon-sm shrink-0 text-muted" aria-hidden="true"><use href="#i-link"/></svg>
+          <input class="input" type="url" x-model="$store.media.url" placeholder="Adresten ekle: https://…/gorsel.jpg" aria-label="Görsel adresi">
+          <button type="submit" class="btn btn-secondary btn-sm" :disabled="!$store.media.url.trim() || $store.media.fetching" x-text="$store.media.fetching ? 'İndiriliyor…' : 'Ekle'"></button>
+        </form>
+
+        <div class="pn-media-grid" :class="$store.media.over && 'is-over'">
+          <template x-for="item in $store.media.items" :key="item.id">
+            <button type="button" class="pn-media-item" :class="{ 'is-selected': $store.media.isSelected(item.id), 'is-focused': $store.media.focusId === item.id }" @click="$store.media.toggle(item)" :aria-pressed="$store.media.isSelected(item.id)" :title="item.filename">
+              <img :src="item.thumb" alt="" loading="lazy">
+              <span class="pn-media-check" aria-hidden="true"><svg class="icon icon-sm"><use href="#i-check"/></svg></span>
+              <span class="pn-gallery-warn" x-show="$store.media.missingAlt(item)" title="Alt metni eksik"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-alert-circle"/></svg></span>
+            </button>
+          </template>
+          <template x-if="$store.media.loading && !$store.media.items.length">
+            <span class="contents"><span class="skeleton aspect-square"></span><span class="skeleton aspect-square"></span><span class="skeleton aspect-square"></span><span class="skeleton aspect-square"></span></span>
+          </template>
+          <p class="col-span-full py-10 text-center text-sm text-muted" x-show="!$store.media.loading && !$store.media.items.length" x-cloak>Görsel yok. Yükleyin ya da buraya sürükleyin.</p>
+        </div>
+        <button type="button" class="btn btn-ghost btn-sm mx-auto" x-show="$store.media.page < $store.media.pages" @click="$store.media.load(true)" :disabled="$store.media.loading">Daha fazla göster</button>
+        <div class="pn-media-drop" x-show="$store.media.over" x-cloak><svg class="icon icon-xl" aria-hidden="true"><use href="#i-upload"/></svg> Bırakın, yükleyelim</div>
+      </div>
+
+      {# ============================================================ seçili görsel + alt metin #}
+      <aside class="pn-media-side">
+        <template x-if="!$store.media.focused">
+          <div class="pn-empty py-10">
+            <span class="icon-tile icon-tile-round"><svg class="icon icon-lg" aria-hidden="true"><use href="#i-image"/></svg></span>
+            <p class="text-sm text-ink-2">Bir görsel seçin ya da yükleyin. Seçince alt metnini burada yazarsınız.</p>
+          </div>
+        </template>
+        <template x-if="$store.media.focused">
+          <div class="flex flex-col gap-4">
+            <template x-if="$store.media.multiple && $store.media.selected.length > 1">
+              <div class="pn-media-chosen">
+                <template x-for="s in $store.media.selected" :key="s.id">
+                  <button type="button" :class="{ 'is-focused': $store.media.focusId === s.id, 'is-missing': $store.media.missingAlt(s) }" @click="$store.media.focusId = s.id" :aria-label="s.filename"><img :src="s.thumb" alt=""></button>
+                </template>
+              </div>
+            </template>
+            <img class="pn-media-preview" :src="$store.media.focused.src" alt="">
+            <p class="truncate text-xs text-muted" x-text="$store.media.focused.filename + ' · ' + $store.media.focused.width + '×' + $store.media.focused.height"></p>
+            {# Alt metin alanları dil kaydından: varsayılan dil zorunlu, diğerleri boşsa varsayılan dildeki metin kullanılır. #}
+            <template x-for="l in $store.media.altLanguages" :key="l.code">
+              <div class="field">
+                <label class="field-label" :for="'alt-' + l.code">
+                  <span x-text="l.code === $store.media.altLocale ? 'Alt metin · ' + l.name : l.name"></span>
+                  <span class="req" x-show="l.code === $store.media.altLocale">*</span>
+                  <span class="font-normal text-muted" x-show="l.code !== $store.media.altLocale" x-text="'(boşsa ' + $store.media.altLabel + ')'"></span>
+                </label>
+                <input :id="'alt-' + l.code" class="input" x-model="$store.media.focused.alts[l.code]" maxlength="200" :placeholder="l.code === $store.media.altLocale ? 'Görselde ne var? Ör. Harman mobil uygulamasının ana ekranı' : ''"
+                  :aria-invalid="l.code === $store.media.altLocale && !!$store.media.error && $store.media.missingAlt($store.media.focused)"
+                  x-effect="l.code === $store.media.altLocale && $store.media.open && $store.media.focusId && $nextTick(() => !$el.value && $el.focus())">
+              </div>
+            </template>
+            <p class="field-help">Alt metin, görseli göremeyenler ve arama motorları içindir: görselde ne olduğunu kısa ve somut anlatın.</p>
+          </div>
+        </template>
+      </aside>
+    </div>
+
+    <footer class="pn-modal-foot">
+      <p class="pn-alert flex-1" x-show="$store.media.error" x-text="$store.media.error" role="alert" x-cloak></p>
+      <span class="mr-auto text-sm text-muted" x-show="!$store.media.error" x-text="$store.media.selected.length ? $store.media.selected.length + ' görsel seçili' : ''"></span>
+      <button type="button" class="btn btn-ghost" @click="$store.media.close()">Vazgeç</button>
+      <button type="button" class="btn btn-primary" @click="$store.media.confirm()" :disabled="!$store.media.selected.length || $store.media.saving">
+        <svg class="icon icon-sm animate-spin" aria-hidden="true" x-show="$store.media.saving" x-cloak><use href="#i-loader"/></svg>
+        <span x-text="$store.media.saving ? 'Kaydediliyor…' : 'Seç'"></span>
+      </button>
+    </footer>
+  </section>
+</div>

@@ -1,0 +1,5 @@
+{{! Kayıt sayfası bloğu: sık sorulanlar ($store.km.entry.faq). }}
+<section class="book-block" x-data="{ get e() { return $store.km.entry || {}; } }" x-show="e.faq?.length">
+  <h2 class="h4 mb-3" data-km-field="title">{{title}}</h2>
+  <div class="book-faq"><template x-for="(item, i) in e.faq || []" :key="i"><details><summary x-text="item.q"></summary><p x-text="item.a"></p></details></template></div>
+</section>

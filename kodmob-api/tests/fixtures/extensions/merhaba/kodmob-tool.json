@@ -1,0 +1,12 @@
+{
+    "key": "merhaba",
+    "label": "Merhaba",
+    "description": "Merhaba aracı: ne işe yaradığını bir cümleyle yazın.",
+    "version": "0.1.0",
+    "kodmob": ">=2.4 <3",
+    "author": "Kodmob",
+    "license": "MIT",
+    "homepage": "",
+    "namespace": "KodmobTools\\Merhaba",
+    "module": "MerhabaModule"
+}

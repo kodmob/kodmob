@@ -1,0 +1,41 @@
+{{! Şablon: hukuki görüş değildir; yayından önce işletmenize göre kontrol ettirin. }}
+<h2>Taraflar ve kapsam</h2>
+<p>Bu koşullar, {{site.name}} sitesini ({{site.url}}) kullanan herkes için geçerlidir. Siteyi sunan işletme:</p>
+{{{controllerCard}}}
+<p>Siteyi kullanarak bu koşulları kabul etmiş olursunuz. Kabul etmiyorsanız lütfen siteyi kullanmayın.</p>
+
+<h2>Sitenin kullanımı</h2>
+<p>Siteyi yalnızca hukuka uygun amaçlarla kullanabilirsiniz. Şunlar yasaktır:</p>
+<ul>
+  <li>sitenin güvenliğini aşmaya, sistemlerine yetkisiz erişmeye ya da çalışmasını engellemeye çalışmak,</li>
+  <li>otomatik araçlarla siteyi aşırı yüklemek ya da içeriği izinsiz toplu olarak kopyalamak,</li>
+  <li>formlar aracılığıyla yanıltıcı, hukuka aykırı ya da başkalarına ait bilgiler göndermek,</li>
+  <li>siteyi spam, kötü amaçlı yazılım ya da dolandırıcılık için kullanmak.</li>
+</ul>
+
+<h2>Fikri mülkiyet</h2>
+<p>Sitedeki metin, görsel, logo, tasarım ve yazılımlar üzerindeki haklar işletmemize ya da lisans verenlerine aittir. Kişisel ve ticari olmayan kullanım için kaynak göstererek alıntı yapabilirsiniz; bunun dışında içerik izin alınmadan çoğaltılamaz, dağıtılamaz ya da değiştirilemez.</p>
+
+<h2>İçerik ve sorumluluk</h2>
+<p>Sitedeki bilgileri doğru ve güncel tutmaya özen gösteririz, ancak bilgilerin eksiksiz ve hatasız olduğunu garanti edemeyiz. Sitedeki genel bilgiler tavsiye niteliği taşımaz. Kasıt ve ağır ihmal hâlleri ile kanundan doğan sorumluluklar saklı kalmak kaydıyla, sitenin kullanımından doğabilecek dolaylı zararlardan sorumlu değiliz.</p>
+<p>Site bakım, güncelleme ya da teknik nedenlerle geçici olarak erişilemez olabilir.</p>
+
+<h2>Dış bağlantılar</h2>
+<p>Sitede başka sitelere bağlantılar bulunabilir. Bu sitelerin içeriğinden ve gizlilik uygulamalarından sorumlu değiliz.</p>
+
+{{#modules.commerce}}
+<h2>Satışlar</h2>
+<p>Sitemizden yapılan alışverişlerde{{#links.shopTerms}} <a href="{{links.shopTerms}}">Mesafeli Satış Sözleşmesi</a>,{{/links.shopTerms}}{{#links.preInformation}} <a href="{{links.preInformation}}">Ön Bilgilendirme Formu</a>{{/links.preInformation}} ve ilgili koşullar ayrıca geçerlidir. Tüketici olarak kanundan doğan haklarınız bu koşullarla sınırlanmaz.</p>
+{{/modules.commerce}}
+
+<h2>Kişisel veriler</h2>
+<p>Kişisel verilerinizin işlenmesi{{#links.privacy}} <a href="{{links.privacy}}">Gizlilik Politikası</a>{{/links.privacy}}{{#links.kvkk}} ve <a href="{{links.kvkk}}">KVKK Aydınlatma Metni</a>{{/links.kvkk}}'nde anlatılır.</p>
+
+<h2>Değişiklikler</h2>
+<p>Bu koşulları gerektiğinde güncelleyebiliriz. Güncel sürüm her zaman bu sayfadadır; değişiklikler yayımlandığı andan itibaren geçerlidir.</p>
+
+<h2>Uygulanacak hukuk ve yetki</h2>
+<p>Bu koşullara Türkiye Cumhuriyeti hukuku uygulanır. Uyuşmazlıklarda {{controller.court}} mahkemeleri ve icra daireleri yetkilidir. Tüketicilerin, Ticaret Bakanlığınca her yıl belirlenen parasal sınırlar dahilinde tüketici hakem heyetlerine ve tüketici mahkemelerine başvurma hakkı saklıdır.</p>
+
+<h2>İletişim</h2>
+<p>Sorularınız için <a href="mailto:{{controller.email}}">{{controller.email}}</a> adresine yazabilirsiniz.</p>

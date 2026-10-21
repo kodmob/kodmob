@@ -1,0 +1,25 @@
+{
+  "name": "courses",
+  "label": "Kurslar",
+  "singular": "Kurs",
+  "slug": "kurslar",
+  "icon": "book",
+  "orderable": true,
+  "purpose": "Eğitim kurumunun açtığı kurslar: seviye, süre, ücret ve dönem başlangıcı; sitede kurs listesi ve kurs sayfası. Kayıt formu talepler modülüyle (iletişim formu) alınır.",
+  "fields": {
+    "shared": {
+      "cover": { "type": "image", "label": "Görsel", "section": "Genel" },
+      "level": { "type": "select", "label": "Seviye", "options": { "a1": "Başlangıç", "b1": "Orta", "c1": "İleri" }, "section": "Genel", "width": "half" },
+      "hours": { "type": "int", "label": "Toplam saat", "min": 1, "max": 500, "section": "Genel", "width": "half" },
+      "price": { "type": "money", "label": "Ücret", "section": "Genel", "width": "half" },
+      "starts": { "type": "date", "label": "Dönem başlangıcı", "section": "Genel", "width": "half" },
+      "online": { "type": "bool", "label": "Çevrim içi", "help": "İşaretliyse kurs uzaktan yapılır.", "section": "Genel" }
+    },
+    "localized": {
+      "title": { "type": "text", "label": "Kursun adı", "section": "İçerik" },
+      "summary": { "type": "textarea", "label": "Kısa tanıtım", "max": 300, "section": "İçerik" },
+      "body": { "type": "html", "label": "Program ve ayrıntılar", "section": "İçerik" },
+      "outcomes": { "type": "list", "label": "Kazanımlar", "help": "Her satır bir madde.", "section": "İçerik" }
+    }
+  }
+}

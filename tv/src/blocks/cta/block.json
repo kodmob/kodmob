@@ -1,0 +1,15 @@
+{
+  "label": "Çağrı bandı",
+  "description": "Lacivert bantta iki satırlık çağrı ve düğme: iletişime, teklife, kayda yönlendirin.",
+  "category": "section",
+  "icon": "send",
+  "fields": [
+    { "name": "title", "type": "text", "label": "Başlık", "localized": true, "max": 120, "default": "@blocks.cta.title" },
+    { "name": "titleAccent", "type": "text", "label": "İkinci satır (vurgulu)", "localized": true, "max": 120, "default": "@blocks.cta.titleAccent" },
+    { "name": "lead", "type": "textarea", "label": "Açıklama", "localized": true, "max": 300, "default": "@blocks.cta.lead" },
+    { "name": "button", "type": "text", "label": "Düğme", "localized": true, "max": 40, "default": "@blocks.cta.button" },
+    { "name": "url", "type": "link", "label": "Düğmenin bağlantısı", "default": "route:contact" },
+    { "name": "secondary", "type": "text", "label": "İkinci düğme", "localized": true, "max": 40, "help": "Boşsa görünmez." },
+    { "name": "secondaryUrl", "type": "link", "label": "İkinci düğmenin bağlantısı" }
+  ]
+}

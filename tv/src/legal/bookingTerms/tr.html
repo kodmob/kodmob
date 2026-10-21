@@ -1,0 +1,45 @@
+{{! Şablon: iptal ve iade kurallarını işletmenize göre panelde özelleştirin. Paket turlarda Paket Tur Sözleşmeleri Yönetmeliği'ni de gözetin. }}
+<h2>Kapsam</h2>
+<p>Bu koşullar, {{site.name}} üzerinden yapılan tur, etkinlik{{#modules.hotels}} ve konaklama{{/modules.hotels}} rezervasyonları için geçerlidir. Hizmeti sunan işletme:</p>
+{{{controllerCard}}}
+<p>Rezervasyonlar ayrıca{{#links.shopTerms}} <a href="{{links.shopTerms}}">Mesafeli Satış Sözleşmesi</a>'ne{{/links.shopTerms}} tabidir; bu metindeki özel hükümler önceliklidir.</p>
+
+<h2>Rezervasyonun kesinleşmesi</h2>
+<p>Rezervasyonunuz, ödemenin tamamlanmasıyla (havale / EFT'de ödemenin hesabımıza ulaşmasıyla) kesinleşir ve onay e-postasıyla bildirilir. Kontenjan, ödeme sırasında yeniden denetlenir; yer kalmamışsa ödemeniz alınmaz ya da tamamı iade edilir.</p>
+
+<h2>Fiyatlar</h2>
+<ul>
+  <li>Fiyatlar rezervasyon sayfasında gösterilir ve vergiler dahildir; ödeme adımındaki toplam tutar geçerlidir.</li>
+  <li>Kişi başı fiyatlı hizmetlerde çocuk ve bebek fiyatları ile yaş aralıkları rezervasyon sayfasında belirtilir. Yaşı doğru bildirmek rezervasyonu yapan kişinin sorumluluğundadır.</li>
+{{#modules.hotels}}
+  <li>Konaklamada fiyat oda ve gece başınadır; seçtiğiniz oda tipi ve pansiyon türüne göre belirlenir. Giriş ve çıkış saatleri tesis sayfasında yazar.</li>
+{{/modules.hotels}}
+  <li>Grup, sezon ve erken rezervasyon indirimleri yalnızca rezervasyon anında uygulanır.</li>
+</ul>
+
+<h2>Cayma hakkı</h2>
+<p>Belirli bir tarihte sunulan tur, etkinlik{{#modules.hotels}} ve konaklama{{/modules.hotels}} hizmetlerinde, Mesafeli Sözleşmeler Yönetmeliği'nin 15. maddesi uyarınca cayma hakkı bulunmaz. Bunun yerine aşağıdaki iptal koşulları uygulanır.</p>
+
+<h2>Sizin yaptığınız iptaller</h2>
+<p>İptal talebinizi rezervasyon numaranızla <a href="mailto:{{controller.email}}">{{controller.email}}</a> adresine yazılı olarak iletin. Rezervasyon sayfasında farklı bir koşul belirtilmemişse:</p>
+<ul>
+  <li>hizmet tarihinden 7 gün veya daha önce yapılan iptallerde ödediğiniz tutarın tamamı iade edilir,</li>
+  <li>hizmet tarihine 7 günden az kala yapılan iptallerde ve hizmete katılmamanız (no-show) hâlinde iade yapılmaz.</li>
+</ul>
+<p>Tarih değişikliği talepleri kontenjan ve fiyat uygunluğuna göre değerlendirilir.</p>
+
+<h2>Bizim yaptığımız iptaller ve değişiklikler</h2>
+<p>Yetersiz katılım, hava koşulları, mücbir sebep ya da güvenlik nedeniyle hizmeti iptal etmemiz gerekirse size hemen haber veririz; alternatif tarih kabul etmezseniz ödediğiniz tutarın tamamı 14 gün içinde iade edilir. Programda zorunlu küçük değişiklikler olabilir; esaslı bir değişiklikte rezervasyonunuzu ücretsiz iptal edebilirsiniz.</p>
+
+<h2>Katılımcının sorumlulukları</h2>
+<ul>
+  <li>Kimlik, pasaport, vize ve sağlık gerekliliklerini karşılamak katılımcının sorumluluğundadır.</li>
+  <li>Buluşma noktasına ve saatine zamanında gelinmesi gerekir; gecikme nedeniyle kaçırılan hizmet iade edilmez.</li>
+  <li>Katılımcı, hizmet sırasında görevlilerin güvenlik talimatlarına uymakla yükümlüdür.</li>
+</ul>
+
+<h2>İade süreci</h2>
+<p>İadeler, ödeme kartla yapıldıysa ilgili karta, havale / EFT ile yapıldıysa bildireceğiniz banka hesabına yapılır.</p>
+
+<h2>Şikâyet ve uyuşmazlık</h2>
+<p>Şikâyetlerinizi <a href="mailto:{{controller.email}}">{{controller.email}}</a> adresine iletebilirsiniz. Uyuşmazlıklarda Ticaret Bakanlığınca belirlenen parasal sınırlar dahilinde tüketici hakem heyetleri, bu sınırları aşan durumlarda tüketici mahkemeleri yetkilidir.</p>

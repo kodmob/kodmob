@@ -1,0 +1,30 @@
+{{! Bülten aboneliği (block.js → POST /newsletter; çift onay: gönderince onay e-postası gider). Tuzak alan `website`. }}
+<section class="container-site section-sm">
+  <div class="km-newsletter is-{{tone}} reveal">
+    <div class="km-newsletter-text">
+{{#eyebrow}}
+      <span class="eyebrow" data-km-field="eyebrow">{{eyebrow}}</span>
+{{/eyebrow}}
+      <h2 class="h2 mt-2" data-km-field="title">{{title}}</h2>
+{{#lead}}
+      <p class="km-newsletter-lead mt-3" data-km-field="lead">{{lead}}</p>
+{{/lead}}
+    </div>
+    <div>
+      <form class="km-newsletter-form" novalidate data-newsletter-form>
+        <div class="km-newsletter-row">
+{{#askName}}
+          <label class="km-newsletter-field"><span class="sr-only">{{nameLabel}}</span><input name="name" class="input" placeholder="{{nameLabel}}" autocomplete="name" maxlength="120"></label>
+{{/askName}}
+          <label class="km-newsletter-field"><span class="sr-only">{{placeholder}}</span><input name="email" type="email" class="input" placeholder="{{placeholder}}" autocomplete="email" maxlength="190" required></label>
+          <button type="submit" class="btn btn-primary"><span data-km-field="button">{{button}}</span></button>
+        </div>
+        <p class="field-error" data-error="email" hidden></p>
+        <div class="sr-only" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></div>
+        <label class="check mt-3"><input type="checkbox" name="consent"> <span><span data-km-field="consent">{{consent}}</span>{{#privacyUrl}} <a href="{{privacyUrl}}" class="font-semibold" target="_blank" rel="noopener">{{privacyLabel}}</a>{{/privacyUrl}}</span></label>
+        <p class="field-error" data-error="consent" hidden></p>
+      </form>
+      <p class="km-newsletter-done" role="status" tabindex="-1" hidden data-newsletter-done><svg class="icon" aria-hidden="true"><use href="#i-check-circle"/></svg> <span data-km-field="done">{{done}}</span></p>
+    </div>
+  </div>
+</section>

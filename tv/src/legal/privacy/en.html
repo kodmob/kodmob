@@ -1,0 +1,92 @@
+{{! Template: not legal advice; have it reviewed by a lawyer against the site's actual processing before publishing. }}
+<h2>In short</h2>
+<ul>
+  <li>You do not need an account or to give us any information to browse {{site.name}}.</li>
+  <li>We do not use advertising, retargeting or analytics trackers. Our pages, including fonts, are served from our own server.</li>
+  <li>We process your personal data only for the purpose you give it to us; we do not sell it or share it with others for marketing.</li>
+</ul>
+
+<h2>Data controller</h2>
+<p>This policy explains how the data controller below processes personal data on {{site.name}}:</p>
+{{{controllerCard}}}
+
+<h2>When you visit the site</h2>
+<p>When you open our pages, your browser sends our server your IP address, browser details and the page requested, as with any website. This information may be kept briefly in server logs to run and secure the site. We do not track visits per person or build profiles.</p>
+<p>Our security system records the IP address and a request summary only for requests it blocks on suspicion of attack or abuse. These records are deleted after {{retention.security}} days.</p>
+<p>Your language and theme preferences are stored in your browser{{#modules.commerce}}; a cookie is used to remember your cart{{/modules.commerce}}.{{#links.cookies}} See our <a href="{{links.cookies}}">Cookie Policy</a> for details.{{/links.cookies}}</p>
+
+{{#modules.briefs}}
+<h2>When you write to us</h2>
+<p>When you submit a contact or enquiry form we receive your name, e-mail address, optional phone number and message. To prevent spam we store an irreversible hash of your IP address (not the address itself) and your browser details with your request.</p>
+<p>We use this information only to assess your request and reply to you. Requests are automatically and permanently deleted from our system after {{retention.briefs}} months.{{#links.contactNotice}} Details: <a href="{{links.contactNotice}}">Contact and Enquiry Form Notice</a>.{{/links.contactNotice}}</p>
+{{/modules.briefs}}
+
+{{#modules.newsletter}}
+<h2>When you subscribe to our newsletter</h2>
+<p>For the newsletter we process your e-mail address, optional name, the language of the page you subscribed on and a record of your consent (date and a hash of your IP address). Your subscription starts when you confirm the link we e-mail you; you can leave with one click from any newsletter.{{#links.newsletterConsent}} Details: <a href="{{links.newsletterConsent}}">Newsletter Notice and Marketing Consent</a>.{{/links.newsletterConsent}}</p>
+{{/modules.newsletter}}
+
+{{#modules.commerce}}
+<h2>When you shop with us</h2>
+<p>When you order we process your name, e-mail address, phone number, delivery and billing address, the contents and amount of your order and the payment method. We need this to prepare, deliver and invoice your order and to meet our legal obligations.</p>
+{{#modules.booking}}
+<p>For bookings we also process the booking date, the number of participants and the package or room you choose.</p>
+{{/modules.booking}}
+<p>Your card details never reach our servers and are not stored by us.{{#modules.stripe}} Card payments are made on Stripe's secure payment page.{{/modules.stripe}}{{#modules.paytr}} Card payments are made on PayTR's secure payment page.{{/modules.paytr}}{{#links.orderNotice}} Details: <a href="{{links.orderNotice}}">Customer Privacy Notice</a>.{{/links.orderNotice}}</p>
+{{/modules.commerce}}
+
+<h2>Service providers and transfers</h2>
+<p>We do not share your personal data with third parties for marketing. It may be transferred only to the following recipients, to the extent required:</p>
+<ul>
+  <li><strong>Hosting and e-mail infrastructure:</strong> the provider of the server hosting our site and database and of the infrastructure that sends e-mails.</li>
+{{#modules.commerce}}
+  <li><strong>Shipping and logistics companies:</strong> name, address and phone number to deliver physical goods.</li>
+{{/modules.commerce}}
+{{#modules.stripe}}
+  <li><strong>Stripe:</strong> payment amount, e-mail address and order number to take card payments. Stripe's servers are located abroad.</li>
+{{/modules.stripe}}
+{{#modules.paytr}}
+  <li><strong>PayTR:</strong> name, e-mail, phone, address, payment amount and order number to take card payments.</li>
+{{/modules.paytr}}
+  <li><strong>Authorised authorities:</strong> competent public authorities and courts where required by law.</li>
+</ul>
+<p>Where a transfer abroad is necessary, we follow the procedures and safeguards of Article 9 of Law No. 6698 and, for visitors from the EU, the GDPR.</p>
+
+<h2>External services and links</h2>
+<p>Our pages contain only links to external services such as social media, messaging (e.g. WhatsApp) and maps. These links send no information until you click them; once you do, that service's own privacy terms apply.</p>
+
+<h2>How we protect your data</h2>
+<ul>
+  <li>The site is served only over an encrypted connection (HTTPS).</li>
+  <li>Only authorised site administrators can access personal data; the admin panel is closed to visitors, can be protected with two-step verification and actions there are logged.</li>
+  <li>IP addresses are not stored in plain form in form records; forms are protected by rate limits and automatic spam protection.</li>
+  <li>Our pages are served with a strict Content Security Policy (CSP); no code is run from external sources.</li>
+</ul>
+
+<h2>Retention</h2>
+<p>We keep personal data only as long as the purpose requires:</p>
+<ul>
+  <li>Security records: {{retention.security}} days.</li>
+{{#modules.briefs}}
+  <li>Contact and enquiry forms: {{retention.briefs}} months.</li>
+{{/modules.briefs}}
+{{#modules.newsletter}}
+  <li>Newsletter subscription: until you unsubscribe; consent and withdrawal records for the period required by law as proof.</li>
+{{/modules.newsletter}}
+{{#modules.commerce}}
+  <li>Order and invoice records: for the periods required by the Turkish Commercial Code and Tax Procedure Law (up to 10 years).</li>
+{{/modules.commerce}}
+</ul>
+<p>When the period ends, the data is deleted, destroyed or anonymised.</p>
+
+<h2>Your rights</h2>
+<p>You have the right to know what we hold about you and to ask for it to be corrected or deleted.{{#links.kvkk}} The full list of your rights and how to apply is in our <a href="{{links.kvkk}}">Personal Data Notice (KVKK)</a>.{{/links.kvkk}} If you are in the European Union, you can exercise your GDPR rights (access, rectification, erasure, restriction, portability, objection and complaint to a supervisory authority) in the same way.</p>
+
+<h2>Children's privacy</h2>
+<p>Our site is not directed at people under 18 and we do not knowingly collect their personal data. If such data has reached us, write to us and we will delete it.</p>
+
+<h2>Changes to this policy</h2>
+<p>If our site or the way we process data changes, we update this policy. The current version is always on this page; the date of the last update is shown at the top.</p>
+
+<h2>Contact</h2>
+<p>For privacy questions, write to <a href="mailto:{{controller.email}}">{{controller.email}}</a>.</p>

@@ -1,0 +1,37 @@
+{#
+  Sayfanın altındaki sabit katman:
+  - Masaüstü: sağ altta WhatsApp düğmesi (numara ayarlıysa), çevrimiçi durumu.
+  - Mobil: alt çubuk — "Projenizi Konuşalım" + WhatsApp.
+  - Dil önerisi bandı (tarayıcı dili farklıysa; bkz. ui/lang/lang-banner.js).
+  WhatsApp numarası ve saatleri /panel/ > Ayarlar'dan gelir ($store.km.site).
+#}
+{% set waText = t('whatsapp.message') | urlencode | replace("'", '%27') %}
+{% set waHref = "'https://wa.me/' + $store.km.site.whatsapp + '?text=" + waText + "'" %}
+
+<template x-if="$store.km.site.whatsapp">
+<a :href="{{ waHref }}" class="wa-float max-lg:hidden" target="_blank" rel="noopener" x-data="kmWhatsapp($store.km.site.hours)" data-no-prerender>
+  <span class="wa-float-icon"><svg class="icon icon-lg" aria-hidden="true"><use href="#i-chat"/></svg><span class="wa-dot" :class="online && 'is-online'"></span></span>
+  <span class="wa-float-text">
+    <span class="block font-semibold">{{ t('whatsapp.label') }}</span>
+    <span class="block text-xs opacity-80" x-text="online ? $el.dataset.online : $el.dataset.offline" data-online="{{ t('whatsapp.online') }}" data-offline="{{ t('whatsapp.offline') }}">{{ t('whatsapp.offline') }}</span>
+  </span>
+</a>
+</template>
+
+{% if page.name != 'contact' %}
+<div class="mobile-bar lg:hidden">
+  <a href="{{ url('contact') }}" class="btn btn-primary flex-1">{{ t('nav.cta') }}</a>
+  <template x-if="$store.km.site.whatsapp">
+    <a :href="{{ waHref }}" class="btn btn-secondary" target="_blank" rel="noopener" aria-label="{{ t('whatsapp.label') }}" data-no-prerender>
+      <svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg> WhatsApp
+    </a>
+  </template>
+</div>
+{% endif %}
+
+<div class="lang-banner" x-data="kmLangBanner" x-show="show" x-cloak x-transition role="region" :aria-label="text">
+  <svg class="icon shrink-0 text-primary" aria-hidden="true"><use href="#i-globe"/></svg>
+  <p class="flex-1 text-sm text-ink" x-text="text" :lang="code"></p>
+  <a :href="href" :hreflang="code" :lang="code" class="btn btn-primary btn-sm" @click="go()" x-text="switchLabel"></a>
+  <button type="button" class="btn-icon" @click="dismiss()" :aria-label="dismissLabel"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-x"/></svg></button>
+</div>

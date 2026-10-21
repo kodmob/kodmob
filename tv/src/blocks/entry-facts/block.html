@@ -1,0 +1,11 @@
+{{! Kayıt sayfası bloğu (tur, otel…): içerik sayfadaki kayıttan ($store.km.entry); boş bilgi görünmez. }}
+<section class="book-block" x-data="{ get e() { return $store.km.entry || {}; } }" x-show="e.location || e.booking?.checkIn || e.duration || e.guideLanguages?.length || e.meeting">
+  <ul class="book-facts">
+    <li x-show="e.location"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-map-pin"/></svg><span><small data-km-field="locationLabel">{{locationLabel}}</small><span x-text="e.location"></span></span></li>
+    <li x-show="e.booking?.checkIn"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-clock"/></svg><span><small data-km-field="checkInLabel">{{checkInLabel}}</small><span x-text="e.booking?.checkIn"></span></span></li>
+    <li x-show="e.booking?.checkOut"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-clock"/></svg><span><small data-km-field="checkOutLabel">{{checkOutLabel}}</small><span x-text="e.booking?.checkOut"></span></span></li>
+    <li x-show="e.duration"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-clock"/></svg><span><small data-km-field="durationLabel">{{durationLabel}}</small><span x-text="e.duration"></span></span></li>
+    <li x-show="e.guideLanguages?.length"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-globe"/></svg><span><small data-km-field="languagesLabel">{{languagesLabel}}</small><span x-text="(e.guideLanguages || []).join(', ')"></span></span></li>
+    <li x-show="e.meeting"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-map-pin"/></svg><span><small data-km-field="meetingLabel">{{meetingLabel}}</small><span x-text="e.meeting"></span></span></li>
+  </ul>
+</section>

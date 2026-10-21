@@ -1,0 +1,15 @@
+{
+  "label": "Rakamlar",
+  "description": "Büyük rakamlar ve kısa açıklamaları; görünür olunca sayarak artar. Deneyim, müşteri, proje sayısı.",
+  "category": "section",
+  "icon": "bar-chart",
+  "fields": [
+    { "name": "eyebrow", "type": "text", "label": "Üst etiket", "localized": true, "max": 60, "default": "@blocks.stats.eyebrow" },
+    { "name": "title", "type": "text", "label": "Başlık", "localized": true, "max": 120, "default": "@blocks.stats.title" },
+    { "name": "items", "type": "rows", "label": "Rakamlar", "localized": true, "max": 6, "columns": [
+      { "name": "value", "type": "text", "label": "Değer (ör. 50+)", "max": 20 },
+      { "name": "label", "type": "text", "label": "Açıklama", "max": 60 }
+    ], "default": "@blocks.stats.items" },
+    { "name": "tone", "type": "select", "label": "Zemin", "options": { "plain": "Sade", "navy": "Lacivert" }, "default": "plain" }
+  ]
+}

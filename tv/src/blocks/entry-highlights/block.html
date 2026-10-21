@@ -1,0 +1,5 @@
+{{! Kayıt sayfası bloğu: öne çıkanlar ($store.km.entry.highlights). }}
+<section class="book-block" x-data="{ get e() { return $store.km.entry || {}; } }" x-show="e.highlights?.length">
+  <h2 class="h4 mb-3" data-km-field="title">{{title}}</h2>
+  <ul class="book-highlights"><template x-for="(line, i) in e.highlights || []" :key="i"><li><svg class="icon icon-sm" aria-hidden="true"><use href="#i-sparkles"/></svg><span x-text="line"></span></li></template></ul>
+</section>

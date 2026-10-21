@@ -1,0 +1,4 @@
+{
+    "description": "Kodmob topluluk araçları kataloğu. Araç bu listeye açık depoda çekme isteğiyle (PR) eklenir; kontrol listesi ve paket biçimi: docs/arac-paketi.md. Alanlar: key, label, description, author, license, version, kodmob (uyumlu çatı), repository, download (zip), sha256 (zip'in özeti), verified (incelendi).",
+    "tools": []
+}

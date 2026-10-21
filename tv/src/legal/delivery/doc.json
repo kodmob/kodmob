@@ -1,0 +1,7 @@
+{
+  "group": "commerce",
+  "order": 30,
+  "module": "commerce",
+  "updated": "2026-10-21",
+  "paths": { "tr": "teslimat-ve-kargo", "en": "delivery-and-shipping", "de": "lieferung-und-versand" }
+}

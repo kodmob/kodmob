@@ -1,0 +1,149 @@
+/*
+ * Panel tasarım belirteçleri (renk, yazı, köşe,
+ * gölge, dokunma hedefleri). Koyu tema Kodmob'dan: sistem tercihi ya da
+ * <html class="theme-dark|theme-light"> (ui/theme/theme.js).
+ *
+ * Takma adlar (navy-*, primary-strong, tile, btn, lift, star): paneldeki eski
+ * ekran stilleri (screens.css) ve ortak site bileşenleri aynı adları kullanır.
+ */
+
+@font-face {
+  font-family: "Google Sans Flex";
+  src: url("/assets/fonts/GoogleSansFlex-Variable.woff2") format("woff2-variations");
+  font-weight: 1 1000;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  --font-sans: "Google Sans Flex", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+
+  /* Zemin ve yüzey */
+  --color-bg: #F6F7F9;
+  --color-surface: #FFFFFF;
+  --color-surface-subtle: #F9FAFB;
+  --color-line: #E4E7EC;
+  --color-line-strong: #D0D5DD;
+
+  /* Metin */
+  --color-ink: #101828;
+  --color-ink-2: #475467;
+  --color-muted: #667085;
+
+  /* Ana renk (mavi) */
+  --color-primary: #2563EB;
+  --color-primary-strong: #2563EB;
+  --color-primary-hover: #1D4ED8;
+  --color-primary-soft: #EFF6FF;
+  --color-primary-ink: #1E40AF;
+
+  /* Durum renkleri — her biri açık tonuyla */
+  --color-success: #16A34A;
+  --color-success-soft: #F0FDF4;
+  --color-success-ink: #166534;
+  --color-warning: #D97706;
+  --color-warning-soft: #FFFBEB;
+  --color-warning-ink: #92400E;
+  --color-danger: #DC2626;
+  --color-danger-soft: #FEF2F2;
+  --color-danger-ink: #991B1B;
+  --color-info: #0891B2;
+  --color-info-soft: #ECFEFF;
+  --color-info-ink: #155E75;
+  --color-star: #F5A524;
+
+  /* Koyu menü (lacivert sol menü) */
+  --color-nav: #0B1733;
+  --color-nav-2: #13244A;
+  --color-nav-line: #1E3160;
+  --color-nav-ink: #C7D2EA;
+  --color-nav-muted: #7E8DB0;
+  --color-navy: #0B1733;
+  --color-navy-2: #13244A;
+  --color-navy-line: #1E3160;
+  --color-navy-ink: #C7D2EA;
+  --color-navy-muted: #7E8DB0;
+
+  /* Köşe: kart 12px, kutucuk 10px, form ve düğme 8px */
+  --radius-card: 12px;
+  --radius-tile: 10px;
+  --radius-control: 8px;
+
+  /* Gölge: çok hafif; ayrım kenarlıkla yapılır */
+  --shadow-card: 0 1px 2px rgb(16 24 40 / 0.04);
+  --shadow-pop: 0 12px 32px -8px rgb(16 24 40 / 0.18), 0 2px 6px rgb(16 24 40 / 0.06);
+  --shadow-lift: 0 8px 20px -10px rgb(16 24 40 / 0.22);
+  --shadow-btn: none;
+
+  /* Dokunma hedefleri */
+  --spacing-control: 3rem;      /* 48px düğme */
+  --spacing-field: 3.25rem;     /* 52px form alanı */
+  --spacing-topbar: 3.5rem;     /* 56px mobil üst bar */
+  --spacing-sidebar: 15.5rem;   /* 248px masaüstü menü */
+  --spacing-bottomnav: 4rem;    /* 64px mobil alt menü */
+}
+
+@layer base {
+  :root.theme-dark {
+    color-scheme: dark;
+    --color-bg: #0B1020;
+    --color-surface: #121A2E;
+    --color-surface-subtle: #18223A;
+    --color-line: #243049;
+    --color-line-strong: #34425F;
+    --color-ink: #E8EDF7;
+    --color-ink-2: #AEB9D0;
+    --color-muted: #8391AE;
+    --color-primary: #6F95FF;
+    --color-primary-strong: #2E63F5;
+    --color-primary-hover: #4A78FF;
+    --color-primary-soft: #16244A;
+    --color-primary-ink: #B7CBFF;
+    --color-nav: #080F22;
+    --color-nav-2: #12204A;
+    --color-navy: #080F22;
+    --color-navy-2: #12204A;
+    --color-success-soft: #0F2A1B;
+    --color-success-ink: #86EFAC;
+    --color-warning-soft: #2A2110;
+    --color-warning-ink: #FCD34D;
+    --color-danger-soft: #2C1215;
+    --color-danger-ink: #FCA5A5;
+    --color-info-soft: #0C2530;
+    --color-info-ink: #67E8F9;
+    --shadow-card: 0 1px 2px rgb(0 0 0 / 0.3);
+    --shadow-pop: 0 18px 40px -12px rgb(0 0 0 / 0.6), 0 2px 6px rgb(0 0 0 / 0.3);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not(.theme-light) {
+      color-scheme: dark;
+      --color-bg: #0B1020;
+      --color-surface: #121A2E;
+      --color-surface-subtle: #18223A;
+      --color-line: #243049;
+      --color-line-strong: #34425F;
+      --color-ink: #E8EDF7;
+      --color-ink-2: #AEB9D0;
+      --color-muted: #8391AE;
+      --color-primary: #6F95FF;
+      --color-primary-strong: #2E63F5;
+      --color-primary-hover: #4A78FF;
+      --color-primary-soft: #16244A;
+      --color-primary-ink: #B7CBFF;
+      --color-nav: #080F22;
+      --color-nav-2: #12204A;
+      --color-navy: #080F22;
+      --color-navy-2: #12204A;
+      --color-success-soft: #0F2A1B;
+      --color-success-ink: #86EFAC;
+      --color-warning-soft: #2A2110;
+      --color-warning-ink: #FCD34D;
+      --color-danger-soft: #2C1215;
+      --color-danger-ink: #FCA5A5;
+      --color-info-soft: #0C2530;
+      --color-info-ink: #67E8F9;
+      --shadow-card: 0 1px 2px rgb(0 0 0 / 0.3);
+      --shadow-pop: 0 18px 40px -12px rgb(0 0 0 / 0.6), 0 2px 6px rgb(0 0 0 / 0.3);
+    }
+  }
+}

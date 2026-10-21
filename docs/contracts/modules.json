@@ -1,0 +1,3388 @@
+{
+    "modules": {
+        "auth": {
+            "label": "Oturum",
+            "kind": "core",
+            "scope": "each",
+            "routes": [
+                {
+                    "method": "POST",
+                    "path": "/v1/auth/handoff",
+                    "auth": false,
+                    "throttle": "10/1"
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/auth/token",
+                    "auth": false
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/auth/token/refresh",
+                    "auth": false,
+                    "throttle": "60/1"
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/auth/token/revoke",
+                    "auth": true
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/me",
+                    "auth": true
+                },
+                {
+                    "method": "PUT",
+                    "path": "/v1/me",
+                    "name": "profile.updated",
+                    "summary": "Profilini güncelledi",
+                    "auth": true
+                },
+                {
+                    "method": "PUT",
+                    "path": "/v1/me/password",
+                    "name": "profile.password_changed",
+                    "summary": "Şifresini değiştirdi",
+                    "auth": true
+                },
+                {
+                    "method": "DELETE",
+                    "path": "/v1/me/quick-actions",
+                    "auth": true
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/me/quick-actions",
+                    "auth": true
+                },
+                {
+                    "method": "PUT",
+                    "path": "/v1/me/quick-actions",
+                    "auth": true,
+                    "throttle": "60/1"
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/me/sessions",
+                    "auth": true
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/me/sessions/end-others",
+                    "name": "sessions.ended_others",
+                    "summary": "Diğer oturumlar kapatıldı",
+                    "auth": true
+                },
+                {
+                    "method": "DELETE",
+                    "path": "/v1/me/sessions/{id}",
+                    "name": "sessions.ended",
+                    "summary": "Oturum kapatıldı",
+                    "auth": true
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/me/two-factor/confirm",
+                    "auth": true,
+                    "throttle": "10/1"
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/me/two-factor/disable",
+                    "auth": true,
+                    "throttle": "10/1"
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/me/two-factor/recovery",
+                    "auth": true,
+                    "throttle": "10/1"
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/me/two-factor/setup",
+                    "auth": true,
+                    "throttle": "10/1"
+                }
+            ]
+        },
+        "blog": {
+            "label": "Blog",
+            "kind": "base",
+            "scope": "each",
+            "routes": [
+                {
+                    "method": "POST",
+                    "path": "/v1/admin/content/posts/{id}/link",
+                    "auth": true,
+                    "caps": [
+                        "@content"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/admin/content/posts/{id}/translations",
+                    "auth": true,
+                    "caps": [
+                        "@content"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/admin/content/posts/{id}/unlink",
+                    "auth": true,
+                    "caps": [
+                        "@content"
+                    ]
+                }
+            ]
+        },
+        "booking": {
+            "label": "Rezervasyon",
+            "kind": "tool",
+            "requires": [
+                "commerce"
+            ],
+            "scope": "each",
+            "routes": [
+                {
+                    "method": "GET",
+                    "path": "/v1/admin/commerce/bookings",
+                    "auth": true,
+                    "caps": [
+                        "km_view_bookings"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/shop/bookings/quote",
+                    "auth": false,
+                    "throttle": "60/1"
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/shop/bookings/{tour}/availability",
+                    "auth": false,
+                    "throttle": "60/1"
+                }
+            ],
+            "capabilities": [
+                "km_view_bookings"
+            ],
+            "settings": [
+                {
+                    "key": "booking.lead_days",
+                    "type": "int",
+                    "default": 1,
+                    "label": "En erken rezervasyon",
+                    "group": "Mağaza: Rezervasyon",
+                    "scope": "project",
+                    "min": 0,
+                    "max": 365
+                }
+            ]
+        },
+        "briefs": {
+            "label": "Talepler",
+            "kind": "base",
+            "scope": "each",
+            "routes": [
+                {
+                    "method": "GET",
+                    "path": "/v1/admin/briefs",
+                    "auth": true,
+                    "caps": [
+                        "km_view_briefs"
+                    ]
+                },
+                {
+                    "method": "DELETE",
+                    "path": "/v1/admin/briefs/{id}",
+                    "auth": true,
+                    "caps": [
+                        "km_delete_briefs"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/admin/briefs/{id}",
+                    "auth": true,
+                    "caps": [
+                        "km_view_briefs"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/admin/briefs/{id}/status",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_briefs"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/briefs",
+                    "auth": true,
+                    "caps": [
+                        "km_view_briefs"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/briefs",
+                    "auth": false,
+                    "throttle": "20/1"
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/briefs/{id}/status",
+                    "name": "briefs.status_changed",
+                    "summary": "Talep durumu değişti",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_briefs"
+                    ]
+                }
+            ],
+            "capabilities": [
+                "km_delete_briefs",
+                "km_manage_briefs",
+                "km_view_briefs"
+            ],
+            "settings": [
+                {
+                    "key": "brief.notify_email",
+                    "type": "string",
+                    "default": "",
+                    "label": "Bildirim e-postası",
+                    "group": "Talepler"
+                },
+                {
+                    "key": "brief.retention_months",
+                    "type": "int",
+                    "default": 24,
+                    "label": "Saklama süresi",
+                    "group": "Talepler",
+                    "min": 1,
+                    "max": 120
+                }
+            ],
+            "events": {
+                "brief.deleted": "Talep kalıcı olarak silindi",
+                "brief.purged": "Süresi dolan talepler silindi",
+                "brief.received": "Yeni talep",
+                "brief.spam_blocked": "Spam talep engellendi"
+            },
+            "schedule": {
+                "briefs:purge": "10 3 * * *"
+            }
+        },
+        "commerce": {
+            "label": "Mağaza",
+            "kind": "tool",
+            "scope": "each",
+            "routes": [
+                {
+                    "method": "GET",
+                    "path": "/v1/admin/commerce/coupons",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_coupons"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/admin/commerce/coupons",
+                    "name": "commerce.coupon_created",
+                    "summary": "Kupon eklendi",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_coupons"
+                    ]
+                },
+                {
+                    "method": "DELETE",
+                    "path": "/v1/admin/commerce/coupons/{id}",
+                    "name": "commerce.coupon_deleted",
+                    "summary": "Kupon silindi",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_coupons"
+                    ]
+                },
+                {
+                    "method": "PUT",
+                    "path": "/v1/admin/commerce/coupons/{id}",
+                    "name": "commerce.coupon_saved",
+                    "summary": "Kupon güncellendi",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_coupons"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/admin/commerce/orders",
+                    "auth": true,
+                    "caps": [
+                        "km_view_orders"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/admin/commerce/orders/{id}",
+                    "auth": true,
+                    "caps": [
+                        "km_view_orders"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/admin/commerce/orders/{id}/status",
+                    "name": "commerce.order_status",
+                    "summary": "Sipariş durumu değişti",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_orders"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/shop/cart",
+                    "auth": false,
+                    "throttle": "120/1"
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/shop/cart/coupon",
+                    "auth": false,
+                    "throttle": "20/1"
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/shop/cart/items",
+                    "auth": false,
+                    "throttle": "60/1"
+                },
+                {
+                    "method": "DELETE",
+                    "path": "/v1/shop/cart/items/{line}",
+                    "auth": false,
+                    "throttle": "60/1"
+                },
+                {
+                    "method": "PATCH",
+                    "path": "/v1/shop/cart/items/{line}",
+                    "auth": false,
+                    "throttle": "60/1"
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/shop/checkout",
+                    "auth": false,
+                    "throttle": "10/1"
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/shop/orders/{number}",
+                    "auth": false,
+                    "throttle": "30/1"
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/shop/orders/{number}/pay",
+                    "auth": false,
+                    "throttle": "10/1"
+                }
+            ],
+            "capabilities": [
+                "km_manage_coupons",
+                "km_manage_orders",
+                "km_view_orders"
+            ],
+            "settings": [
+                {
+                    "key": "commerce.currency",
+                    "type": "string",
+                    "default": "TRY",
+                    "label": "Para birimi",
+                    "group": "Mağaza",
+                    "scope": "project",
+                    "options": [
+                        "TRY",
+                        "EUR",
+                        "USD",
+                        "GBP"
+                    ]
+                },
+                {
+                    "key": "commerce.include_tax",
+                    "type": "bool",
+                    "default": true,
+                    "label": "Fiyatlar KDV dahil",
+                    "group": "Mağaza",
+                    "scope": "project"
+                },
+                {
+                    "key": "commerce.shipping_fee",
+                    "type": "float",
+                    "default": 0,
+                    "label": "Kargo ücreti",
+                    "group": "Mağaza",
+                    "scope": "project",
+                    "min": 0,
+                    "max": 100000
+                },
+                {
+                    "key": "commerce.free_shipping_over",
+                    "type": "float",
+                    "default": 0,
+                    "label": "Ücretsiz kargo alt sınırı",
+                    "group": "Mağaza",
+                    "scope": "project",
+                    "min": 0,
+                    "max": 1000000
+                },
+                {
+                    "key": "commerce.notify_email",
+                    "type": "string",
+                    "default": "",
+                    "label": "Sipariş bildirim e-postası",
+                    "group": "Mağaza",
+                    "scope": "project"
+                },
+                {
+                    "key": "commerce.order_prefix",
+                    "type": "string",
+                    "default": "S",
+                    "label": "Sipariş numarası öneki",
+                    "group": "Mağaza",
+                    "scope": "project"
+                },
+                {
+                    "key": "commerce.bank_enabled",
+                    "type": "bool",
+                    "default": false,
+                    "label": "Havale / EFT",
+                    "group": "Mağaza",
+                    "scope": "project"
+                },
+                {
+                    "key": "commerce.bank_name",
+                    "type": "string",
+                    "default": "",
+                    "label": "Banka adı",
+                    "group": "Mağaza",
+                    "scope": "project"
+                },
+                {
+                    "key": "commerce.bank_holder",
+                    "type": "string",
+                    "default": "",
+                    "label": "Hesap sahibi",
+                    "group": "Mağaza",
+                    "scope": "project"
+                },
+                {
+                    "key": "commerce.bank_iban",
+                    "type": "string",
+                    "default": "",
+                    "label": "IBAN",
+                    "group": "Mağaza",
+                    "scope": "project"
+                },
+                {
+                    "key": "commerce.cod_enabled",
+                    "type": "bool",
+                    "default": false,
+                    "label": "Kapıda ödeme",
+                    "group": "Mağaza",
+                    "scope": "project"
+                },
+                {
+                    "key": "commerce.cod_fee",
+                    "type": "float",
+                    "default": 0,
+                    "label": "Kapıda ödeme ücreti",
+                    "group": "Mağaza",
+                    "scope": "project",
+                    "min": 0,
+                    "max": 10000
+                }
+            ],
+            "events": {
+                "commerce.coupon_created": "Kupon eklendi",
+                "commerce.coupon_deleted": "Kupon silindi",
+                "commerce.coupon_saved": "Kupon güncellendi",
+                "commerce.order_placed": "Yeni sipariş",
+                "commerce.order_status": "Sipariş durumu değişti",
+                "commerce.payment_received": "Ödeme alındı"
+            },
+            "schedule": {
+                "commerce:carts": "40 3 * * *"
+            }
+        },
+        "content": {
+            "label": "İçerik",
+            "kind": "core",
+            "scope": "each",
+            "routes": [
+                {
+                    "method": "GET",
+                    "path": "/v1/admin/backup",
+                    "name": "backup.exported",
+                    "summary": "Yedek indirildi",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_backups"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/admin/backup",
+                    "name": "backup.restored",
+                    "summary": "Yedekten geri yüklendi",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_backups"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/admin/backups",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_backups"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/admin/backups/auto",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_backups"
+                    ]
+                },
+                {
+                    "method": "PUT",
+                    "path": "/v1/admin/backups/auto",
+                    "name": "backup.auto_updated",
+                    "summary": "Otomatik yedek ayarları değişti",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_backups"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/admin/backups/auto/run",
+                    "name": "backup.auto_run",
+                    "summary": "Otomatik yedek başlatıldı",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_backups"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/admin/backups/auto/test",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_backups"
+                    ],
+                    "throttle": "10/1"
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/admin/backups/auto/{name}",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_backups"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/admin/backups/auto/{name}/restore",
+                    "name": "backup.restored",
+                    "summary": "Yedekten geri yüklendi",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_backups"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/admin/backups/{name}",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_backups"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/admin/content/{type}",
+                    "auth": true,
+                    "caps": [
+                        "@content"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/admin/content/{type}",
+                    "auth": true,
+                    "caps": [
+                        "@content"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/admin/content/{type}/new",
+                    "auth": true,
+                    "caps": [
+                        "@content"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/admin/content/{type}/order",
+                    "name": "content.reordered",
+                    "summary": "Sıralama değişti",
+                    "auth": true,
+                    "caps": [
+                        "@content"
+                    ]
+                },
+                {
+                    "method": "DELETE",
+                    "path": "/v1/admin/content/{type}/{id}",
+                    "auth": true,
+                    "caps": [
+                        "@content"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/admin/content/{type}/{id}",
+                    "auth": true,
+                    "caps": [
+                        "@content"
+                    ]
+                },
+                {
+                    "method": "PUT",
+                    "path": "/v1/admin/content/{type}/{id}",
+                    "auth": true,
+                    "caps": [
+                        "@content"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/admin/options/{type}",
+                    "auth": true,
+                    "caps": [
+                        "@content"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/admin/overview",
+                    "auth": true,
+                    "caps": [
+                        "km_view_overview"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/admin/schema/{type}",
+                    "auth": true,
+                    "caps": [
+                        "@content"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/admin/texts",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_texts"
+                    ]
+                },
+                {
+                    "method": "PUT",
+                    "path": "/v1/admin/texts",
+                    "name": "texts.updated",
+                    "summary": "Sayfa metinleri değişti",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_texts"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/admin/texts/translate",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_texts"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/admin/translate/{type}",
+                    "auth": true,
+                    "caps": [
+                        "@content"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/page-data",
+                    "auth": false,
+                    "throttle": "120/1"
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/search-index",
+                    "auth": false,
+                    "throttle": "60/1"
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/suggest",
+                    "auth": false,
+                    "throttle": "30/1"
+                }
+            ]
+        },
+        "domains": {
+            "label": "Domain arama",
+            "kind": "tool",
+            "scope": "each",
+            "routes": [
+                {
+                    "method": "GET",
+                    "path": "/v1/jarvis/domains",
+                    "auth": true,
+                    "caps": [
+                        "km_use_domains"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/jarvis/domains/check",
+                    "name": "jarvis.domains_checked",
+                    "summary": "Domain kontrol edildi",
+                    "auth": true,
+                    "caps": [
+                        "km_use_domains"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/jarvis/domains/export",
+                    "auth": true,
+                    "caps": [
+                        "km_use_domains"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/jarvis/domains/options",
+                    "auth": true,
+                    "caps": [
+                        "km_use_domains"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/jarvis/domains/preview",
+                    "auth": true,
+                    "caps": [
+                        "km_use_domains"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/jarvis/domains/scan",
+                    "name": "jarvis.scan_started",
+                    "summary": "Domain taraması başladı",
+                    "auth": true,
+                    "caps": [
+                        "km_use_domains"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/jarvis/jobs",
+                    "auth": true,
+                    "caps": [
+                        "km_use_domains"
+                    ]
+                },
+                {
+                    "method": "DELETE",
+                    "path": "/v1/jarvis/jobs/{id}",
+                    "name": "jarvis.job_deleted",
+                    "summary": "Jarvis işi silindi",
+                    "auth": true,
+                    "caps": [
+                        "km_use_domains"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/jarvis/jobs/{id}",
+                    "auth": true,
+                    "caps": [
+                        "km_use_domains"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/jarvis/jobs/{id}/{action}",
+                    "name": "jarvis.job_controlled",
+                    "summary": "Jarvis işi",
+                    "auth": true,
+                    "caps": [
+                        "km_use_domains"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/jarvis/tick",
+                    "auth": true,
+                    "caps": [
+                        "km_use_domains"
+                    ]
+                }
+            ],
+            "capabilities": [
+                "km_use_domains"
+            ],
+            "settings": [
+                {
+                    "key": "jarvis.rdap_concurrency",
+                    "type": "int",
+                    "default": 2,
+                    "label": "RDAP eşzamanlılığı",
+                    "group": "Domain arama",
+                    "min": 1,
+                    "max": 6
+                }
+            ],
+            "events": {
+                "jarvis.job_finished": "Domain taraması bitti"
+            },
+            "schedule": {
+                "domains:tick": "* * * * *"
+            }
+        },
+        "estimate": {
+            "label": "Teklif hesaplayıcı",
+            "kind": "tool",
+            "scope": "each",
+            "routes": [
+                {
+                    "method": "GET",
+                    "path": "/v1/admin/estimate",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_estimate"
+                    ]
+                },
+                {
+                    "method": "PUT",
+                    "path": "/v1/admin/estimate",
+                    "name": "estimate.updated",
+                    "summary": "Teklif fiyatları değişti",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_estimate"
+                    ]
+                }
+            ],
+            "capabilities": [
+                "km_manage_estimate"
+            ]
+        },
+        "history": {
+            "label": "İşlem geçmişi",
+            "kind": "core",
+            "scope": "each",
+            "routes": [
+                {
+                    "method": "GET",
+                    "path": "/v1/history",
+                    "auth": true
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/history/options",
+                    "auth": true
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/history/stats",
+                    "auth": true
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/history/{id}",
+                    "auth": true
+                }
+            ]
+        },
+        "hotels": {
+            "label": "Oteller",
+            "kind": "tool",
+            "requires": [
+                "booking"
+            ],
+            "scope": "each"
+        },
+        "i18n": {
+            "label": "Çoklu dil",
+            "kind": "core",
+            "scope": "each",
+            "routes": [
+                {
+                    "method": "GET",
+                    "path": "/v1/languages",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_languages"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/languages",
+                    "name": "languages.created",
+                    "summary": "Dil eklendi",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_languages"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/languages/health",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_languages"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/languages/order",
+                    "name": "languages.reordered",
+                    "summary": "Dil sırası değişti",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_languages"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/languages/overview",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_languages"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/languages/urls",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_languages"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/languages/visitor",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_languages"
+                    ]
+                },
+                {
+                    "method": "PUT",
+                    "path": "/v1/languages/visitor",
+                    "name": "languages.visitor_updated",
+                    "summary": "404 bağlantıları değişti",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_languages"
+                    ]
+                },
+                {
+                    "method": "DELETE",
+                    "path": "/v1/languages/{code}",
+                    "name": "languages.deleted",
+                    "summary": "Dil silindi",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_languages"
+                    ]
+                },
+                {
+                    "method": "PUT",
+                    "path": "/v1/languages/{code}",
+                    "name": "languages.updated",
+                    "summary": "Dil değişti",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_languages"
+                    ]
+                }
+            ],
+            "settings": [
+                {
+                    "key": "i18n.enabled",
+                    "type": "bool",
+                    "default": true,
+                    "label": "Çoklu dil",
+                    "group": "Çoklu dil"
+                },
+                {
+                    "key": "i18n.banner",
+                    "type": "bool",
+                    "default": true,
+                    "label": "Dil önerisi bandı",
+                    "group": "Çoklu dil"
+                }
+            ]
+        },
+        "jarvis": {
+            "label": "Jarvis",
+            "kind": "tool",
+            "scope": "each",
+            "routes": [
+                {
+                    "method": "GET",
+                    "path": "/v1/jarvis",
+                    "auth": true,
+                    "caps": [
+                        "km_use_jarvis"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/jarvis/actions/{id}/approve",
+                    "name": "jarvis.action_approved",
+                    "summary": "Jarvis önerisi onaylandı",
+                    "auth": true,
+                    "caps": [
+                        "km_use_jarvis"
+                    ],
+                    "throttle": "30/1"
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/jarvis/actions/{id}/reject",
+                    "name": "jarvis.action_rejected",
+                    "summary": "Jarvis önerisi reddedildi",
+                    "auth": true,
+                    "caps": [
+                        "km_use_jarvis"
+                    ],
+                    "throttle": "30/1"
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/jarvis/conversations",
+                    "auth": true,
+                    "caps": [
+                        "km_use_jarvis"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/jarvis/conversations",
+                    "name": "jarvis.conversation_created",
+                    "summary": "Jarvis sohbeti açıldı",
+                    "auth": true,
+                    "caps": [
+                        "km_use_jarvis"
+                    ]
+                },
+                {
+                    "method": "DELETE",
+                    "path": "/v1/jarvis/conversations/{id}",
+                    "name": "jarvis.conversation_deleted",
+                    "summary": "Jarvis sohbeti silindi",
+                    "auth": true,
+                    "caps": [
+                        "km_use_jarvis"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/jarvis/conversations/{id}",
+                    "auth": true,
+                    "caps": [
+                        "km_use_jarvis"
+                    ]
+                },
+                {
+                    "method": "PATCH",
+                    "path": "/v1/jarvis/conversations/{id}",
+                    "name": "jarvis.conversation_renamed",
+                    "summary": "Jarvis sohbetinin adı değişti",
+                    "auth": true,
+                    "caps": [
+                        "km_use_jarvis"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/jarvis/conversations/{id}/continue",
+                    "auth": true,
+                    "caps": [
+                        "km_use_jarvis"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/jarvis/conversations/{id}/messages",
+                    "name": "jarvis.message_sent",
+                    "summary": "Jarvis'e mesaj yazıldı",
+                    "auth": true,
+                    "caps": [
+                        "km_use_jarvis"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/jarvis/skills/{name}",
+                    "auth": true,
+                    "caps": [
+                        "km_use_jarvis"
+                    ]
+                }
+            ],
+            "capabilities": [
+                "km_use_jarvis"
+            ],
+            "events": {
+                "jarvis.action_approved": "Jarvis önerisi onaylandı",
+                "jarvis.action_rejected": "Jarvis önerisi reddedildi"
+            }
+        },
+        "live": {
+            "label": "Canlı şerit",
+            "kind": "core",
+            "scope": "each",
+            "routes": [
+                {
+                    "method": "GET",
+                    "path": "/v1/changes",
+                    "auth": true
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/changes/cursor",
+                    "auth": true
+                }
+            ]
+        },
+        "media": {
+            "label": "Medya",
+            "kind": "core",
+            "scope": "each",
+            "routes": [
+                {
+                    "method": "GET",
+                    "path": "/v1/admin/media",
+                    "auth": true,
+                    "caps": [
+                        "@content",
+                        "km_manage_media"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/admin/media",
+                    "name": "media.uploaded",
+                    "summary": "Görsel yüklendi",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_media"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/admin/media/url",
+                    "name": "media.imported",
+                    "summary": "Görsel adresten eklendi",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_media"
+                    ]
+                },
+                {
+                    "method": "PUT",
+                    "path": "/v1/admin/media/{id}",
+                    "name": "media.alts_updated",
+                    "summary": "Görsel alt metni değişti",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_media"
+                    ]
+                }
+            ],
+            "settings": [
+                {
+                    "key": "media.webp",
+                    "type": "bool",
+                    "default": true,
+                    "label": "Ara boyutları WebP üret",
+                    "group": "Görseller"
+                }
+            ]
+        },
+        "newsletter": {
+            "label": "Bülten",
+            "kind": "tool",
+            "scope": "each",
+            "routes": [
+                {
+                    "method": "GET",
+                    "path": "/v1/admin/newsletter/campaigns",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_newsletter"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/admin/newsletter/campaigns",
+                    "name": "newsletter.campaign_created",
+                    "summary": "Bülten taslağı eklendi",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_newsletter"
+                    ]
+                },
+                {
+                    "method": "DELETE",
+                    "path": "/v1/admin/newsletter/campaigns/{id}",
+                    "name": "newsletter.campaign_deleted",
+                    "summary": "Bülten silindi",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_newsletter"
+                    ]
+                },
+                {
+                    "method": "PUT",
+                    "path": "/v1/admin/newsletter/campaigns/{id}",
+                    "name": "newsletter.campaign_saved",
+                    "summary": "Bülten güncellendi",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_newsletter"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/admin/newsletter/campaigns/{id}/continue",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_newsletter"
+                    ],
+                    "throttle": "10/1"
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/admin/newsletter/campaigns/{id}/pause",
+                    "name": "newsletter.campaign_paused",
+                    "summary": "Bülten duraklatıldı",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_newsletter"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/admin/newsletter/campaigns/{id}/send",
+                    "name": "newsletter.campaign_started",
+                    "summary": "Bülten gönderimi başladı",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_newsletter"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/admin/newsletter/campaigns/{id}/test",
+                    "name": "newsletter.campaign_tested",
+                    "summary": "Bülten denemesi gönderildi",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_newsletter"
+                    ],
+                    "throttle": "10/1"
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/admin/newsletter/subscribers",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_newsletter"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/admin/newsletter/subscribers",
+                    "name": "newsletter.subscriber_added",
+                    "summary": "Bülten abonesi eklendi (onay e-postası gitti)",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_newsletter"
+                    ],
+                    "throttle": "30/1"
+                },
+                {
+                    "method": "DELETE",
+                    "path": "/v1/admin/newsletter/subscribers/{id}",
+                    "name": "newsletter.subscriber_deleted",
+                    "summary": "Bülten abonesi silindi",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_newsletter"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/newsletter",
+                    "auth": false,
+                    "throttle": "10/1"
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/newsletter/confirm",
+                    "auth": false,
+                    "throttle": "30/1"
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/newsletter/unsubscribe",
+                    "auth": false,
+                    "throttle": "30/1"
+                }
+            ],
+            "capabilities": [
+                "km_manage_newsletter"
+            ],
+            "settings": [
+                {
+                    "key": "newsletter.hourly_limit",
+                    "type": "int",
+                    "default": 100,
+                    "label": "Saatlik gönderim sınırı",
+                    "group": "Bülten",
+                    "scope": "project",
+                    "min": 1,
+                    "max": 10000
+                }
+            ],
+            "events": {
+                "newsletter.campaign_created": "Bülten taslağı eklendi",
+                "newsletter.campaign_deleted": "Bülten silindi",
+                "newsletter.campaign_paused": "Bülten duraklatıldı",
+                "newsletter.campaign_saved": "Bülten güncellendi",
+                "newsletter.campaign_sent": "Bülten gönderildi",
+                "newsletter.campaign_started": "Bülten gönderimi başladı",
+                "newsletter.campaign_stopped": "Bülten gönderimi durdu",
+                "newsletter.campaign_tested": "Bülten denemesi gönderildi",
+                "newsletter.confirmed": "Yeni bülten abonesi",
+                "newsletter.subscriber_added": "Bülten abonesi eklendi (onay e-postası gitti)",
+                "newsletter.subscriber_deleted": "Bülten abonesi silindi",
+                "newsletter.unsubscribed": "Bülten aboneliği sonlandı"
+            },
+            "schedule": {
+                "newsletter:purge": "20 3 * * *",
+                "newsletter:send": "* * * * *"
+            }
+        },
+        "notifications": {
+            "label": "Bildirimler",
+            "kind": "core",
+            "scope": "each",
+            "routes": [
+                {
+                    "method": "GET",
+                    "path": "/v1/notifications",
+                    "auth": true
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/notifications/read",
+                    "auth": true
+                }
+            ],
+            "schedule": {
+                "notifications:prune": "20 3 * * *"
+            }
+        },
+        "paytr": {
+            "label": "PayTR",
+            "kind": "tool",
+            "requires": [
+                "commerce"
+            ],
+            "scope": "each",
+            "routes": [
+                {
+                    "method": "POST",
+                    "path": "/v1/shop/payments/paytr",
+                    "auth": false,
+                    "throttle": "120/1"
+                }
+            ],
+            "settings": [
+                {
+                    "key": "paytr.merchant_id",
+                    "type": "string",
+                    "default": "",
+                    "label": "Mağaza no",
+                    "group": "Mağaza: PayTR",
+                    "scope": "project"
+                },
+                {
+                    "key": "paytr.merchant_key",
+                    "type": "string",
+                    "label": "Mağaza parolası",
+                    "group": "Mağaza: PayTR",
+                    "scope": "project",
+                    "format": "secret"
+                },
+                {
+                    "key": "paytr.merchant_salt",
+                    "type": "string",
+                    "label": "Mağaza gizli anahtarı",
+                    "group": "Mağaza: PayTR",
+                    "scope": "project",
+                    "format": "secret"
+                },
+                {
+                    "key": "paytr.test_mode",
+                    "type": "bool",
+                    "default": true,
+                    "label": "Deneme kipi",
+                    "group": "Mağaza: PayTR",
+                    "scope": "project"
+                },
+                {
+                    "key": "paytr.installments",
+                    "type": "bool",
+                    "default": false,
+                    "label": "Taksit",
+                    "group": "Mağaza: PayTR",
+                    "scope": "project"
+                }
+            ]
+        },
+        "project": {
+            "label": "Proje",
+            "kind": "core",
+            "scope": "each"
+        },
+        "records": {
+            "label": "Silinenler",
+            "kind": "core",
+            "scope": "each",
+            "routes": [
+                {
+                    "method": "GET",
+                    "path": "/v1/records/hidden",
+                    "auth": true,
+                    "caps": [
+                        "km_restore_records"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/records/hide",
+                    "name": "records.hidden",
+                    "auth": true,
+                    "caps": [
+                        "km_delete_briefs",
+                        "km_delete_content"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/records/plan",
+                    "auth": true,
+                    "caps": [
+                        "km_delete_briefs",
+                        "km_delete_content"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/records/restore",
+                    "name": "records.restored",
+                    "summary": "Silinen kayıt geri yüklendi",
+                    "auth": true,
+                    "caps": [
+                        "km_restore_records"
+                    ]
+                }
+            ]
+        },
+        "security": {
+            "label": "Güvenlik",
+            "kind": "core",
+            "scope": "each",
+            "routes": [
+                {
+                    "method": "GET",
+                    "path": "/v1/security",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_security"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/security/blocks",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_security"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/security/blocks",
+                    "name": "security.ip_blocked",
+                    "summary": "IP engellendi",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_security"
+                    ]
+                },
+                {
+                    "method": "DELETE",
+                    "path": "/v1/security/blocks/{id}",
+                    "name": "security.ip_unblocked",
+                    "summary": "IP engeli kaldırıldı",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_security"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/security/events",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_security"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/security/key/rotate",
+                    "name": "security.key_rotated",
+                    "summary": "İmza anahtarı yenilendi (herkesin oturumu kapandı)",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_security"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/security/lockouts",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_security"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/security/lockouts/unlock",
+                    "name": "security.login_unlocked",
+                    "summary": "Giriş kilidi açıldı",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_security"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/security/sessions",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_security"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/security/sessions/end-all",
+                    "name": "sessions.ended_all",
+                    "summary": "Bütün oturumlar kapatıldı",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_security"
+                    ]
+                },
+                {
+                    "method": "DELETE",
+                    "path": "/v1/security/sessions/{id}",
+                    "name": "security.session_ended",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_security"
+                    ]
+                }
+            ],
+            "settings": [
+                {
+                    "key": "security.access_ttl_minutes",
+                    "type": "int",
+                    "default": 60,
+                    "label": "Erişim jetonu süresi",
+                    "group": "Güvenlik",
+                    "min": 5,
+                    "max": 1440
+                },
+                {
+                    "key": "security.refresh_ttl_days",
+                    "type": "int",
+                    "default": 30,
+                    "label": "Oturum süresi",
+                    "group": "Güvenlik",
+                    "min": 1,
+                    "max": 365
+                },
+                {
+                    "key": "security.login_max_attempts",
+                    "type": "int",
+                    "default": 5,
+                    "label": "Hatalı giriş hakkı",
+                    "group": "Güvenlik",
+                    "min": 3,
+                    "max": 20
+                },
+                {
+                    "key": "security.login_lockout_minutes",
+                    "type": "int",
+                    "default": 15,
+                    "label": "Kilit süresi",
+                    "group": "Güvenlik",
+                    "min": 1,
+                    "max": 1440
+                },
+                {
+                    "key": "security.ip_login_limit",
+                    "type": "int",
+                    "default": 30,
+                    "label": "IP başına hatalı giriş sınırı",
+                    "group": "Güvenlik",
+                    "min": 0,
+                    "max": 1000
+                },
+                {
+                    "key": "security.password_min_length",
+                    "type": "int",
+                    "default": 10,
+                    "label": "En kısa şifre",
+                    "group": "Güvenlik",
+                    "min": 8,
+                    "max": 64
+                },
+                {
+                    "key": "security.waf",
+                    "type": "bool",
+                    "default": true,
+                    "label": "Saldırı kalıbı süzgeci (WAF)",
+                    "group": "Güvenlik"
+                },
+                {
+                    "key": "security.auto_block_threshold",
+                    "type": "int",
+                    "default": 20,
+                    "label": "Otomatik IP engeli eşiği",
+                    "group": "Güvenlik",
+                    "min": 0,
+                    "max": 1000
+                },
+                {
+                    "key": "security.auto_block_hours",
+                    "type": "int",
+                    "default": 24,
+                    "label": "Otomatik engel süresi",
+                    "group": "Güvenlik",
+                    "min": 1,
+                    "max": 720
+                },
+                {
+                    "key": "security.hsts",
+                    "type": "bool",
+                    "default": false,
+                    "label": "HSTS (yalnızca HTTPS)",
+                    "group": "Güvenlik"
+                },
+                {
+                    "key": "security.log_retention_days",
+                    "type": "int",
+                    "default": 90,
+                    "label": "Güvenlik kaydı saklama süresi",
+                    "group": "Güvenlik",
+                    "min": 7,
+                    "max": 730
+                }
+            ],
+            "schedule": {
+                "security:prune": "30 3 * * *"
+            }
+        },
+        "seo": {
+            "label": "SEO",
+            "kind": "core",
+            "scope": "each",
+            "routes": [
+                {
+                    "method": "GET",
+                    "path": "/v1/seo",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_seo"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/seo/404",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_seo"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/seo/404/delete",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_seo"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/seo/404/status",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_seo"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/seo/ai",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_seo"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/seo/analyze",
+                    "auth": true,
+                    "caps": [
+                        "@content",
+                        "km_manage_seo"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/seo/content",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_seo"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/seo/indexnow",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_seo"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/seo/indexnow/submit",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_seo"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/seo/links",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_seo"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/seo/links/check",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_seo"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/seo/links/fix",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_seo"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/seo/meta/{type}/{id}",
+                    "auth": true,
+                    "caps": [
+                        "@content",
+                        "km_manage_seo"
+                    ]
+                },
+                {
+                    "method": "PUT",
+                    "path": "/v1/seo/meta/{type}/{id}",
+                    "auth": true,
+                    "caps": [
+                        "@content",
+                        "km_manage_seo"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/seo/pages",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_seo"
+                    ]
+                },
+                {
+                    "method": "PUT",
+                    "path": "/v1/seo/pages",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_seo"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/seo/redirects",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_seo"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/seo/redirects",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_seo"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/seo/redirects/export",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_seo"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/seo/redirects/import",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_seo"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/seo/redirects/test",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_seo"
+                    ]
+                },
+                {
+                    "method": "DELETE",
+                    "path": "/v1/seo/redirects/{id}",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_seo"
+                    ]
+                },
+                {
+                    "method": "PUT",
+                    "path": "/v1/seo/redirects/{id}",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_seo"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/seo/robots",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_seo"
+                    ]
+                },
+                {
+                    "method": "PUT",
+                    "path": "/v1/seo/robots",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_seo"
+                    ]
+                }
+            ],
+            "settings": [
+                {
+                    "key": "seo.enabled",
+                    "type": "bool",
+                    "default": true,
+                    "label": "SEO modülü",
+                    "group": "SEO"
+                },
+                {
+                    "key": "seo.module.meta",
+                    "type": "bool",
+                    "default": true,
+                    "label": "Başlık ve açıklama",
+                    "group": "SEO"
+                },
+                {
+                    "key": "seo.module.analysis",
+                    "type": "bool",
+                    "default": true,
+                    "label": "İçerik analizi",
+                    "group": "SEO"
+                },
+                {
+                    "key": "seo.module.social",
+                    "type": "bool",
+                    "default": true,
+                    "label": "Sosyal paylaşım",
+                    "group": "SEO"
+                },
+                {
+                    "key": "seo.module.schema",
+                    "type": "bool",
+                    "default": true,
+                    "label": "Yapılandırılmış veri",
+                    "group": "SEO"
+                },
+                {
+                    "key": "seo.module.sitemap",
+                    "type": "bool",
+                    "default": true,
+                    "label": "Site haritası",
+                    "group": "SEO"
+                },
+                {
+                    "key": "seo.module.robots",
+                    "type": "bool",
+                    "default": true,
+                    "label": "Robots ve yapay zekâ botları",
+                    "group": "SEO"
+                },
+                {
+                    "key": "seo.module.ai",
+                    "type": "bool",
+                    "default": true,
+                    "label": "Yapay zekâ görünürlüğü",
+                    "group": "SEO"
+                },
+                {
+                    "key": "seo.module.llms",
+                    "type": "bool",
+                    "default": true,
+                    "label": "llms.txt",
+                    "group": "SEO"
+                },
+                {
+                    "key": "seo.module.redirects",
+                    "type": "bool",
+                    "default": true,
+                    "label": "Yönlendirmeler",
+                    "group": "SEO"
+                },
+                {
+                    "key": "seo.module.monitor404",
+                    "type": "bool",
+                    "default": true,
+                    "label": "404 izleme",
+                    "group": "SEO"
+                },
+                {
+                    "key": "seo.module.webmaster",
+                    "type": "bool",
+                    "default": true,
+                    "label": "Site doğrulama",
+                    "group": "SEO"
+                },
+                {
+                    "key": "seo.module.indexnow",
+                    "type": "bool",
+                    "default": false,
+                    "label": "Anında indeksleme (IndexNow)",
+                    "group": "SEO"
+                },
+                {
+                    "key": "seo.module.toc",
+                    "type": "bool",
+                    "default": true,
+                    "label": "İçindekiler",
+                    "group": "SEO"
+                },
+                {
+                    "key": "seo.module.links",
+                    "type": "bool",
+                    "default": true,
+                    "label": "Dış bağlantılar",
+                    "group": "SEO"
+                },
+                {
+                    "key": "seo.default_image",
+                    "type": "int",
+                    "default": 0,
+                    "label": "Varsayılan paylaşım görseli",
+                    "group": "SEO",
+                    "min": 0
+                },
+                {
+                    "key": "seo.twitter",
+                    "type": "string",
+                    "default": "",
+                    "label": "X (Twitter) hesabı",
+                    "group": "SEO"
+                },
+                {
+                    "key": "seo.org_type",
+                    "type": "string",
+                    "default": "ProfessionalService",
+                    "label": "Kurum türü",
+                    "group": "SEO",
+                    "options": [
+                        "Organization",
+                        "ProfessionalService",
+                        "LocalBusiness"
+                    ]
+                },
+                {
+                    "key": "seo.org_name",
+                    "type": "string",
+                    "default": "",
+                    "label": "Kurum adı",
+                    "group": "SEO"
+                },
+                {
+                    "key": "seo.org_logo",
+                    "type": "int",
+                    "default": 0,
+                    "label": "Logo",
+                    "group": "SEO",
+                    "min": 0
+                },
+                {
+                    "key": "seo.org_city",
+                    "type": "string",
+                    "default": "Kozan",
+                    "label": "Şehir / ilçe",
+                    "group": "SEO"
+                },
+                {
+                    "key": "seo.org_region",
+                    "type": "string",
+                    "default": "Adana",
+                    "label": "İl / bölge",
+                    "group": "SEO"
+                },
+                {
+                    "key": "seo.org_postal",
+                    "type": "string",
+                    "default": "",
+                    "label": "Posta kodu",
+                    "group": "SEO"
+                },
+                {
+                    "key": "seo.org_country",
+                    "type": "string",
+                    "default": "TR",
+                    "label": "Ülke kodu",
+                    "group": "SEO"
+                },
+                {
+                    "key": "seo.org_lat",
+                    "type": "string",
+                    "default": "",
+                    "label": "Enlem",
+                    "group": "SEO"
+                },
+                {
+                    "key": "seo.org_lng",
+                    "type": "string",
+                    "default": "",
+                    "label": "Boylam",
+                    "group": "SEO"
+                },
+                {
+                    "key": "seo.org_founded",
+                    "type": "string",
+                    "default": "",
+                    "label": "Kuruluş yılı",
+                    "group": "SEO"
+                },
+                {
+                    "key": "seo.org_price",
+                    "type": "string",
+                    "default": "",
+                    "label": "Fiyat aralığı",
+                    "group": "SEO"
+                },
+                {
+                    "key": "seo.org_area",
+                    "type": "string",
+                    "default": "TR, DE, Worldwide",
+                    "label": "Hizmet bölgesi",
+                    "group": "SEO"
+                },
+                {
+                    "key": "seo.verify_google",
+                    "type": "string",
+                    "default": "",
+                    "label": "Google Search Console",
+                    "group": "SEO"
+                },
+                {
+                    "key": "seo.verify_bing",
+                    "type": "string",
+                    "default": "",
+                    "label": "Bing Webmaster",
+                    "group": "SEO"
+                },
+                {
+                    "key": "seo.verify_yandex",
+                    "type": "string",
+                    "default": "",
+                    "label": "Yandex",
+                    "group": "SEO"
+                },
+                {
+                    "key": "seo.verify_baidu",
+                    "type": "string",
+                    "default": "",
+                    "label": "Baidu",
+                    "group": "SEO"
+                },
+                {
+                    "key": "seo.ai_bots",
+                    "type": "string",
+                    "default": "allow",
+                    "label": "Yapay zekâ tarayıcıları",
+                    "group": "SEO",
+                    "options": [
+                        "allow",
+                        "block"
+                    ]
+                },
+                {
+                    "key": "seo.llms_intro",
+                    "type": "string",
+                    "default": "",
+                    "label": "llms.txt tanıtım cümlesi",
+                    "group": "SEO"
+                },
+                {
+                    "key": "seo.sitemap_images",
+                    "type": "bool",
+                    "default": true,
+                    "label": "Site haritasında görseller",
+                    "group": "SEO"
+                },
+                {
+                    "key": "seo.toc_min",
+                    "type": "int",
+                    "default": 3,
+                    "label": "İçindekiler için en az başlık",
+                    "group": "SEO",
+                    "min": 2,
+                    "max": 10
+                },
+                {
+                    "key": "seo.links_new_tab",
+                    "type": "bool",
+                    "default": true,
+                    "label": "Dış bağlantılar yeni sekmede",
+                    "group": "SEO"
+                },
+                {
+                    "key": "seo.links_nofollow",
+                    "type": "bool",
+                    "default": false,
+                    "label": "Dış bağlantılara nofollow",
+                    "group": "SEO"
+                },
+                {
+                    "key": "seo.retention_404",
+                    "type": "int",
+                    "default": 90,
+                    "label": "404 kaydı saklama",
+                    "group": "SEO",
+                    "min": 7,
+                    "max": 730
+                },
+                {
+                    "key": "seo.indexnow_key",
+                    "type": "string",
+                    "default": "",
+                    "label": "IndexNow anahtarı",
+                    "group": "SEO"
+                }
+            ],
+            "events": {
+                "seo.indexnow_sent": "IndexNow bildirimi gönderildi"
+            },
+            "schedule": {
+                "seo:404": "40 3 * * *",
+                "seo:ai": "0 * * * *",
+                "seo:links": "50 3 * * *"
+            }
+        },
+        "setup": {
+            "label": "Kurulum",
+            "kind": "core",
+            "scope": "each",
+            "routes": [
+                {
+                    "method": "GET",
+                    "path": "/v1/setup",
+                    "auth": false
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/setup",
+                    "auth": false
+                }
+            ]
+        },
+        "site": {
+            "label": "Site",
+            "kind": "core",
+            "scope": "each",
+            "routes": [
+                {
+                    "method": "GET",
+                    "path": "/v1/admin/blocks",
+                    "auth": true,
+                    "caps": [
+                        "km_edit_layout",
+                        "km_manage_settings"
+                    ]
+                },
+                {
+                    "method": "PUT",
+                    "path": "/v1/admin/blocks/{type}",
+                    "name": "blocks.library",
+                    "summary": "Blok kitaplığı değişti",
+                    "auth": true,
+                    "caps": [
+                        "km_edit_layout",
+                        "km_manage_settings"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/admin/layouts",
+                    "auth": true,
+                    "caps": [
+                        "km_edit_layout"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/admin/layouts/assist",
+                    "auth": true,
+                    "caps": [
+                        "km_edit_layout"
+                    ],
+                    "throttle": "30/1"
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/admin/layouts/preview",
+                    "auth": true,
+                    "caps": [
+                        "km_edit_layout"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/admin/layouts/publish",
+                    "name": "layouts.published",
+                    "summary": "Sayfa düzeni yayınlandı",
+                    "auth": true,
+                    "caps": [
+                        "km_edit_layout"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/admin/layouts/render",
+                    "auth": true,
+                    "caps": [
+                        "km_edit_layout"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/admin/layouts/suggest",
+                    "auth": true,
+                    "caps": [
+                        "km_edit_layout"
+                    ],
+                    "throttle": "30/1"
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/admin/layouts/translate",
+                    "auth": true,
+                    "caps": [
+                        "km_edit_layout"
+                    ],
+                    "throttle": "30/1"
+                },
+                {
+                    "method": "PUT",
+                    "path": "/v1/admin/layouts/{zone}",
+                    "auth": true,
+                    "caps": [
+                        "km_edit_layout"
+                    ]
+                },
+                {
+                    "method": "DELETE",
+                    "path": "/v1/admin/layouts/{zone}/draft",
+                    "name": "layouts.discarded",
+                    "summary": "Sayfa düzeni taslağı atıldı",
+                    "auth": true,
+                    "caps": [
+                        "km_edit_layout"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/admin/layouts/{zone}/revisions",
+                    "auth": true,
+                    "caps": [
+                        "km_edit_layout"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/admin/layouts/{zone}/revisions/{id}",
+                    "name": "layouts.restored",
+                    "summary": "Sayfa düzeninin eski hali taslağa alındı",
+                    "auth": true,
+                    "caps": [
+                        "km_edit_layout"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/admin/legal",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_legal"
+                    ]
+                },
+                {
+                    "method": "DELETE",
+                    "path": "/v1/admin/legal/{name}/{locale}",
+                    "name": "legal.reset",
+                    "summary": "Yasal belge şablona döndü",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_legal"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/admin/legal/{name}/{locale}",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_legal"
+                    ]
+                },
+                {
+                    "method": "PUT",
+                    "path": "/v1/admin/legal/{name}/{locale}",
+                    "name": "legal.customized",
+                    "summary": "Yasal belge özelleştirildi",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_legal"
+                    ]
+                }
+            ],
+            "settings": [
+                {
+                    "key": "site.name",
+                    "type": "string",
+                    "default": "",
+                    "label": "Site adı",
+                    "group": "Kimlik"
+                },
+                {
+                    "key": "site.logo",
+                    "type": "string",
+                    "default": "",
+                    "label": "Logo yazısı",
+                    "group": "Kimlik"
+                },
+                {
+                    "key": "site.logo_sub",
+                    "type": "string",
+                    "default": "",
+                    "label": "Logo alt yazısı",
+                    "group": "Kimlik"
+                },
+                {
+                    "key": "site.logo_image",
+                    "type": "int",
+                    "default": 0,
+                    "label": "Logo görseli",
+                    "group": "Kimlik",
+                    "format": "image",
+                    "min": 0
+                },
+                {
+                    "key": "site.color",
+                    "type": "string",
+                    "default": "",
+                    "label": "Ana renk",
+                    "group": "Kimlik",
+                    "format": "color"
+                },
+                {
+                    "key": "site.color_dark",
+                    "type": "string",
+                    "default": "",
+                    "label": "Koyu bant rengi",
+                    "group": "Kimlik",
+                    "format": "color"
+                },
+                {
+                    "key": "site.email",
+                    "type": "string",
+                    "default": "",
+                    "label": "E-posta",
+                    "group": "İletişim"
+                },
+                {
+                    "key": "site.phone",
+                    "type": "string",
+                    "default": "",
+                    "label": "Telefon",
+                    "group": "İletişim"
+                },
+                {
+                    "key": "site.address",
+                    "type": "string",
+                    "default": "",
+                    "label": "Adres",
+                    "group": "İletişim"
+                },
+                {
+                    "key": "site.whatsapp",
+                    "type": "string",
+                    "default": "",
+                    "label": "WhatsApp numarası",
+                    "group": "İletişim"
+                },
+                {
+                    "key": "site.hours_start",
+                    "type": "int",
+                    "default": 9,
+                    "label": "Çalışma başlangıcı",
+                    "group": "İletişim",
+                    "min": 0,
+                    "max": 23
+                },
+                {
+                    "key": "site.hours_end",
+                    "type": "int",
+                    "default": 18,
+                    "label": "Çalışma bitişi",
+                    "group": "İletişim",
+                    "min": 1,
+                    "max": 24
+                },
+                {
+                    "key": "site.linkedin",
+                    "type": "string",
+                    "default": "",
+                    "label": "LinkedIn",
+                    "group": "Sosyal medya"
+                },
+                {
+                    "key": "site.instagram",
+                    "type": "string",
+                    "default": "",
+                    "label": "Instagram",
+                    "group": "Sosyal medya"
+                },
+                {
+                    "key": "site.youtube",
+                    "type": "string",
+                    "default": "",
+                    "label": "YouTube",
+                    "group": "Sosyal medya"
+                },
+                {
+                    "key": "site.x",
+                    "type": "string",
+                    "default": "",
+                    "label": "X (Twitter)",
+                    "group": "Sosyal medya"
+                },
+                {
+                    "key": "legal.name",
+                    "type": "string",
+                    "default": "",
+                    "label": "Veri sorumlusu",
+                    "group": "Yasal"
+                },
+                {
+                    "key": "legal.address",
+                    "type": "string",
+                    "default": "",
+                    "label": "Adres",
+                    "group": "Yasal"
+                },
+                {
+                    "key": "legal.email",
+                    "type": "string",
+                    "default": "",
+                    "label": "KVKK başvuru e-postası",
+                    "group": "Yasal"
+                },
+                {
+                    "key": "legal.tax",
+                    "type": "string",
+                    "default": "",
+                    "label": "Vergi dairesi ve no",
+                    "group": "Yasal"
+                },
+                {
+                    "key": "legal.mersis",
+                    "type": "string",
+                    "default": "",
+                    "label": "MERSİS numarası",
+                    "group": "Yasal"
+                },
+                {
+                    "key": "legal.kep",
+                    "type": "string",
+                    "default": "",
+                    "label": "KEP adresi",
+                    "group": "Yasal"
+                },
+                {
+                    "key": "legal.court",
+                    "type": "string",
+                    "default": "",
+                    "label": "Yetkili mahkeme",
+                    "group": "Yasal"
+                }
+            ]
+        },
+        "sites": {
+            "label": "Çok proje",
+            "kind": "tool",
+            "scope": "main",
+            "routes": [
+                {
+                    "method": "GET",
+                    "path": "/v1/system/sites",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_sites"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/system/sites",
+                    "name": "sites.created",
+                    "summary": "Alt site oluşturuldu",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_sites"
+                    ],
+                    "throttle": "10/1"
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/system/sites/plan",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_sites"
+                    ],
+                    "throttle": "6/1"
+                },
+                {
+                    "method": "DELETE",
+                    "path": "/v1/system/sites/{key}",
+                    "name": "sites.removed",
+                    "summary": "Alt site kayıttan çıkarıldı",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_sites"
+                    ]
+                },
+                {
+                    "method": "PUT",
+                    "path": "/v1/system/sites/{key}",
+                    "name": "sites.updated",
+                    "summary": "Alt site güncellendi",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_sites"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/system/sites/{key}/handoff",
+                    "name": "sites.handoff",
+                    "summary": "Başka projeye geçti",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_sites"
+                    ],
+                    "throttle": "20/1"
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/system/sites/{key}/migrate",
+                    "name": "sites.migrated",
+                    "summary": "Alt sitelerin tabloları güncellendi",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_sites"
+                    ],
+                    "throttle": "10/1"
+                }
+            ],
+            "capabilities": [
+                "km_manage_sites"
+            ]
+        },
+        "sms": {
+            "label": "SMS",
+            "kind": "tool",
+            "scope": "each",
+            "routes": [
+                {
+                    "method": "GET",
+                    "path": "/v1/system/sms",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_sms"
+                    ]
+                },
+                {
+                    "method": "PUT",
+                    "path": "/v1/system/sms",
+                    "name": "sms.updated",
+                    "summary": "SMS ayarları değişti",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_sms"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/system/sms/senders",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_sms"
+                    ],
+                    "throttle": "10/1"
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/system/sms/test",
+                    "name": "sms.tested",
+                    "summary": "Deneme SMS'i gönderildi",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_sms"
+                    ],
+                    "throttle": "10/1"
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/users/sms",
+                    "name": "users.sms_sent",
+                    "summary": "Kullanıcılara SMS gönderildi",
+                    "auth": true,
+                    "caps": [
+                        "km_message_users"
+                    ],
+                    "throttle": "20/1"
+                }
+            ],
+            "capabilities": [
+                "km_manage_sms"
+            ]
+        },
+        "stripe": {
+            "label": "Stripe",
+            "kind": "tool",
+            "requires": [
+                "commerce"
+            ],
+            "scope": "each",
+            "routes": [
+                {
+                    "method": "POST",
+                    "path": "/v1/shop/payments/stripe",
+                    "auth": false,
+                    "throttle": "120/1"
+                }
+            ],
+            "settings": [
+                {
+                    "key": "stripe.secret_key",
+                    "type": "string",
+                    "label": "Gizli anahtar",
+                    "group": "Mağaza: Stripe",
+                    "scope": "project",
+                    "format": "secret"
+                },
+                {
+                    "key": "stripe.webhook_secret",
+                    "type": "string",
+                    "label": "Bildirim imza anahtarı",
+                    "group": "Mağaza: Stripe",
+                    "scope": "project",
+                    "format": "secret"
+                }
+            ]
+        },
+        "system": {
+            "label": "Sistem",
+            "kind": "core",
+            "scope": "each",
+            "routes": [
+                {
+                    "method": "GET",
+                    "path": "/v1",
+                    "auth": false
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/admin/settings",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_ai",
+                        "km_manage_security",
+                        "km_manage_settings"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/live",
+                    "auth": true
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/search",
+                    "auth": true,
+                    "throttle": "120/1"
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/settings",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_ai",
+                        "km_manage_languages",
+                        "km_manage_security",
+                        "km_manage_seo",
+                        "km_manage_settings"
+                    ]
+                },
+                {
+                    "method": "PUT",
+                    "path": "/v1/settings",
+                    "name": "settings.updated",
+                    "summary": "Ayarlar değiştirildi",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_ai",
+                        "km_manage_languages",
+                        "km_manage_security",
+                        "km_manage_seo",
+                        "km_manage_settings"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/settings/defaults",
+                    "name": "settings.defaults",
+                    "summary": "Ayarlar varsayılana döndü",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_ai",
+                        "km_manage_languages",
+                        "km_manage_security",
+                        "km_manage_seo",
+                        "km_manage_settings"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/site",
+                    "auth": false
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/system/ai",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_ai"
+                    ]
+                },
+                {
+                    "method": "PUT",
+                    "path": "/v1/system/ai",
+                    "name": "ai.updated",
+                    "summary": "Yapay zekâ ayarları değişti",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_ai"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/system/ai/models",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_ai"
+                    ],
+                    "throttle": "20/1"
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/system/ai/test",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_ai"
+                    ],
+                    "throttle": "10/1"
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/system/health",
+                    "auth": true,
+                    "caps": [
+                        "km_view_health"
+                    ]
+                },
+                {
+                    "method": "DELETE",
+                    "path": "/v1/system/health/errors",
+                    "name": "health.errors_cleared",
+                    "summary": "Hata kodları günlüğü temizlendi",
+                    "auth": true,
+                    "caps": [
+                        "km_view_health"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/system/health/errors",
+                    "auth": true,
+                    "caps": [
+                        "km_view_health"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/system/health/report",
+                    "name": "health.reported",
+                    "summary": "Sistem sağlığı raporu gönderildi",
+                    "auth": true,
+                    "caps": [
+                        "km_view_health"
+                    ],
+                    "throttle": "5/1"
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/system/jobs",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_settings"
+                    ]
+                },
+                {
+                    "method": "DELETE",
+                    "path": "/v1/system/jobs/{uuid}",
+                    "name": "jobs.forgotten",
+                    "summary": "Başarısız iş silindi",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_settings"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/system/jobs/{uuid}/retry",
+                    "name": "jobs.retried",
+                    "summary": "Başarısız iş yeniden denendi",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_settings"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/system/mail",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_settings"
+                    ]
+                },
+                {
+                    "method": "PUT",
+                    "path": "/v1/system/mail",
+                    "name": "mail.updated",
+                    "summary": "E-posta ayarları değişti",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_settings"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/system/mail/test",
+                    "name": "mail.tested",
+                    "summary": "Deneme e-postası gönderildi",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_settings"
+                    ],
+                    "throttle": "10/1"
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/system/openapi",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_settings"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/system/tools",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_settings"
+                    ]
+                },
+                {
+                    "method": "PUT",
+                    "path": "/v1/system/tools/{key}",
+                    "name": "tools.toggled",
+                    "summary": "Araç açıldı ya da kapatıldı",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_settings"
+                    ]
+                },
+                {
+                    "method": "PUT",
+                    "path": "/v1/system/tools/{key}/install",
+                    "name": "tools.installed",
+                    "summary": "Araç eklendi ya da çıkarıldı",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_settings"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/theme.css",
+                    "auth": false,
+                    "throttle": "120/1"
+                }
+            ],
+            "settings": [
+                {
+                    "key": "health.report_to",
+                    "type": "string",
+                    "default": "",
+                    "label": "Rapor alıcısı",
+                    "group": "Sistem sağlığı"
+                },
+                {
+                    "key": "health.report_monthly",
+                    "type": "bool",
+                    "default": false,
+                    "label": "Ayda bir kendiliğinden gönder",
+                    "group": "Sistem sağlığı"
+                }
+            ],
+            "schedule": {
+                "health:monthly": "0 9 1 * *"
+            }
+        },
+        "users": {
+            "label": "Kullanıcılar ve roller",
+            "kind": "core",
+            "scope": "each",
+            "routes": [
+                {
+                    "method": "GET",
+                    "path": "/v1/roles",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_roles"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/roles",
+                    "name": "roles.created",
+                    "summary": "Rol eklendi",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_roles"
+                    ]
+                },
+                {
+                    "method": "DELETE",
+                    "path": "/v1/roles/{slug}",
+                    "name": "roles.deleted",
+                    "summary": "Rol silindi",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_roles"
+                    ]
+                },
+                {
+                    "method": "PUT",
+                    "path": "/v1/roles/{slug}",
+                    "name": "roles.renamed",
+                    "summary": "Rolün adı değişti",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_roles"
+                    ]
+                },
+                {
+                    "method": "PUT",
+                    "path": "/v1/roles/{slug}/caps",
+                    "name": "roles.updated",
+                    "summary": "Rol izinleri değişti",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_roles"
+                    ]
+                },
+                {
+                    "method": "PUT",
+                    "path": "/v1/roles/{slug}/menu",
+                    "name": "roles.menu_updated",
+                    "summary": "Rolün yan menüsü değişti",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_roles"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/users",
+                    "auth": true,
+                    "caps": [
+                        "km_view_users"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/users",
+                    "name": "users.created",
+                    "summary": "Kullanıcı eklendi",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_users"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/users/mail",
+                    "name": "users.mail_sent",
+                    "summary": "Kullanıcılara e-posta gönderildi",
+                    "auth": true,
+                    "caps": [
+                        "km_message_users"
+                    ],
+                    "throttle": "20/1"
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/users/options",
+                    "auth": true,
+                    "caps": [
+                        "km_view_users"
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/users/{id}",
+                    "auth": true,
+                    "caps": [
+                        "km_view_users"
+                    ]
+                },
+                {
+                    "method": "PUT",
+                    "path": "/v1/users/{id}",
+                    "name": "users.updated",
+                    "summary": "Kullanıcı güncellendi",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_users"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/users/{id}/activate",
+                    "name": "users.activated",
+                    "summary": "Kullanıcı aktifleştirildi",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_users"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/users/{id}/deactivate",
+                    "name": "users.deactivated",
+                    "summary": "Kullanıcı pasife alındı",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_users"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/users/{id}/sessions/end",
+                    "name": "users.sessions_ended",
+                    "summary": "Kullanıcının oturumları kapatıldı",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_users"
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/users/{id}/two-factor/reset",
+                    "name": "users.two_factor_reset",
+                    "summary": "Kullanıcının iki adımlı doğrulaması sıfırlandı",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_users"
+                    ]
+                }
+            ]
+        }
+    },
+    "capabilities": {
+        "km_access_panel": {
+            "label": "Panele giriş",
+            "group": "Genel",
+            "module": "core"
+        },
+        "km_delete_briefs": {
+            "label": "Talebi kalıcı silme (KVKK silme talebi)",
+            "group": "Müşteriler",
+            "module": "briefs"
+        },
+        "km_delete_content": {
+            "label": "İçerik silme",
+            "group": "İçerik",
+            "module": "core"
+        },
+        "km_edit_layout": {
+            "label": "Sayfa düzenleyici: sayfa bölümlerini (bloklar) düzenleme ve yayınlama",
+            "group": "Site",
+            "module": "core"
+        },
+        "km_manage_ai": {
+            "label": "Yapay zekâ sağlayıcıları ve API anahtarları (Claude, OpenAI, Gemini)",
+            "group": "Site",
+            "module": "core"
+        },
+        "km_manage_backups": {
+            "label": "Yedek alma ve yedekten geri yükleme",
+            "group": "Yönetim",
+            "module": "core"
+        },
+        "km_manage_briefs": {
+            "label": "Talep durumunu değiştirme (okundu, arşiv)",
+            "group": "Müşteriler",
+            "module": "briefs"
+        },
+        "km_manage_coupons": {
+            "label": "Kuponları yönetme",
+            "group": "Mağaza",
+            "module": "commerce"
+        },
+        "km_manage_estimate": {
+            "label": "Teklif hesaplayıcı fiyatlarını düzenleme",
+            "group": "Site",
+            "module": "estimate"
+        },
+        "km_manage_languages": {
+            "label": "Çoklu dil: sitenin dilleri, adres önekleri ve dil ayarları",
+            "group": "Site",
+            "module": "core"
+        },
+        "km_manage_legal": {
+            "label": "Yasal belgeler: aydınlatma metinlerini ve sözleşmeleri özelleştirme",
+            "group": "Site",
+            "module": "core"
+        },
+        "km_manage_media": {
+            "label": "Görsel yükleme ve alt metin düzenleme",
+            "group": "İçerik",
+            "module": "core"
+        },
+        "km_manage_newsletter": {
+            "label": "Bülten: aboneleri görme ve bülten gönderme",
+            "group": "Bülten",
+            "module": "newsletter"
+        },
+        "km_manage_orders": {
+            "label": "Sipariş durumunu değiştirme (ödendi, kargoda, iptal)",
+            "group": "Mağaza",
+            "module": "commerce"
+        },
+        "km_manage_roles": {
+            "label": "Rolleri ve izinleri düzenleme",
+            "group": "Yönetim",
+            "module": "core"
+        },
+        "km_manage_security": {
+            "label": "Güvenlik: oturumlar, IP engelleri, güvenlik kayıtları ve ayarları",
+            "group": "Yönetim",
+            "module": "core"
+        },
+        "km_manage_seo": {
+            "label": "SEO: başlık ve açıklamalar, yönlendirmeler, 404, site haritası ve robots",
+            "group": "Site",
+            "module": "core"
+        },
+        "km_manage_settings": {
+            "label": "Site ayarlarını değiştirme",
+            "group": "Site",
+            "module": "core"
+        },
+        "km_manage_sites": {
+            "label": "Alt siteler: oluşturma, alan adları, güncelleme",
+            "group": "Yönetim",
+            "module": "sites"
+        },
+        "km_manage_sms": {
+            "label": "SMS ayarları (NetGSM), onaylı başlıklar ve deneme SMS'i",
+            "group": "Site",
+            "module": "sms"
+        },
+        "km_manage_texts": {
+            "label": "Sayfa metinlerini düzenleme",
+            "group": "Site",
+            "module": "core"
+        },
+        "km_manage_users": {
+            "label": "Kullanıcı ekleme, düzenleme, pasife alma, oturum kapatma",
+            "group": "Yönetim",
+            "module": "core"
+        },
+        "km_message_users": {
+            "label": "Kullanıcılara SMS ve e-posta gönderme",
+            "group": "Yönetim",
+            "module": "core"
+        },
+        "km_publish_content": {
+            "label": "Yayınlama ve yayından kaldırma (yoksa kayıt taslak kalır)",
+            "group": "İçerik",
+            "module": "core"
+        },
+        "km_restore_records": {
+            "label": "Silinen kayıtları görme ve geri yükleme",
+            "group": "Yönetim",
+            "module": "core"
+        },
+        "km_use_domains": {
+            "label": "Domain arama ve tarama",
+            "group": "Jarvis",
+            "module": "domains"
+        },
+        "km_use_jarvis": {
+            "label": "Jarvis asistanıyla sohbet",
+            "group": "Jarvis",
+            "module": "jarvis"
+        },
+        "km_view_all_history": {
+            "label": "Herkesin bütün işlemlerini görme (İşlem Geçmişi)",
+            "group": "Yönetim",
+            "module": "core"
+        },
+        "km_view_bookings": {
+            "label": "Rezervasyonları görme",
+            "group": "Mağaza",
+            "module": "booking"
+        },
+        "km_view_briefs": {
+            "label": "Talepleri görme",
+            "group": "Müşteriler",
+            "module": "briefs"
+        },
+        "km_view_health": {
+            "label": "Sistem sağlığını görme, hata kodlarını okuma, teknik servise bildirme",
+            "group": "Yönetim",
+            "module": "core"
+        },
+        "km_view_orders": {
+            "label": "Siparişleri görme",
+            "group": "Mağaza",
+            "module": "commerce"
+        },
+        "km_view_overview": {
+            "label": "Genel bakışı görme",
+            "group": "Genel",
+            "module": "core"
+        },
+        "km_view_users": {
+            "label": "Kullanıcıları görme",
+            "group": "Yönetim",
+            "module": "core"
+        }
+    }
+}

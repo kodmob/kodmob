@@ -1,0 +1,90 @@
+{#
+  İçerik parçaları — Alpine şablonları. İçerik ($store.km) ziyaret anında gelir;
+  bu makrolar ona bağlı işaretleme üretir. İlk argüman bir JS ifadesidir:
+
+    {% import "macros/live.njk" as live %}
+    <template x-for="(p, i) in $store.km.projects" :key="p.id">
+      {{ live.projectCard('p', reveal="'reveal reveal-delay-' + (i % 3 + 1)") }}
+    </template>
+
+  Sabit bölümler (başlıklar, metinler) macros/ui.njk'dedir.
+#}
+
+{# İkon: `name` JS ifadesi (ör. 'p.icon') #}
+{% macro icon(name, class='icon') %}<svg class="{{ class }}" aria-hidden="true"><use :href="'#i-' + ({{ name }})"/></svg>{% endmacro %}
+
+{#
+  Görsel: v → { src, srcset, width, height, alt } ya da null (yoksa ızgaralı
+  yer tutucu). Alt metin görselin bu dildeki metnidir; `alt` yalnızca yedek
+  ifadedir (ör. başlık). `eager`: ilk ekrandaki görsel (LCP) öncelikli yüklenir.
+#}
+{% macro img(v, sizes='100vw', class='', eager=false, alt=null) %}
+<template x-if="{{ v }}?.src"><img :src="{{ v }}.src" :srcset="{{ v }}.srcset || false" sizes="{{ sizes }}" :width="{{ v }}.width" :height="{{ v }}.height" :alt="{{ v }}.alt || ({{ alt or "''" }})" class="{{ class }}" decoding="async" {% if eager %}fetchpriority="high"{% else %}loading="lazy"{% endif %}></template>
+<template x-if="!{{ v }}?.src"><div class="media-ph {{ class }}"><svg class="icon h-10 w-10" aria-hidden="true"><use href="#i-image"/></svg></div></template>
+{% endmacro %}
+
+{# Proje kartı (liste, benzer projeler). `data-vt-media`: görsel detay sayfasına akar. #}
+{% macro projectCard(p, headingLevel=3, reveal="''") %}
+<article class="project-card card-hover" :class="{{ reveal }}">
+  <a :href="{{ p }}.url" class="flex h-full flex-col">
+    <div class="project-card-media" data-vt-media>
+      {{ img(p + '.cover', '(min-width: 1024px) 380px, (min-width: 640px) 50vw, 100vw', 'h-full w-full object-cover', alt=p + '.title') }}
+    </div>
+    <div class="project-card-body">
+      <h{{ headingLevel }} class="project-card-brand"><span class="icon-tile icon-tile-sm">{{ icon(p + '.icon') }}</span><span x-text="{{ p }}.title"></span></h{{ headingLevel }}>
+      <p class="project-card-text" x-text="{{ p }}.summary"></p>
+      <div class="project-card-foot">
+        <div class="flex flex-wrap gap-1.5">
+          <template x-for="tag in {{ p }}.tags.slice(0, 2)" :key="tag"><span class="tag" x-text="tag"></span></template>
+        </div>
+        <span class="btn-round" aria-hidden="true"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-right"/></svg></span>
+      </div>
+    </div>
+  </a>
+</article>
+{% endmacro %}
+
+{# Blog kartı #}
+{% macro blogCard(post, headingLevel=3, reveal="''") %}
+<article class="blog-card card-hover" :class="{{ reveal }}">
+  <a :href="{{ post }}.url" class="flex h-full flex-col">
+    <div class="blog-card-media" data-vt-media>
+      {{ img(post + '.cover', '(min-width: 768px) 33vw, 100vw', 'h-full w-full object-cover', alt=post + '.title') }}
+      <span class="category" x-text="$store.km.label('blogCategories', {{ post }}.category)"></span>
+    </div>
+    <div class="blog-card-body">
+      <h{{ headingLevel }} class="blog-card-title" x-text="{{ post }}.title"></h{{ headingLevel }}>
+      <p class="blog-meta mt-auto"><time :datetime="{{ post }}.date" x-text="$store.km.date({{ post }}.date)"></time><span x-text="$store.km.readTime({{ post }}.minutes)"></span></p>
+    </div>
+  </a>
+</article>
+{% endmacro %}
+
+{#
+  Müşteri yorumu kartı: item → { quote, name, role }. `link` → { url, label }
+  JS ifadeleri (isteğe bağlı).
+#}
+{% macro testimonial(item, linkUrl=null, linkLabel=null) %}
+<figure class="testimonial">
+  <blockquote class="testimonial-quote" x-text="{{ item }}.quote"></blockquote>
+  <figcaption class="mt-auto flex items-center gap-3">
+    <span class="avatar grid place-items-center bg-primary-soft text-sm font-bold text-primary" aria-hidden="true" x-text="$store.km.initials({{ item }}.name)"></span>
+    <span class="flex-1"><span class="testimonial-name block" x-text="{{ item }}.name"></span><span class="testimonial-role" x-text="{{ item }}.role"></span></span>
+    <span class="rating" aria-hidden="true">{% for n in range(5) %}<svg class="icon icon-sm icon-fill" aria-hidden="true"><use href="#i-star"/></svg>{% endfor %}</span>
+  </figcaption>
+{% if linkUrl %}
+  <template x-if="{{ linkUrl }}"><a :href="{{ linkUrl }}" class="link-arrow mt-1"><span x-text="{{ linkLabel }}"></span> <svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-right"/></svg></a></template>
+{% endif %}
+</figure>
+{% endmacro %}
+
+{# Marka şeridi: logo varsa logo, yoksa ad (ana sayfa, Referanslar) #}
+{% macro logoStrip(more) %}
+<template x-for="r in $store.km.references" :key="r.id">
+  <span class="logo-strip-item">
+    <template x-if="r.logo?.src"><img :src="r.logo.src" :alt="r.logo.alt || r.name" class="logo-strip-img" loading="lazy" decoding="async"></template>
+    <template x-if="!r.logo?.src"><span x-text="r.name"></span></template>
+  </span>
+</template>
+<span class="text-sm text-muted">{{ more }}</span>
+{% endmacro %}

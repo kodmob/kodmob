@@ -1,0 +1,30 @@
+{{! Kayan etiketler: her satırda iki kopya (ikincisi ekran okuyucudan ve klavyeden gizli), CSS ile -50% kayar; block.js geniş ekranda kopyayı çoğaltır, hızı uzunluğa göre ayarlar. }}
+<section class="km-marquee is-{{speed}} tone-{{tone}}" aria-label="{{label}}">
+{{#row1.length}}
+  <div class="km-marquee-row km-marquee-row-1">
+    <div class="km-marquee-track">
+      <div class="km-marquee-set">{{#row1}}{{#url}}<a href="{{url}}" class="km-marquee-item{{#filled}} is-filled{{/filled}}" data-km-field="row1.{{@index}}.text">{{text}}</a>{{/url}}{{^url}}<span class="km-marquee-item{{#filled}} is-filled{{/filled}}" data-km-field="row1.{{@index}}.text">{{text}}</span>{{/url}}<span class="km-marquee-sep" aria-hidden="true"></span>{{/row1}}</div>
+      <div class="km-marquee-set" aria-hidden="true" inert>{{#row1}}{{#url}}<a href="{{url}}" class="km-marquee-item{{#filled}} is-filled{{/filled}}">{{text}}</a>{{/url}}{{^url}}<span class="km-marquee-item{{#filled}} is-filled{{/filled}}">{{text}}</span>{{/url}}<span class="km-marquee-sep"></span>{{/row1}}</div>
+    </div>
+  </div>
+{{/row1.length}}
+{{#row2.length}}
+  <div class="km-marquee-row km-marquee-row-2">
+    <div class="km-marquee-track">
+      <div class="km-marquee-set">{{#row2}}{{#url}}<a href="{{url}}" class="km-marquee-item"><span data-km-field="row2.{{@index}}.text">{{text}}</span>{{#badge}} <span class="km-marquee-badge" data-km-field="row2.{{@index}}.badge">{{badge}}</span>{{/badge}}</a>{{/url}}{{^url}}<span class="km-marquee-item"><span data-km-field="row2.{{@index}}.text">{{text}}</span>{{#badge}} <span class="km-marquee-badge" data-km-field="row2.{{@index}}.badge">{{badge}}</span>{{/badge}}</span>{{/url}}<span class="km-marquee-sep" aria-hidden="true"></span>{{/row2}}</div>
+      <div class="km-marquee-set" aria-hidden="true" inert>{{#row2}}{{#url}}<a href="{{url}}" class="km-marquee-item"><span>{{text}}</span>{{#badge}} <span class="km-marquee-badge">{{badge}}</span>{{/badge}}</a>{{/url}}{{^url}}<span class="km-marquee-item"><span>{{text}}</span>{{#badge}} <span class="km-marquee-badge">{{badge}}</span>{{/badge}}</span>{{/url}}<span class="km-marquee-sep"></span>{{/row2}}</div>
+    </div>
+  </div>
+{{/row2.length}}
+{{#row3.length}}
+  <div class="km-marquee-row km-marquee-row-3">
+    <div class="km-marquee-track">
+      <div class="km-marquee-set">{{#row3}}{{#url}}<a href="{{url}}" class="km-marquee-item" data-km-field="row3.{{@index}}.text">{{text}}</a>{{/url}}{{^url}}<span class="km-marquee-item" data-km-field="row3.{{@index}}.text">{{text}}</span>{{/url}}<span class="km-marquee-sep" aria-hidden="true"></span>{{/row3}}</div>
+      <div class="km-marquee-set" aria-hidden="true" inert>{{#row3}}{{#url}}<a href="{{url}}" class="km-marquee-item">{{text}}</a>{{/url}}{{^url}}<span class="km-marquee-item">{{text}}</span>{{/url}}<span class="km-marquee-sep"></span>{{/row3}}</div>
+    </div>
+  </div>
+{{/row3.length}}
+{{#footer}}
+  <p class="km-marquee-footer container-site" data-km-field="footer">{{footer}}</p>
+{{/footer}}
+</section>

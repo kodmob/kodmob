@@ -1,0 +1,15 @@
+{
+  "label": "Müşteri yorumları",
+  "description": "Müşterilerinizin kısa yorumları, adları ve unvanlarıyla kartlarda.",
+  "category": "section",
+  "icon": "quote",
+  "fields": [
+    { "name": "eyebrow", "type": "text", "label": "Üst etiket", "localized": true, "max": 60, "default": "@blocks.testimonials.eyebrow" },
+    { "name": "title", "type": "text", "label": "Başlık", "localized": true, "max": 120, "default": "@blocks.testimonials.title" },
+    { "name": "items", "type": "rows", "label": "Yorumlar", "localized": true, "max": 9, "columns": [
+      { "name": "quote", "type": "textarea", "label": "Yorum", "max": 500 },
+      { "name": "name", "type": "text", "label": "Ad", "max": 60 },
+      { "name": "role", "type": "text", "label": "Unvan / şirket", "max": 80 }
+    ], "default": "@blocks.testimonials.items" }
+  ]
+}

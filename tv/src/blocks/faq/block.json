@@ -1,0 +1,14 @@
+{
+  "label": "Sık sorulanlar",
+  "description": "Açılır kapanır sorular ve yanıtlar; ziyaretçinin aklındakini sayfada yanıtlayın.",
+  "category": "content",
+  "icon": "help",
+  "fields": [
+    { "name": "eyebrow", "type": "text", "label": "Üst etiket", "localized": true, "max": 60, "default": "@blocks.faq.eyebrow" },
+    { "name": "title", "type": "text", "label": "Başlık", "localized": true, "max": 120, "default": "@blocks.faq.title" },
+    { "name": "items", "type": "rows", "label": "Sorular", "localized": true, "max": 20, "columns": [
+      { "name": "q", "type": "text", "label": "Soru", "max": 200 },
+      { "name": "a", "type": "textarea", "label": "Yanıt", "max": 1500 }
+    ], "default": "@blocks.faq.items" }
+  ]
+}

@@ -1,0 +1,21 @@
+<!-- Bildirimler ($store.toast). Metinler x-text ile basılır; sunucu mesajı HTML olarak yorumlanmaz. -->
+<div class="pointer-events-none fixed inset-x-0 bottom-0 z-[90] flex flex-col items-center gap-2 p-4 sm:items-end" x-data aria-live="polite">
+  <template x-for="t in $store.toast.items" :key="t.id">
+    <div class="card pointer-events-auto flex w-full max-w-sm items-start gap-3 p-3 shadow-pop" role="status"
+      x-transition:enter="transition duration-200 ease-out" x-transition:enter-start="translate-y-2 opacity-0" x-transition:enter-end="translate-y-0 opacity-100">
+      <span class="tone-icon h-8 w-8"
+        :class="{ 'tone-success': t.type === 'success', 'tone-info': t.type === 'info', 'tone-warning': t.type === 'warning', 'tone-danger': t.type === 'error' }">
+        <svg class="icon icon-sm" aria-hidden="true"><use :href="t.type === 'success' ? '#i-check-circle' : t.type === 'info' ? '#i-info' : '#i-alert-circle'"/></svg>
+      </span>
+      <div class="min-w-0 flex-1">
+        <p class="text-sm font-semibold text-ink" x-show="t.title" x-text="t.title"></p>
+        <p class="text-sm text-ink-2" x-text="t.message"></p>
+        <button type="button" class="btn btn-sm btn-secondary mt-2" x-show="t.action" @click="$store.toast.act(t)" x-text="t.action?.label"></button>
+        <div class="toast-timer mt-2" x-show="t.ms"><span :style="{ animationDuration: t.ms + 'ms' }"></span></div>
+      </div>
+      <button type="button" class="btn-icon -mr-1 -mt-1" @click="$store.toast.dismiss(t.id)" aria-label="{{ t('common.close') }}">
+        <svg class="icon icon-sm" aria-hidden="true"><use href="#i-x"/></svg>
+      </button>
+    </div>
+  </template>
+</div>

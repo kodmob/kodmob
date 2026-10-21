@@ -1,0 +1,51 @@
+<p class="lead">Siteden gelen müşteri talepleri, teklif hesaplayıcının fiyatları ve yapay zekâ asistanı Jarvis. Gördükleriniz rolünüze göredir: Satış rolü talepleri ve fiyatları, Editör talepleri görür.</p>
+
+<h2 id="talepler">Talepler</h2>
+<p><a data-route="briefs">Talepler</a> sitedeki üç formdan gelir:</p>
+<div class="table-wrap"><table>
+  <thead><tr><th>Kaynak</th><th>İçinde</th></tr></thead>
+  <tbody>
+    <tr><td>Proje brifi</td><td>Hizmetler, bütçe, süre, şirket ve mesaj.</td></tr>
+    <tr><td>Teklif hesaplayıcı</td><td>Ziyaretçinin seçtiği proje türü ve özellikler, gördüğü fiyat aralığı.</td></tr>
+    <tr><td>İletişim formu</td><td>Ad, iletişim bilgisi ve mesaj.</td></tr>
+  </tbody>
+</table></div>
+<ol class="steps">
+  <li>Yeni talep gelince bildirim zilinde ve menüdeki sayıda görünür; liste kendiliğinden yenilenir, yeni satır vurgulanır.</li>
+  <li>Satıra basınca yan panelde detay açılır ve talep <strong>Okundu</strong> olur.</li>
+  <li><strong>Yanıtla</strong> e-posta programınızı talep sahibinin adresiyle açar.</li>
+  <li>İşi biten talebi <strong>Arşive al</strong>. Sekmeler: Yeni, Okundu, Arşiv. <em>Seç</em> ile birden çok talebi birlikte okundu sayın ya da arşivleyin.</li>
+</ol>
+<p>Kaynağa, dile ve tarihe göre süzün, arayın, CSV olarak indirin.</p>
+<p class="note note-warn"><strong>Kalıcı sil</strong> yalnızca kişi verisinin silinmesini isteyen talep sahibi içindir (KVKK); geri alınamaz. Talepler saklama süresi dolunca zaten kendiliğinden silinir.</p>
+
+<h2 id="hesaplayici">Teklif hesaplayıcı</h2>
+<p><a data-route="estimate">Teklif hesaplayıcı</a> sitedeki fiyat hesaplayıcısının rakamlarını tutar.</p>
+<ul>
+  <li><strong>Proje türleri</strong>: taban fiyat (en az / en çok; TRY ve EUR) ve süre (hafta). "Sitede" kapalı tür hesaplayıcıda görünmez.</li>
+  <li><strong>Özellikler</strong>: fiyata eklenen tutar ve ek süre.</li>
+  <li><strong>Tasarım çarpanı ve yuvarlama</strong>: taban fiyat tasarım düzeyiyle çarpılır, seçilen özellikler eklenir, sonuç yuvarlama adımına yuvarlanır. Altta örnek hesap görünür.</li>
+  <li>Türkçe sayfa TRY, diğer diller EUR gösterir. Seçeneklerin adları <a data-route="texts">Sayfa metinleri</a> › Teklif hesaplayıcı'dadır.</li>
+</ul>
+<p><em>Başlangıç değerlerine dön</em> bütün rakamları ilk hâline getirir (kaydedince geçerli olur).</p>
+
+<h2 id="jarvis">Jarvis</h2>
+<p><a data-route="jarvis">Jarvis</a> panelin yapay zekâ asistanıdır. Sohbet için Yönetici'nin bir yapay zekâ sağlayıcısı (Claude, OpenAI ya da Gemini) anahtarı eklemiş olması gerekir.</p>
+<ul>
+  <li>Siteyle ilgili sorular: "Kaç yeni talep var?", "Son değişen içerikler neler?", "Sitenin durumunu özetle".</li>
+  <li>Metin yazdırma ve çeviri; domain arama ve tarama başlatma.</li>
+  <li>Sohbetler solda saklanır, <em>Yeni</em> ile yenisini açın. <kbd>Enter</kbd> gönderir, <kbd>Shift</kbd> <kbd>Enter</kbd> yeni satır.</li>
+  <li>Jarvis cevabını araç sonuçlarına dayandırır; <em>Sonuçlar</em> ve <em>Ham veri</em> neye baktığını gösterir. Web araması açıksa kaynakları yazar.</li>
+</ul>
+<p class="note note-info">Yapay zekânın yazdığı metni yayına almadan önce mutlaka okuyun: rakam, tarih ve isimleri kontrol edin.</p>
+
+<h2 id="domain">Domain arama</h2>
+<p><a data-route="domains">Domain arama</a> alan adlarının boş olup olmadığını resmî kayıt servisleriyle (RDAP) kontrol eder; anahtar gerekmez, sonuçlar 24 saat saklanır.</p>
+<ul>
+  <li><strong>Hızlı kontrol</strong>: en çok 100 ad, beklemeden. Uzantısız ad seçili uzantılarla denenir; <em>Boşları kopyala</em>.</li>
+  <li><strong>Tarama</strong>: binlerce adayı arka planda tarar. Uzunluk ve karakterlerle, kalıplarla (C ünsüz, V ünlü, L harf, D rakam), kelime listeleriyle ya da kendi kelimelerinizle aday üretir. "Domain hilesi" uzantıyla biten kelimeyi böler: <code>kahvesi</code> → <code>kahve.si</code>.</li>
+  <li>Taramayı duraklatın, sürdürün ya da durdurun; bitince bildirim gelir. <em>Boşları yeniden doğrula</em> ve <em>Belirsizleri yeniden dene</em> sonucu tazeler.</li>
+</ul>
+
+<h2 id="gizlilik">Kişisel veri ve yapay zekâ</h2>
+<p>Talep sahiplerinin adı, e-postası, telefonu ve mesajı hiçbir yapay zekâ sağlayıcısına gönderilmez. Jarvis taleplerden yalnızca sayı ve özet gibi anonim bilgileri görür.</p>

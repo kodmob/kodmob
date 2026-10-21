@@ -1,0 +1,15 @@
+<section class="container-site section-sm">
+  <div class="grid gap-10 lg:grid-cols-[0.8fr_2fr]">
+    <div class="reveal">
+{{#eyebrow}}
+      <span class="eyebrow" data-km-field="eyebrow">{{eyebrow}}</span>
+{{/eyebrow}}
+      <h2 class="h2 mt-2" data-km-field="title">{{title}}</h2>
+    </div>
+    <div class="km-faq reveal reveal-delay-1">
+{{#items}}
+      <details{{#@first}} open{{/@first}}><summary data-km-field="items.{{@index}}.q">{{q}}</summary><p data-km-field="items.{{@index}}.a">{{a}}</p></details>
+{{/items}}
+    </div>
+  </div>
+</section>

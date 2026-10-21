@@ -1,0 +1,38 @@
+{# Panel araması (üst çubuk). Mantık: panel/search.js; dizin: panel/search-index.js. #}
+<div class="contents" x-data="kmSearch" @keydown.escape.window="open && close()">
+  {# masaüstü: üst çubukta kutu, altında açılır sonuçlar #}
+  <div class="relative hidden w-full max-w-md lg:block xl:max-w-lg" @click.outside="open && !mobile && close()" data-tour="search">
+    <form role="search" class="relative" @submit.prevent="submit()">
+      <svg class="icon icon-sm pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-muted" aria-hidden="true"><use href="#i-search"/></svg>
+      <input x-ref="input" x-model="q" type="search" class="input min-h-10 pr-20 pl-9" placeholder="Sayfa, ayar ya da kayıt ara…" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search"
+        role="combobox" aria-label="Panelde ara" aria-controls="km-search-list-desktop" :aria-expanded="open && !mobile" :aria-activedescendant="activeKey ? 'km-search-desktop-' + activeKey : null"
+        @focus="focus()" @keydown.down.prevent="move(1)" @keydown.up.prevent="move(-1)" data-testid="search-input">
+      <kbd class="pn-kbd pointer-events-none absolute top-1/2 right-3 -translate-y-1/2" x-show="!q && !loading" x-text="shortcut"></kbd>
+      <svg class="icon icon-sm absolute top-1/2 right-3 -translate-y-1/2 animate-spin text-primary" x-show="loading" x-cloak aria-hidden="true"><use href="#i-loader"/></svg>
+    </form>
+    <div class="absolute inset-x-0 top-full z-50 mt-2 max-h-[min(72vh,36rem)] overflow-y-auto rounded-card border border-line bg-surface shadow-pop" x-show="open && !mobile" x-cloak data-testid="search-results">
+      {% set searchList = 'desktop' %}{% include "pages/panel/_search-results.njk" %}
+    </div>
+  </div>
+
+  {# dar ekran: büyüteç → tam ekran katman. Üst çubuk backdrop-blur ile fixed'i kendine bağlar: katman body'ye taşınır. #}
+  <button type="button" class="btn-icon lg:hidden" @click="focus()" aria-label="Panelde ara" data-testid="search-open" data-tour="search">
+    <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
+  </button>
+  <template x-teleport="body">
+  <div class="fixed inset-0 z-[60] flex flex-col bg-surface pt-[env(safe-area-inset-top)] lg:hidden" x-show="open && mobile" x-cloak x-transition.opacity.duration.150ms role="dialog" aria-modal="true" aria-label="Panelde ara">
+    <form role="search" class="flex items-center gap-2 border-b border-line p-2" @submit.prevent="submit()">
+      <div class="relative flex-1">
+        <svg class="icon icon-sm pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-muted" aria-hidden="true"><use href="#i-search"/></svg>
+        <input data-search-input="mobile" x-model="q" type="search" class="input min-h-11 pr-10 pl-9" placeholder="Sayfa, ayar ya da kayıt ara…" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search"
+          aria-label="Panelde ara" aria-controls="km-search-list-mobile" @keydown.down.prevent="move(1)" @keydown.up.prevent="move(-1)">
+        <svg class="icon icon-sm absolute top-1/2 right-3 -translate-y-1/2 animate-spin text-primary" x-show="loading" x-cloak aria-hidden="true"><use href="#i-loader"/></svg>
+      </div>
+      <button type="button" class="btn btn-ghost btn-sm" @click="close()">Kapat</button>
+    </form>
+    <div class="flex-1 overflow-y-auto pb-[env(safe-area-inset-bottom)]">
+      {% set searchList = 'mobile' %}{% include "pages/panel/_search-results.njk" %}
+    </div>
+  </div>
+  </template>
+</div>

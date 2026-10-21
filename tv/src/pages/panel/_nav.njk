@@ -1,0 +1,84 @@
+{# Menü gövdesi: masaüstü kenar çubuğu ve mobil çekmece aynı parçayı kullanır. #}
+{# Proje seçici: bu proje; ana projede, projeleri yöneten kişiye diğer projeler ve yeni proje. Diğer projenin
+   paneli kendi adresinde açılır (orada ayrıca giriş yapılır; kullanıcılar proje başına ayrı). #}
+<div class="relative shrink-0 px-3 pt-3 pb-1 [[data-tour-drawer]_&]:pr-12" x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false" data-testid="project-switcher" data-tour="project">
+  <button type="button" class="flex w-full items-center gap-2.5 rounded-control px-2 py-2 text-left text-white transition-colors hover:bg-nav-2"
+    @click="open = !open" :aria-expanded="open" aria-haspopup="menu" aria-label="Proje seçici">
+    <span class="grid h-8 w-8 shrink-0 place-items-center rounded-control bg-primary-strong text-sm font-bold" x-text="(project.name || 'k').charAt(0).toLocaleUpperCase('tr')">k</span>
+    <span class="flex min-w-0 flex-1 flex-col leading-tight">
+      <span class="truncate text-[0.9375rem] font-semibold tracking-tight" x-text="project.name" data-testid="project-name">kodmob</span>
+      <span class="truncate text-[0.6875rem] text-nav-muted" x-text="project.main ? 'Ana proje' : 'Proje'">Proje</span>
+    </span>
+    <svg class="icon icon-sm shrink-0 text-nav-muted transition-transform" :class="open && 'rotate-180'" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+  </button>
+  <div class="absolute inset-x-3 top-full z-50 mt-1 rounded-card border border-line bg-surface p-1 text-ink shadow-pop" x-show="open" x-cloak x-transition.opacity.duration.100ms role="menu">
+    <p class="px-3 pt-2 pb-1 text-[0.6875rem] font-semibold tracking-wider text-muted uppercase">Projeler</p>
+    <span class="flex min-h-9 items-center gap-2.5 rounded-control bg-surface-subtle px-3 text-sm font-medium" aria-current="true">
+      <svg class="icon icon-sm text-primary" aria-hidden="true"><use href="#i-check"/></svg><span class="truncate" x-text="project.name"></span>
+    </span>
+    <template x-for="p in projects" :key="p.key">
+      <a :href="p.panel" @click.prevent="open = false; switchProject(p)" class="flex min-h-9 items-center gap-2.5 rounded-control px-3 text-sm hover:bg-surface-subtle" role="menuitem" :data-project="p.key">
+        <svg class="icon icon-sm text-muted" aria-hidden="true"><use href="#i-layers"/></svg><span class="truncate" x-text="p.name"></span>
+        <svg class="icon icon-sm ml-auto text-muted" aria-hidden="true"><use href="#i-external"/></svg>
+      </a>
+    </template>
+    <template x-if="canManageProjects">
+      <div class="mt-1 border-t border-line pt-1">
+        <a :href="$href('sites', {}, { yeni: 1 })" class="flex min-h-9 items-center gap-2.5 rounded-control px-3 text-sm font-medium text-primary hover:bg-surface-subtle" role="menuitem" @click="open = false; navOpen = false" data-testid="project-new">
+          <svg class="icon icon-sm" aria-hidden="true"><use href="#i-plus"/></svg> Yeni proje
+        </a>
+        <a :href="$href('sites')" class="flex min-h-9 items-center gap-2.5 rounded-control px-3 text-sm hover:bg-surface-subtle" role="menuitem" @click="open = false; navOpen = false">
+          <svg class="icon icon-sm text-muted" aria-hidden="true"><use href="#i-cog"/></svg> Projeleri yönet
+        </a>
+      </div>
+    </template>
+    <p class="px-3 py-2 text-xs text-muted" x-show="!canManageProjects">Bu kurulumdaki diğer projeleri ana projenin yöneticisi görür.</p>
+  </div>
+</div>
+
+{# Bir menü grubu (Alpine `group`): başlıklı grup açılıp kapanır, başlıksız grup (Genel bakış, Proje Ayarları) hep açık. #}
+{% macro navGroup() %}
+    <div class="mt-3 first:mt-1">
+      <button type="button" class="flex w-full items-center justify-between rounded-md px-2 py-1.5 text-[0.6875rem] font-semibold tracking-wider text-nav-muted uppercase hover:text-nav-ink"
+        x-show="group.label" @click="toggleGroup(group)" :aria-expanded="isOpen(group)">
+        <span x-text="group.label"></span>
+        <svg class="icon icon-sm transition-transform" :class="isOpen(group) ? '' : '-rotate-90'" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+      </button>
+      <ul class="mt-1 flex flex-col gap-0.5" x-show="!group.label || isOpen(group)" x-collapse>
+        <template x-for="item in group.items" :key="item.key">
+          <li>
+            <a :href="item.href" :data-tour="'nav-' + item.key" class="flex min-h-10 items-center gap-3 rounded-control px-3 text-[0.875rem] font-medium transition-colors"
+              :class="isActive(item) ? 'bg-primary-strong text-white' : 'text-nav-ink hover:bg-nav-2 hover:text-white'"
+              :aria-current="isActive(item) ? 'page' : null" @click="navOpen = false">
+              <svg class="icon" aria-hidden="true"><use :href="'#i-' + item.icon"/></svg>
+              <span class="flex-1" x-text="item.label"></span>
+              <span class="pn-nav-badge" x-show="badgeFor(item)" x-text="badgeFor(item)" x-cloak></span>
+            </a>
+          </li>
+        </template>
+      </ul>
+    </div>
+{% endmacro %}
+
+<nav class="flex flex-1 flex-col overflow-y-auto px-3 pb-4" aria-label="Ana menü">
+  <template x-for="group in groups.filter((g) => !g.bottom)" :key="group.key">
+    {{ navGroup() }}
+  </template>
+  {# Sistem: kurulumun tamamı, menünün altında. #}
+  <div class="mt-auto pt-3" x-show="groups.some((g) => g.bottom)" data-testid="nav-system">
+    <div class="border-t border-nav-line"></div>
+    <template x-for="group in groups.filter((g) => g.bottom)" :key="group.key">
+      {{ navGroup() }}
+    </template>
+  </div>
+</nav>
+
+<div class="shrink-0 border-t border-nav-line px-3 py-3">
+  <a href="/" target="_blank" rel="noopener" class="flex min-h-10 items-center gap-3 rounded-control px-3 text-[0.875rem] font-medium text-nav-ink hover:bg-nav-2 hover:text-white">
+    <svg class="icon" aria-hidden="true"><use href="#i-external"/></svg> Siteyi aç
+  </a>
+  <button type="button" class="flex min-h-10 w-full items-center gap-3 rounded-control px-3 text-[0.875rem] font-medium text-nav-ink hover:bg-nav-2 hover:text-white" @click="logout()">
+    <svg class="icon" aria-hidden="true"><use href="#i-logout"/></svg> Çıkış yap
+  </button>
+  <p class="px-3 pt-2 text-[0.6875rem] text-nav-muted">kodmob panel<span x-show="$store.session.me?.version" x-text="' · v' + $store.session.me?.version"></span></p>
+</div>

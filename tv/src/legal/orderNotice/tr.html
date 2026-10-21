@@ -1,0 +1,45 @@
+{{! Şablon: sipariş ve ödeme süreçleri için KVKK md. 10 aydınlatması. Hukuki görüş değildir. }}
+<h2>Veri sorumlusu</h2>
+<p>Sitemizden alışveriş{{#modules.booking}} ya da rezervasyon{{/modules.booking}} yaptığınızda kişisel verileriniz, 6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") uyarınca veri sorumlusu sıfatıyla aşağıdaki işletme tarafından işlenir:</p>
+{{{controllerCard}}}
+
+<h2>İşlenen kişisel veriler</h2>
+<ul>
+  <li><strong>Kimlik:</strong> ad soyad; fatura için gerekirse T.C. kimlik ya da vergi numarası.</li>
+  <li><strong>İletişim:</strong> e-posta adresi, telefon, teslimat ve fatura adresi.</li>
+  <li><strong>Müşteri işlem:</strong> sipariş içeriği, tutarı, kupon, sipariş notu, sipariş ve iade geçmişi.</li>
+  <li><strong>Finans:</strong> ödeme yöntemi, ödeme durumu ve ödeme kuruluşunun işlem numarası. Kart bilgileriniz sunucularımıza ulaşmaz.</li>
+{{#modules.booking}}
+  <li><strong>Rezervasyon:</strong> tarih, kişi sayıları (yetişkin, çocuk, bebek), seçilen paket{{#modules.hotels}}, oda tipi ve pansiyon{{/modules.hotels}}. Özel nitelikli kişisel veri (sağlık vb.) istemeyiz; hizmet için gerekirse ayrıca açık rızanızı alırız.</li>
+{{/modules.booking}}
+  <li><strong>İşlem güvenliği:</strong> sipariş tarihi, IP adresi ve tarayıcı bilgisi.</li>
+</ul>
+
+<h2>Amaçlar ve hukuki sebepler</h2>
+<ul>
+  <li>Siparişinizin alınması, hazırlanması, teslimatı{{#modules.booking}} ve rezervasyon hizmetinin sunulması{{/modules.booking}}, sizinle iletişim, iade ve şikâyet süreçleri: <strong>sözleşmenin kurulması ve ifası (KVKK md. 5/2-c)</strong>,</li>
+  <li>faturalama, muhasebe kayıtları ve tüketici mevzuatından doğan yükümlülükler: <strong>hukuki yükümlülük (md. 5/2-ç)</strong>,</li>
+  <li>olası uyuşmazlıklarda haklarımızın korunması: <strong>bir hakkın tesisi ve korunması (md. 5/2-e)</strong>,</li>
+  <li>dolandırıcılığın ve kötüye kullanımın önlenmesi: <strong>meşru menfaat (md. 5/2-f)</strong>.</li>
+</ul>
+<p>Sipariş bilgilerinizi pazarlama için kullanmayız. Size kampanya e-postası göndermemiz, ayrıca vereceğiniz ticari ileti onayına bağlıdır.</p>
+
+<h2>Aktarım</h2>
+<ul>
+  <li><strong>Kargo ve lojistik firmaları:</strong> fiziksel ürünlerin teslimatı için ad, adres ve telefon.</li>
+{{#modules.stripe}}
+  <li><strong>Stripe:</strong> kartla ödeme için ödeme tutarı, e-posta adresi ve sipariş numarası. Stripe'ın sunucuları yurt dışındadır; aktarım KVKK'nın 9. maddesindeki usul ve güvencelere uygun yapılır.</li>
+{{/modules.stripe}}
+{{#modules.paytr}}
+  <li><strong>PayTR Ödeme ve Elektronik Para Kuruluşu:</strong> kartla ödeme için ad, e-posta, telefon, adres, ödeme tutarı ve sipariş numarası.</li>
+{{/modules.paytr}}
+  <li><strong>Mali müşavir ve muhasebe hizmeti sağlayıcıları:</strong> faturalama ve yasal kayıtlar için.</li>
+  <li><strong>Barındırma ve e-posta altyapısı sağlayıcıları:</strong> hizmetin sunulması için.</li>
+  <li><strong>Yetkili kamu kurumları ve yargı mercileri:</strong> talep hâlinde.</li>
+</ul>
+
+<h2>Saklama süresi</h2>
+<p>Sipariş, fatura ve ödeme kayıtları Türk Ticaret Kanunu (10 yıl) ve Vergi Usul Kanunu'nda (5 yıl) öngörülen süreler boyunca saklanır; süre sonunda silinir ya da anonim hâle getirilir. Tamamlanmamış sepetler 30 gün sonra silinir.</p>
+
+<h2>Haklarınız</h2>
+<p>KVKK'nın 11. maddesindeki haklarınızı <a href="mailto:{{controller.email}}">{{controller.email}}</a> adresine sipariş numaranızla yazarak kullanabilirsiniz.{{#links.kvkk}} Haklarınızın tam listesi ve başvuru yolları <a href="{{links.kvkk}}">KVKK Aydınlatma Metni</a>'ndedir.{{/links.kvkk}}</p>

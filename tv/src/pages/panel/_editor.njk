@@ -1,0 +1,332 @@
+{% import "pages/panel/_fields.njk" as fields %}
+<div class="pn-page" x-data="kmEditor(r.type, r.id)" @keydown.window.ctrl.s.prevent="save()" @keydown.window.meta.s.prevent="save()">
+  <template x-if="loading">
+    <div class="pn-editor">
+      <div class="flex flex-col gap-4"><span class="skeleton h-14"></span><span class="skeleton h-96"></span></div>
+      <div class="flex flex-col gap-4"><span class="skeleton h-40"></span><span class="skeleton h-64"></span></div>
+    </div>
+  </template>
+
+  <template x-if="!loading && item">
+  <div>
+    {# ============================================================ üst çubuk #}
+    <div class="pn-bar">
+      <a :href="$href('list', { type: type })" class="btn-icon" :aria-label="meta.label + ' listesine dön'"><svg class="icon" aria-hidden="true"><use href="#i-chevron-left"/></svg></a>
+      <div class="min-w-0 flex-1">
+        <p class="pn-bar-title" x-text="title || (id ? meta.singular : meta.newLabel)"></p>
+        <p class="pn-bar-meta">
+          <span class="badge" :class="status[item.status]?.badge" x-text="status[item.status]?.label"></span>
+          <span x-show="item.modified" x-text="'Son kayıt ' + relative(item.modified)"></span>
+          <span class="pn-dirty" x-show="dirty" x-cloak>● Kaydedilmedi</span>
+        </p>
+      </div>
+      <a :href="builderUrl" class="btn btn-secondary btn-sm" x-show="builderUrl" x-cloak data-testid="editor-builder"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-pen-tool"/></svg> Sayfa düzenleyicide aç</a>
+      <a :href="publicUrl" target="_blank" rel="noopener" class="btn btn-ghost btn-sm max-sm:hidden" x-show="publicUrl && !dirty" x-cloak><svg class="icon icon-sm" aria-hidden="true"><use href="#i-external"/></svg> Sitede gör</a>
+      <div class="relative" x-data="{ open: false }" @click.outside="open = false" @keydown.escape="open = false">
+        <button type="button" class="btn btn-ghost btn-sm" @click="open = !open" :aria-expanded="open" title="Çeviri için JSON dışa / içe aktar"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-code"/></svg> JSON</button>
+        <div class="pn-menu right-0 w-72" x-show="open" x-cloak x-transition.origin.top.right>
+          <button type="button" class="menu-item" @click="open = false; exportJson()">
+            <svg class="icon icon-sm" aria-hidden="true"><use href="#i-download"/></svg>
+            <span x-text="'Dışa aktar · ' + (schema.localized.length ? locales[tab] : (locales[item.locale] || 'Yazı'))"></span>
+          </button>
+          <button type="button" class="menu-item" @click="open = false; openImport()">
+            <svg class="icon icon-sm" aria-hidden="true"><use href="#i-upload"/></svg>
+            <span>İçe aktar (boş alanları doldur)…</span>
+          </button>
+        </div>
+      </div>
+      <button type="button" class="btn-icon text-danger" x-show="id && $store.session.can('km_delete_content')" @click="remove()" aria-label="Sil" title="Sil"><svg class="icon" aria-hidden="true"><use href="#i-trash"/></svg></button>
+      <button type="button" class="btn btn-primary" @click="save()" :disabled="saving" title="Kaydet (Ctrl+S)">
+        <svg class="icon icon-sm animate-spin" aria-hidden="true" x-show="saving" x-cloak><use href="#i-loader"/></svg>
+        <span x-text="saving ? 'Kaydediliyor…' : 'Kaydet'">Kaydet</span>
+      </button>
+    </div>
+
+    <div class="pn-editor">
+      {# ============================================================ sol: içerik #}
+      <div class="pn-editor-main">
+        <template x-if="schema.localized.length">
+          <section class="card">
+            <div class="pn-locale-tabs" role="tablist" aria-label="Dil" data-testid="locale-tabs">
+              <template x-for="code in addedLocales()" :key="code">
+                <button type="button" role="tab" class="pn-locale-tab" :aria-selected="tab === code" @click="tab = code" :data-locale="code">
+                  <img class="flag" :src="'/assets/img/flags/' + code + '.svg'" alt="" width="20" height="14">
+                  <span x-text="locales[code]"></span>
+                  <span class="pn-dot" :class="localeDot(code).cls" :title="localeDot(code).title"></span>
+                </button>
+              </template>
+              <div class="relative pb-2" x-show="missingLocales().length" x-data="{ open: false }" @click.outside="open = false" @keydown.escape="open = false">
+                <button type="button" class="btn btn-ghost btn-sm" @click="open = !open" :aria-expanded="open" data-testid="locale-add"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-plus"/></svg> Dil ekle</button>
+                <div class="pn-menu right-auto left-0" x-show="open" x-cloak x-transition.origin.top.left>
+                  <template x-for="code in missingLocales()" :key="code">
+                    <button type="button" class="menu-item" @click="open = false; openAdder(code)" :data-locale="code">
+                      <img class="flag" :src="'/assets/img/flags/' + code + '.svg'" alt="" width="20" height="14">
+                      <span x-text="locales[code] + (localeInactive(code) ? ' (sitede kapalı)' : '')"></span>
+                    </button>
+                  </template>
+                </div>
+              </div>
+              <div class="ml-auto" x-data="{ open: false }" @click.outside="open = false" @keydown.escape="open = false">
+                <button type="button" class="btn btn-ghost btn-sm" @click="open = !open" :aria-expanded="open" :disabled="translating === tab">
+                  <svg class="icon icon-sm" :class="translating === tab && 'animate-spin'" aria-hidden="true"><use :href="translating === tab ? '#i-loader' : '#i-copy'"/></svg>
+                  <span x-text="translating === tab ? 'Çevriliyor…' : 'Dil işlemleri'"></span>
+                </button>
+                <div class="pn-menu" x-show="open" x-cloak x-transition.origin.top.right>
+                  <template x-for="code in addedLocales().filter((c) => c !== tab)" :key="'copy-' + code">
+                    <button type="button" class="menu-item" @click="open = false; copyFrom(code)"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg> <span x-text="locales[code] + ' içeriğini kopyala'"></span></button>
+                  </template>
+                  <template x-for="code in (translatorReady() ? addedLocales().filter((c) => c !== tab) : [])" :key="'ai-' + code">
+                    <button type="button" class="menu-item" @click="open = false; translateInto(code)"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-sparkles"/></svg> <span x-text="locales[code] + ' dilinden Jarvis ile çevir'"></span></button>
+                  </template>
+                  <button type="button" class="menu-item" x-show="localeStale(tab)" @click="open = false; markCurrent(tab)"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"/></svg> <span>Güncel say</span></button>
+                  <button type="button" class="menu-item text-danger" x-show="addedLocales().length > 1" @click="open = false; removeLocale(tab)" data-testid="locale-remove"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-trash"/></svg> <span x-text="locales[tab] + ' dilini kaldır'"></span></button>
+                </div>
+              </div>
+            </div>
+            <p class="pn-locale-note" x-show="localeStale(tab)" data-testid="locale-stale">
+              <svg class="icon icon-sm shrink-0" aria-hidden="true"><use href="#i-alert"/></svg>
+              <span class="flex-1" x-text="'Güncellenmeli: ' + locales[sourceLocale()] + ' metni bu çeviriden sonra değişti.'"></span>
+              <button type="button" class="btn btn-secondary btn-sm" x-show="translatorReady()" @click="translateInto(sourceLocale())" :disabled="translating === tab">Jarvis ile güncelle</button>
+              <button type="button" class="btn btn-ghost btn-sm" @click="markCurrent(tab)">Güncel say</button>
+            </p>
+            <p class="pn-locale-note" x-show="schema.localeKey && !localeFilled(tab)">
+              <svg class="icon icon-sm" aria-hidden="true"><use href="#i-info"/></svg>
+              <span>Bu dilde başlık boş: kaydetmek için başlık yazın ya da dili kaldırın.</span>
+            </p>
+            <p class="pn-locale-note is-muted" x-show="localeFilled(tab) && !localePublished(tab)">
+              <svg class="icon icon-sm" aria-hidden="true"><use href="#i-info"/></svg>
+              <span x-text="locales[tab] + ' taslak: bu dilin sitesinde görünmez. Hazır olunca sağdaki Diller bölümünden yayına alın.'"></span>
+            </p>
+            <template x-for="g in localizedGroups" :key="tab + g.name">
+              <div class="pn-group">
+                <h3 class="pn-group-title" x-text="g.name"></h3>
+                <div class="pn-grid">
+                  <template x-for="f in g.fields" :key="f.name">
+                    {{ fields.control('item.i18n[tab]', "'i18n.' + tab + '.' + f.name", 'l-') }}
+                  </template>
+                </div>
+              </div>
+            </template>
+            <template x-for="g in galleries()" :key="'cap-' + tab + g.name">
+              <div class="pn-group" x-show="item[g.name].length">
+                <h3 class="pn-group-title">Galeri açıklamaları</h3>
+                <div class="pn-captions">
+                  <template x-for="(img, i) in item[g.name]" :key="img.id + '-' + i">
+                    <label class="pn-caption"><img :src="img.src" alt=""><input class="input" x-model="item.i18n[tab][g.captions][i]" :placeholder="(i + 1) + '. görselin açıklaması'"></label>
+                  </template>
+                </div>
+              </div>
+            </template>
+          </section>
+        </template>
+
+        <template x-for="g in mainGroups" :key="g.name">
+          <section class="card pn-group-card">
+            <h3 class="pn-group-title" x-text="g.name"></h3>
+            <div class="pn-grid">
+              <template x-for="f in g.fields" :key="f.name">
+                {{ fields.control('item', 'f.name', 's-') }}
+              </template>
+            </div>
+          </section>
+        </template>
+      </div>
+
+      {# ============================================================ sağ: yayın + ortak alanlar #}
+      <aside class="pn-editor-side">
+        <section class="card pn-group-card">
+          <h3 class="pn-group-title">Yayın durumu</h3>
+          <label class="pn-switch">
+            <input type="checkbox" class="peer sr-only" x-model="published" :disabled="!$store.session.can('km_publish_content')">
+            <span class="pn-switch-track" aria-hidden="true"></span>
+            <span><span class="field-label block" x-text="published ? 'Yayında' : 'Taslak'"></span><span class="field-help" x-text="published ? 'Kaydedince sitede görünür.' : 'Sitede görünmez; hazır olunca açın.'"></span></span>
+          </label>
+          <p class="text-sm text-ink-2" x-show="!$store.session.can('km_publish_content')" x-cloak>Yayınlama yetkiniz yok: kaydettikleriniz taslak kalır, Editör ya da Yönetici yayınlar.</p>
+          <template x-if="hasLanguages()">
+            <div class="flex flex-col gap-2 border-t border-line pt-4" data-testid="locale-status">
+              <p class="field-label">Diller</p>
+              <ul class="pn-langs">
+                <template x-for="code in addedLocales()" :key="code">
+                  <li class="pn-lang" :data-locale="code">
+                    <img class="flag" :src="'/assets/img/flags/' + code + '.svg'" alt="" width="20" height="14">
+                    <button type="button" class="min-w-0 flex-1 truncate text-left text-sm font-medium text-ink" @click="tab = code" x-text="locales[code]"></button>
+                    <span class="badge badge-warning" x-show="localeStale(code)">Güncellenmeli</span>
+                    <label class="pn-switch" :title="localePublished(code) ? 'Bu dilde yayında' : 'Bu dil taslak'">
+                      <input type="checkbox" class="peer sr-only" :checked="localePublished(code)" @change="setLocalePublished(code, $event.target.checked)" :disabled="!$store.session.can('km_publish_content')" :aria-label="locales[code] + ' yayında'">
+                      <span class="pn-switch-track" aria-hidden="true"></span>
+                    </label>
+                  </li>
+                </template>
+              </ul>
+              <p class="field-help">Kayıt yayındayken yalnızca açık diller sitede görünür.</p>
+            </div>
+          </template>
+        </section>
+        <template x-if="type === 'posts'">
+          <section class="card pn-group-card" data-testid="post-translations">
+            <h3 class="pn-group-title">Diller</h3>
+            <p class="text-sm text-ink-2" x-show="!item.id">Kaydettikten sonra yazının diğer dillerdeki karşılıklarını buradan oluşturabilirsiniz.</p>
+            <p class="pn-locale-note m-0" x-show="postStale()">
+              <svg class="icon icon-sm shrink-0" aria-hidden="true"><use href="#i-alert"/></svg>
+              <span class="flex-1">Güncellenmeli: kaynak yazı bu çeviriden sonra değişti.</span>
+              <button type="button" class="btn btn-ghost btn-sm" @click="markPostCurrent()">Güncel say</button>
+            </p>
+            <ul class="pn-langs" x-show="item.id">
+              <template x-for="t in postTranslations()" :key="t.code">
+                <li class="pn-lang" :data-locale="t.code">
+                  <img class="flag" :src="'/assets/img/flags/' + t.code + '.svg'" alt="" width="20" height="14">
+                  <span class="min-w-0 flex-1">
+                    <span class="block truncate text-sm font-medium text-ink" x-text="t.id ? t.title : locales[t.code]"></span>
+                    <span class="flex flex-wrap gap-1 text-xs text-muted">
+                      <span x-text="locales[t.code]" x-show="t.id"></span>
+                      <span x-show="!t.id">Çevirisi yok</span>
+                      <span x-show="t.source">· kaynak</span>
+                      <span x-show="t.current">· bu yazı</span>
+                    </span>
+                  </span>
+                  <template x-if="t.id">
+                    <span class="flex shrink-0 items-center gap-1">
+                      <span class="badge badge-warning" x-show="t.stale && !(t.current && item.translation_current)">Güncellenmeli</span>
+                      <span class="badge" :class="status[t.status]?.badge" x-text="status[t.status]?.label"></span>
+                      <a :href="$href('editor', { type: 'posts', id: t.id })" class="btn-icon" x-show="!t.current" :aria-label="locales[t.code] + ' yazısını düzenle'"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-pencil"/></svg></a>
+                    </span>
+                  </template>
+                  <template x-if="!t.id">
+                    <div class="relative shrink-0" x-data="{ open: false }" @click.outside="open = false" @keydown.escape="open = false">
+                      <button type="button" class="btn btn-secondary btn-sm" @click="open = !open" :aria-expanded="open" :disabled="!!translating">
+                        <svg class="icon icon-sm animate-spin" aria-hidden="true" x-show="translating === t.code" x-cloak><use href="#i-loader"/></svg>
+                        <span x-text="translating === t.code ? 'Oluşturuluyor…' : 'Oluştur'"></span>
+                      </button>
+                      <div class="pn-menu right-0 w-64" x-show="open" x-cloak x-transition.origin.top.right>
+                        <button type="button" class="menu-item" @click="open = false; createPostTranslation(t.code, 'copy')"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg> <span>Bu yazıdan kopyala</span></button>
+                        <button type="button" class="menu-item" x-show="translatorReady()" @click="open = false; createPostTranslation(t.code, 'ai')"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-sparkles"/></svg> <span>Jarvis ile çevir</span></button>
+                        <button type="button" class="menu-item" @click="open = false; createPostTranslation(t.code, 'empty')"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-plus"/></svg> <span>Boş yazı</span></button>
+                        <button type="button" class="menu-item" @click="open = false; openLinker(t.code)"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-link"/></svg> <span>Var olan yazıyı bağla…</span></button>
+                      </div>
+                    </div>
+                  </template>
+                </li>
+              </template>
+            </ul>
+            <button type="button" class="btn btn-ghost btn-sm self-start text-danger" x-show="item.id && groupSize() > 1" @click="unlinkPost()">Bu yazıyı gruptan ayır</button>
+          </section>
+        </template>
+        <template x-if="item && (meta.record === 'post' || hasPage) && $store.session.me?.seo?.enabled">
+          {% include "pages/panel/_seo-box.njk" %}
+        </template>
+        <template x-for="g in sideGroups" :key="g.name">
+          <section class="card pn-group-card">
+            <h3 class="pn-group-title" x-text="g.name"></h3>
+            <div class="pn-grid">
+              <template x-for="f in g.fields" :key="f.name">
+                {{ fields.control('item', 'f.name', 's-') }}
+              </template>
+            </div>
+          </section>
+        </template>
+        <p class="px-1 text-xs text-muted">Kısayol: <kbd class="pn-kbd">Ctrl</kbd> + <kbd class="pn-kbd">S</kbd> kaydeder.</p>
+      </aside>
+    </div>
+  </div>
+  </template>
+
+  {# ============================================================ dil ekle #}
+  <template x-if="adder.open">
+    <div>
+      <div class="pn-modal-backdrop" @click="adder.busy || (adder.open = false)"></div>
+      <div class="pn-modal-wrap">
+        <section class="pn-modal max-w-lg" role="dialog" aria-modal="true" aria-labelledby="adder-title" @keydown.escape.window="adder.busy || (adder.open = false)" data-testid="locale-adder">
+          <header class="pn-modal-head">
+            <img class="flag" :src="'/assets/img/flags/' + adder.code + '.svg'" alt="" width="20" height="14">
+            <h2 id="adder-title" class="h3" x-text="locales[adder.code] + ' ekle'"></h2>
+            <button type="button" class="btn-icon ml-auto" @click="adder.open = false" :disabled="adder.busy" aria-label="Kapat"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button>
+          </header>
+          <div class="flex flex-col gap-3 p-5">
+            <label class="check pn-choice" x-show="localeFilled(adder.code)"><input type="radio" name="adder-mode" value="keep" x-model="adder.mode"><span><strong>Kayıtlı metinle geri ekle</strong><span class="field-help block">Bu dil daha önce kaldırılmış; metinleri duruyor.</span></span></label>
+            <label class="check pn-choice" x-show="addedLocales().length"><input type="radio" name="adder-mode" value="copy" x-model="adder.mode"><span><strong>Başka dilden kopyala</strong><span class="field-help block">Metinler kopyalanır, siz çevirirsiniz. Adres kopyalanmaz.</span></span></label>
+            <label class="check pn-choice" x-show="addedLocales().length && translatorReady()"><input type="radio" name="adder-mode" value="ai" x-model="adder.mode"><span><strong>Jarvis ile çevir</strong><span class="field-help block">Metinler Claude ile çevrilir; kaydetmeden önce gözden geçirin.</span></span></label>
+            <label class="check pn-choice"><input type="radio" name="adder-mode" value="empty" x-model="adder.mode"><span><strong>Boş başla</strong><span class="field-help block">Alanları kendiniz doldurursunuz.</span></span></label>
+            <div class="field" x-show="['copy', 'ai'].includes(adder.mode) && addedLocales().length > 1">
+              <label class="field-label" for="adder-from">Kaynak dil</label>
+              <select id="adder-from" class="input" x-model="adder.from">
+                <template x-for="code in addedLocales()" :key="code"><option :value="code" x-text="locales[code]" :selected="code === adder.from"></option></template>
+              </select>
+            </div>
+            <p class="text-sm text-ink-2">Yeni dil <strong>taslak</strong> eklenir; gözden geçirip yayına alın. <strong>Kaydet</strong>'e basana kadar hiçbir şey yazılmaz.</p>
+          </div>
+          <footer class="pn-modal-foot">
+            <button type="button" class="btn btn-ghost" @click="adder.open = false" :disabled="adder.busy">Vazgeç</button>
+            <button type="button" class="btn btn-primary" @click="addLocale()" :disabled="adder.busy" data-testid="locale-adder-ok">
+              <svg class="icon icon-sm animate-spin" aria-hidden="true" x-show="adder.busy" x-cloak><use href="#i-loader"/></svg>
+              <span x-text="adder.busy ? 'Çevriliyor…' : 'Ekle'"></span>
+            </button>
+          </footer>
+        </section>
+      </div>
+    </div>
+  </template>
+
+  {# ============================================================ blog: var olan yazıyı bağla #}
+  <template x-if="linker.open">
+    <div>
+      <div class="pn-modal-backdrop" @click="linker.open = false"></div>
+      <div class="pn-modal-wrap">
+        <section class="pn-modal max-w-lg" role="dialog" aria-modal="true" aria-labelledby="linker-title" @keydown.escape.window="linker.open = false">
+          <header class="pn-modal-head">
+            <h2 id="linker-title" class="h3" x-text="locales[linker.code] + ' yazısını bağla'"></h2>
+            <button type="button" class="btn-icon ml-auto" @click="linker.open = false" aria-label="Kapat"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button>
+          </header>
+          <div class="flex flex-col gap-3 p-5">
+            <p class="text-sm text-ink-2">Seçtiğiniz yazı bu yazının çevirisi olur: sitede dil değiştirici iki yazıyı birbirine bağlar.</p>
+            <span class="skeleton h-10" x-show="linker.busy && !linker.posts.length"></span>
+            <p class="text-sm text-muted" x-show="!linker.busy && !linker.posts.length" x-text="locales[linker.code] + ' yazı yok.'"></p>
+            <div class="field" x-show="linker.posts.length">
+              <label class="field-label" for="linker-post">Yazı</label>
+              <select id="linker-post" class="input" x-model.number="linker.postId">
+                <template x-for="p in linker.posts" :key="p.id"><option :value="p.id" x-text="p.title + ((p.languages?.length || 1) > 1 ? ' (başka bir grupta)' : '')" :selected="p.id === linker.postId"></option></template>
+              </select>
+            </div>
+          </div>
+          <footer class="pn-modal-foot">
+            <button type="button" class="btn btn-ghost" @click="linker.open = false">Vazgeç</button>
+            <button type="button" class="btn btn-primary" @click="linkPost()" :disabled="linker.busy || !linker.postId">Bağla</button>
+          </footer>
+        </section>
+      </div>
+    </div>
+  </template>
+
+  {# ============================================================ JSON içe aktar #}
+  <template x-if="importer.open">
+    <div>
+      <div class="pn-modal-backdrop" @click="importer.open = false"></div>
+      <div class="pn-modal-wrap">
+        <section class="pn-modal max-w-2xl" role="dialog" aria-modal="true" aria-labelledby="import-title" @keydown.escape.window="importer.open = false">
+          <header class="pn-modal-head">
+            <h2 id="import-title" class="h3">JSON içe aktar</h2>
+            <button type="button" class="btn-icon ml-auto" @click="importer.open = false" aria-label="Kapat"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button>
+          </header>
+          <div class="flex flex-col gap-4 overflow-y-auto p-5">
+            <p class="text-sm text-ink-2">Dışa aktardığınız JSON'un çevrilmiş halini yapıştırın ya da dosyasını seçin. Hedef dildeki boş alanlar ve görsel alt metinleri doldurulur; <strong>Kaydet</strong>'e basana kadar hiçbir şey yazılmaz.</p>
+            <div class="flex flex-wrap items-end gap-3">
+              <div class="field min-w-40 flex-1" x-show="schema.localized.length">
+                <label class="field-label" for="import-locale">Hedef dil</label>
+                <select id="import-locale" class="input" x-model="importer.locale">
+                  <template x-for="code in addedLocales()" :key="code"><option :value="code" x-text="locales[code]" :selected="code === importer.locale"></option></template>
+                </select>
+              </div>
+              <label class="btn btn-secondary"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-upload"/></svg> Dosya seç<input type="file" accept="application/json,.json" class="sr-only" @change="importFile($event.target.files); $event.target.value = ''"></label>
+            </div>
+            <textarea class="input font-mono text-xs" rows="12" x-model="importer.text" placeholder='{ "format": "kodmob-record", "fields": { … } }' aria-label="JSON"></textarea>
+            <label class="check"><input type="checkbox" x-model="importer.overwrite"> <span>Dolu alanların da üzerine yaz</span></label>
+            <p class="pn-alert" x-show="importer.error" x-text="importer.error" role="alert"></p>
+          </div>
+          <footer class="pn-modal-foot">
+            <button type="button" class="btn btn-ghost" @click="importer.open = false">Vazgeç</button>
+            <button type="button" class="btn btn-primary" @click="applyImport()" :disabled="!importer.text.trim()">Uygula</button>
+          </footer>
+        </section>
+      </div>
+    </div>
+  </template>
+</div>

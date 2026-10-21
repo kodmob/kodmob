@@ -1,0 +1,32 @@
+{{! Template: customise delivery time, area and carrier for your business. }}
+<h2>General</h2>
+<p>Orders placed on {{site.name}} are prepared and shipped after the order is confirmed. For bank transfers, preparation starts when the payment reaches our account. You can follow your order from the link in the confirmation e-mail; we also e-mail you when it ships.</p>
+
+<h2>Delivery time</h2>
+<p>Goods are delivered within the promised time and in any case within 30 days of order confirmation. If delivery within this period becomes impossible, we will inform you; you may then cancel your order and receive a full refund.</p>
+
+<h2>Shipping costs</h2>
+{{#commerce.shippingFee}}
+<p>Shipping costs {{commerce.shippingFee}}{{#commerce.freeOver}}; orders of {{commerce.freeOver}} or more ship free{{/commerce.freeOver}}. The cost is added to the total at checkout.</p>
+{{/commerce.shippingFee}}
+{{^commerce.shippingFee}}
+<p>Shipping is free.</p>
+{{/commerce.shippingFee}}
+{{#commerce.cod}}
+<p>With cash on delivery{{#commerce.codFee}} an extra fee of {{commerce.codFee}} applies and{{/commerce.codFee}} payment is made to the courier on delivery.</p>
+{{/commerce.cod}}
+
+<h2>On receipt</h2>
+<p>Check the outer packaging when you receive the parcel. We recommend refusing a damaged, crushed or opened parcel, or accepting it only with a damage report signed by the courier. Contact us about goods that arrive damaged; they will be replaced free of charge or refunded.</p>
+<p>If you are not at the address, the carrier leaves a notice; parcels not collected in time are returned to us and we will contact you.</p>
+
+<h2>Digital goods</h2>
+<p>Digital goods are delivered electronically by e-mail or on the order page once payment is confirmed; no shipping costs apply.</p>
+
+{{#modules.booking}}
+<h2>Bookings</h2>
+<p>Tours, activities{{#modules.hotels}} and accommodation{{/modules.hotels}} involve no physical delivery. Your booking details are sent by confirmation e-mail and the service is provided on the date you chose.{{#links.bookingTerms}} Details: <a href="{{links.bookingTerms}}">Booking Terms</a>.{{/links.bookingTerms}}</p>
+{{/modules.booking}}
+
+<h2>Contact</h2>
+<p>For delivery questions, write to <a href="mailto:{{controller.email}}">{{controller.email}}</a> with your order number.</p>

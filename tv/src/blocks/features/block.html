@@ -1,0 +1,21 @@
+<section class="container-site section">
+{{#title}}
+  <div class="section-head reveal">
+    <div>
+{{#eyebrow}}
+      <span class="eyebrow" data-km-field="eyebrow">{{eyebrow}}</span>
+{{/eyebrow}}
+      <h2 class="h2 mt-2"><span data-km-field="title">{{title}}</span>{{#titleAccent}}&#32;<span class="accent" data-km-field="titleAccent">{{titleAccent}}</span>{{/titleAccent}}</h2>
+    </div>
+  </div>
+{{/title}}
+  <div class="grid gap-4 km-grid-{{columns}}">
+{{#items}}
+    <div class="service-card reveal reveal-delay-{{@number}}">
+      <span class="icon-tile"><svg class="icon icon-lg" aria-hidden="true"><use href="#i-{{icon}}"/></svg></span>
+      <span class="service-card-title" data-km-field="items.{{@index}}.title">{{title}}</span>
+      <span class="service-card-text" data-km-field="items.{{@index}}.text">{{text}}</span>
+    </div>
+{{/items}}
+  </div>
+</section>

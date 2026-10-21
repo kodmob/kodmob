@@ -1,0 +1,18 @@
+{{! Rakamlar: değer HTML'de yazılı (arama motoru görür), görünür olunca kmCountUp sayar. }}
+<section class="container-site section-sm">
+  <div class="km-stats is-{{tone}} reveal">
+{{#title}}
+    <div class="mb-8">
+{{#eyebrow}}
+      <span class="eyebrow" data-km-field="eyebrow">{{eyebrow}}</span>
+{{/eyebrow}}
+      <h2 class="h2 mt-2" data-km-field="title">{{title}}</h2>
+    </div>
+{{/title}}
+    <dl class="stats">
+{{#items}}
+      <div class="stat"><dt class="stat-label order-2" data-km-field="items.{{@index}}.label">{{label}}</dt><dd class="stat-value order-1" x-data="kmCountUp" data-km-field="items.{{@index}}.value">{{value}}</dd></div>
+{{/items}}
+    </dl>
+  </div>
+</section>

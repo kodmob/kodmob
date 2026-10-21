@@ -1,0 +1,83 @@
+<p class="lead">Sitenin bölümleri, sabit metinleri, dilleri ve arama motorlarındaki görünüşü. Burada yaptığınız değişiklik kaydedince (düzenleyicide: yayınlayınca) sitede hemen görünür; yeni bir sürüm yüklemek gerekmez.</p>
+
+<h2 id="duzenleyici">Sayfa düzenleyici: bölümler ve bloklar</h2>
+<p><a data-route="builder">Sayfa düzenleyici</a> sitenin gerçek sayfasını gösterir; bölümleri (bloklar) görerek ekler, yazar ve sıralarsınız.</p>
+<ol class="steps">
+  <li>Üstten sayfayı ve dili seçin. Solda <strong>Bölümler</strong>: sayfanın bölgeleri ve içindeki bloklar. "Her sayfada" yazan bölge bütün sayfalarda görünür.</li>
+  <li><strong>Ekle</strong> sekmesinden bir bloğu sayfada istediğiniz yere sürükleyin ya da tıklayın. "Keşfet" işaretli bloklar (ör. Animasyon: Kayan etiketler, Harf animasyonlu başlık) ilk kullanımda kitaplığa girer; <a data-route="tools" data-tab="discover">Araç Pazarı › Keşfet</a>'ten de eklenir.</li>
+  <li>Sayfada bir bölüme tıklayın: ayarları sağda açılır. Yazıya <strong>çift tıklayıp</strong> doğrudan yazabilirsiniz; <kbd>Enter</kbd> bitirir, <kbd>Esc</kbd> vazgeçer.</li>
+  <li>Bölümün üstündeki araç çubuğu: taşı, yukarı / aşağı, çoğalt, gizle, kaldır. Kısayollar: <kbd>Ctrl</kbd> <kbd>Z</kbd> geri al, <kbd>Ctrl</kbd> <kbd>D</kbd> çoğalt, <kbd>Alt</kbd> <kbd>↑</kbd>/<kbd>↓</kbd> taşı, <kbd>Ctrl</kbd> <kbd>C</kbd>/<kbd>V</kbd> başka sayfaya kopyala.</li>
+  <li>Değişiklikler <strong>taslağa</strong> kendiliğinden kaydedilir; ziyaretçiler <strong>Yayınla</strong>'dan sonra görür. Yayınla menüsünde taslakları atma ve bölgenin yayın geçmişi (eski hale dönme) vardır.</li>
+</ol>
+<p><strong>Jarvis</strong> (yapay zekâ anahtarı girilmişse): seçili bölümün metnini isteğinize göre yazar ("daha kısa", "tur acentesi için"), diğer dillere çevirir; üst çubuktaki Jarvis düğmesi sayfaya baştan sona bölüm önerir. Yalnızca bölümün metinleri gönderilir; sonuç taslaktır.</p>
+
+<h3 id="blok-sayfalari">Kendi sayfanız: blok sayfaları</h3>
+<p>Kampanya, etkinlik ya da hakkımızda gibi yeni bir sayfayı yalnızca bloklarla kurabilirsiniz; sürüm yüklemek gerekmez.</p>
+<ol class="steps">
+  <li>Sayfa seçicide <strong>Yeni sayfa</strong>: başlığı yazın, adres kendiliğinden önerilir (<code>/yaz-kampanyasi/</code>). Sitenin başka bir sayfasının adresi verilemez.</li>
+  <li>Sayfa <strong>taslak</strong> açılır; ilk bölümü başlığınızla bir karşılamadır. Blokları ekleyin, yazın; ziyaretçi henüz göremez.</li>
+  <li><strong>Yayınla</strong> bölümlerle birlikte sayfayı da yayına alır. Bağlantı alanlarında sayfa listesinde blok sayfaları da çıkar.</li>
+  <li>Başlık, adres, arama motoru açıklaması, paylaşım görseli ve diller üst çubuktaki <strong>Sayfa ayarları</strong> düğmesinde (<a data-route="list" data-type="pages">Blok sayfaları</a> listesinden de açılır; silme orada).</li>
+</ol>
+
+<h2 id="metinler">Sayfa metinleri</h2>
+<p><a data-route="texts">Sayfa metinleri</a> (Sayfalar ve Diller içinde): ana sayfa başlığı, bölüm başlıkları, düğme yazıları, alt bilgi gibi kayıt olmayan bütün metinler, dil dil.</p>
+<ul>
+  <li>Soldan sayfayı seçin ya da <em>Bütün sayfalarda ara</em> ile metni bulun. Süzgeç: Tümü, Değiştirilenler, Güncellenmeli.</li>
+  <li>Değiştirdiğiniz metin <strong>Değiştirildi</strong> diye işaretlenir; <em>Sözlükteki metne dön</em> sitenin ilk metnine geri götürür.</li>
+  <li>Varsayılan dildeki metin değişince diğer dillerdeki karşılığı <strong>Güncellenmeli</strong> olur. Tek tek ya da toplu <em>Jarvis ile çevir</em>.</li>
+  <li>Çevirmen için <strong>JSON</strong> ile dışa aktarın, çevrilmiş dosyayı içe aktarın. <kbd>Ctrl</kbd> <kbd>S</kbd> kaydeder.</li>
+</ul>
+
+<h2 id="diller">Diller</h2>
+<p><a data-route="languages">Sayfalar ve Diller</a> sitenin dillerini yönetir.</p>
+<ul>
+  <li><strong>Yeni dil pasif eklenir</strong>: içerikleri o dile çevirmeye başlayabilirsiniz, site o dilde henüz açılmaz. Dil sitenin sürümüne eklenince yayına alınır. Adres öneki (ör. <code>/en/</code>) ve varsayılan dil sitenin sürümünden gelir.</li>
+  <li><strong>Adresler</strong>: her dilin sayfa adresleri ve eski adresler. Bölüm adı ya da önek değişince eski adresler yeni adrese kendiliğinden yönlenir (301); adresi değişen proje ve yazıların eski adresleri de.</li>
+  <li><strong>Ziyaretçi</strong>: tarayıcı dili farklı ziyaretçiye dil önerisi bandı ve 404 sayfasında gösterilecek sık ziyaret edilen bağlantılar (dil başına en fazla 6).</li>
+  <li><strong>Sağlık</strong>: eksik çeviriler, kırık bağlantılar ve dil sorunları; çoğunun yanında <em>Düzelt</em> vardır.</li>
+</ul>
+<p class="note note-info">Çevirisi olmayan içerik o dilin listelerinde görünmez; adresi açılırsa 404 sayfasında "şu dillerde mevcut" kutusu çıkar. Dil seçici yalnızca yayındaki dilleri gösterir.</p>
+
+<h2 id="seo">SEO durumu ve puanlar</h2>
+<p><a data-route="seo">SEO</a> genel bakışı: ortalama SEO puanı, yönlendirme ve yeni 404 sayıları, kontrol listesi (eksik olanın yanında <em>Düzelt</em>) ve site haritası, robots.txt, llms.txt bağlantıları.</p>
+<ul>
+  <li><a data-route="seo" data-tab="content">İçerik</a>: yayındaki her proje ve yazının SEO başlığı, açıklaması ve puanı, dil başına. Düzeltmek için satırdan düzenleyiciye geçin.</li>
+  <li><a data-route="seo" data-tab="pages">Sayfalar</a>: ana sayfa, Hizmetler, İletişim gibi sabit sayfaların arama sonucundaki başlık ve açıklaması. Boş alan sitenin varsayılan metnini kullanır.</li>
+</ul>
+
+<h2 id="yonlendirme">Yönlendirmeler ve 404</h2>
+<ul>
+  <li><a data-route="seo" data-tab="redirects">Yönlendirmeler</a>: eski adresi yenisine gönderin. 301 kalıcı, 302 / 307 geçici, 410 "kaldırıldı" demektir. <em>Dene</em> bir adresin hangi kurala uyduğunu gösterir. Çok sayıda kural CSV ile içe aktarılır.</li>
+  <li><a data-route="seo" data-tab="404">404 kayıtları</a>: sitede bulunamayan adresler. "İç bağlantı" işaretliyse ziyaretçi sitenin kendi sayfasından geldi: o bağlantıyı düzeltin. <em>Önerilene yönlendir</em> benzer adresi hedef yapar. Bot taramalarını yoksayabilirsiniz.</li>
+  <li>İçerikteki kırık ya da yönlenen iç bağlantılar aynı sekmede listelenir; <em>Yeniden denetle</em> ile tazelenir.</li>
+</ul>
+
+<h2 id="robots">robots.txt, llms.txt ve ayarlar</h2>
+<ul>
+  <li><a data-route="seo" data-tab="robots">Robots</a>: arama motoru kuralları (her satır bir kural) ve önizleme. Site yayın öncesi modundaysa robots.txt her şeyi engeller; kurallar site açılınca geçerli olur.</li>
+  <li><strong>Yapay zekâ tarayıcıları</strong> ayarı GPTBot, ClaudeBot, PerplexityBot, Google-Extended gibi botlara izin verir ya da engeller. Engellemek siteyi ChatGPT ve benzerlerinin cevaplarından da çıkarır; arama motorları (Googlebot, Bingbot) bu ayarla engellenmez.</li>
+  <li><strong>llms.txt</strong>: yapay zekâ araçları için sitenin özeti; tanıtım cümlesi boşsa site açıklaması kullanılır.</li>
+  <li><a data-route="seo" data-tab="settings">Ayarlar</a>: varsayılan paylaşım görseli (1200×630), kurum ve yerel işletme bilgisi, arama konsollarının doğrulama değerleri, IndexNow (yayınlanan kayıt Bing ve Yandex'e kendiliğinden bildirilir; Google için Search Console).</li>
+</ul>
+
+<h2 id="yapay-zeka">Yapay zekâ görünürlüğü</h2>
+<p><a data-route="seo" data-tab="ai">SEO › Yapay zekâ</a>, ChatGPT, Claude, Perplexity ve Google'ın sitenizi ne kadar okuduğunu gösterir.</p>
+<div class="table-wrap"><table>
+  <thead><tr><th>Amaç</th><th>Ne demek</th></tr></thead>
+  <tbody>
+    <tr><td>Eğitim</td><td>Modeli eğitmek için toplanır.</td></tr>
+    <tr><td>Yapay zekâ araması</td><td>Cevaplarda kaynak gösterilecek dizin.</td></tr>
+    <tr><td>Kullanıcı isteği</td><td>Biri soru sorunca sayfanız o an okundu: en değerli ziyaret.</td></tr>
+    <tr><td>Arama motoru</td><td>Google, Bing, Apple; Gemini ve yapay zekâ özetleri de Googlebot'la gelir.</td></tr>
+  </tbody>
+</table></div>
+<ul>
+  <li>Günlük ziyaret grafiği, botlar ve robots kuralına göre durumları, yapay zekânın en çok okuduğu sayfalar.</li>
+  <li><strong>Denetim</strong>: site arama motorlarına ve yapay zekâya açık mı, botlar robots.txt'te serbest mi, yapısal veri ve site açıklaması var mı gibi kontroller.</li>
+  <li><strong>İçerik hazırlığı</strong>: yayındaki her kaydın yapay zekâ cevabına ne kadar hazır olduğu: kısa özet (açıklama), içerik uzunluğu, ara başlıklar, son bir yılda güncellenmiş olması, görsellerin alt metni. Eksikler satırda yazar; düzenleyicide tamamlayın.</li>
+</ul>
+<p class="note note-warn">Sayılar tarayıcının kendini nasıl tanıttığına göredir; kayıt 2.4 sürümüyle başladı. Bot geldikçe dolar.</p>
+
+<h2 id="kimlik">Logo yazısı, renkler ve iletişim</h2>
+<p>Ayarlar yetkiniz varsa <a data-route="projectSettings">Proje Ayarları</a>'nda <strong>Kimlik</strong> grubu: site adı, logo yazısı ve alt yazısı, logo görseli, ana renk ve koyu bant rengi. Renk seçiciyle seçin; açık ve koyu tonlar kendiliğinden türetilir, beyaz yazının okunacağı kadar koyu bir renk seçin. İletişim, sosyal medya ve yasal bilgiler de aynı sayfadadır.</p>

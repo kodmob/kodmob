@@ -1,0 +1,259 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Call to function is_string\(\) with string will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: app/Core/Ai/AiHttp.php
+
+		-
+			message: '#^Offset ''inputSchema'' on array\{name\: string, description\: string, inputSchema\: array\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Core/Ai/Providers/AnthropicProvider.php
+
+		-
+			message: '#^Offset ''inputSchema'' on array\{name\: string, description\: string, inputSchema\: array\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Core/Ai/Providers/GeminiProvider.php
+
+		-
+			message: '#^Offset ''inputSchema'' on array\{name\: string, description\: string, inputSchema\: array\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Core/Ai/Providers/OpenAiProvider.php
+
+		-
+			message: '#^Parameter \#1 \$array \(list\<array\{id\: non\-falsy\-string, label\: non\-falsy\-string\}\>\) of array_values is already a list, call has no effect\.$#'
+			identifier: arrayValues.list
+			count: 1
+			path: app/Core/Ai/Providers/OpenAiProvider.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>data" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Core/Content/ContentType.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 3
+			path: app/Core/Content/ContentType.php
+
+		-
+			message: '#^Parameter \#1 \$array \(list\) of array_values is already a list, call has no effect\.$#'
+			identifier: arrayValues.list
+			count: 1
+			path: app/Core/Content/Locales.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\ConnectionInterface\:\:getDriverName\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Core/Database/Sql.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\ConnectionInterface\:\:getDriverName\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Core/Database/TableRepository.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\ConnectionInterface\:\:getTablePrefix\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Core/Database/TableRepository.php
+
+		-
+			message: '#^Parameter \#2 \$callback of function array_filter expects \(callable\(string\)\: bool\)\|null, ''strlen'' given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Core/Database/TableRepository.php
+
+		-
+			message: '#^Parameter \#1 \$array \(list\<string\>\) of array_values is already a list, call has no effect\.$#'
+			identifier: arrayValues.list
+			count: 1
+			path: app/Core/Sms/NetgsmGateway.php
+
+		-
+			message: '#^Offset ''to'' on array\{to\: string, name\?\: string\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 2
+			path: app/Core/Sms/Sms.php
+
+		-
+			message: '#^Parameter \#2 \$callback of function array_filter expects \(callable\(string\)\: bool\)\|null, ''strlen'' given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Core/Support/PanelUrl.php
+
+		-
+			message: '#^Parameter \#1 \$array \(array\{\}\) to function array_values is empty, call has no effect\.$#'
+			identifier: arrayValues.empty
+			count: 1
+			path: app/Modules/Auth/Services/TwoFactor.php
+
+		-
+			message: '#^Property App\\Modules\\Auth\\Models\\User\:\:\$two_factor_recovery \(string\|null\) does not accept array\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: app/Modules/Auth/Services/TwoFactor.php
+
+		-
+			message: '#^Property App\\Modules\\Auth\\Models\\User\:\:\$two_factor_recovery \(string\|null\) does not accept array\<int, string\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: app/Modules/Auth/Services/TwoFactor.php
+
+		-
+			message: '#^Call to an undefined method App\\Core\\Database\\Entity\:\:archive\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Modules/Briefs/BriefsController.php
+
+		-
+			message: '#^Call to an undefined method App\\Core\\Database\\Entity\:\:markRead\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Modules/Briefs/BriefsController.php
+
+		-
+			message: '#^Call to an undefined method App\\Core\\Database\\Entity\:\:reopen\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Modules/Briefs/BriefsController.php
+
+		-
+			message: '#^Parameter \#1 \$array \(list\<string\>\) of array_values is already a list, call has no effect\.$#'
+			identifier: arrayValues.list
+			count: 1
+			path: app/Modules/Briefs/Domain/Brief.php
+
+		-
+			message: '#^Call to an undefined method App\\Core\\Database\\Entity\:\:archive\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Modules/Content/Http/AdminContentController.php
+
+		-
+			message: '#^Call to an undefined method App\\Core\\Database\\Entity\:\:markRead\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Modules/Content/Http/AdminContentController.php
+
+		-
+			message: '#^Call to an undefined method App\\Core\\Database\\Entity\:\:reopen\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Modules/Content/Http/AdminContentController.php
+
+		-
+			message: '#^Call to an undefined method App\\Core\\Database\\Entity\:\:status\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Modules/Content/Http/AdminContentController.php
+
+		-
+			message: '#^Method App\\Modules\\History\\HistoryRepository\:\:stats\(\) should return array\{total\: array\{count\: int, previous\: int\}, groups\: array\<string, int\>, users\: int\} but returns array\{range\: array\{from\: non\-falsy\-string, to\: non\-falsy\-string\}, total\: array\{count\: int, previous\: int\}, groups\: stdClass, users\: int\}\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Modules/History/HistoryRepository.php
+
+		-
+			message: '#^Call to function is_array\(\) with array\<string, string\> will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: app/Modules/I18n/LanguageService.php
+
+		-
+			message: '#^Parameter \#1 \$array \(list\<string\>\) of array_values is already a list, call has no effect\.$#'
+			identifier: arrayValues.list
+			count: 1
+			path: app/Modules/I18n/LanguageService.php
+
+		-
+			message: '#^Parameter \#2 \$callback of function array_filter expects \(callable\(string\)\: bool\)\|null, ''strlen'' given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Modules/I18n/LanguageService.php
+
+		-
+			message: '#^Offset ''native'' on array\{id\: int, role\: string, content\: array\|string, meta\: array, created_at\: string\} on left side of \?\? does not exist\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Modules/Jarvis/Assistant/JarvisAgent.php
+
+		-
+			message: '#^Parameter \#2 \$callback of function array_filter expects \(callable\(mixed\)\: bool\)\|null, ''strlen'' given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Modules/Domains/Generators/GeneratorFactory.php
+
+		-
+			message: '#^Parameter \#2 \$callback of function array_filter expects \(callable\(string\)\: bool\)\|null, ''strlen'' given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Modules/Domains/Http/DomainsController.php
+
+		-
+			message: '#^Method App\\Modules\\Domains\\Jobs\\JobRepository\:\:active\(\) should return list\<App\\Modules\\Domains\\Jobs\\Job\> but returns array\<int, App\\Core\\Database\\Entity\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Modules/Domains/Jobs/JobRepository.php
+
+		-
+			message: '#^Method App\\Modules\\Domains\\Jobs\\JobRepository\:\:nextRunnable\(\) should return App\\Modules\\Domains\\Jobs\\Job\|null but returns App\\Core\\Database\\Entity\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Modules/Domains/Jobs/JobRepository.php
+
+		-
+			message: '#^Method App\\Modules\\Domains\\Jobs\\JobRunner\:\:create\(\) should return App\\Modules\\Domains\\Jobs\\Job but returns App\\Core\\Database\\Entity\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Modules/Domains/Jobs/JobRunner.php
+
+		-
+			message: '#^Parameter \#1 \$callback of function array_map expects \(callable\(array\)\: mixed\)\|null, array\{''App\\\\Core\\\\Content\\\\MediaPayload'', ''admin''\} given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Modules/Media/MediaController.php
+
+		-
+			message: '#^Method App\\Modules\\Media\\MediaLibrary\:\:page\(\) should return array\{items\: list\<array\>, total\: int, pages\: int\} but returns array\{items\: array\<int, int\>, total\: int\<0, max\>, pages\: int\}\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Modules/Media/MediaLibrary.php
+
+		-
+			message: '#^Method App\\Modules\\Records\\RecordsController\:\:handler\(\) should return App\\Core\\Content\\ContentType\|App\\Modules\\Blog\\BlogPosts but returns App\\Core\\Content\\EditableContent\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Modules/Records/RecordsController.php
+
+		-
+			message: '#^Call to function is_string\(\) with string will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: app/Modules/Seo/Services/IndexNow.php
+
+		-
+			message: '#^Parameter \#1 \$array \(list\<array\{key\: string, status\: string, message\: string\}\>\) of array_values is already a list, call has no effect\.$#'
+			identifier: arrayValues.list
+			count: 1
+			path: app/Modules/Seo/Services/SeoAnalyzer.php
+
+		-
+			message: '#^Method App\\Modules\\Seo\\Services\\SeoBackup\:\:export\(\) should return array\{pages\: array, robots\: string, redirects\: list\<array\>, media\: list\<int\>\} but returns array\{pages\: stdClass, robots\: string, redirects\: array\<int, array\>, media\: list\<int\<min, \-1\>\|int\<1, max\>\>\}\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Modules/Seo/Services/SeoBackup.php
+
+		-
+			message: '#^Offset 0 on non\-empty\-list\<string\> on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Modules/Site/Render/Router.php

@@ -1,0 +1,11 @@
+# Statik analiz (Larastan): vendor/bin/phpstan analyse --memory-limit=1G
+# Seviye 5. phpstan-baseline.neon 18 Ekim 2026'daki eski uyarıları dondurur (çoğu tür açıklaması); yeni kod
+# uyarısız olmalı. Eski uyarı düzeltildikçe baseline yeniden üretilir (--generate-baseline) ve küçülür.
+includes:
+    - vendor/larastan/larastan/extension.neon
+    - phpstan-baseline.neon
+
+parameters:
+    paths:
+        - app
+    level: 5

@@ -1,0 +1,35 @@
+{{! Şablon: 6502 s. Kanun md. 11 ve 48, Mesafeli Sözleşmeler Yönetmeliği md. 9–15. Hukuki görüş değildir. }}
+<h2>Siparişi iptal etmek</h2>
+<p>Siparişiniz kargoya verilmeden önce <a href="mailto:{{controller.email}}">{{controller.email}}</a> adresine sipariş numaranızla yazarak iptal edebilirsiniz. Ödenmiş tutar, iptalin onaylanmasından itibaren en geç 14 gün içinde ödeme aracınıza iade edilir.</p>
+
+<h2>Cayma hakkı (14 gün)</h2>
+<p>Ürünü teslim aldığınız günden itibaren 14 gün içinde, hiçbir gerekçe göstermeden ve cezai şart ödemeden sözleşmeden cayabilirsiniz. Birden fazla ürünün ayrı teslim edildiği siparişlerde süre son ürünün teslim alındığı gün başlar.</p>
+<ol>
+  <li>Süre dolmadan <a href="mailto:{{controller.email}}">{{controller.email}}</a> adresine sipariş numaranızı ve cayma talebinizi yazın.</li>
+  <li>Ürünü, cayma bildiriminizden itibaren 10 gün içinde, faturası ve mümkünse orijinal ambalajıyla birlikte size bildireceğimiz adrese gönderin.</li>
+  <li>Bildiriminiz bize ulaştıktan sonra en geç 14 gün içinde, varsa teslimat ücreti dahil ödediğiniz tutarın tamamı kullandığınız ödeme aracıyla iade edilir.</li>
+</ol>
+<p>Ürünü olağan kullanımın dışında kullanmanız sonucunda oluşan değer kaybından sorumlu olursunuz; ürünü inceleyip denemeniz cayma hakkınızı etkilemez.</p>
+
+<h2>Cayma hakkının olmadığı durumlar</h2>
+<ul>
+  <li>kişiye özel üretilen ya da kişiselleştirilen ürünler,</li>
+  <li>çabuk bozulabilen ya da son kullanma tarihi geçebilecek ürünler,</li>
+  <li>ambalajı açılmış; iadesi sağlık ve hijyen açısından uygun olmayan ürünler,</li>
+  <li>elektronik ortamda anında teslim edilen dijital içerik ve anında ifa edilen hizmetler,</li>
+  <li>belirli bir tarihte sunulan konaklama, tur, etkinlik ve benzeri hizmetler.</li>
+</ul>
+
+<h2>Ayıplı ürünler</h2>
+<p>Ürün size ayıplı (kusurlu, hasarlı ya da siparişten farklı) ulaştıysa, 6502 sayılı Kanun'un 11. maddesi uyarınca sözleşmeden dönme, bedel indirimi, ücretsiz onarım ya da ayıpsız bir benzeriyle değişim haklarından birini seçebilirsiniz. Bu durumda gönderim masrafları tarafımızca karşılanır.</p>
+
+{{#modules.booking}}
+<h2>Rezervasyon iptalleri</h2>
+<p>Belirli bir tarihte sunulan tur, etkinlik{{#modules.hotels}} ve konaklama{{/modules.hotels}} hizmetlerinde cayma hakkı bulunmaz; iptal ve ücret iadesi rezervasyon koşullarına göre yapılır.{{#links.bookingTerms}} Ayrıntılar: <a href="{{links.bookingTerms}}">Rezervasyon Koşulları</a>.{{/links.bookingTerms}}</p>
+{{/modules.booking}}
+
+<h2>İade süreci</h2>
+<p>Onaylanan iadeler, ödeme kartla yapıldıysa ilgili karta, havale / EFT ya da kapıda ödemeyle yapıldıysa bildireceğiniz banka hesabına (IBAN) yapılır. Tutarın hesabınıza yansıma süresi bankanıza göre değişebilir.</p>
+
+<h2>İtiraz</h2>
+<p>Talebinize verdiğimiz cevaptan memnun kalmazsanız, Ticaret Bakanlığınca belirlenen parasal sınırlar dahilinde yerleşim yerinizdeki tüketici hakem heyetine, bu sınırları aşan durumlarda tüketici mahkemesine başvurabilirsiniz.</p>

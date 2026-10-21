@@ -1,0 +1,21 @@
+{
+  "label": "Bülten aboneliği",
+  "description": "E-posta bültenine abone olma kutusu: e-posta, onay kutusu, düğme. Abone onay e-postasındaki bağlantıyla listeye girer.",
+  "category": "section",
+  "icon": "mail",
+  "module": "newsletter",
+  "fields": [
+    { "name": "eyebrow", "type": "text", "label": "Üst etiket", "localized": true, "max": 60, "default": "@blocks.newsletter.eyebrow" },
+    { "name": "title", "type": "text", "label": "Başlık", "localized": true, "max": 120, "default": "@blocks.newsletter.title" },
+    { "name": "lead", "type": "textarea", "label": "Açıklama", "localized": true, "max": 300, "default": "@blocks.newsletter.lead" },
+    { "name": "askName", "type": "bool", "label": "Adını da sor", "default": false },
+    { "name": "nameLabel", "type": "text", "label": "Ad kutusunun yazısı", "localized": true, "max": 60, "default": "@blocks.newsletter.name" },
+    { "name": "placeholder", "type": "text", "label": "E-posta kutusunun yazısı", "localized": true, "max": 60, "default": "@blocks.newsletter.placeholder" },
+    { "name": "button", "type": "text", "label": "Düğme", "localized": true, "max": 40, "default": "@blocks.newsletter.button" },
+    { "name": "consent", "type": "textarea", "label": "Onay metni", "localized": true, "max": 300, "default": "@blocks.newsletter.consent", "help": "Ziyaretçi işaretlemeden abone olamaz (ticari ileti onayı)." },
+    { "name": "privacyLabel", "type": "text", "label": "Aydınlatma metni bağlantısının yazısı", "localized": true, "max": 60, "default": "@blocks.newsletter.privacyLabel" },
+    { "name": "privacyUrl", "type": "link", "label": "Aydınlatma metni", "default": "route:newsletterConsent" },
+    { "name": "done", "type": "textarea", "label": "Gönderince görünen yazı", "localized": true, "max": 300, "default": "@blocks.newsletter.done" },
+    { "name": "tone", "type": "select", "label": "Zemin", "options": { "light": "Açık", "navy": "Lacivert" }, "default": "light" }
+  ]
+}

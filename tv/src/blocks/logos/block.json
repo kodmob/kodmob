@@ -1,0 +1,13 @@
+{
+  "label": "Logo şeridi",
+  "description": "Çalıştığınız markalar, iş ortakları ya da basında çıkanlar: logo yoksa ad yazılır.",
+  "category": "section",
+  "icon": "briefcase",
+  "fields": [
+    { "name": "eyebrow", "type": "text", "label": "Başlık", "localized": true, "max": 80, "default": "@blocks.logos.eyebrow" },
+    { "name": "items", "type": "rows", "label": "Logolar", "max": 16, "columns": [
+      { "name": "name", "type": "text", "label": "Ad", "max": 60 },
+      { "name": "image", "type": "image", "label": "Logo" }
+    ], "default": "@blocks.logos.items" }
+  ]
+}

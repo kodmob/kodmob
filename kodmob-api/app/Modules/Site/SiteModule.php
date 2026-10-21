@@ -1,0 +1,126 @@
+<?php
+
+namespace App\Modules\Site;
+
+use App\Core\Module;
+use App\Core\Settings\SettingDefinition;
+use App\Core\Settings\SettingsService;
+use App\Modules\Briefs\BriefsModule;
+use App\Modules\Site\Pages\PageType;
+
+/**
+ * Site geneli: iletişim bilgileri, WhatsApp, çalışma saatleri, sosyal medya ve
+ * yasal metinlerdeki veri sorumlusu bilgileri.
+ *
+ * Değerler /panel/ > Ayarlar'dan düzenlenir; herkese açık olanlar `GET /site`
+ * ve sayfa verisiyle (Content\PageData) sayfalara gider.
+ */
+final class SiteModule extends Module
+{
+    public const EMAIL = 'site.email';
+
+    public const PHONE = 'site.phone';
+
+    public const ADDRESS = 'site.address';
+
+    public const WHATSAPP = 'site.whatsapp';
+
+    public const HOURS_START = 'site.hours_start';
+
+    public const HOURS_END = 'site.hours_end';
+
+    public const LINKEDIN = 'site.linkedin';
+
+    public const INSTAGRAM = 'site.instagram';
+
+    public const YOUTUBE = 'site.youtube';
+
+    public const X = 'site.x';
+
+    public const LEGAL_NAME = 'legal.name';
+
+    public const LEGAL_ADDRESS = 'legal.address';
+
+    public const LEGAL_EMAIL = 'legal.email';
+
+    public const LEGAL_TAX = 'legal.tax';
+
+    public const LEGAL_MERSIS = 'legal.mersis';
+
+    public const LEGAL_KEP = 'legal.kep';
+
+    public const LEGAL_COURT = 'legal.court';
+
+    public function settings(): array
+    {
+        return [
+            // Kimlik (SiteProfile): boşsa derlemedeki ad ve logo; aynı temayı kullanan alt site kendi adını buradan verir.
+            new SettingDefinition(SiteProfile::NAME, 'string', '', 'Site adı', 'Kimlik', 'Sayfa başlıklarının eki, paylaşım kartları, alt bilgi, yapısal veri ve e-postalarda geçer. Boşsa derlemedeki ad.'),
+            new SettingDefinition(SiteProfile::LOGO, 'string', '', 'Logo yazısı', 'Kimlik', 'Üst bar ve alt bilgideki logo yazısı. Boşsa derlemedeki.'),
+            new SettingDefinition(SiteProfile::LOGO_SUB, 'string', '', 'Logo alt yazısı', 'Kimlik', 'Logonun yanındaki küçük yazı (bütün dillerde aynı). Boşsa derlemedeki, dile göre.'),
+            new SettingDefinition(SiteProfile::LOGO_IMAGE, 'int', 0, 'Logo görseli', 'Kimlik', 'Seçilirse logo yazısının yerine üst bar ve alt bilgide görünür. Yüksekliği 36 piksel gösterilir; yatay, şeffaf zeminli (SVG ya da PNG) olmalı.', 0, null, '', [], 'image'),
+            new SettingDefinition(SiteProfile::COLOR, 'string', '', 'Ana renk', 'Kimlik', 'Düğmeler, bağlantılar ve vurgular; açık ve koyu tonları kendiliğinden türetilir. Boşsa derlemedeki renk. Beyaz yazıyla okunacak kadar koyu seçin.', null, null, '', [], 'color'),
+            new SettingDefinition(SiteProfile::COLOR_DARK, 'string', '', 'Koyu bant rengi', 'Kimlik', 'Öne çıkan bölümler, çağrı bandı ve alt bilgi vurgularındaki koyu zemin. Boşsa derlemedeki.', null, null, '', [], 'color'),
+            new SettingDefinition(self::EMAIL, 'string', '', 'E-posta', 'İletişim', 'Sitede gösterilen iletişim adresi.'),
+            new SettingDefinition(self::PHONE, 'string', '', 'Telefon', 'İletişim', 'Sitede gösterilen numara, ör. +90 535 000 00 00. Boşsa gösterilmez.'),
+            new SettingDefinition(self::ADDRESS, 'string', '', 'Adres', 'İletişim', 'İletişim, Hakkımızda ve yasal metinlerde gösterilen açık adres. Boşsa yalnızca şehir (footer) gösterilir.'),
+            new SettingDefinition(self::WHATSAPP, 'string', '', 'WhatsApp numarası', 'İletişim', 'Ülke koduyla, yalnızca rakam: 905320000000. Boşsa WhatsApp düğmesi gösterilmez.'),
+            new SettingDefinition(self::HOURS_START, 'int', 9, 'Çalışma başlangıcı', 'İletişim', 'Hafta içi, Türkiye saati. WhatsApp düğmesi bu saatlerde "çevrimiçi" görünür.', 0, 23, 'saat'),
+            new SettingDefinition(self::HOURS_END, 'int', 18, 'Çalışma bitişi', 'İletişim', 'Hafta içi, Türkiye saati.', 1, 24, 'saat'),
+            new SettingDefinition(self::LINKEDIN, 'string', '', 'LinkedIn', 'Sosyal medya', 'Profil adresi. Boşsa simge gösterilmez.'),
+            new SettingDefinition(self::INSTAGRAM, 'string', '', 'Instagram', 'Sosyal medya', 'Profil adresi.'),
+            new SettingDefinition(self::YOUTUBE, 'string', '', 'YouTube', 'Sosyal medya', 'Kanal adresi.'),
+            new SettingDefinition(self::X, 'string', '', 'X (Twitter)', 'Sosyal medya', 'Profil adresi.'),
+            new SettingDefinition(self::LEGAL_NAME, 'string', '', 'Veri sorumlusu', 'Yasal', 'KVKK, gizlilik ve çerez metinlerinde geçer. Şahıs şirketinde ad soyad ve ticari ad, ör. "Ad Soyad – Kodmob Yazılım". Boşsa metinlerde köşeli parantezle uyarı görünür; yayından önce doldurun.'),
+            new SettingDefinition(self::LEGAL_ADDRESS, 'string', '', 'Adres', 'Yasal', 'Veri sorumlusunun tebligat adresi. Boşsa iletişim adresi kullanılır.'),
+            new SettingDefinition(self::LEGAL_EMAIL, 'string', '', 'KVKK başvuru e-postası', 'Yasal', 'İlgili kişi başvuruları bu adrese yapılır. Boşsa iletişim e-postası kullanılır.'),
+            new SettingDefinition(self::LEGAL_TAX, 'string', '', 'Vergi dairesi ve no', 'Yasal', 'İsteğe bağlı, ör. "Kozan V.D. 1234567890". Doluysa metinlerde gösterilir.'),
+            new SettingDefinition(self::LEGAL_MERSIS, 'string', '', 'MERSİS numarası', 'Yasal', 'Şirketlerde (şahıs işletmesinde yok). Doluysa yasal belgelerde gösterilir.'),
+            new SettingDefinition(self::LEGAL_KEP, 'string', '', 'KEP adresi', 'Yasal', 'Kayıtlı elektronik posta; doluysa KVKK başvuru yolu olarak yazılır.'),
+            new SettingDefinition(self::LEGAL_COURT, 'string', '', 'Yetkili mahkeme', 'Yasal', 'Kullanım koşullarındaki yetkili mahkeme ve icra daireleri, ör. "Adana". Tüketicilerin hakem heyeti ve tüketici mahkemesi hakkı ayrıca yazılır.'),
+        ];
+    }
+
+    /** Blok sayfaları (Sayfa düzenleyiciden açılan sayfalar; her projede). */
+    public function contentTypes(): array
+    {
+        return [PageType::class];
+    }
+
+    /**
+     * `GET /site` ve sayfa verisi: herkese açık site bilgileri (iletişim, WhatsApp,
+     * çalışma saatleri, sosyal medya, yasal metinlerdeki veri sorumlusu, talep
+     * saklama süresi). Gizli ayar dönmez.
+     */
+    public static function payload(): array
+    {
+        $s = SettingsService::instance();
+        $social = array_filter([
+            'linkedin' => $s->string(self::LINKEDIN),
+            'instagram' => $s->string(self::INSTAGRAM),
+            'youtube' => $s->string(self::YOUTUBE),
+            'x' => $s->string(self::X),
+        ]);
+
+        return [
+            'email' => $s->string(self::EMAIL),
+            'phone' => $s->string(self::PHONE),
+            'address' => $s->string(self::ADDRESS),
+            'whatsapp' => preg_replace('/\D+/', '', $s->string(self::WHATSAPP)),
+            'hours' => [
+                'start' => $s->int(self::HOURS_START),
+                'end' => $s->int(self::HOURS_END),
+                'days' => [1, 2, 3, 4, 5],
+                'timezone' => 'Europe/Istanbul',
+            ],
+            'social' => (object) $social,
+            'legal' => [
+                'name' => $s->string(self::LEGAL_NAME),
+                'address' => $s->string(self::LEGAL_ADDRESS) ?: $s->string(self::ADDRESS),
+                'email' => $s->string(self::LEGAL_EMAIL) ?: $s->string(self::EMAIL),
+                'tax' => $s->string(self::LEGAL_TAX),
+            ],
+            'retentionMonths' => $s->int(BriefsModule::RETENTION_MONTHS),
+        ];
+    }
+}

@@ -1,0 +1,15 @@
+{
+  "label": "Harf animasyonlu başlık",
+  "description": "İki satırlık büyük başlık; harfler sırayla eğilip yerine oturur (kalın üst satır, ince alt satır). İletişim çağrısı ya da bölüm girişi için.",
+  "category": "animation",
+  "icon": "sparkles",
+  "library": false,
+  "fields": [
+    { "name": "line1", "type": "text", "label": "Üst satır (kalın)", "localized": true, "max": 60, "default": "@blocks.letters.line1" },
+    { "name": "line2", "type": "text", "label": "Alt satır (ince)", "localized": true, "max": 80, "default": "@blocks.letters.line2" },
+    { "name": "tone", "type": "select", "label": "Renk", "options": { "primary": "Ana renk", "ink": "Koyu", "red": "Kırmızı" }, "default": "primary" },
+    { "name": "size", "type": "select", "label": "Boyut", "options": { "md": "Orta", "lg": "Büyük", "xl": "Çok büyük" }, "default": "lg" },
+    { "name": "align", "type": "select", "label": "Hizalama", "options": { "center": "Ortada", "start": "Solda" }, "default": "center" },
+    { "name": "loop", "type": "bool", "label": "Sürekli tekrarlasın", "default": true }
+  ]
+}

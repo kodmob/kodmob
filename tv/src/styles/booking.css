@@ -1,0 +1,213 @@
+/*
+ * Rezervasyon kutusu ve sayfa bölümleri (pages/shop/_booking-box.njk, _booking-sections.njk; features/shop.js
+ * shopBook). Geniş ekranda yapışkan kart; dar ekranda altta fiyat çubuğu ve alttan açılan sayfa (aynı öğe).
+ * Fiyat sunucudan.
+ */
+@layer components {
+  .book-card { display: flex; flex-direction: column; gap: 1rem; padding: 1.25rem; }
+  .book-price { display: flex; flex-direction: column; gap: 0.125rem; }
+  .book-grip, .book-close, .book-bar, .book-backdrop { display: none; }
+
+  /* Paket kartları */
+  .book-packages { display: grid; gap: 0.5rem; }
+  .book-package {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.125rem 0.75rem;
+    padding: 0.75rem 0.875rem;
+    border: 1.5px solid var(--color-line);
+    border-radius: var(--radius-tile);
+    text-align: left;
+    background: var(--color-surface);
+    transition: border-color 0.15s, box-shadow 0.15s, background-color 0.15s;
+  }
+  .book-package:hover { border-color: var(--color-line-strong); }
+  .book-package[aria-checked="true"] {
+    border-color: var(--color-primary);
+    background: var(--color-primary-soft);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 15%, transparent);
+  }
+  .book-package-name { font-weight: 600; color: var(--color-ink); }
+  .book-package-sub { grid-column: 1; font-size: 0.8125rem; color: var(--color-ink-2); }
+  .book-package-price { grid-column: 2; grid-row: 1 / span 2; align-self: center; text-align: right; white-space: nowrap; color: var(--color-ink); }
+  .book-package-price s { display: block; font-size: 0.75rem; color: var(--color-muted); }
+
+  /* Otel: yıldız ve konum (liste kartı ve sayfa) */
+  .hotel-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 0.75rem; font-size: 0.8125rem; color: var(--color-ink-2); }
+  .hotel-meta > span { display: inline-flex; align-items: center; gap: 0.25rem; }
+  .hotel-stars { color: var(--color-warning); }
+  .hotel-stars svg { fill: currentColor; }
+
+  /* Gece birimi: oda tipleri ve pansiyonlar */
+  .book-stay { display: flex; flex-wrap: wrap; gap: 0.25rem 0.875rem; margin-top: -0.25rem; font-size: 0.8125rem; color: var(--color-ink-2); }
+  .book-stay strong { color: var(--color-ink); }
+  .book-rooms { display: grid; gap: 0.625rem; }
+  .book-room {
+    display: grid;
+    gap: 0.375rem;
+    padding: 0.75rem 0.875rem;
+    border: 1.5px solid var(--color-line);
+    border-radius: var(--radius-tile);
+    transition: border-color 0.15s;
+  }
+  .book-room.is-active { border-color: color-mix(in srgb, var(--color-primary) 55%, var(--color-line)); }
+  .book-room-head { display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem; }
+  .book-room-for { font-size: 0.75rem; color: var(--color-muted); white-space: nowrap; }
+  .book-boards { display: flex; flex-wrap: wrap; gap: 0.375rem; }
+  .book-board {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.375rem;
+    padding: 0.375rem 0.625rem;
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    font-size: 0.8125rem;
+    color: var(--color-ink-2);
+    transition: border-color 0.15s, background-color 0.15s;
+  }
+  .book-board strong { color: var(--color-ink); }
+  .book-board:hover { border-color: var(--color-line-strong); }
+  .book-board[aria-checked="true"] {
+    border-color: var(--color-primary);
+    background: var(--color-primary-soft);
+    color: var(--color-primary-ink);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 15%, transparent);
+  }
+
+  /* Sayaçlar */
+  .book-counters { display: flex; flex-direction: column; gap: 0.625rem; }
+  .book-counter { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
+  .counter { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem; border: 1px solid var(--color-line); border-radius: 999px; }
+  .counter-btn {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 999px;
+    color: var(--color-ink);
+    background: var(--color-surface-subtle);
+    transition: background-color 0.15s, color 0.15s;
+  }
+  .counter-btn:hover:not(:disabled) { background: var(--color-primary); color: #fff; }
+  .counter-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .counter-value { min-width: 1.75rem; text-align: center; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--color-ink); }
+
+  /* Grup kademeleri */
+  .book-tiers { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .book-tier {
+    display: inline-flex;
+    flex-direction: column;
+    min-width: 5.5rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px dashed var(--color-line-strong);
+    border-radius: var(--radius-tile);
+    font-size: 0.75rem;
+    color: var(--color-ink-2);
+  }
+  .book-tier strong { font-size: 1rem; color: var(--color-ink); }
+  .book-tier.is-active { border-style: solid; border-color: var(--color-success); background: var(--color-success-soft); color: var(--color-success-ink); }
+  .book-tier.is-active strong { color: var(--color-success-ink); }
+
+  /* Özet */
+  .book-summary { display: flex; flex-direction: column; gap: 0.375rem; padding: 0.875rem; border-radius: var(--radius-tile); font-size: 0.875rem; background: var(--color-surface-subtle); }
+  .book-total { display: flex; justify-content: space-between; padding-top: 0.5rem; border-top: 1px solid var(--color-line); font-size: 1.0625rem; font-weight: 700; color: var(--color-ink); }
+
+  /* Geniş ekran: yapışkan kart */
+  @media (min-width: 1024px) {
+    .book { align-self: start; position: sticky; top: calc(var(--spacing-header) + 1.5rem); }
+  }
+
+  /* Dar ekran: alt çubuk + alttan açılan sayfa */
+  @media (max-width: 1023.98px) {
+    .book-bar {
+      position: fixed;
+      inset: auto 0 0 0;
+      z-index: 45;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom));
+      border-top: 1px solid var(--color-line);
+      background: color-mix(in srgb, var(--color-surface) 94%, transparent);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 -12px 30px -18px rgb(11 22 51 / 0.35);
+    }
+    .book-card {
+      position: fixed;
+      inset: auto 0 0 0;
+      z-index: 47;
+      max-height: 88vh;
+      overflow-y: auto;
+      padding-bottom: calc(1.25rem + env(safe-area-inset-bottom));
+      border-radius: 1.5rem 1.5rem 0 0;
+      transform: translateY(105%);
+      visibility: hidden;
+      transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s linear 0.3s;
+    }
+    .book.is-open .book-card { transform: none; visibility: visible; transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
+    .book-backdrop { position: fixed; inset: 0; z-index: 46; background: rgb(11 22 51 / 0.45); opacity: 0; pointer-events: none; transition: opacity 0.25s; display: block; }
+    .book.is-open .book-backdrop { opacity: 1; pointer-events: auto; }
+    .book-grip { display: block; width: 2.5rem; height: 0.3125rem; margin: -0.25rem auto 0; border-radius: 999px; background: var(--color-line-strong); }
+    .book-close { display: grid; position: absolute; top: 0.75rem; right: 0.75rem; }
+    main:has(.book) { padding-bottom: 5rem; }
+  }
+
+  /* ------------------------------------------------------------ sayfa bölümleri */
+  .book-sections { display: flex; flex-direction: column; gap: 2.5rem; }
+  /* Kayıt sayfası blokları (Sayfa düzenleyici; tur ve otel sayfasının bölgesi): aralık bloğun kendisinde. */
+  .book-block { padding-block: 1.25rem; }
+  .book-facts { display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); }
+  .book-facts li {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    padding: 0.875rem 1rem;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-tile);
+    background: var(--color-surface);
+    color: var(--color-primary);
+  }
+  .book-facts li > span { display: flex; flex-direction: column; color: var(--color-ink); font-weight: 500; }
+  .book-facts small { font-size: 0.75rem; font-weight: 400; color: var(--color-muted); }
+  .book-highlights { display: grid; gap: 0.625rem; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); }
+  .book-highlights li { display: flex; gap: 0.5rem; align-items: flex-start; color: var(--color-ink); }
+  .book-highlights li svg { margin-top: 0.2rem; color: var(--color-primary); flex-shrink: 0; }
+  .book-amenities { display: grid; gap: 0.5rem 1rem; grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr)); font-size: 0.9375rem; }
+  .book-amenities li { display: flex; gap: 0.5rem; align-items: flex-start; color: var(--color-ink-2); }
+  .book-amenities li svg { margin-top: 0.2rem; color: var(--color-success); flex-shrink: 0; }
+  .book-itinerary { position: relative; display: flex; flex-direction: column; gap: 0.75rem; }
+  .book-itinerary::before { content: ""; position: absolute; top: 0.75rem; bottom: 0.75rem; left: 0.9375rem; width: 2px; background: var(--color-line); }
+  .book-itinerary li { position: relative; display: flex; gap: 1rem; }
+  .book-itinerary-no {
+    position: relative;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 999px;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: #fff;
+    background: var(--color-primary);
+    box-shadow: 0 0 0 4px var(--color-bg);
+  }
+  .book-itinerary details, .book-faq details {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-tile);
+    background: var(--color-surface);
+  }
+  .book-itinerary summary, .book-faq summary { display: flex; justify-content: space-between; gap: 1rem; cursor: pointer; list-style: none; font-weight: 600; color: var(--color-ink); }
+  .book-itinerary summary::-webkit-details-marker, .book-faq summary::-webkit-details-marker { display: none; }
+  .book-itinerary summary::after, .book-faq summary::after { content: "+"; flex-shrink: 0; font-size: 1.375rem; font-weight: 400; line-height: 1; color: var(--color-primary); transition: transform 0.2s; }
+  .book-itinerary details[open] summary::after, .book-faq details[open] summary::after { transform: rotate(45deg); }
+  .book-itinerary details p, .book-faq details p { margin-top: 0.5rem; color: var(--color-ink-2); white-space: pre-line; }
+  .book-faq { display: flex; flex-direction: column; gap: 0.5rem; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .book-card, .book-backdrop { transition: none; }
+  }
+}

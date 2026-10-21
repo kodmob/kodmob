@@ -1,0 +1,15 @@
+{
+  "label": "Görsel ve metin",
+  "description": "Bir yanda görsel, öbür yanda başlık, metin ve düğme: hakkımızda, hizmet tanıtımı, kampanya.",
+  "category": "content",
+  "icon": "image",
+  "fields": [
+    { "name": "image", "type": "image", "label": "Görsel" },
+    { "name": "eyebrow", "type": "text", "label": "Üst etiket", "localized": true, "max": 60, "default": "@blocks.split.eyebrow" },
+    { "name": "title", "type": "text", "label": "Başlık", "localized": true, "max": 120, "default": "@blocks.split.title" },
+    { "name": "text", "type": "textarea", "label": "Metin", "localized": true, "max": 800, "default": "@blocks.split.text" },
+    { "name": "button", "type": "text", "label": "Düğme", "localized": true, "max": 40, "default": "@blocks.split.button" },
+    { "name": "url", "type": "link", "label": "Düğmenin bağlantısı", "default": "route:contact" },
+    { "name": "side", "type": "select", "label": "Görsel", "options": { "start": "Solda", "end": "Sağda" }, "default": "start" }
+  ]
+}

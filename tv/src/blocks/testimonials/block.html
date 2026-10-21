@@ -1,0 +1,23 @@
+<section class="container-site section-sm">
+{{#title}}
+  <div class="section-head reveal">
+    <div>
+{{#eyebrow}}
+      <span class="eyebrow" data-km-field="eyebrow">{{eyebrow}}</span>
+{{/eyebrow}}
+      <h2 class="h2 mt-2" data-km-field="title">{{title}}</h2>
+    </div>
+  </div>
+{{/title}}
+  <div class="grid gap-5 md:grid-cols-3">
+{{#items}}
+    <figure class="testimonial reveal reveal-delay-{{@number}}">
+      <blockquote class="testimonial-quote" data-km-field="items.{{@index}}.quote">{{quote}}</blockquote>
+      <figcaption class="mt-auto flex items-center gap-3">
+        <span class="flex-1"><span class="testimonial-name block" data-km-field="items.{{@index}}.name">{{name}}</span><span class="testimonial-role" data-km-field="items.{{@index}}.role">{{role}}</span></span>
+        <span class="rating" aria-hidden="true"><svg class="icon icon-sm icon-fill"><use href="#i-star"/></svg><svg class="icon icon-sm icon-fill"><use href="#i-star"/></svg><svg class="icon icon-sm icon-fill"><use href="#i-star"/></svg><svg class="icon icon-sm icon-fill"><use href="#i-star"/></svg><svg class="icon icon-sm icon-fill"><use href="#i-star"/></svg></span>
+      </figcaption>
+    </figure>
+{{/items}}
+  </div>
+</section>

@@ -1,0 +1,183 @@
+{# Jarvis → Asistan (yapay zekâ sohbeti; sağlayıcı Ayarlar > Yapay zekâ). Mantık: panel/jarvis.js. #}
+<div class="grid gap-4 lg:h-[calc(100dvh-4rem-3rem)] lg:grid-cols-[17rem_minmax(0,1fr)] lg:gap-5" x-data="kmJarvis(r.id)">
+
+  {# ============================================================ sohbet listesi #}
+  <aside class="card flex max-h-64 min-h-0 flex-col lg:max-h-none">
+    <div class="card-header">
+      <p class="card-title">Sohbetler</p>
+      <button type="button" class="btn btn-primary btn-sm" @click="create()"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-plus"/></svg> Yeni</button>
+    </div>
+    <div class="min-h-0 flex-1 overflow-y-auto p-1.5">
+      <template x-if="listLoading"><div class="space-y-2 p-2"><div class="skeleton h-10"></div><div class="skeleton h-10"></div></div></template>
+      <template x-if="!listLoading && !conversations.length"><p class="p-4 text-center text-sm text-muted">Henüz sohbet yok.</p></template>
+      <template x-for="c in conversations" :key="c.id">
+        <div class="group flex items-center gap-1 rounded-control" :class="current?.id === c.id ? 'bg-primary-soft' : 'hover:bg-surface-subtle'">
+          <button type="button" class="min-w-0 flex-1 px-3 py-2 text-left" @click="open(c.id)">
+            <span class="block truncate text-sm font-medium" :class="current?.id === c.id ? 'text-primary-ink' : 'text-ink'" x-text="c.title"></span>
+            <span class="block text-xs text-muted" x-text="fmt.relative(c.updated_at)"></span>
+          </button>
+          <button type="button" class="btn-icon h-8 w-8 shrink-0 opacity-0 group-hover:opacity-100 focus:opacity-100" @click="remove(c)" aria-label="Sohbeti sil" title="Sil"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-trash"/></svg></button>
+        </div>
+      </template>
+    </div>
+    <div class="border-t border-line p-2">
+      <button type="button" class="menu-item" @click="openSettings()" data-testid="jarvis-ai-settings">
+        <svg class="icon icon-sm" aria-hidden="true"><use href="#i-cog"/></svg>
+        <span class="flex-1">Yapay zekâ ayarları</span>
+        <span class="badge" :class="ai?.configured ? 'badge-success' : 'badge-warning'" x-text="ai?.configured ? 'Hazır' : 'Anahtar yok'"></span>
+      </button>
+    </div>
+  </aside>
+
+  {# ============================================================ konuşma #}
+  <section class="card flex min-h-[70vh] min-w-0 flex-col lg:min-h-0">
+    <div class="card-header">
+      <div class="flex min-w-0 items-center gap-2.5">
+        <span class="tone-icon tone-primary h-9 w-9"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-sparkles"/></svg></span>
+        <div class="min-w-0">
+          <p class="card-title truncate" x-text="current?.title || 'Jarvis'"></p>
+          <p class="text-xs text-muted" x-text="modelLabel + (current ? ' · ' + fmt.number((current.input_tokens || 0) + (current.output_tokens || 0)) + ' token' : '')"></p>
+        </div>
+      </div>
+      <a :href="$href('domains')" class="btn btn-ghost btn-sm"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-globe"/></svg><span class="hidden sm:inline">Domain arama</span></a>
+    </div>
+
+    <div class="min-h-0 flex-1 overflow-y-auto px-4 py-4 md:px-6" x-ref="scroller">
+      {# Boş sohbet: öneriler #}
+      <template x-if="!transcript.length && !loadingConversation">
+        <div class="mx-auto flex max-w-xl flex-col items-center py-8 text-center">
+          <span class="tone-icon tone-primary h-14 w-14 rounded-full"><svg class="icon icon-lg" aria-hidden="true"><use href="#i-sparkles"/></svg></span>
+          <p class="mt-4 text-lg font-semibold text-ink">Merhaba, ben Jarvis.</p>
+          <p class="mt-1 text-sm text-ink-2">Domain arayabilir, taramalar başlatabilir, sonuçları yorumlayabilir ve sitenin durumunu özetleyebilirim.</p>
+          <template x-if="ai && !ai.configured">
+            <div class="mt-5 w-full rounded-control border border-warning/30 bg-warning-soft p-4 text-left text-sm text-warning-ink">
+              Sohbet için bir yapay zekâ sağlayıcısının (Claude, OpenAI ya da Gemini) API anahtarı gerekli. Domain arama ekranı anahtarsız da çalışır.
+              <button type="button" class="btn btn-secondary btn-sm mt-3" @click="openSettings()">Anahtar ekle</button>
+            </div>
+          </template>
+          <div class="mt-6 grid w-full gap-2 sm:grid-cols-2">
+            <template x-for="s in suggestions" :key="s">
+              <button type="button" class="rounded-control border border-line bg-surface p-3 text-left text-sm text-ink-2 transition-colors hover:border-primary/40 hover:text-ink" @click="send(s)" x-text="s"></button>
+            </template>
+          </div>
+        </div>
+      </template>
+      <template x-if="loadingConversation && !transcript.length">
+        <div class="space-y-4"><div class="skeleton ml-auto h-10 w-2/3"></div><div class="skeleton h-24 w-5/6"></div></div>
+      </template>
+
+      <div class="flex flex-col gap-5">
+        <template x-for="item in transcript" :key="item.id">
+          <div>
+            {# Kullanıcı #}
+            <template x-if="item.role === 'user'">
+              <div class="ml-auto max-w-[85%] rounded-card rounded-br-[4px] bg-primary-strong px-4 py-2.5 text-[0.9375rem] whitespace-pre-wrap text-white" x-text="item.text"></div>
+            </template>
+            {# Jarvis #}
+            <template x-if="item.role === 'assistant'">
+              <div class="flex max-w-full gap-3">
+                <span class="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary-soft text-primary"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-sparkles"/></svg></span>
+                <div class="flex min-w-0 flex-1 flex-col gap-2.5">
+                  <template x-for="(part, pi) in item.parts" :key="pi">
+                    <div>
+                      <template x-if="part.type === 'text'">
+                        <div class="prose max-w-none text-[0.9375rem] text-ink" x-html="markdown(part.text)"></div>
+                      </template>
+
+                      <template x-if="part.type === 'tool'">
+                        <div class="rounded-control border border-line bg-surface-subtle">
+                          <button type="button" class="flex w-full items-center gap-2.5 px-3 py-2 text-left" @click="toggle(part)" :aria-expanded="isOpen(part)">
+                            <span class="tone-icon h-7 w-7" :class="part.is_error ? 'tone-danger' : 'tone-info'"><svg class="icon icon-sm" aria-hidden="true"><use :href="'#i-' + toolIcon(part.name)"/></svg></span>
+                            <span class="min-w-0 flex-1">
+                              <span class="block text-sm font-medium text-ink" x-text="part.title"></span>
+                              <span class="block truncate text-xs" :class="part.is_error ? 'text-danger' : 'text-muted'" x-text="toolSummary(part)"></span>
+                            </span>
+                            <svg class="icon icon-sm text-muted transition-transform" :class="isOpen(part) && 'rotate-180'" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+                          </button>
+                          {# Operatör: yazma önerisi onay bekliyor (onaylanınca kullanıcının adına çalışır). #}
+                          <template x-if="actionFor(part)">
+                            <div class="flex flex-wrap items-center gap-3 border-t border-line px-3 py-2.5 text-sm" data-testid="jarvis-action">
+                              <span class="tone-icon tone-warning h-7 w-7"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-alert-circle"/></svg></span>
+                              <span class="min-w-0 flex-1 font-medium text-ink" x-text="actionFor(part).summary"></span>
+                              <button type="button" class="btn btn-ghost btn-sm" @click="decide(actionFor(part), false)" :disabled="deciding !== null" data-testid="jarvis-reject">Reddet</button>
+                              <button type="button" class="btn btn-primary btn-sm" @click="decide(actionFor(part), true)" :disabled="deciding !== null" data-testid="jarvis-approve"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"/></svg> Onayla</button>
+                            </div>
+                          </template>
+                          {# İş kartı (tarama başlatıldı / iş durumu) #}
+                          <template x-if="jobOf(part)">
+                            <div class="flex flex-wrap items-center gap-3 border-t border-line px-3 py-2 text-sm">
+                              <span class="badge" :class="status('job', jobOf(part).status).cls" x-text="status('job', jobOf(part).status).label"></span>
+                              <span class="min-w-0 flex-1 truncate text-ink-2" x-text="jobOf(part).title"></span>
+                              <a class="link-arrow" :href="$href('domains', { job: jobOf(part).id })">Sonuçlar <svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+                            </div>
+                          </template>
+                          <div class="border-t border-line" x-show="isOpen(part)" x-collapse>
+                            <template x-if="domainRows(part).length">
+                              <ul class="max-h-72 divide-y divide-line overflow-y-auto">
+                                <template x-for="row in domainRows(part)" :key="row.domain">
+                                  <li class="flex items-center gap-3 px-3 py-1.5 text-sm">
+                                    <span class="code min-w-0 flex-1 truncate text-ink" x-text="row.domain"></span>
+                                    <span class="hidden text-xs text-muted sm:inline" x-text="row.expires_at ? 'bitiş ' + fmt.date(row.expires_at) : ''"></span>
+                                    <span class="badge" :class="status('domain', row.status).cls" x-text="status('domain', row.status).label"></span>
+                                  </li>
+                                </template>
+                              </ul>
+                            </template>
+                            <details class="px-3 py-2 text-xs">
+                              <summary class="cursor-pointer text-muted">Ham veri</summary>
+                              <pre class="mt-2 max-h-60 overflow-auto rounded bg-surface p-2 text-[0.6875rem] text-ink-2" x-text="pretty({ girdi: part.input, sonuc: part.result })"></pre>
+                            </details>
+                          </div>
+                        </div>
+                      </template>
+
+                      <template x-if="part.type === 'search'">
+                        <div class="rounded-control border border-line px-3 py-2 text-sm">
+                          <p class="flex items-center gap-2 text-ink-2"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-globe"/></svg> Web'de arandı: <span class="font-medium text-ink" x-text="part.query"></span></p>
+                          <ul class="mt-1.5 flex flex-col gap-1" x-show="part.results.length">
+                            <template x-for="hit in part.results" :key="hit.url">
+                              <li class="truncate"><a :href="hit.url" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline" x-text="hit.title || hit.url"></a></li>
+                            </template>
+                          </ul>
+                        </div>
+                      </template>
+
+                      <template x-if="part.type === 'notice'">
+                        <p class="rounded-control border border-warning/30 bg-warning-soft px-3 py-2 text-sm text-warning-ink" x-text="part.text"></p>
+                      </template>
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </template>
+          </div>
+        </template>
+
+        <template x-if="sending">
+          <div class="flex items-center gap-3 text-sm text-ink-2">
+            <span class="grid h-8 w-8 place-items-center rounded-full bg-primary-soft text-primary"><svg class="icon icon-sm animate-spin" aria-hidden="true"><use href="#i-loader"/></svg></span>
+            Jarvis çalışıyor…
+          </div>
+        </template>
+        <template x-if="!sending && (pending || error)">
+          <div class="flex flex-wrap items-center gap-3 rounded-control border px-3 py-2 text-sm" :class="error ? 'border-danger/30 bg-danger-soft text-danger-ink' : 'border-line bg-surface-subtle text-ink-2'">
+            <span class="flex-1" x-text="error ? error.message : 'Jarvis yarıda kaldı (süre sınırı).'"></span>
+            <button type="button" class="btn btn-secondary btn-sm" @click="error = null; continueRun()" x-show="pending">Devam et</button>
+          </div>
+        </template>
+      </div>
+    </div>
+
+    {# Yazma alanı #}
+    <form class="border-t border-line p-3 md:p-4" @submit.prevent="send()">
+      <div class="flex items-end gap-2 rounded-card border border-line bg-surface p-1.5 focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/12">
+        <textarea x-ref="composer" rows="1" class="max-h-56 min-h-10 flex-1 resize-none bg-transparent px-2.5 py-2 text-[0.9375rem] text-ink outline-none placeholder:text-muted"
+          x-model="text" @keydown="onKey($event)" @input="autosize($el)" :disabled="sending || actions.length > 0" :placeholder="actions.length ? 'Önce Jarvis\'in önerisini onaylayın ya da reddedin.' : 'Jarvis\'e yazın… (ör. kırık adresleri bul ve yönlendirme öner)'" aria-label="Mesaj"></textarea>
+        <button type="submit" class="btn btn-primary h-10 min-h-10 w-10 px-0" :disabled="sending || !text.trim() || actions.length > 0" aria-label="Gönder" title="Gönder (Enter)">
+          <svg class="icon icon-sm" aria-hidden="true"><use href="#i-send"/></svg>
+        </button>
+      </div>
+      <p class="mt-1.5 px-1 text-[0.6875rem] text-muted">Enter gönderir, Shift+Enter yeni satır. Jarvis araç sonuçlarına dayanır; talep sahiplerinin kişisel verisi yapay zekâ sağlayıcısına gönderilmez.</p>
+    </form>
+  </section>
+</div>

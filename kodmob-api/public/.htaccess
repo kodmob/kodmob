@@ -1,0 +1,24 @@
+# public_html/api/ — Laravel API (index.php) ve ziyaretçi sayfaları (render.php).
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+
+    # Çekirdek bu klasörün içindeyse (_core) asla dışarıdan açılmaz.
+    RewriteRule ^_core(/|$) - [F,L]
+
+    # Authorization başlığı (JWT) PHP'ye iletilsin; bazı hostinglerde CGI/FPM bunu düşürür.
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Her istek ön denetleyiciye (render.php gibi var olan dosyalar hariç).
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+</IfModule>
+
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+</IfModule>

@@ -1,0 +1,7 @@
+{
+  "group": "booking",
+  "order": 10,
+  "module": "booking",
+  "updated": "2026-10-21",
+  "paths": { "tr": "rezervasyon-kosullari", "en": "booking-terms", "de": "buchungsbedingungen" }
+}

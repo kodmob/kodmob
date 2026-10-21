@@ -1,0 +1,114 @@
+<div class="pn-page" x-data="kmEstimate" @keydown.window.ctrl.s.prevent="save()" @keydown.window.meta.s.prevent="save()">
+  <div class="pn-bar">
+    <div class="min-w-0 flex-1">
+      <p class="pn-bar-title">Teklif hesaplayıcı</p>
+      <p class="pn-bar-meta"><span>Fiyatlar ve süreler; seçenek adları için Sayfa metinleri → Teklif hesaplayıcı.</span><span class="pn-dirty" x-show="dirty" x-cloak>● Kaydedilmedi</span></p>
+    </div>
+    <a href="/teklif-hesapla/" target="_blank" rel="noopener" class="btn btn-ghost btn-sm max-sm:hidden" x-show="!dirty"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-external"/></svg> Sitede gör</a>
+    <button type="button" class="btn btn-ghost" x-show="dirty" x-cloak @click="undo()">Vazgeç</button>
+    <button type="button" class="btn btn-primary" @click="save()" :disabled="saving || !dirty" title="Kaydet (Ctrl+S)">
+      <svg class="icon icon-sm animate-spin" aria-hidden="true" x-show="saving" x-cloak><use href="#i-loader"/></svg>
+      <span x-text="saving ? 'Kaydediliyor…' : 'Kaydet'">Kaydet</span>
+    </button>
+  </div>
+
+  <template x-if="loading">
+    <div class="flex flex-col gap-4"><span class="skeleton h-72"></span><span class="skeleton h-72"></span></div>
+  </template>
+
+  <template x-if="!loading && value">
+    <div class="pn-settings">
+      {# ------------------------------------------------ proje türleri #}
+      <section class="card pn-group-card">
+        <h3 class="pn-group-title">Proje türleri · taban fiyat ve süre</h3>
+        <div class="pn-table-wrap">
+          <table class="pn-table">
+            <thead>
+              <tr><th scope="col">Tür</th><th scope="col">Sitede</th><th scope="col">TRY en az</th><th scope="col">TRY en çok</th><th scope="col">EUR en az</th><th scope="col">EUR en çok</th><th scope="col">Süre (hafta)</th></tr>
+            </thead>
+            <tbody>
+              <template x-for="(label, key) in labels.types" :key="key">
+                <tr :class="!shown('types', key) && 'is-off'">
+                  <th scope="row"><span x-text="label"></span><p class="field-error" x-show="errors['prices.TRY.types.' + key] || errors['prices.EUR.types.' + key] || errors['weeks.' + key]" x-text="errors['prices.TRY.types.' + key] || errors['prices.EUR.types.' + key] || errors['weeks.' + key]"></p></th>
+                  <td><label class="pn-switch"><input type="checkbox" class="peer sr-only" :checked="shown('types', key)" @change="toggle('types', key)" :aria-label="label + ' sitede görünsün'"><span class="pn-switch-track" aria-hidden="true"></span></label></td>
+                  <template x-for="[cur, i] in [['TRY', 0], ['TRY', 1], ['EUR', 0], ['EUR', 1]]" :key="cur + i">
+                    <td><input class="input" type="number" min="0" step="any" x-model.number="value.prices[cur].types[key][i]" :aria-label="label + ' ' + cur + (i ? ' en çok' : ' en az')" :aria-invalid="!!errors['prices.' + cur + '.types.' + key]"></td>
+                  </template>
+                  <td><div class="pn-range"><input class="input" type="number" min="0" max="104" x-model.number="value.weeks[key][0]" :aria-label="label + ' en az hafta'"><span>–</span><input class="input" type="number" min="0" max="104" x-model.number="value.weeks[key][1]" :aria-label="label + ' en çok hafta'"></div></td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+        <p class="field-error" x-show="errors['off.types']" x-text="errors['off.types']"></p>
+      </section>
+
+      {# ------------------------------------------------ özellikler #}
+      <section class="card pn-group-card">
+        <h3 class="pn-group-title">Özellikler · fiyata eklenen tutar</h3>
+        <div class="pn-table-wrap">
+          <table class="pn-table">
+            <thead>
+              <tr><th scope="col">Özellik</th><th scope="col">Sitede</th><th scope="col">TRY</th><th scope="col">EUR</th><th scope="col">Ek süre (hafta)</th></tr>
+            </thead>
+            <tbody>
+              <template x-for="(label, key) in labels.features" :key="key">
+                <tr :class="!shown('features', key) && 'is-off'">
+                  <th scope="row" x-text="label"></th>
+                  <td><label class="pn-switch"><input type="checkbox" class="peer sr-only" :checked="shown('features', key)" @change="toggle('features', key)" :aria-label="label + ' sitede görünsün'"><span class="pn-switch-track" aria-hidden="true"></span></label></td>
+                  <template x-for="cur in ['TRY', 'EUR']" :key="cur">
+                    <td><input class="input" type="number" min="0" step="any" x-model.number="value.prices[cur].features[key]" :aria-label="label + ' ' + cur"></td>
+                  </template>
+                  <td><input class="input" type="number" min="0" max="52" x-model.number="value.featureWeeks[key]" :aria-label="label + ' ek hafta'"></td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <div class="grid gap-5 lg:grid-cols-2">
+        {# ------------------------------------------------ tasarım + yuvarlama #}
+        <section class="card pn-group-card">
+          <h3 class="pn-group-title">Tasarım çarpanı ve yuvarlama</h3>
+          <div class="pn-grid">
+            <template x-for="key in Object.keys(labels.designs)" :key="'d-' + key">
+              <div class="pn-field pn-w-third justify-end">
+                <label class="field-label" :for="'design-' + key" x-text="labels.designs[key]"></label>
+                <div class="pn-number"><input class="input" type="number" min="0.1" max="5" step="0.05" :id="'design-' + key" x-model.number="value.design[key]"><span class="pn-unit">×</span></div>
+              </div>
+            </template>
+            <template x-for="(symbol, cur) in currencies" :key="cur">
+              <div class="pn-field pn-w-half">
+                <label class="field-label" :for="'round-' + cur" x-text="cur + ' yuvarlama adımı'"></label>
+                <div class="pn-number"><input class="input" type="number" min="1" :id="'round-' + cur" x-model.number="value.prices[cur].round"><span class="pn-unit" x-text="symbol"></span></div>
+              </div>
+            </template>
+          </div>
+          <p class="field-help">Taban fiyat tasarım çarpanıyla çarpılır, seçilen özellikler eklenir (üst sınırda ×1,25); sonuç yuvarlama adımına yuvarlanır. TR sayfası TRY, EN/DE sayfaları EUR gösterir.</p>
+        </section>
+
+        {# ------------------------------------------------ örnek #}
+        <section class="card pn-group-card">
+          <h3 class="pn-group-title">Örnek hesap (özelliksiz)</h3>
+          <div class="pn-grid">
+            <div class="pn-field pn-w-half">
+              <label class="field-label" for="pv-type">Tür</label>
+              <select id="pv-type" class="input" x-model="preview.type"><template x-for="(label, key) in labels.types" :key="key"><option :value="key" x-text="label" :selected="key === preview.type"></option></template></select>
+            </div>
+            <div class="pn-field pn-w-half">
+              <label class="field-label" for="pv-design">Tasarım</label>
+              <select id="pv-design" class="input" x-model="preview.design"><template x-for="(label, key) in labels.designs" :key="'d-' + key"><option :value="key" x-text="label" :selected="key === preview.design"></option></template></select>
+            </div>
+            <div class="pn-field pn-w-half">
+              <label class="field-label" for="pv-cur">Para birimi</label>
+              <select id="pv-cur" class="input" x-model="preview.currency"><template x-for="(symbol, cur) in currencies" :key="cur"><option :value="cur" x-text="cur" :selected="cur === preview.currency"></option></template></select>
+            </div>
+          </div>
+          <p class="text-2xl font-bold text-ink tabular-nums" x-text="sample"></p>
+          <button type="button" class="btn btn-ghost btn-sm self-start" x-show="!isDefault" @click="restoreDefaults()"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-rotate-ccw"/></svg> Başlangıç değerlerine dön</button>
+        </section>
+      </div>
+    </div>
+  </template>
+</div>

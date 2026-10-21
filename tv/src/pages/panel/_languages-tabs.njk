@@ -1,0 +1,10 @@
+{# Çoklu Dil sekme çubuğu (Çoklu Dil ve Metinler görünümlerinde ortak). Sekmeler bağlantıdır; seçili sekme adresten (r). Mantık: panel/languages.js kmLanguageTabs. #}
+<div class="-mx-1 overflow-x-auto px-1" x-data="kmLanguageTabs">
+  <nav class="pn-tabs w-max" aria-label="Çoklu Dil" data-testid="language-tabs">
+    <template x-for="t in tabs" :key="t.key">
+      <a :href="tabHref(t)" class="pn-tab" :aria-selected="selected(r) === t.key" :aria-current="selected(r) === t.key ? 'page' : null" x-show="visible(t)" :data-tab="t.key">
+        <svg class="icon icon-sm" aria-hidden="true"><use :href="'#i-' + t.icon"/></svg> <span x-text="t.label"></span>
+      </a>
+    </template>
+  </nav>
+</div>

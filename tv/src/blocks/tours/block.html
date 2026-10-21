@@ -1,0 +1,30 @@
+{{! Öne çıkan turlar: liste Alpine'da ($store.km.tours; blok `needs: tours`), sunucu ilk kartları yazar (ListSsr). }}
+<section class="container-site section-sm" x-show="$store.km.tours?.length">
+  <div class="section-head reveal">
+    <div>
+{{#eyebrow}}
+      <span class="eyebrow" data-km-field="eyebrow">{{eyebrow}}</span>
+{{/eyebrow}}
+      <h2 class="h2 mt-2" data-km-field="title">{{title}}</h2>
+    </div>
+{{#cta}}{{#ctaUrl}}
+    <a href="{{ctaUrl}}" class="link-arrow"><span data-km-field="cta">{{cta}}</span> <svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+{{/ctaUrl}}{{/cta}}
+  </div>
+  <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    <template x-for="(p, i) in ($store.km.tours || []).slice(0, {{count}})" :key="p.id" data-km-ssr-list="tours" data-km-ssr-route="tour" data-km-ssr-limit="{{count}}">
+      <a :href="p.url" class="card card-hover flex flex-col overflow-hidden" :class="'reveal reveal-delay-' + (i % 3 + 1)">
+        <div class="aspect-[4/3] overflow-hidden">
+          <template x-if="p.cover?.src"><img :src="p.cover.src" :srcset="p.cover.srcset || false" sizes="(min-width: 1024px) 380px, (min-width: 640px) 50vw, 100vw" :alt="p.cover.alt || p.title" class="h-full w-full object-cover" loading="lazy" decoding="async"></template>
+          <template x-if="!p.cover?.src"><div class="media-ph h-full w-full"><svg class="icon h-10 w-10" aria-hidden="true"><use href="#i-image"/></svg></div></template>
+        </div>
+        <div class="card-body flex flex-1 flex-col gap-2">
+          <h3 class="h3" x-text="p.title"></h3>
+          <p class="text-sm text-ink-2" x-text="p.summary"></p>
+          <p class="text-xs text-muted" x-show="p.duration"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-clock"/></svg> <span x-text="p.duration"></span></p>
+          <p class="mt-auto flex items-baseline gap-2 pt-2"><span class="text-xs text-muted" data-km-field="from">{{from}}</span><strong class="text-lg text-ink" x-text="p.booking?.fromText || p.priceAdultText"></strong></p>
+        </div>
+      </a>
+    </template>
+  </div>
+</section>

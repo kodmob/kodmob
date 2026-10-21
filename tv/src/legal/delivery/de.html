@@ -1,0 +1,32 @@
+{{! Vorlage: Lieferzeit, Liefergebiet und Versanddienstleister an Ihr Unternehmen anpassen. }}
+<h2>Allgemeines</h2>
+<p>Bestellungen auf {{site.name}} werden nach der Bestellbestätigung vorbereitet und versandt. Bei Überweisung beginnt die Vorbereitung mit dem Zahlungseingang. Den Status verfolgen Sie über den Link in der Bestätigungs-E-Mail; beim Versand erhalten Sie eine weitere E-Mail.</p>
+
+<h2>Lieferzeit</h2>
+<p>Die Ware wird innerhalb der zugesagten Frist, spätestens 30 Tage nach Bestellbestätigung, geliefert. Ist eine Lieferung in dieser Frist nicht möglich, informieren wir Sie; Sie können dann stornieren und erhalten den vollen Betrag zurück.</p>
+
+<h2>Versandkosten</h2>
+{{#commerce.shippingFee}}
+<p>Die Versandkosten betragen {{commerce.shippingFee}}{{#commerce.freeOver}}; ab {{commerce.freeOver}} versenden wir kostenlos{{/commerce.freeOver}}. Sie werden im Bestellvorgang zum Gesamtbetrag addiert.</p>
+{{/commerce.shippingFee}}
+{{^commerce.shippingFee}}
+<p>Der Versand ist kostenlos.</p>
+{{/commerce.shippingFee}}
+{{#commerce.cod}}
+<p>Bei Nachnahme{{#commerce.codFee}} fällt eine Gebühr von {{commerce.codFee}} an und{{/commerce.codFee}} die Zahlung erfolgt bei Lieferung an den Zusteller.</p>
+{{/commerce.cod}}
+
+<h2>Bei Empfang</h2>
+<p>Prüfen Sie bei Empfang die Verpackung. Ein beschädigtes, eingedrücktes oder geöffnetes Paket sollten Sie ablehnen oder nur mit einem vom Zusteller unterschriebenen Schadensprotokoll annehmen. Melden Sie sich bei beschädigter Ware; sie wird kostenlos ersetzt oder erstattet.</p>
+<p>Sind Sie nicht anzutreffen, hinterlässt der Zusteller eine Nachricht; nicht abgeholte Sendungen gehen an uns zurück, und wir melden uns bei Ihnen.</p>
+
+<h2>Digitale Waren</h2>
+<p>Digitale Waren werden nach Zahlungsbestätigung per E-Mail oder auf der Bestellseite bereitgestellt; Versandkosten fallen nicht an.</p>
+
+{{#modules.booking}}
+<h2>Buchungen</h2>
+<p>Bei Touren, Aktivitäten{{#modules.hotels}} und Unterkünften{{/modules.hotels}} gibt es keine physische Lieferung. Die Buchungsdaten erhalten Sie per Bestätigungs-E-Mail; die Leistung wird am gewählten Termin erbracht.{{#links.bookingTerms}} Einzelheiten: <a href="{{links.bookingTerms}}">Buchungsbedingungen</a>.{{/links.bookingTerms}}</p>
+{{/modules.booking}}
+
+<h2>Kontakt</h2>
+<p>Bei Fragen zur Lieferung schreiben Sie mit Ihrer Bestellnummer an <a href="mailto:{{controller.email}}">{{controller.email}}</a>.</p>

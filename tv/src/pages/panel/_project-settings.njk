@@ -1,0 +1,5 @@
+{# Proje Ayarları: bu projenin kimliği, iletişim, sosyal medya, yasal bilgiler, talepler ve araçların ayarları.
+   Mantık: panel/settings.js (kapsam: project). #}
+<div class="pn-page" x-data="kmSettings(r, 'project')" @keydown.window.ctrl.s.prevent="save()" @keydown.window.meta.s.prevent="save()" data-testid="project-settings">
+  {% include "pages/panel/_settings-form.njk" %}
+</div>

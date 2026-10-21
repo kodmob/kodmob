@@ -1,0 +1,86 @@
+{# Tüm İşlemler. Mantık: panel/other.js; kartlar ve bağlantılar: panel/operations.js. #}
+<div class="pn-page" x-data="kmOther">
+  <div class="pn-toolbar">
+    <p class="pn-hint flex-1">
+      <svg class="icon icon-sm" aria-hidden="true"><use href="#i-info"/></svg>
+      <span>Paneldeki bütün işler tek yerde. Yan menüde olmayanlar da burada; yalnızca yetkiniz olanlar görünür.</span>
+    </p>
+    <input type="search" class="input md:max-w-xs" x-model.debounce.150ms="q" placeholder="İşlem ara…" aria-label="İşlem ara" data-testid="other-search">
+    <a :href="$href('guide')" class="btn btn-secondary shrink-0" data-testid="other-guide"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-book"/></svg> Kullanım Kılavuzu</a>
+  </div>
+
+  {# ============================================================ Hızlı İşlemler (kişiye özel) #}
+  <section class="card" aria-labelledby="quick-title" data-testid="quick">
+    <div class="card-header flex-wrap">
+      <div class="min-w-0">
+        <h2 id="quick-title" class="card-title flex items-center gap-2"><svg class="icon icon-sm icon-filled text-warning" aria-hidden="true"><use href="#i-star"/></svg> Hızlı İşlemler</h2>
+        <p class="mt-0.5 text-sm text-ink-2">En çok kullandığınız işler. Aşağıdaki satırlarda <svg class="icon icon-sm inline-block align-[-3px]" aria-hidden="true"><use href="#i-star"/></svg> ile ekleyin ya da satırı buraya sürükleyin.</p>
+      </div>
+      <div class="flex gap-2">
+        <button type="button" class="btn btn-ghost btn-sm" x-show="editing" x-cloak @click="resetQuick()" data-testid="quick-reset">Varsayılana dön</button>
+        <button type="button" class="btn btn-sm" :class="editing ? 'btn-primary' : 'btn-secondary'" @click="editing = !editing" :aria-pressed="editing" x-show="quick.length" data-testid="quick-edit">
+          <svg class="icon icon-sm" aria-hidden="true"><use :href="editing ? '#i-check-circle' : '#i-pencil'"/></svg> <span x-text="editing ? 'Bitti' : 'Düzenle'"></span>
+        </button>
+      </div>
+    </div>
+    <div class="card-body" @dragover="dragOver($event)" @dragleave.self="dropIndex = null" @drop.prevent="drop()">
+      <template x-if="quickKeys === null"><div class="skeleton h-16"></div></template>
+      <div x-show="quickKeys !== null" x-ref="quick" class="grid min-h-16 grid-cols-2 gap-2 rounded-control sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-6"
+        :class="dragKey ? 'outline-2 outline-dashed outline-offset-4 outline-primary/50' : ''">
+        <template x-for="(item, i) in quick" :key="item.key">
+          <div class="relative flex items-center rounded-control border bg-surface transition-colors" :data-quick="item.key"
+            :class="[dragKey === item.key ? 'opacity-40' : '', dropIndex === i && dragKey && dragKey !== item.key ? 'border-primary shadow-[inset_3px_0_0_var(--color-primary)]' : 'border-line hover:border-primary/40']"
+            draggable="true" @dragstart="dragStart($event, item.key)" @dragend="dragEnd()">
+            <a class="flex min-h-14 min-w-0 flex-1 items-center gap-2.5 px-3 py-2" :href="item.href" draggable="false" @click="editing && $event.preventDefault()" :title="item.hint || ''">
+              <span class="tone-icon h-8 w-8" :class="'tone-' + item.tone"><svg class="icon icon-sm" aria-hidden="true"><use :href="'#i-' + item.icon"/></svg></span>
+              <span class="min-w-0">
+                <span class="block truncate text-sm font-semibold text-ink" x-text="item.label"></span>
+                <span class="block truncate text-xs text-muted" x-text="item.card"></span>
+              </span>
+            </a>
+            <div class="flex shrink-0 items-center pr-1" x-show="editing" x-cloak>
+              <button type="button" class="btn-icon h-8 w-8" data-move="left" @click="moveQuick(item.key, -1)" :disabled="i === 0" :aria-label="item.label + ': öne al'"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chevron-left"/></svg></button>
+              <button type="button" class="btn-icon h-8 w-8" data-move="right" @click="moveQuick(item.key, 1)" :disabled="i === quick.length - 1" :aria-label="item.label + ': arkaya al'"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>
+              <button type="button" class="btn-icon h-8 w-8 text-danger" @click="removeQuick(item.key)" :aria-label="item.label + ': Hızlı İşlemler\'den çıkar'"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-x"/></svg></button>
+            </div>
+            <svg class="icon icon-sm mr-2 hidden shrink-0 cursor-grab text-muted lg:block" x-show="!editing" aria-hidden="true"><use href="#i-grip"/></svg>
+          </div>
+        </template>
+        <p class="col-span-full grid min-h-16 place-items-center rounded-control border border-dashed border-line px-4 text-center text-sm text-ink-2" x-show="!quick.length">
+          Henüz hızlı işlem yok. Aşağıdan bir satırın yıldızına basın ya da satırı buraya sürükleyin.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  {# ============================================================ kartlar: her grup tek kart, işler satır satır #}
+  <p class="rounded-tile border border-dashed border-line px-4 py-6 text-center text-sm text-muted" x-show="!cards.length" x-cloak>"<span x-text="q"></span>" ile eşleşen işlem yok.</p>
+  <div class="gap-4 sm:columns-2 xl:columns-3">
+    <template x-for="c in cards" :key="c.key">
+      <section class="card mb-4 break-inside-avoid" :data-group="c.key" :aria-labelledby="'card-' + c.key">
+        <div class="card-body flex flex-col gap-3">
+          <div class="flex items-start gap-3">
+            <span class="tone-icon" :class="'tone-' + c.tone"><svg class="icon" aria-hidden="true"><use :href="'#i-' + c.icon"/></svg></span>
+            <div class="min-w-0">
+              <h2 class="font-semibold text-ink" :id="'card-' + c.key" x-text="c.title"></h2>
+              <p class="mt-0.5 text-sm text-ink-2" x-text="c.text"></p>
+            </div>
+          </div>
+          <ul class="flex flex-col gap-1.5">
+            <template x-for="l in c.links" :key="l.key">
+              <li class="flex items-center gap-1" :data-op="l.key" draggable="true" @dragstart="dragStart($event, l.key)" @dragend="dragEnd()">
+                <a class="flex min-h-10 min-w-0 flex-1 items-center justify-between gap-2 rounded-control border border-line px-3 text-sm font-medium text-ink hover:border-primary/40 hover:text-primary" :class="l.sub && 'ml-4 font-normal text-ink-2'" :href="l.href" :title="l.hint || ''" draggable="false">
+                  <span class="truncate" x-text="l.label"></span><svg class="icon icon-sm shrink-0 text-muted" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+                </a>
+                <button type="button" class="btn-icon h-10 w-10 shrink-0" @click="toggleQuick(l.key)" :aria-pressed="isQuick(l.key)" data-star
+                  :aria-label="l.label + (isQuick(l.key) ? ': Hızlı İşlemler\'den çıkar' : ': Hızlı İşlemler\'e ekle')" :title="isQuick(l.key) ? 'Hızlı İşlemler\'den çıkar' : 'Hızlı İşlemler\'e ekle'">
+                  <svg class="icon icon-sm" :class="isQuick(l.key) ? 'icon-filled text-warning' : 'text-muted'" aria-hidden="true"><use href="#i-star"/></svg>
+                </button>
+              </li>
+            </template>
+          </ul>
+        </div>
+      </section>
+    </template>
+  </div>
+</div>

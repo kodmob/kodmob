@@ -1,0 +1,407 @@
+{# km-grid işaretlemesi (dfGrid). Kapsayıcı: <div x-data="kmGrid(config)"> (bkz. grid.js). Panelde ve sitede aynıdır. #}
+<div class="card km-grid">
+
+  {# Araç çubuğu #}
+  <div class="flex flex-wrap items-center gap-2 p-3 md:p-4">
+    <template x-if="searchFilter">
+      <label class="relative min-w-0 flex-1 basis-60">
+        <span class="sr-only" x-text="searchFilter.label || 'Ara'"></span>
+        <svg class="icon pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-muted" aria-hidden="true"><use href="#i-search"/></svg>
+        <input type="search" class="input min-h-11 pl-10" x-model="q" @input="onSearchInput()" @keydown.enter.prevent="refresh()"
+          :placeholder="searchFilter.placeholder || 'Ara'" autocomplete="off" enterkeyhint="search">
+      </label>
+    </template>
+
+    {# Telefonda düğmeler yan yana sığsın diye aralık dardır; sığmazsa alt satıra geçer (yatay taşma olmaz). #}
+    <div class="ml-auto flex flex-wrap items-center justify-end gap-1.5 sm:gap-2">
+      <button type="button" class="btn min-h-11 px-3 sm:px-4" :class="selectMode ? 'btn-primary' : 'btn-secondary'" x-show="canSelect" x-cloak @click="toggleSelectMode()" :aria-pressed="selectMode" data-testid="grid-select" title="Kayıtları seçip toplu işlem yap">
+        <svg class="icon" aria-hidden="true"><use href="#i-check-circle"/></svg>
+        <span>Seç</span>
+      </button>
+      <button type="button" class="btn min-h-11 px-3" :class="grouping ? 'btn-primary' : 'btn-secondary'" x-show="canToggleGroup" x-cloak @click="setGrouping(!grouping)" :aria-pressed="grouping" data-testid="grid-group" title="Aynı gruptaki kayıtları bir arada göster">
+        <svg class="icon" aria-hidden="true"><use href="#i-layers"/></svg>
+        <span class="hidden sm:inline">Grupla</span>
+      </button>
+      <template x-if="panelFilters.length">
+        <button type="button" class="btn btn-secondary min-h-11" @click="filtersOpen = !filtersOpen" :aria-expanded="filtersOpen">
+          <svg class="icon" aria-hidden="true"><use href="#i-sliders"/></svg>
+          <span>Filtreler</span>
+          <span class="num rounded-full bg-primary-strong px-1.5 text-xs text-white" x-show="chips.length" x-text="chips.length"></span>
+        </button>
+      </template>
+
+      <div class="relative" @click.outside="columnsMenu = false" @keydown.escape="columnsMenu = false">
+        <button type="button" class="btn btn-secondary min-h-11 px-3" @click="columnsMenu = !columnsMenu" :aria-expanded="columnsMenu" aria-label="Sütunları göster/gizle" title="Sütunlar">
+          <svg class="icon" aria-hidden="true"><use href="#i-list"/></svg>
+          <span class="hidden sm:inline">Görünüm</span>
+        </button>
+        <div class="absolute top-full right-0 z-30 mt-2 w-60 rounded-card border border-line bg-surface p-2 shadow-pop" x-show="columnsMenu" x-cloak x-transition.opacity.duration.100ms>
+          <p class="px-2 pt-1 pb-1 text-xs font-semibold tracking-wider text-muted uppercase">Sütunlar</p>
+          <template x-for="col in columns" :key="col.key">
+            <label class="flex min-h-10 cursor-pointer items-center gap-3 rounded-control px-2 text-sm hover:bg-surface-subtle">
+              <input type="checkbox" class="h-4.5 w-4.5 accent-primary" :checked="!isHidden(col)" @change="toggleColumn(col)">
+              <span x-text="col.label"></span>
+            </label>
+          </template>
+        </div>
+      </div>
+
+      {# Genel Sil: silinen kayıtları gösterir; orada satır işlemi "Geri Yükle" olur. #}
+      <button type="button" class="btn min-h-11 px-3" :class="showHidden ? 'btn-danger' : 'btn-secondary'" x-show="canShowHidden || showHidden" x-cloak @click="toggleHidden()" :aria-pressed="showHidden" title="Silinen kayıtları göster / gizle" data-testid="grid-hidden">
+        <svg class="icon" aria-hidden="true"><use href="#i-trash"/></svg>
+        <span class="hidden sm:inline">Silinenler</span>
+      </button>
+
+      <button type="button" class="btn btn-secondary min-h-11 px-3" x-show="canExport" @click="exportCsv()" :disabled="exporting || !total" title="Filtrelenmiş listeyi CSV olarak indir">
+        <svg class="icon" :class="exporting && 'animate-spin'" aria-hidden="true"><use :href="exporting ? '#i-loader' : '#i-download'"/></svg>
+        <span class="hidden sm:inline">CSV</span>
+      </button>
+    </div>
+  </div>
+
+  {# Durum sekmeleri (sayılarıyla) #}
+  <template x-if="tabFilter">
+    <div class="-mt-1 overflow-x-auto px-3 pb-3 md:px-4" role="tablist" :aria-label="tabFilter.label || 'Durum'">
+      <div class="flex w-max gap-1.5">
+        <template x-for="tab in tabs()" :key="tab.value">
+          <button type="button" role="tab" :aria-selected="isTab(tab.value)" @click="setFilter(tabFilter.key, tab.value)"
+            class="flex min-h-10 items-center gap-2 rounded-full border px-3.5 text-sm font-medium transition-colors"
+            :class="isTab(tab.value) ? 'border-primary-strong bg-primary-strong text-white' : 'border-line bg-surface text-ink-2 hover:border-line-strong hover:text-ink'">
+            <span x-text="tab.label"></span>
+            <span class="num rounded-full px-1.5 text-xs" :class="isTab(tab.value) ? 'bg-white/20' : 'bg-surface-subtle'" x-text="tab.count"></span>
+          </button>
+        </template>
+      </div>
+    </div>
+  </template>
+
+  {# Filtre paneli #}
+  <div class="border-t border-line bg-surface-subtle px-3 py-3 md:px-4" x-show="filtersOpen" x-cloak x-collapse>
+    <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <template x-for="f in panelFilters" :key="f.key">
+        <div class="field" :class="f.type === 'date-range' && 'sm:col-span-2'">
+          <span class="field-label" x-text="f.label"></span>
+          <template x-if="f.type === 'select'">
+            <select class="input min-h-11" :value="values[f.key] ?? ''" @change="setFilter(f.key, $event.target.value)" :aria-label="f.label">
+              <option value="">Tümü</option>
+              <template x-for="o in optionsFor(f)" :key="o.value"><option :value="o.value" x-text="o.label" :selected="String(values[f.key] ?? '') === String(o.value)"></option></template>
+            </select>
+          </template>
+          <template x-if="f.type === 'date-range'">
+            <div class="grid grid-cols-2 gap-2">
+              <input type="date" class="input min-h-11" :value="values[f.key + '_from'] ?? ''" @change="setFilter(f.key + '_from', $event.target.value)" :aria-label="f.label + ' başlangıç'">
+              <input type="date" class="input min-h-11" :value="values[f.key + '_to'] ?? ''" @change="setFilter(f.key + '_to', $event.target.value)" :aria-label="f.label + ' bitiş'">
+            </div>
+          </template>
+        </div>
+      </template>
+    </div>
+  </div>
+
+  {# Aktif filtre çipleri ve sonuç özeti #}
+  <div class="flex flex-wrap items-center gap-2 border-t border-line px-3 py-2.5 md:px-4" x-show="chips.length" x-cloak>
+    <p class="flex w-full flex-wrap items-baseline gap-x-3 gap-y-0.5 text-sm text-ink-2" :class="loading && 'opacity-60'" x-show="filterSummary" role="status" data-testid="grid-filter-summary">
+      <strong class="num font-semibold text-ink" x-text="filterSummary?.count"></strong>
+      <template x-for="t in filterSummary?.totals || []" :key="t.key">
+        <span><span x-text="t.label"></span>: <strong class="num font-semibold text-ink" x-text="t.value"></strong></span>
+      </template>
+    </p>
+    <template x-for="chip in chips" :key="chip.key">
+      <button type="button" class="badge badge-primary min-h-8 gap-1.5 pr-1.5 text-[0.8125rem]" @click="removeChip(chip)" :aria-label="chip.label + ' filtresini kaldır'">
+        <span x-text="chip.label"></span>
+        <svg class="icon icon-sm" aria-hidden="true"><use href="#i-x"/></svg>
+      </button>
+    </template>
+    <button type="button" class="text-sm font-medium text-primary hover:underline" @click="clearAll()">Tümünü temizle</button>
+  </div>
+
+  {# Silinenler: bu tabloda silinen kayıtlar; geri yüklenince her yerde geri gelir. #}
+  <div class="border-t border-line bg-surface-subtle px-3 py-3 md:px-4" x-show="showHidden" x-cloak data-testid="grid-hidden-list">
+    <p class="text-sm font-semibold text-ink">Silinen kayıtlar</p>
+    <p class="mt-1 text-sm text-ink-2" x-show="!hiddenRows.length">Bu tabloda silinen kayıt yok.</p>
+    <ul class="mt-2 divide-y divide-line rounded-control border border-line bg-surface" x-show="hiddenRows.length">
+      <template x-for="h in hiddenRows" :key="h.id">
+        <li class="flex flex-wrap items-center gap-x-3 gap-y-1 px-3 py-2 text-sm">
+          <span class="min-w-0 truncate font-medium text-ink" x-text="h.label || ('#' + h.object_id)"></span>
+          <span class="text-xs text-muted" x-text="hiddenMeta(h)"></span>
+          <button type="button" class="btn btn-secondary btn-sm ml-auto" @click="restoreHidden(h)">Geri Yükle</button>
+        </li>
+      </template>
+    </ul>
+  </div>
+
+  {# Toplu işlem çubuğu #}
+  <div class="flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-primary/20 bg-primary-soft px-3 py-2.5 md:px-4" role="toolbar" aria-label="Toplu işlemler" x-show="selectMode" x-cloak data-testid="grid-bulk-bar">
+    <label class="flex min-h-9 cursor-pointer items-center gap-2 text-sm font-medium text-primary-ink">
+      <input type="checkbox" class="h-5 w-5 accent-primary" :checked="allSelected" @change="toggleAll()" data-testid="grid-select-all"> Hepsini seç
+    </label>
+    <span class="text-sm text-primary-ink" x-text="selected.length ? selected.length + ' kayıt seçildi' : 'Kayıt seçin'" data-testid="grid-selected-count"></span>
+    {# Telefonda: "Seçimi bitir" üst satırda, "Toplu İşlem" altta tam genişlikte. #}
+    <button type="button" class="btn btn-ghost btn-sm ml-auto sm:order-last sm:ml-0" @click="toggleSelectMode()">Seçimi bitir</button>
+    <div class="relative w-full sm:ml-auto sm:w-auto" @click.outside="bulkMenuOpen = false" @keydown.escape.stop="bulkMenuOpen = false">
+      <button type="button" class="btn btn-primary btn-sm w-full whitespace-nowrap sm:w-auto" :disabled="!selected.length || bulkBusy" @click="bulkMenuOpen = !bulkMenuOpen" :aria-expanded="bulkMenuOpen" aria-haspopup="menu" data-testid="grid-bulk-menu">
+        <svg class="icon icon-sm animate-spin" x-show="bulkBusy" x-cloak aria-hidden="true"><use href="#i-loader"/></svg>
+        Toplu İşlem <svg class="icon icon-sm" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+      </button>
+      <div class="absolute top-full right-0 z-30 mt-1 w-full min-w-56 overflow-hidden rounded-control border border-line bg-surface py-1 shadow-pop sm:w-auto" role="menu" x-show="bulkMenuOpen" x-cloak x-transition.opacity.duration.100ms>
+        <template x-for="action in bulkMenu" :key="action.key">
+          <button type="button" role="menuitem" class="flex min-h-11 w-full items-center gap-2 px-3 text-left text-sm hover:bg-surface-subtle" :class="action.tone === 'danger' ? 'text-danger' : 'text-ink'" @click="bulk(action)" :data-bulk="action.key">
+            <svg class="icon icon-sm" x-show="action.icon" aria-hidden="true"><use :href="'#i-' + (action.icon || 'check')"/></svg>
+            <span x-text="action.label"></span>
+          </button>
+        </template>
+      </div>
+    </div>
+  </div>
+
+  {# Sürükle-bırak sıralama kapalıysa neden (reorder); bağlantı sıraya döndürür. #}
+  <p class="grid-hint" x-show="reorderHint" x-cloak data-testid="grid-reorder-hint">
+    <svg class="icon icon-sm shrink-0" aria-hidden="true"><use href="#i-info"/></svg>
+    <span class="flex-1" x-text="reorderHint"></span>
+    <button type="button" class="font-medium text-primary hover:underline" @click="sortForReorder()">Sıraya göre göster</button>
+  </p>
+
+  {# Canlı güncelleme şeridi: "1 yeni kayıt · 1 güncelleme" (sayılı) ya da "Liste değişti". Tablo kendiliğinden kaymaz. #}
+  <template x-if="live">
+    <button type="button" class="grid-live-bar" x-show="liveVisible" x-cloak x-transition.opacity.duration.150ms
+      @click="applyLive()" :aria-label="liveText + ' — yüklemek için tıklayın'" data-grid-live>
+      <span class="grid-live-dot" aria-hidden="true"></span>
+      <span class="font-semibold" x-text="liveText"></span>
+      <span class="underline decoration-dotted underline-offset-2 opacity-80">yüklemek için tıklayın</span>
+      <svg class="icon icon-sm ml-auto" aria-hidden="true"><use href="#i-refresh"/></svg>
+    </button>
+  </template>
+
+  {# Hata #}
+  <template x-if="error">
+    <div class="flex flex-col items-start gap-3 border-t border-line p-4 sm:flex-row sm:items-center" role="alert">
+      <span class="flex flex-1 items-center gap-2 text-sm text-danger"><svg class="icon" aria-hidden="true"><use href="#i-alert-circle"/></svg><span x-text="error.message || 'Liste yüklenemedi.'"></span></span>
+      <button type="button" class="btn btn-secondary btn-sm" @click="load()">Tekrar Dene</button>
+    </div>
+  </template>
+
+  {# Masaüstü tablo #}
+  <div class="relative hidden border-t border-line md:block" :class="loading && loadedOnce && 'opacity-60'" x-show="!isEmpty">
+    <div class="overflow-x-auto">
+      <table class="w-full border-collapse text-sm">
+        <thead class="sticky top-0 z-10 bg-surface-subtle">
+          <tr class="border-b border-line text-left text-[0.8125rem] text-ink-2">
+            <th class="w-10 pr-0 pl-3" x-show="reorderable"><span class="sr-only">Sıra</span></th>
+            <th class="w-12 px-4" x-show="selectMode">
+              <input type="checkbox" class="h-4.5 w-4.5 accent-primary" :checked="allSelected" @change="toggleAll()" aria-label="Sayfadaki bütün kayıtları seç">
+            </th>
+            <template x-for="col in visibleColumns" :key="col.key">
+              <th scope="col" class="h-11 px-4 font-medium whitespace-nowrap" :class="cellClass(col)" :aria-sort="ariaSort(col)">
+                <template x-if="col.sortable">
+                  <button type="button" class="inline-flex items-center gap-1 hover:text-ink" :class="col.align === 'end' && 'flex-row-reverse'" @click="toggleSort(col)">
+                    <span x-text="col.label"></span>
+                    <svg class="icon icon-sm transition-transform" :class="sortIcon(col)" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+                  </button>
+                </template>
+                <template x-if="!col.sortable"><span :class="col.format === 'image' && 'sr-only'" x-text="col.label"></span></template>
+              </th>
+            </template>
+            <th class="w-px px-4 text-right font-medium whitespace-nowrap" x-show="hasActions"><span class="sr-only">İşlemler</span></th>
+          </tr>
+        </thead>
+
+        <template x-if="showSkeleton">
+          <tbody>
+            <template x-for="i in 5" :key="i">
+              <tr class="border-b border-line last:border-b-0">
+                <td class="px-4 py-4" :colspan="colspan"><div class="skeleton h-5" :class="i % 2 ? 'w-3/4' : 'w-2/3'"></div></td>
+              </tr>
+            </template>
+          </tbody>
+        </template>
+
+        <template x-for="(row, index) in viewRows" :key="keyOf(row)">
+          <tbody>
+            <tr class="border-b border-line bg-surface-subtle" x-show="startsGroup(index)" data-grid-group>
+              <td class="px-4 py-1" :colspan="colspan">
+                {# Grup başlığı: tıklayınca grubun satırları açılır / kapanır. #}
+                <button type="button" class="flex min-h-9 w-full items-center gap-2 text-left" @click="toggleGroup(row)" :aria-expanded="!isGroupCollapsed(row)">
+                  <svg class="icon icon-sm shrink-0 text-ink-2 transition-transform" :class="isGroupCollapsed(row) && '-rotate-90'" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+                  <span class="font-semibold text-ink" x-text="groupLabel(row)"></span>
+                  <span class="num text-xs text-muted" x-text="startsGroup(index) ? groupSummary(index) : ''"></span>
+                </button>
+              </td>
+            </tr>
+            <tr data-grid-row tabindex="0" class="h-14 border-b border-line transition-colors hover:bg-surface-subtle focus:bg-primary-soft/60 focus:outline-none"
+              :class="{ 'bg-primary-soft/60': isSelected(row), 'row-fresh': isFresh(row), 'grid-member': inGroup(row), 'grid-drop-target': isDropTarget(row), 'opacity-50': dragKey === keyOf(row) }"
+              x-show="!isGroupCollapsed(row)" @keydown="onRowKey($event, row)" @dragover.prevent="dragOver(row)" @drop.prevent="drop(row)" :data-key="keyOf(row)">
+              <td class="w-10 pr-0 pl-3" x-show="reorderable" @click.stop>
+                <button type="button" class="grid-handle" draggable="true" @dragstart="dragStart(row, $event)" @dragend="dragEnd()" @keydown="onHandleKey($event, row)" :data-handle="keyOf(row)" :disabled="reorderBusy"
+                  aria-label="Sırayı değiştir: sürükleyin ya da ok tuşlarını kullanın" title="Sürükleyerek ya da ↑ ↓ tuşlarıyla sırala"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-menu"/></svg></button>
+              </td>
+              <td class="px-4" x-show="selectMode" @click.stop>
+                <input type="checkbox" class="h-4.5 w-4.5 accent-primary" :checked="isSelected(row)" @change="toggleRow(row)" aria-label="Kaydı seç">
+              </td>
+              <template x-for="col in visibleColumns" :key="col.key">
+                <td class="px-4 py-2" :class="cellClass(col)">
+                  <template x-if="col.format === 'image'">
+                    <span class="grid h-10 w-10 place-items-center overflow-hidden rounded-control bg-surface-subtle text-muted">
+                      <template x-if="imageSrc(col, row)"><img :src="imageSrc(col, row)" alt="" class="h-full w-full object-cover" loading="lazy"></template>
+                      <template x-if="!imageSrc(col, row)"><svg class="icon icon-sm" aria-hidden="true"><use :href="'#i-' + (col.icon || 'image')"/></svg></template>
+                    </span>
+                  </template>
+                  <template x-if="col.badge && hasBadge(col, row)">
+                    <span class="badge" :class="badge(col, row).cls"><svg class="icon icon-sm" aria-hidden="true"><use :href="badge(col, row).href"/></svg><span x-text="badge(col, row).label"></span></span>
+                  </template>
+                  <template x-if="!!col.chips">
+                    <span class="flex gap-1">
+                      <template x-for="(chip, ci) in chipsOf(col, row)" :key="ci"><span class="grid-chip" :class="'is-' + (chip.tone || 'neutral')" :title="chip.title || ''" x-text="chip.label"></span></template>
+                    </span>
+                  </template>
+                  <template x-if="canFilterBy(col, row)">
+                    <button type="button" class="text-left text-primary underline decoration-primary/30 underline-offset-4 hover:decoration-primary" :class="col.strong && 'font-medium'" :title="filterTitle(col, row)" @click="filterBy(col, row)" x-text="text(col, row)"></button>
+                  </template>
+                  <template x-if="col.format !== 'image' && !col.chips && (!col.badge || !hasBadge(col, row)) && !canFilterBy(col, row)">
+                    <span :class="textClass(col)" x-text="text(col, row)"></span>
+                  </template>
+                </td>
+              </template>
+              <td class="px-4 text-right" x-show="hasActions" @click.stop>
+                <div class="relative inline-flex items-center gap-1.5" @click.outside="isMenuOpen(row) && (menuFor = null)">
+                  <template x-for="action in inlineActions(row)" :key="action.key">
+                    <button type="button" class="btn btn-sm" :class="actionClass(action)" @click="run(action, row)" :data-action="action.key" x-text="action.label"></button>
+                  </template>
+                  <template x-if="menuActions(row).length">
+                    <button type="button" class="btn-icon h-9 w-9" @click="toggleMenu(row, $event)" :aria-expanded="isMenuOpen(row)" aria-label="Diğer işlemler" title="Diğer işlemler">
+                      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>
+                    </button>
+                  </template>
+                  <div class="fixed z-50 w-52 rounded-card border border-line bg-surface p-1.5 text-left shadow-pop" :style="menuPos" x-show="isMenuOpen(row)" x-cloak role="menu">
+                    <template x-for="action in menuActions(row)" :key="action.key">
+                      <button type="button" role="menuitem" class="flex min-h-10 w-full items-center gap-2 rounded-control px-3 text-sm hover:bg-surface-subtle" :class="action.tone === 'danger' ? 'text-danger' : 'text-ink'" @click="run(action, row)" :data-action="action.key">
+                        <svg class="icon icon-sm" x-show="action.icon" aria-hidden="true"><use :href="'#i-' + action.icon"/></svg>
+                        <span x-text="action.label"></span>
+                      </button>
+                    </template>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </template>
+      </table>
+    </div>
+  </div>
+
+  {# Mobil kartlar #}
+  <div class="border-t border-line md:hidden" x-show="!isEmpty" :class="loading && loadedOnce && 'opacity-60'">
+    <template x-if="showSkeleton">
+      <div class="space-y-3 p-3"><div class="skeleton h-24"></div><div class="skeleton h-24"></div><div class="skeleton h-24"></div></div>
+    </template>
+    <ul class="divide-y divide-line">
+      <template x-for="(row, index) in viewRows" :key="keyOf(row)">
+        <li :class="{ 'grid-member': inGroup(row) }" :data-key="keyOf(row)">
+          <button type="button" class="flex min-h-11 w-full items-center gap-2 bg-surface-subtle px-3 py-2 text-left text-sm font-semibold text-ink" x-show="startsGroup(index)" @click="toggleGroup(row)" :aria-expanded="!isGroupCollapsed(row)">
+            <svg class="icon icon-sm shrink-0 text-ink-2 transition-transform" :class="isGroupCollapsed(row) && '-rotate-90'" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+            <span class="min-w-0 truncate" x-text="groupLabel(row)"></span>
+            <span class="num shrink-0 text-xs font-normal text-muted" x-text="startsGroup(index) ? groupSummary(index) : ''"></span>
+          </button>
+          <div class="flex gap-3 px-3 py-3" :class="{ 'bg-primary-soft/60': isSelected(row), 'row-fresh': isFresh(row) }" x-show="!isGroupCollapsed(row)">
+            <input type="checkbox" class="mt-1 h-5 w-5 shrink-0 accent-primary" x-show="selectMode" :checked="isSelected(row)" @change="toggleRow(row)" aria-label="Kaydı seç">
+            <template x-if="cardImage">
+              <span class="grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-control bg-surface-subtle text-muted">
+                <template x-if="imageSrc(cardImage, row)"><img :src="imageSrc(cardImage, row)" alt="" class="h-full w-full object-cover" loading="lazy"></template>
+                <template x-if="!imageSrc(cardImage, row)"><svg class="icon icon-sm" aria-hidden="true"><use :href="'#i-' + (cardImage.icon || 'image')"/></svg></template>
+              </span>
+            </template>
+            <div class="min-w-0 flex-1 text-left">
+              <span class="flex items-start justify-between gap-2">
+                <span class="min-w-0">
+                  <span class="block truncate text-[0.9375rem] font-semibold text-ink" :class="cardTitle?.mono && 'code'" x-text="cardTitle ? text(cardTitle, row) : ''"></span>
+                  <template x-if="cardSubtitle && canFilterBy(cardSubtitle, row)">
+                    <button type="button" class="block max-w-full truncate text-left text-sm text-primary underline decoration-primary/30 underline-offset-4" :title="filterTitle(cardSubtitle, row)" @click="filterBy(cardSubtitle, row)" x-text="text(cardSubtitle, row)"></button>
+                  </template>
+                  <span class="block truncate text-sm text-ink-2" x-show="cardSubtitle && !canFilterBy(cardSubtitle, row)" x-text="cardSubtitle ? text(cardSubtitle, row) : ''"></span>
+                </span>
+                <span class="flex shrink-0 flex-col items-end gap-1">
+                  <template x-for="col in cardBadges" :key="col.key">
+                    <span class="badge" :class="badge(col, row).cls" x-show="hasBadge(col, row)"><svg class="icon icon-sm" aria-hidden="true"><use :href="badge(col, row).href"/></svg><span x-text="badge(col, row).label"></span></span>
+                  </template>
+                </span>
+              </span>
+              <span class="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-sm" x-show="cardSpecs.length">
+                <template x-for="col in cardSpecs" :key="col.key">
+                  <span class="flex min-w-0 justify-between gap-2">
+                    <span class="truncate text-muted" x-text="col.label"></span>
+                    <span class="truncate font-medium text-ink" :class="isNumeric(col) && 'num'" x-text="text(col, row)"></span>
+                  </span>
+                </template>
+              </span>
+              <span class="mt-1.5 block truncate text-xs text-muted" x-show="cardMeta.length" x-text="metaText(row)"></span>
+            </div>
+          </div>
+          {# Kart işlemleri: birincil ve vurgulu işlem düğme olarak, kalanı "Diğer" menüsünde. #}
+          <div class="relative flex flex-wrap items-center justify-end gap-2 px-3 pb-3" x-show="(actionsFor(row).length || reorderable) && !isGroupCollapsed(row)" @click.outside="isMenuOpen(row) && (menuFor = null)" data-testid="card-actions">
+            {# Telefonda sıralama: yukarı / aşağı #}
+            <span class="mr-auto flex items-center gap-1" x-show="reorderable">
+              <button type="button" class="btn-icon h-10 w-10" @click="moveBy(row, -1)" :disabled="reorderBusy || index === 0" aria-label="Yukarı taşı"><svg class="icon icon-sm -rotate-90" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>
+              <button type="button" class="btn-icon h-10 w-10" @click="moveBy(row, 1)" :disabled="reorderBusy || index === viewRows.length - 1" aria-label="Aşağı taşı"><svg class="icon icon-sm rotate-90" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>
+            </span>
+            <template x-for="action in inlineActions(row)" :key="action.key">
+              <button type="button" class="btn btn-sm" :class="actionClass(action)" @click="run(action, row)" x-text="action.label"></button>
+            </template>
+            <template x-if="menuActions(row).length">
+              <button type="button" class="btn btn-secondary btn-sm" @click="toggleMenu(row, $event)" :aria-expanded="isMenuOpen(row)" aria-haspopup="menu" data-testid="card-more">
+                Diğer <svg class="icon icon-sm" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+              </button>
+            </template>
+            <div class="fixed z-50 w-52 rounded-card border border-line bg-surface p-1.5 text-left shadow-pop" :style="menuPos" x-show="isMenuOpen(row)" x-cloak role="menu" data-testid="card-menu">
+              <template x-for="action in menuActions(row)" :key="action.key">
+                <button type="button" role="menuitem" class="flex min-h-11 w-full items-center gap-2 rounded-control px-3 text-sm hover:bg-surface-subtle" :class="action.tone === 'danger' ? 'text-danger' : 'text-ink'" @click="run(action, row)">
+                  <svg class="icon icon-sm" x-show="action.icon" aria-hidden="true"><use :href="'#i-' + action.icon"/></svg>
+                  <span x-text="action.label"></span>
+                </button>
+              </template>
+            </div>
+          </div>
+        </li>
+      </template>
+    </ul>
+  </div>
+
+  {# Boş durum #}
+  <template x-if="isEmpty">
+    <div class="flex flex-col items-center border-t border-line px-4 py-12 text-center">
+      <span class="grid h-12 w-12 place-items-center rounded-full bg-surface-subtle text-muted"><svg class="icon icon-lg" aria-hidden="true"><use :href="'#i-' + (emptyState.icon || 'layers')"/></svg></span>
+      <p class="mt-3 font-semibold text-ink" x-text="emptyTitle"></p>
+      <p class="mt-1 max-w-sm text-sm text-ink-2" x-show="emptyText" x-text="emptyText"></p>
+      <button type="button" class="btn btn-secondary mt-4" x-show="emptyByFilter" @click="clearAll()">Filtreleri temizle</button>
+    </div>
+  </template>
+
+  {# Alt bilgi: toplamlar ve sayfalama #}
+  <div class="flex flex-col gap-3 border-t border-line px-3 py-3 md:flex-row md:items-center md:px-4" x-show="loadedOnce && total > 0">
+    <div class="flex flex-wrap items-center gap-x-5 gap-y-1 text-sm">
+      <span class="num text-ink-2" x-text="rangeText"></span>
+      <template x-for="def in totalsDef" :key="def.key">
+        <span class="text-ink-2"><span x-text="def.label"></span>: <strong class="num font-semibold text-ink" x-text="totalText(def)"></strong></span>
+      </template>
+    </div>
+    <div class="flex items-center gap-2 md:ml-auto">
+      <label class="hidden items-center gap-2 text-sm text-ink-2 sm:flex">
+        Sayfada
+        <select class="input min-h-9 w-20 py-0 text-sm" :value="perPage" @change="setPerPage($event.target.value)">
+          <template x-for="n in pageSizes" :key="n"><option :value="n" x-text="n" :selected="n === perPage"></option></template>
+        </select>
+      </label>
+      <nav class="ml-auto flex items-center gap-1 md:ml-0" aria-label="Sayfalar">
+        <button type="button" class="btn-icon h-10 w-10" @click="go(page - 1)" :disabled="page <= 1" aria-label="Önceki sayfa"><svg class="icon" aria-hidden="true"><use href="#i-chevron-left"/></svg></button>
+        <template x-for="(p, i) in pageWindow" :key="i">
+          <span>
+            <template x-if="p === null"><span class="px-1 text-muted">…</span></template>
+            <template x-if="p !== null">
+              <button type="button" class="num h-10 min-w-10 rounded-control px-2 text-sm font-medium"
+                :class="p === page ? 'bg-primary-strong text-white' : 'text-ink-2 hover:bg-surface-subtle'" @click="go(p)" :aria-current="p === page ? 'page' : null" x-text="p"></button>
+            </template>
+          </span>
+        </template>
+        <button type="button" class="btn-icon h-10 w-10" @click="go(page + 1)" :disabled="page >= pages" aria-label="Sonraki sayfa"><svg class="icon" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>
+      </nav>
+    </div>
+  </div>
+</div>

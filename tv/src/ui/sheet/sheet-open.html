@@ -1,0 +1,21 @@
+<!-- km-sheet başlangıcı. Kapsayıcı: <div x-data="kmSheet({...})" x-modelable="open" x-model="…">. İçerik sonrası: sheet-close.html -->
+<template x-teleport="body">
+<div class="fixed inset-0 z-[60] flex items-stretch justify-center sm:items-center sm:p-4" x-show="open" x-cloak
+  @keydown.escape.stop.prevent="dismiss()" @keydown.tab="trap($event)" role="dialog" aria-modal="true" :aria-label="title">
+  <div class="absolute inset-0 bg-ink/50" x-show="open" x-transition.opacity.duration.150ms @click="dismiss()"></div>
+  <div x-ref="panel" tabindex="-1"
+    class="relative flex h-dvh w-full flex-col bg-surface shadow-pop outline-none sm:h-auto sm:max-h-[90vh] sm:rounded-card"
+    :class="sizeClass"
+    x-show="open"
+    x-transition:enter="transition duration-200 ease-out" x-transition:enter-start="translate-y-4 opacity-0 sm:translate-y-2" x-transition:enter-end="translate-y-0 opacity-100"
+    x-transition:leave="transition duration-150 ease-in" x-transition:leave-start="opacity-100" x-transition:leave-end="translate-y-4 opacity-0 sm:translate-y-2">
+    <header class="flex items-start gap-3 border-b border-line px-4 pb-3 pt-[calc(env(safe-area-inset-top)+0.75rem)] sm:px-5 sm:pt-4">
+      <div class="min-w-0 flex-1">
+        <h2 class="text-lg font-semibold text-ink" x-text="title"></h2>
+        <p class="mt-0.5 text-sm text-ink-2" x-show="subtitle" x-text="subtitle"></p>
+      </div>
+      <button type="button" class="btn-icon -mr-2 -mt-1" @click="close()" :disabled="busy" aria-label="{{ t('common.close') }}">
+        <svg class="icon" aria-hidden="true"><use href="#i-x"/></svg>
+      </button>
+    </header>
+    <div class="sheet-body flex-1 overflow-y-auto px-4 pt-4 sm:px-5 sm:pt-5">

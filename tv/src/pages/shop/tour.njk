@@ -1,0 +1,49 @@
+{% extends "layouts/base.njk" %}
+{% import "macros/ui.njk" as ui %}
+{% import "macros/live.njk" as live %}
+
+{#
+  Tur sayfası (Rezervasyon): içerik ziyaret anında ($store.km.entry); JSON-LD TouristTrip sunucunun
+  (TourType::structuredData). Sayfa bölümleri ve rezervasyon kutusu rezervasyon profilinden (kodmob-api
+  Booking\BookingView). Sayfa bölümleri Sayfa düzenleyicinin bölgesinde (`tour.sections`; ilk blokları aşağıda,
+  "Kayıt sayfası" blokları içeriği kayıttan alır, bütün turlarda ortak); kutu pages/shop/_booking-box.njk.
+#}
+{% block content %}
+<template x-if="$store.km.notFound">
+  <section class="container-site grid min-h-[50vh] place-items-center py-20">
+    <div class="card w-full max-w-md p-8 text-center">
+      <h1 class="h2">{{ t('notFound.title') }}</h1>
+      <a href="{{ url('tours') }}" class="btn btn-primary mt-6">{{ t('shop.booking.back') }}</a>
+    </div>
+  </section>
+</template>
+
+<template x-if="$store.km.entry" data-km-ssr>
+<div x-data="{ p: $store.km.entry }">
+<article class="container-site grid gap-10 py-10 lg:grid-cols-[1fr_24rem] lg:py-16">
+  <div class="min-w-0">
+    <nav class="breadcrumb mb-6" aria-label="{{ t('common.breadcrumb') }}">
+      <a href="{{ url('tours') }}">{{ t('shop.booking.meta.title') }}</a>{{ ui.icon('chevron-right', 'icon icon-sm') }}
+      <span aria-current="page" x-text="p.title"><!--km:e:title--></span>
+    </nav>
+    <h1 class="display text-[2rem] sm:text-[2.5rem]" x-text="p.title"><!--km:e:title--></h1>
+    <p class="lead mt-4" x-text="p.summary"><!--km:e:summary--></p>
+    <div class="mt-8 overflow-hidden rounded-card">
+      {{ live.img('p.cover', '(min-width: 1024px) 720px, 100vw', 'aspect-[16/9] w-full object-cover', eager=true, alt='p.title') }}
+    </div>
+    <template x-if="p.gallery?.length">
+      <div class="mt-3 grid grid-cols-3 gap-3 sm:grid-cols-4">
+        <template x-for="(g, i) in p.gallery.slice(0, 8)" :key="i">
+          <div class="aspect-[4/3] overflow-hidden rounded-tile">{{ live.img('g', '(min-width: 640px) 25vw, 33vw', 'h-full w-full object-cover', alt='p.title') }}</div>
+        </template>
+      </div>
+    </template>
+    <div class="prose mt-10" x-html="p.body"><!--km:h:body--></div>
+    <div class="book-zone mt-5">{{ zone('tour.sections', 'Tur bölümleri', ['entry-facts', 'entry-highlights', 'entry-itinerary', 'entry-includes', 'entry-faq']) }}</div>
+  </div>
+
+  {% include "pages/shop/_booking-box.njk" %}
+</article>
+</div>
+</template>
+{% endblock %}

@@ -1,0 +1,16 @@
+{
+  "label": "Öne çıkan turlar",
+  "description": "Rezervasyondaki turlar kartlarla: görsel, süre ve başlayan fiyat. Tur yoksa bölüm görünmez.",
+  "category": "commerce",
+  "icon": "map",
+  "module": "booking",
+  "needs": ["tours"],
+  "fields": [
+    { "name": "eyebrow", "type": "text", "label": "Üst etiket", "localized": true, "max": 60, "default": "@blocks.tours.eyebrow" },
+    { "name": "title", "type": "text", "label": "Başlık", "localized": true, "max": 120, "default": "@blocks.tours.title" },
+    { "name": "cta", "type": "text", "label": "Bağlantı yazısı", "localized": true, "max": 40, "default": "@blocks.tours.cta" },
+    { "name": "ctaUrl", "type": "link", "label": "Bağlantı", "default": "route:tours" },
+    { "name": "from", "type": "text", "label": "Fiyatın önündeki yazı", "localized": true, "max": 30, "default": "@shop.booking.startingAt" },
+    { "name": "count", "type": "select", "label": "Kaç tur", "options": { "3": "3", "6": "6" }, "default": "3" }
+  ]
+}

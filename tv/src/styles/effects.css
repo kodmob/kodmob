@@ -1,0 +1,292 @@
+/*
+ * Görsel efektler. Hepsi yalnızca `transform` ile çalışır (GPU'da, yerleşimi
+ * bozmadan). Dokunmatik ekranda (hover yok) ve "hareketi azalt" tercihinde
+ * 3D eğim uygulanmaz: öğe düz durur.
+ */
+@layer components {
+  /* ------------------------------------------------------------ 3D eğim
+     Öğe perspektifte hafif yatık durur; üzerine gelince ya da klavyeyle
+     içine odaklanınca düz görünüme döner.
+
+       <section class="fx-tilt">…</section>
+       <section class="fx-tilt fx-tilt-alt">…</section>   ← ters yöne yatık
+
+     Açılar değişkenlerle ayarlanır: style="--tilt-y: -6deg". */
+  .fx-tilt {
+    --tilt-x: 5deg;
+    --tilt-y: -9deg;
+    --tilt-z: 0.6deg;
+    --tilt-scale: 0.955;
+    --tilt-depth: 1800px;
+    position: relative;
+    transition:
+      transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1),
+      box-shadow 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .fx-tilt-alt {
+    --tilt-y: 9deg;
+    --tilt-z: -0.6deg;
+  }
+
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .fx-tilt {
+      transform: perspective(var(--tilt-depth)) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) rotateZ(var(--tilt-z)) scale(var(--tilt-scale));
+    }
+    .fx-tilt:hover,
+    .fx-tilt:focus-within {
+      z-index: 1;
+      transform: perspective(var(--tilt-depth)) rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1);
+      box-shadow: var(--shadow-lift);
+    }
+  }
+
+  /* Eğilen bölümü yüzen bir panele çevirir (zemin, köşe, gölge, iç boşluk).
+     Genişlik içerik alanıyla sınırlı: eğilen kenar ekrandan taşmaz. */
+  .fx-panel {
+    @apply mx-auto my-6 max-w-site rounded-[28px] border border-line bg-surface;
+    padding-inline: clamp(1rem, 3vw, 2.5rem);
+    box-shadow: var(--shadow-card);
+  }
+
+  /* ------------------------------------------------------------ kart yığını
+     css-tricks.com'un meşhur kart yığını, 3D eğimle: kartlar üst üste biner,
+     üzerine gelinen kart kalkar ve düzleşir, arkasındakiler `--stack-shift`
+     kadar kayıp yer açar.
+
+       <div class="card-stack">
+         <a class="stack-card">…</a> × n
+       </div>
+
+     Dokunmatikte kartlar üst üste binmez; yana kaydırılan düz bir liste olur. */
+  .card-stack {
+    --stack-overlap: 10rem;
+    --stack-shift: var(--stack-overlap);
+    @apply flex overflow-x-auto;
+    padding: 2.5rem 1.5rem 3rem;
+    scrollbar-width: none;
+  }
+  .card-stack::-webkit-scrollbar { display: none; }
+  /* Alana yayılan yığın (ör. koyu bandın içi): bindirme, kart sayısına ve
+     kapsayıcı genişliğine göre hesaplanır; yığın genişliği tam doldurur:
+       n·kart − (n−1)·bindirme = genişlik
+     Üzerine gelinen kart arkadakileri itmez, öne çıkar (taşma olmaz).
+     Kart sayısı :has() ile okunur (satır içi stil CSP'de kapalı); 8'e kadar. */
+  .card-stack-fit { --stack-n: 3; --stack-shift: 0px; container-type: inline-size; }
+  .card-stack-fit:has(> :nth-child(4)) { --stack-n: 4; }
+  .card-stack-fit:has(> :nth-child(5)) { --stack-n: 5; }
+  .card-stack-fit:has(> :nth-child(6)) { --stack-n: 6; }
+  .card-stack-fit:has(> :nth-child(7)) { --stack-n: 7; }
+  .card-stack-fit:has(> :nth-child(8)) { --stack-n: 8; }
+  .card-stack-fit > .stack-card {
+    --stack-overlap: clamp(3rem, (var(--stack-n) * var(--stack-card-w) - 100cqw) / (var(--stack-n) - 1), 14rem);
+  }
+
+  .stack-card {
+    --stack-card-w: 17rem;
+    @apply relative flex min-h-[22rem] shrink-0 flex-col gap-3 overflow-hidden rounded-card p-6 text-white;
+    flex-basis: var(--stack-card-w);
+    background: linear-gradient(160deg, var(--color-navy-2) 0%, var(--color-navy) 100%);
+    border: 1px solid rgb(255 255 255 / 0.09);
+    box-shadow: -1.25rem 0 2.5rem -0.75rem color-mix(in oklab, var(--color-navy) 55%, transparent);
+    transform-origin: left center;
+    transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .stack-card + .stack-card { margin-left: 1rem; }
+  .stack-card::before {
+    content: "";
+    @apply pointer-events-none absolute inset-0;
+    background: radial-gradient(18rem 12rem at 100% 0%, color-mix(in oklab, var(--color-primary-strong) 45%, transparent), transparent 70%);
+  }
+  .stack-card > * { @apply relative; }
+  .stack-card-title { @apply text-xl font-bold; }
+  .stack-card-text { @apply text-sm text-navy-ink; }
+
+  @media (hover: hover) and (pointer: fine) {
+    /* Üst üste binen yığın ekrana sığar; kaydırma gerekmez ve gölgeler kesilmez. */
+    .card-stack { overflow: visible; }
+    .card-stack-fit { justify-content: center; }
+    .stack-card + .stack-card { margin-left: calc(var(--stack-overlap) * -1); }
+    .stack-card:hover, .stack-card:focus-visible { z-index: 1; }
+  }
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .stack-card { transform: perspective(1200px) rotateY(-16deg); }
+    .stack-card:hover,
+    .stack-card:focus-visible {
+      transform: perspective(1200px) translateY(-1rem) rotateY(0deg);
+    }
+    .stack-card:hover ~ .stack-card,
+    .stack-card:focus-visible ~ .stack-card {
+      transform: perspective(1200px) translateX(var(--stack-shift)) rotateY(-16deg);
+    }
+  }
+  /* Hareket azaltma tercihinde yığın yine açılır, yalnızca animasyonsuz. */
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: reduce) {
+    .stack-card { transition: none; }
+    .stack-card:hover ~ .stack-card,
+    .stack-card:focus-visible ~ .stack-card { transform: translateX(var(--stack-shift)); }
+  }
+}
+
+/* 3D modunda eğik bölümlerin taşan kenarı yatay kaydırma çubuğu açmasın. */
+html.fx-3d body {
+  overflow-x: clip;
+}
+
+/* ============================================================ kaydırınca belirme
+   ui/effects/reveal.js. Gizleme yalnızca html.reveal-ready varken: JavaScript
+   yoksa içerik görünür kalır. */
+@layer components {
+  .reveal-ready .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition:
+      opacity 0.9s cubic-bezier(0.2, 0.8, 0.2, 1),
+      transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .reveal-ready .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+  .reveal-delay-1 { transition-delay: 0.12s; }
+  .reveal-delay-2 { transition-delay: 0.24s; }
+  .reveal-delay-3 { transition-delay: 0.36s; }
+  .reveal-delay-4 { transition-delay: 0.48s; }
+
+  /* İlk ekran için yükleme animasyonu (yalnızca CSS; JavaScript beklemez). */
+  .fade-up { animation: km-fade-up 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+  .fade-up-1 { animation-delay: 0.1s; }
+  .fade-up-2 { animation-delay: 0.2s; }
+  .fade-up-3 { animation-delay: 0.3s; }
+  .fade-up-4 { animation-delay: 0.4s; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal-ready .reveal { opacity: 1; transform: none; transition: none; }
+    .fade-up { animation: none; }
+  }
+}
+
+@keyframes km-fade-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ============================================================ özel imleç
+   ui/effects/cursor.js. Katmanlar JS ile eklenir; html.has-custom-cursor
+   yalnızca fareli cihazda konur. Yazı alanlarında tarayıcı imleci görünür. */
+html.has-custom-cursor,
+html.has-custom-cursor * {
+  cursor: none;
+}
+html.has-custom-cursor :is(input, textarea, select, [contenteditable]) {
+  cursor: auto;
+}
+
+.km-cursor-dot,
+.km-cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  border-radius: 9999px;
+  pointer-events: none;
+  will-change: translate;
+  transition: opacity 0.3s ease, scale 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+.km-cursor-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--color-primary);
+  box-shadow: 0 0 12px 3px color-mix(in oklab, var(--color-primary-strong) 35%, transparent);
+}
+.km-cursor-ring {
+  z-index: 9998;
+  width: 34px;
+  height: 34px;
+  border: 1.5px solid color-mix(in oklab, var(--color-primary-strong) 35%, transparent);
+}
+/* Bağlantı ve düğme üstünde beyaz, mavi kenarlı: mavi düğmede de beyaz zeminde de görünür. */
+.km-cursor-dot.is-active {
+  scale: 1.8;
+  background: #fff;
+  box-shadow: 0 0 0 1.5px var(--color-primary), 0 0 12px 3px color-mix(in oklab, var(--color-primary-strong) 35%, transparent);
+}
+.km-cursor-ring.is-active {
+  scale: 1.5;
+  border-color: color-mix(in oklab, var(--color-primary-strong) 60%, transparent);
+  background: color-mix(in oklab, var(--color-primary-strong) 6%, transparent);
+}
+.km-cursor-ring.is-pressed { scale: 0.85; }
+.km-cursor-dot.is-hidden,
+.km-cursor-ring.is-hidden { opacity: 0; }
+
+.km-cursor-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 9990;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* ============================================================ sayfa geçişleri
+   Belgeler arası View Transitions: sayfalar arasında yumuşak geçiş. Header
+   sabit kalır; içerik hafif kayarak değişir. Proje kartındaki görsel detay
+   sayfasının hero görseline akar (kartın adını ui/effects/page-transitions.js verir).
+   Desteklemeyen tarayıcıda normal sayfa geçişi olur. */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+
+  .site-header { view-transition-name: site-header; }
+  /* Detay sayfasında tek hero var: adı sabit verilebilir (yeni sayfa JS beklemez). */
+  [data-vt-hero] { view-transition-name: km-media; }
+
+  ::view-transition-old(root) {
+    animation: km-vt-out 0.22s cubic-bezier(0.4, 0, 1, 1) both;
+  }
+  ::view-transition-new(root) {
+    animation: km-vt-in 0.38s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  ::view-transition-group(km-media) {
+    animation-duration: 0.45s;
+    animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+}
+
+@keyframes km-vt-out {
+  to { opacity: 0; transform: translateY(-8px); }
+}
+@keyframes km-vt-in {
+  from { opacity: 0; transform: translateY(12px); }
+}
+
+/* ============================================================ kaydırmaya bağlı çizgi
+   Süreç adımlarının arkasındaki çizgi, bölüm ekranda ilerledikçe soldan dolar
+   (CSS scroll-driven animations; JavaScript yok). Desteklemeyen tarayıcıda
+   kesikli çizgi olduğu gibi kalır. */
+@supports (animation-timeline: view()) {
+  @media (min-width: 64rem) and (prefers-reduced-motion: no-preference) {
+    .steps { position: relative; }
+    .steps::before {
+      content: "";
+      position: absolute;
+      top: 1.5rem;
+      left: 1.5rem;
+      right: 1.5rem;
+      height: 2px;
+      border-radius: 2px;
+      background: linear-gradient(90deg, var(--color-primary), color-mix(in oklab, var(--color-primary) 55%, white));
+      transform-origin: left center;
+      animation: km-grow-x linear both;
+      animation-timeline: view();
+      animation-range: entry 40% cover 55%;
+    }
+    .step { z-index: 1; }
+  }
+}
+
+@keyframes km-grow-x {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}

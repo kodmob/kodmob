@@ -1,0 +1,95 @@
+<div class="pn-page" x-data="kmOverview">
+  <div class="pn-hello">
+    <div>
+      <h2 class="h2" x-text="greeting"></h2>
+      <p class="mt-1 text-ink-2">Sitedeki içerik burada. Kaydettiğiniz her değişiklik anında yayında.</p>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <template x-if="firstType">
+        <a :href="$href('editor', { type: firstType.key, id: 0 })" class="btn btn-primary"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-plus"/></svg> <span x-text="firstType.newLabel"></span></a>
+      </template>
+      <a :href="$href('editor', { type: 'posts', id: 0 })" class="btn btn-secondary" x-show="$store.session.can('km_manage_posts')"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-pencil"/></svg> Yeni yazı</a>
+      <a :href="$href('other')" class="btn btn-ghost" data-testid="overview-all"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-grid"/></svg> Tüm işlemler</a>
+    </div>
+  </div>
+
+  <div class="pn-stats">
+    <template x-for="(t, key) in types" :key="key">
+      <a :href="$store.session.can(t.can) ? $href('list', { type: key }) : null" class="card pn-stat" :class="$store.session.can(t.can) && 'card-hover'">
+        <span class="icon-tile"><svg class="icon icon-lg" aria-hidden="true"><use :href="'#i-' + t.icon"/></svg></span>
+        <span class="pn-stat-label" x-text="t.label"></span>
+        <template x-if="loading"><span class="skeleton h-9 w-16 rounded-md"></span></template>
+        <template x-if="!loading && data">
+          <span>
+            <span class="pn-stat-value" x-text="data.counts[key].total"></span>
+            <span class="pn-stat-sub"><span x-text="data.counts[key].published"></span> yayında<template x-if="data.counts[key].draft"><span> · <span x-text="data.counts[key].draft"></span> taslak</span></template></span>
+          </span>
+        </template>
+      </a>
+    </template>
+  </div>
+
+  <div class="grid gap-5 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
+    <section class="card">
+      <div class="pn-card-head"><h3 class="h3">Son değişenler</h3></div>
+      <template x-if="loading"><div class="flex flex-col gap-3 p-5"><span class="skeleton h-12"></span><span class="skeleton h-12"></span><span class="skeleton h-12"></span></div></template>
+      <ul class="pn-feed" x-show="!loading" x-cloak>
+        <template x-for="row in (data ? data.recent : [])" :key="row.type + row.id">
+          <li>
+            <a :href="$href('editor', { type: row.type, id: row.id })" class="pn-feed-item">
+              <span class="pn-thumb">
+                <template x-if="row.image"><img :src="row.image.src" alt=""></template>
+                <template x-if="!row.image"><svg class="icon" aria-hidden="true"><use :href="'#i-' + types[row.type].icon"/></svg></template>
+              </span>
+              <span class="min-w-0 flex-1"><span class="block truncate font-semibold text-ink" x-text="row.title"></span><span class="block text-xs text-muted"><span x-text="types[row.type].singular"></span> · <span x-text="relative(row.modified)"></span></span></span>
+              <span class="badge" :class="status[row.status]?.badge" x-text="status[row.status]?.label"></span>
+            </a>
+          </li>
+        </template>
+      </ul>
+    </section>
+
+    <section class="card" x-show="$store.session.can('km_view_briefs')">
+      <div class="pn-card-head">
+        <h3 class="h3">Talepler</h3>
+        <a :href="$href('briefs')" class="link-arrow text-sm">Tümü <svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+      </div>
+      <template x-if="!loading && data && data.briefs">
+        <div>
+          <p class="px-5 text-sm text-ink-2" x-show="data.briefs.new"><span class="font-bold text-primary" x-text="data.briefs.new"></span> yeni talep okunmayı bekliyor.</p>
+          <ul class="pn-feed">
+            <template x-for="b in data.briefs.latest" :key="b.id">
+              <li><a :href="$href('briefs')" class="pn-feed-item">
+                <span class="avatar grid place-items-center bg-primary-soft text-sm font-bold text-primary" aria-hidden="true" x-text="b.name.slice(0, 1).toUpperCase()"></span>
+                <span class="min-w-0 flex-1"><span class="block truncate font-semibold text-ink" x-text="b.name"></span><span class="block truncate text-xs text-muted" x-text="b.message"></span></span>
+                <span class="text-xs text-muted" x-text="relative(b.created_at.replace(' ', 'T'))"></span>
+              </a></li>
+            </template>
+            <li x-show="!data.briefs.latest.length" class="px-5 py-6 text-sm text-muted">Henüz talep yok.</li>
+          </ul>
+        </div>
+      </template>
+    </section>
+
+    <section class="card lg:col-span-2" x-show="$store.session.can('km_use_jarvis|km_use_domains')" x-data="{ jobs: [], ai: null }" x-init="$store.session.can('km_use_jarvis|km_use_domains') && api.jarvis().then((r) => { jobs = r.jobs; ai = r.ai; }).catch(() => {})">
+      <div class="pn-card-head">
+        <h3 class="h3 flex items-center gap-2"><svg class="icon text-primary" aria-hidden="true"><use href="#i-sparkles"/></svg> Jarvis</h3>
+        <div class="flex gap-2">
+          <a :href="$href('domains')" class="btn btn-secondary btn-sm" x-show="$store.session.can('km_use_domains')"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-globe"/></svg> Domain arama</a>
+          <a :href="$href('jarvis')" class="btn btn-primary btn-sm" x-show="$store.session.can('km_use_jarvis')"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-sparkles"/></svg> Asistan</a>
+        </div>
+      </div>
+      <div class="px-5 pb-5">
+        <p class="text-sm text-ink-2" x-show="!jobs.length">Süren tarama yok. Domain aramada kısa adları tarayabilir ya da Jarvis'e sorabilirsiniz<span x-show="ai && !ai.configured"> (sohbet için Claude API anahtarı gerekli)</span>.</p>
+        <ul class="flex flex-col gap-3" x-show="jobs.length">
+          <template x-for="job in jobs" :key="job.id">
+            <li><a :href="$href('domains', { job: job.id })" class="block rounded-control border border-line p-3 hover:bg-surface-subtle">
+              <span class="flex items-center justify-between gap-3 text-sm"><span class="truncate font-medium text-ink" x-text="job.title"></span><span class="num shrink-0 text-xs text-ink-2" x-text="job.found + ' boş · %' + job.progress"></span></span>
+              <span class="progress mt-2 block"><span :style="{ width: job.progress + '%' }"></span></span>
+            </a></li>
+          </template>
+        </ul>
+      </div>
+    </section>
+  </div>
+</div>

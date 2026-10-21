@@ -1,0 +1,7 @@
+{
+  "group": "commerce",
+  "order": 10,
+  "module": "commerce",
+  "updated": "2026-10-21",
+  "paths": { "tr": "mesafeli-satis-sozlesmesi", "en": "distance-sales-contract", "de": "fernabsatzvertrag" }
+}

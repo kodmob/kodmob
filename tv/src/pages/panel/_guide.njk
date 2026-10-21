@@ -1,0 +1,144 @@
+{# Kullanım Kılavuzu: tur ve rehberler. Mantık: panel/guide.js (tur: panel/tour.js); stil: styles/panel/guide.css. #}
+<div class="pn-page" x-data="kmGuide">
+  {# ============================================================ rehber listesi #}
+  <template x-if="!current">
+    <div class="flex flex-col gap-5">
+      <div class="pn-bar">
+        <div class="min-w-0 flex-1">
+          <p class="pn-bar-title">Kullanım Kılavuzu</p>
+          <p class="pn-bar-meta"><span>Menüyü turla tanıyın, ayrıntıyı rehberlerden okuyun.</span></p>
+        </div>
+        <a :href="$href('other')" class="btn btn-secondary"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chevron-left"/></svg> Tüm İşlemler</a>
+        <button type="button" class="btn btn-primary" @click="startTour()" data-testid="guide-tour"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-refresh"/></svg> Turu başlat</button>
+      </div>
+
+      <section class="card">
+        <div class="card-body flex flex-col gap-4 md:flex-row md:items-center">
+          <span class="tone-icon tone-primary"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg></span>
+          <div class="min-w-0 flex-1">
+            <h2 class="font-semibold text-ink">İş akışı tek bakışta</h2>
+            <ol class="guide-flow mt-2" aria-label="İş akışı">
+              <li>İçerik ekle</li><li>Görselleri yükle</li><li>Çevir</li><li>SEO'yu tamamla</li><li>Yayınla</li><li>Talepleri yanıtla</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="guides-title">
+        <h2 id="guides-title" x-ref="guidesTitle" tabindex="-1" class="mb-3 text-base font-semibold text-ink outline-none">Rehberler</h2>
+        <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+          <template x-for="g in guides" :key="g.key">
+            <article class="card flex flex-col" :data-guide="g.key">
+              <div class="card-body flex flex-1 flex-col gap-3">
+                <div class="flex items-start gap-3">
+                  <span class="tone-icon" :class="'tone-' + g.tone"><svg class="icon" aria-hidden="true"><use :href="'#i-' + g.icon"/></svg></span>
+                  <div class="min-w-0 flex-1">
+                    <h3 class="font-semibold text-ink" x-text="g.title"></h3>
+                    <p class="mt-1 text-sm text-ink-2" x-text="g.summary"></p>
+                  </div>
+                </div>
+                <div class="mt-auto flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted">
+                  <span class="flex items-center gap-1"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-clock"/></svg><span x-text="g.minutes + ' dk okuma'"></span></span>
+                  <span class="flex items-center gap-1"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-users"/></svg><span x-text="g.audience"></span></span>
+                  <button type="button" class="btn btn-secondary btn-sm ml-auto" @click="open(g.key)" :aria-label="g.title + ': oku'">Oku <svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
+                </div>
+              </div>
+            </article>
+          </template>
+        </div>
+      </section>
+    </div>
+  </template>
+
+  {# ============================================================ okuyucu #}
+  <template x-if="current">
+    <div class="flex flex-col gap-4">
+      <div class="pn-bar print:hidden">
+        <button type="button" class="btn btn-ghost btn-sm" @click="close()" data-testid="guide-back"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chevron-left"/></svg> Rehberler</button>
+        <div class="min-w-0 flex-1">
+          <p class="pn-bar-title" x-text="current.title"></p>
+          <p class="pn-bar-meta"><span x-text="current.audience + ' · ' + current.minutes + ' dk okuma'"></span></p>
+        </div>
+        <button type="button" class="btn btn-secondary" @click="print()" :disabled="loading || !html"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-printer"/></svg> Yazdır</button>
+      </div>
+
+      <div class="grid grid-cols-1 gap-5 xl:grid-cols-[15rem_minmax(0,1fr)]">
+        <nav class="guide-toc hidden xl:block print:hidden" aria-label="Rehber bölümleri" x-show="toc.length">
+          <p class="mb-2 text-xs font-semibold tracking-wider text-muted uppercase">Bölümler</p>
+          <ul>
+            <template x-for="t in toc" :key="t.id">
+              <li><a :href="'#' + t.id" @click.prevent="jump(t.id)" :class="tocActive === t.id ? 'is-active' : ''" :aria-current="tocActive === t.id ? 'true' : null" x-text="t.label"></a></li>
+            </template>
+          </ul>
+        </nav>
+
+        <div class="card print:border-0 print:shadow-none">
+          <template x-if="loading">
+            <div class="card-body flex flex-col gap-3"><div class="skeleton h-8 w-2/3"></div><div class="skeleton h-4"></div><div class="skeleton h-4"></div><div class="skeleton h-40"></div></div>
+          </template>
+          <p class="hidden px-6 pt-6 text-xl font-semibold text-ink print:block" x-text="current.title"></p>
+          <article class="guide card-body" x-show="!loading" x-html="html" data-testid="guide-article"></article>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  {# Tur: body'ye taşınır (menü çekmecesinin ve üst barın üstünde durur). #}
+  <template x-teleport="body">
+    <div x-data="kmGuideTour">
+      <div class="tour" x-show="open" x-cloak data-testid="tour">
+        <div class="tour-block" @click.stop></div>
+        <div class="tour-shade" :style="shadeTop"></div>
+        <div class="tour-shade" :style="shadeBottom"></div>
+        <div class="tour-shade" :style="shadeLeft"></div>
+        <div class="tour-shade" :style="shadeRight"></div>
+        <div class="tour-ring" :class="rect ? '' : 'is-hidden'" :style="ring"></div>
+
+        <section x-ref="card" class="tour-card" :class="[placed && 'is-placed', step && !step.target && 'is-wide']" :style="cardStyle"
+          role="dialog" aria-modal="true" aria-labelledby="tour-title" aria-describedby="tour-text" data-testid="tour-card">
+          <div class="tour-progress" aria-hidden="true"><span :style="progress"></span></div>
+          <div class="tour-body">
+            <p class="tour-eyebrow">
+              <span x-text="step?.eyebrow || 'Kullanım Kılavuzu'"></span>
+              <span class="num" x-text="(index + 1) + ' / ' + total"></span>
+            </p>
+            <h2 id="tour-title" class="tour-title" x-text="step?.title"></h2>
+            <p id="tour-text" class="tour-text" x-text="step?.text" aria-live="polite"></p>
+            <template x-if="step?.flow">
+              <ol class="tour-flow">
+                <template x-for="(f, i) in step.flow" :key="f">
+                  <li><span x-text="f"></span><svg class="icon icon-sm" x-show="i < step.flow.length - 1" aria-hidden="true"><use href="#i-chevron-right"/></svg></li>
+                </template>
+              </ol>
+            </template>
+            <p class="tour-keys" x-show="isFirst">Klavye: → ileri, ← geri, Boşluk otomatik oynatır / duraklatır, Esc turu kapatır.</p>
+          </div>
+          <div class="tour-actions">
+            <button type="button" class="btn btn-ghost btn-sm" @click="finish()" x-show="!isLast" data-testid="tour-skip">Turu atla</button>
+            <button type="button" class="btn btn-sm px-2.5" :class="autoplay ? 'btn-secondary' : 'btn-ghost'" x-show="!isLast" @click="toggleAutoplay()" :aria-pressed="autoplay" data-testid="tour-autoplay"
+              :title="autoplay ? 'Duraklat: adımlar kendiliğinden ilerliyor (Boşluk)' : 'Otomatik oynat: adımlar kendiliğinden ilerlesin (Boşluk)'">
+              <span class="tour-auto-icon" aria-hidden="true">
+                <span x-text="autoplay ? '❚❚' : '▶'"></span>
+                {# Geri sayım: sıradaki karta kalan süre, saat yönünün tersine eriyen halka (tour.js armAutoplay). #}
+                <template x-for="key in timer" :key="key">
+                  <svg class="tour-timer" viewBox="0 0 24 24" :style="{ '--tour-dur': autoMs + 'ms' }" data-testid="tour-timer">
+                    <circle class="tour-timer-track" cx="12" cy="12" r="10"/>
+                    <circle class="tour-timer-left" cx="12" cy="12" r="10"/>
+                  </svg>
+                </template>
+              </span><span class="sr-only" x-text="autoplay ? 'Duraklat' : 'Otomatik oynat'"></span>
+            </button>
+            <span class="flex-1"></span>
+            <button type="button" class="btn btn-secondary btn-sm" x-show="!isFirst" @click="prev()" data-testid="tour-prev">
+              <svg class="icon icon-sm" aria-hidden="true"><use href="#i-chevron-left"/></svg> Geri
+            </button>
+            <button type="button" x-ref="next" class="btn btn-primary btn-sm" @click="next()" data-testid="tour-next">
+              <span x-text="isLast ? 'Rehberlere geç' : (isFirst ? 'Tura başla' : 'İleri')"></span>
+              <svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-right"/></svg>
+            </button>
+          </div>
+        </section>
+      </div>
+    </div>
+  </template>
+</div>

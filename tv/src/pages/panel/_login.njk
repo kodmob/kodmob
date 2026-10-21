@@ -1,0 +1,33 @@
+<div class="pn-login" x-data="kmLogin">
+  <form class="pn-login-card" @submit.prevent="submit()" novalidate>
+    <div class="pn-login-head">
+      <span class="pn-brand"><span class="site-logo-text">kodmob</span><span class="pn-brand-sub">panel</span></span>
+      <h1 class="h3 mt-6">Giriş yapın</h1>
+      <p class="mt-1 text-sm text-ink-2">Panel hesabınızla girin; göreceğiniz sayfalar rolünüze göredir.</p>
+    </div>
+    <div class="field" x-show="!needCode">
+      <label class="field-label" for="login-user">Kullanıcı adı ya da e-posta</label>
+      <input id="login-user" class="input" x-model="username" autocomplete="username" autocapitalize="none" spellcheck="false" autofocus :aria-invalid="!!error">
+    </div>
+    <div class="field" x-show="!needCode">
+      <label class="field-label" for="login-pass">Şifre</label>
+      <div class="relative">
+        <input id="login-pass" class="input pr-12" :type="show ? 'text' : 'password'" x-model="password" autocomplete="current-password" :aria-invalid="!!error">
+        <button type="button" class="pn-eye" @click="show = !show" :aria-label="show ? 'Şifreyi gizle' : 'Şifreyi göster'"><svg class="icon icon-sm" aria-hidden="true"><use :href="show ? '#i-eye-off' : '#i-eye'" href="#i-eye"/></svg></button>
+      </div>
+    </div>
+    {# İki adımlı doğrulama: şifre doğruysa açılır (panel/login.js). #}
+    <div class="field" x-show="needCode" x-cloak>
+      <label class="field-label" for="login-code">Doğrulama kodu</label>
+      <input id="login-code" class="input font-mono tracking-widest" x-model="code" inputmode="numeric" autocomplete="one-time-code" maxlength="12" :aria-invalid="!!error">
+      <span class="field-help">Doğrulama uygulamanızdaki 6 haneli kod. Telefonunuz yanınızda değilse yedek kodlarınızdan birini yazın.</span>
+      <button type="button" class="self-start text-sm text-muted hover:text-primary" @click="back()">← Başka hesapla gir</button>
+    </div>
+    <p class="pn-alert" x-show="error" x-text="error" role="alert" x-cloak></p>
+    <button type="submit" class="btn btn-primary btn-block btn-lg" :disabled="busy">
+      <svg class="icon icon-sm animate-spin" aria-hidden="true" x-show="busy" x-cloak><use href="#i-loader"/></svg>
+      <span x-text="busy ? 'Giriş yapılıyor…' : 'Giriş yap'">Giriş yap</span>
+    </button>
+    <a href="/" class="mx-auto text-sm text-muted hover:text-primary">← Siteye dön</a>
+  </form>
+</div>

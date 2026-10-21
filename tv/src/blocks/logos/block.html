@@ -1,0 +1,10 @@
+<section class="container-site section-sm">
+{{#eyebrow}}
+  <h2 class="eyebrow eyebrow-muted reveal" data-km-field="eyebrow">{{eyebrow}}</h2>
+{{/eyebrow}}
+  <div class="logo-strip reveal reveal-delay-1 mt-5">
+{{#items}}
+    <span class="logo-strip-item">{{#image}}<img class="logo-strip-img" src="{{image.src}}" alt="{{name}}" loading="lazy" decoding="async">{{/image}}{{^image}}<span data-km-field="items.{{@index}}.name">{{name}}</span>{{/image}}</span>
+{{/items}}
+  </div>
+</section>

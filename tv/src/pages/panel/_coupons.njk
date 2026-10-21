@@ -1,0 +1,79 @@
+{# Mağaza › Kuponlar. Mantık: panel/coupons.js. Tablo: ui/grid (kmGrid). #}
+<div class="pn-page" x-data="kmCoupons" data-testid="coupons">
+  <div class="pn-bar">
+    <div class="min-w-0 flex-1">
+      <p class="pn-bar-title">Kuponlar</p>
+      <p class="pn-bar-meta"><span>İndirim kodları; kullanım sipariş verilince sayılır.</span></p>
+    </div>
+    <button type="button" class="btn btn-primary" @click="open()" data-testid="coupon-new"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-plus"/></svg> Yeni kupon</button>
+  </div>
+
+  <template x-if="grid">
+    <div x-data="kmGrid(grid)" @grid-open="open($event.detail.row)" @grid-action="onAction($event.detail)">
+      {% include "ui/grid/grid.html" %}
+    </div>
+  </template>
+
+  <template x-if="form">
+    <div>
+      <div class="pn-modal-backdrop" @click="saving || (form = null)"></div>
+      <div class="pn-modal-wrap">
+        <form class="pn-modal max-w-lg" role="dialog" aria-modal="true" aria-labelledby="coupon-title" @submit.prevent="save()" @keydown.escape.window="saving || (form = null)" data-testid="coupon-form">
+          <header class="pn-modal-head">
+            <h2 id="coupon-title" class="h3" x-text="form.id ? 'Kuponu düzenle' : 'Yeni kupon'"></h2>
+            <button type="button" class="btn-icon ml-auto" @click="form = null" :disabled="saving" aria-label="Kapat"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button>
+          </header>
+          <div class="grid grid-cols-2 gap-4 p-5">
+            <div class="field col-span-2">
+              <label class="field-label" for="coupon-code">Kod</label>
+              <input id="coupon-code" class="input font-mono uppercase" x-model="form.code" maxlength="40" autocomplete="off" :aria-invalid="!!errors.code" required>
+              <p class="field-error" x-show="errors.code" x-text="errors.code"></p>
+            </div>
+            <div class="field">
+              <label class="field-label" for="coupon-type">Tür</label>
+              <select id="coupon-type" class="input" x-model="form.type">
+                <option value="percent">Yüzde</option>
+                <option value="fixed">Sabit tutar</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="field-label" for="coupon-value" x-text="form.type === 'percent' ? 'Yüzde (1–100)' : 'Tutar'"></label>
+              <input id="coupon-value" class="input" inputmode="decimal" x-model="form.value" :aria-invalid="!!errors.value" required>
+              <p class="field-error" x-show="errors.value" x-text="errors.value"></p>
+            </div>
+            <div class="field">
+              <label class="field-label" for="coupon-min">Alt sınır (sepet tutarı)</label>
+              <input id="coupon-min" class="input" inputmode="decimal" x-model="form.min_total" placeholder="Yok">
+            </div>
+            <div class="field">
+              <label class="field-label" for="coupon-limit">Kullanım sınırı</label>
+              <input id="coupon-limit" class="input" type="number" min="0" step="1" x-model="form.usage_limit">
+              <p class="field-help">0: sınırsız.</p>
+            </div>
+            <div class="field">
+              <label class="field-label" for="coupon-start">Başlangıç</label>
+              <input id="coupon-start" class="input" type="datetime-local" x-model="form.starts_at">
+            </div>
+            <div class="field">
+              <label class="field-label" for="coupon-end">Bitiş</label>
+              <input id="coupon-end" class="input" type="datetime-local" x-model="form.expires_at" :aria-invalid="!!errors.expires_at">
+              <p class="field-error" x-show="errors.expires_at" x-text="errors.expires_at"></p>
+            </div>
+            <div class="field col-span-2">
+              <label class="field-label" for="coupon-note">Not (yalnızca panelde)</label>
+              <input id="coupon-note" class="input" x-model="form.note" maxlength="190">
+            </div>
+            <label class="check col-span-2"><input type="checkbox" x-model="form.active"> <span>Etkin</span></label>
+          </div>
+          <footer class="pn-modal-foot">
+            <button type="button" class="btn btn-ghost" @click="form = null" :disabled="saving">Vazgeç</button>
+            <button type="submit" class="btn btn-primary" :disabled="saving" data-testid="coupon-save">
+              <svg class="icon icon-sm animate-spin" aria-hidden="true" x-show="saving" x-cloak><use href="#i-loader"/></svg>
+              <span x-text="saving ? 'Kaydediliyor…' : 'Kaydet'"></span>
+            </button>
+          </footer>
+        </form>
+      </div>
+    </div>
+  </template>
+</div>

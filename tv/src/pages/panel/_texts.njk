@@ -1,0 +1,94 @@
+{# Çoklu Dil > Metinler. Mantık: panel/texts.js. #}
+<div class="pn-page" x-data="kmTexts(r)" @keydown.window.ctrl.s.prevent="save()" @keydown.window.meta.s.prevent="save()">
+  {% include "pages/panel/_languages-tabs.njk" %}
+  <div class="pn-bar">
+    <div class="min-w-0 flex-1">
+      <p class="pn-bar-title">Sayfa metinleri</p>
+      <p class="pn-bar-meta"><span>Başlıklar, açıklamalar ve sabit bölümler; kaydedince sitede hemen güncellenir.</span><span class="pn-dirty" x-show="changed.length" x-cloak x-text="'● ' + changed.length + ' değişiklik'"></span></p>
+    </div>
+    <button type="button" class="btn btn-secondary" x-show="tab !== source && filterCounts.outdated && translatorReady()" x-cloak @click="translateOutdated()" :disabled="!!translating" data-testid="texts-translate-outdated">
+      <svg class="icon icon-sm" :class="translating === '*' && 'animate-spin'" aria-hidden="true"><use :href="translating === '*' ? '#i-loader' : '#i-sparkles'"/></svg>
+      <span x-text="'Güncellenmelileri Jarvis ile çevir (' + filterCounts.outdated + ')'"></span>
+    </button>
+    <div class="relative" x-data="{ open: false }" @click.outside="open = false" @keydown.escape="open = false">
+      <button type="button" class="btn btn-ghost" @click="open = !open" :aria-expanded="open" title="Çeviri için JSON dışa / içe aktar"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-code"/></svg> JSON</button>
+      <div class="pn-menu right-0 w-64" x-show="open" x-cloak x-transition.origin.top.right>
+        <button type="button" class="menu-item" @click="open = false; exportJson()"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-download"/></svg> <span x-text="'Dışa aktar · ' + locales[tab]"></span></button>
+        <label class="menu-item cursor-pointer"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-upload"/></svg> <span x-text="'İçe aktar → ' + locales[tab]"></span><input type="file" accept="application/json,.json" class="sr-only" @change="open = false; importJson($event.target.files); $event.target.value = ''"></label>
+      </div>
+    </div>
+    <button type="button" class="btn btn-ghost" x-show="changed.length" x-cloak @click="undo()">Vazgeç</button>
+    <button type="button" class="btn btn-primary" @click="save()" :disabled="saving || !changed.length" title="Kaydet (Ctrl+S)">
+      <svg class="icon icon-sm animate-spin" aria-hidden="true" x-show="saving" x-cloak><use href="#i-loader"/></svg>
+      <span x-text="saving ? 'Kaydediliyor…' : 'Kaydet'">Kaydet</span>
+    </button>
+  </div>
+
+  <template x-if="loading">
+    <div class="pn-texts"><span class="skeleton h-72"></span><span class="skeleton h-96"></span></div>
+  </template>
+
+  <template x-if="!loading && !fields.length">
+    <div class="card card-body text-ink-2">Değiştirilebilir metin listesi bulunamadı. Sitenin güncel derlemesi yüklendiğinde (km-manifest.json) burada görünür.</div>
+  </template>
+
+  <div class="pn-texts" x-show="!loading && fields.length" x-cloak>
+    <nav class="pn-texts-nav" aria-label="Sayfalar">
+      <template x-for="p in pageList" :key="p.key">
+        <button type="button" class="pn-texts-page" :aria-current="!query && page === p.key ? 'true' : null" @click="page = p.key; query = ''">
+          <span class="flex-1 text-left" x-text="p.label"></span>
+          <span class="pn-texts-count" :class="p.edited && 'is-edited'" x-text="p.edited ? p.edited + ' / ' + p.count : p.count" :title="p.edited ? p.edited + ' metin değiştirildi' : ''"></span>
+        </button>
+      </template>
+    </nav>
+
+    <section class="card min-w-0">
+      <div class="pn-locale-tabs" role="tablist" aria-label="Dil">
+        <template x-for="(label, code) in locales" :key="code">
+          <button type="button" role="tab" class="pn-locale-tab" :aria-selected="tab === code" @click="tab = code" :data-locale="code">
+            <img class="flag" :src="'/assets/img/flags/' + code + '.svg'" alt="" width="20" height="14">
+            <span x-text="label"></span>
+            <span class="pn-dot" :class="localeEdited(code) && 'is-on'" :title="localeEdited(code) ? 'Bu dilde değiştirilmiş metin var' : 'Bu dilde sözlükteki metinler'"></span>
+          </button>
+        </template>
+        <div class="pn-tabs ml-auto" role="tablist" aria-label="Süzgeç" data-testid="texts-filter">
+          <button type="button" role="tab" class="pn-tab" :aria-selected="filter === 'all'" @click="filter = 'all'">Tümü <span x-text="filterCounts.all"></span></button>
+          <button type="button" role="tab" class="pn-tab" :aria-selected="filter === 'edited'" @click="filter = 'edited'">Değiştirilenler <span x-text="filterCounts.edited"></span></button>
+          <button type="button" role="tab" class="pn-tab" :aria-selected="filter === 'outdated'" @click="filter = 'outdated'" x-show="tab !== source" data-filter="outdated">Güncellenmeli <span x-text="filterCounts.outdated"></span></button>
+        </div>
+        <label class="pn-texts-search">
+          <svg class="icon icon-sm" aria-hidden="true"><use href="#i-search"/></svg>
+          <input type="search" class="input" x-model.debounce.200ms="query" placeholder="Bütün sayfalarda ara…" aria-label="Metinlerde ara">
+        </label>
+      </div>
+
+      <p class="px-5 pt-5 text-sm text-muted" x-show="(query || filter !== 'all') && !groups.length" x-text="query ? 'Aramaya uyan metin yok.' : (filter === 'outdated' ? 'Güncellenmesi gereken metin yok.' : 'Bu dilde değiştirilmiş metin yok.')"></p>
+      <template x-for="g in groups" :key="tab + g.name">
+        <div class="pn-group">
+          <h3 class="pn-group-title" x-text="g.name"></h3>
+          <div class="pn-grid">
+            <template x-for="f in g.fields" :key="f.key">
+              <div class="pn-field" :class="!f.long && 'pn-w-half'">
+                <div class="flex items-center gap-2">
+                  <label class="field-label flex-1" :for="'tx-' + f.key" x-text="f.label"></label>
+                  <span class="badge badge-warning" x-show="isOutdated(f.key)" x-cloak title="Varsayılan dildeki metin değişti; bu dildeki sözlükteki halinde">Güncellenmeli</span>
+                  <span class="badge badge-primary" x-show="isEdited(f.key, tab)" x-cloak>Değiştirildi</span>
+                  <button type="button" class="btn-icon h-7 w-7" x-show="tab !== source && translatorReady()" x-cloak @click="translate([f.key])" :disabled="!!translating" :aria-label="'Jarvis ile çevir'" title="Varsayılan dildeki metinden Jarvis ile çevir"><svg class="icon icon-sm" :class="translating === f.key && 'animate-spin'" aria-hidden="true"><use :href="translating === f.key ? '#i-loader' : '#i-sparkles'"/></svg></button>
+                  <button type="button" class="btn-icon h-7 w-7" x-show="isEdited(f.key, tab)" x-cloak @click="reset(f.key)" aria-label="Sözlükteki metne dön" title="Sözlükteki metne dön"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-rotate-ccw"/></svg></button>
+                </div>
+                <template x-if="f.long">
+                  <textarea class="input" rows="3" :id="'tx-' + f.key" x-model="values[tab][f.key]" :placeholder="defs[f.key][tab]" maxlength="2000"></textarea>
+                </template>
+                <template x-if="!f.long">
+                  <input class="input" :id="'tx-' + f.key" x-model="values[tab][f.key]" :placeholder="defs[f.key][tab]" maxlength="2000" autocomplete="off">
+                </template>
+                <p class="field-help" x-show="isEdited(f.key, tab) && defs[f.key][tab]" x-cloak>Sözlükteki: <span x-text="defs[f.key][tab]"></span></p>
+                <p class="field-help" x-show="f.shared.length" x-text="'Şu sayfalarda da görünür: ' + f.shared.join(', ')"></p>
+              </div>
+            </template>
+          </div>
+        </div>
+      </template>
+    </section>
+  </div>
+</div>

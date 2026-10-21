@@ -1,0 +1,57 @@
+{# Site üst barı. Menü öğeleri rota adlarından, adresler sayfanın dilinden üretilir. #}
+{% set menu = ['home', 'blog', 'contact'] %}
+{# Detay sayfası kendi listesinin menü öğesini etkin gösterir (yazı → Blog). #}
+{% set activeNav = { post: 'blog' }[page.name] or page.name %}
+<a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:rounded-control focus:bg-surface focus:px-4 focus:py-2 focus:shadow-pop">{{ t('nav.skip') }}</a>
+<header class="site-header" x-data="kmHeader" :class="scrolled && 'is-scrolled'" @keydown.escape.window="close()">
+  <div class="container-site flex h-full items-center gap-4 lg:gap-8">
+    <a href="{{ url('home') }}" class="site-logo" aria-label="{{ t('nav.homeAria') }}">
+      <span class="site-logo-text">{{ t('nav.brand') }}</span><span class="site-logo-sub">{{ t('nav.brandSub') }}</span>
+    </a>
+
+    <nav class="site-nav" aria-label="{{ t('nav.mainMenu') }}">
+{% for name in menu %}
+      <a href="{{ url(name) }}" class="site-nav-link"{% if activeNav == name %} aria-current="page"{% endif %}>{{ t('nav.' + name) }}</a>
+{% endfor %}
+    </nav>
+
+    <div class="ml-auto flex items-center gap-1 sm:gap-2">
+      <button type="button" class="btn-icon" @click="$store.search.show()" aria-label="{{ t('search.open') }}" title="{{ t('search.open') }} (Ctrl+K)">
+        <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
+      </button>
+      <button type="button" class="btn-icon max-sm:hidden" x-data="kmTheme" @click="cycle()" :aria-label="{ system: $el.dataset.system, light: $el.dataset.light, dark: $el.dataset.dark }[mode]"
+        data-system="{{ t('nav.themeSystem') }}" data-light="{{ t('nav.themeLight') }}" data-dark="{{ t('nav.themeDark') }}" :title="$el.getAttribute('aria-label')">
+        <svg class="icon" aria-hidden="true"><use :href="icon" href="#i-monitor"/></svg>
+      </button>
+      <div class="max-sm:hidden">{% include "ui/lang/lang-menu.njk" %}</div>
+      <a href="{{ url('contact') }}" class="btn btn-primary btn-sm max-lg:hidden">{{ t('nav.cta') }} <svg class="icon icon-sm icon-arrow" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+      <button type="button" class="btn-icon lg:hidden" @click="toggle()" :aria-expanded="open" aria-controls="mobile-menu" data-label-open="{{ t('nav.menuOpen') }}" data-label-close="{{ t('nav.menuClose') }}" :aria-label="open ? $el.dataset.labelClose : $el.dataset.labelOpen">
+        <svg class="icon icon-lg" aria-hidden="true" x-show="!open"><use href="#i-menu"/></svg>
+        <svg class="icon icon-lg" aria-hidden="true" x-show="open" x-cloak><use href="#i-x"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div id="mobile-menu" class="mobile-drawer" x-show="open" x-cloak
+    x-transition:enter="transition duration-200 ease-out" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
+    x-transition:leave="transition duration-150 ease-in" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+    <nav class="flex flex-col gap-1" aria-label="{{ t('nav.mobileMenu') }}">
+{% for name in menu %}
+      <a href="{{ url(name) }}" class="mobile-nav-link"{% if activeNav == name %} aria-current="page"{% endif %}>{{ t('nav.' + name) }} <svg class="icon icon-sm" aria-hidden="true"><use href="#i-chevron-right"/></svg></a>
+{% endfor %}
+    </nav>
+    <div class="mt-4 flex items-center justify-between border-t border-line pt-4">
+      <span class="text-sm text-ink-2">{{ t('nav.language') }}</span>
+      {% include "ui/lang/lang-inline.njk" %}
+    </div>
+    <div class="mt-2 flex items-center justify-between" x-data="kmTheme">
+      <span class="text-sm text-ink-2">{{ t('nav.theme') }}</span>
+      <button type="button" class="btn btn-ghost btn-sm" @click="cycle()"
+        data-system="{{ t('nav.themeSystem') }}" data-light="{{ t('nav.themeLight') }}" data-dark="{{ t('nav.themeDark') }}">
+        <svg class="icon icon-sm" aria-hidden="true"><use :href="icon" href="#i-monitor"/></svg>
+        <span x-text="{ system: $el.parentElement.dataset.system, light: $el.parentElement.dataset.light, dark: $el.parentElement.dataset.dark }[mode]">{{ t('nav.themeSystem') }}</span>
+      </button>
+    </div>
+    <a href="{{ url('contact') }}" class="btn btn-primary btn-block mt-4">{{ t('nav.cta') }} <svg class="icon icon-sm icon-arrow" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+  </div>
+</header>

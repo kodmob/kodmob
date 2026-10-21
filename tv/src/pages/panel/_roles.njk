@@ -1,0 +1,226 @@
+{# Roller ve İzinler (yalnızca Yönetici). Mantık: panel/roles.js. #}
+<div class="pn-page" x-data="kmRoles">
+  <p class="pn-hint">
+    <svg class="icon icon-sm" aria-hidden="true"><use href="#i-info"/></svg>
+    <span>Rolü seçin; işaretli sayfalar ve yetkiler o roldeki herkese verilir. Yan Menü'de rolün sol menüsü düzenlenir. Yönetici rolü bütün yetkilere sahiptir ve değişmez; menüsü düzenlenebilir.</span>
+  </p>
+
+  <template x-if="loading"><div class="card card-body"><div class="skeleton h-40"></div></div></template>
+
+  <template x-if="!loading && matrix">
+    <div class="grid grid-cols-1 items-start gap-4 lg:grid-cols-[16rem_minmax(0,1fr)]">
+      {# roller #}
+      <nav class="card p-2" aria-label="Roller" data-testid="role-list">
+        <ul class="flex flex-col gap-0.5">
+          <template x-for="ro in matrix.roles" :key="ro.slug">
+            <li>
+              <button type="button" class="flex w-full items-center justify-between gap-2 rounded-control px-3 py-2 text-left text-sm" :class="slug === ro.slug ? 'bg-primary-soft font-semibold text-primary-ink' : 'text-ink hover:bg-surface-subtle'" @click="pick(ro.slug)" :aria-current="slug === ro.slug ? 'true' : null" :data-role="ro.slug">
+                <span class="min-w-0">
+                  <span class="block truncate" x-text="ro.label"></span>
+                  <span class="block text-xs font-normal text-muted" x-text="ro.users + ' kişi · ' + ro.caps.length + ' yetki' + (ro.passive_users ? ' · ' + ro.passive_users + ' pasif' : '')"></span>
+                </span>
+                <span class="badge badge-warning shrink-0" x-show="ro.customized">Değişti</span>
+                <span class="badge badge-neutral shrink-0" x-show="!ro.system">Özel</span>
+                <svg class="icon icon-sm shrink-0 text-muted" aria-hidden="true" x-show="ro.locked"><use href="#i-lock"/></svg>
+              </button>
+            </li>
+          </template>
+        </ul>
+        <button type="button" class="btn btn-secondary btn-sm mt-2 w-full" @click="startCreate()" data-testid="role-new"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-plus"/></svg> Yeni rol</button>
+      </nav>
+
+      {# seçili rol #}
+      <section class="flex flex-col gap-4" x-show="role" aria-live="polite">
+        <div class="card card-body flex flex-wrap items-center gap-3">
+          <div class="min-w-48 flex-1">
+            <h2 class="flex items-center gap-2 text-lg font-semibold text-ink">
+              <span x-text="role?.label"></span>
+              <button type="button" class="btn-icon h-8 w-8" @click="startRename()" aria-label="Adını ve açıklamasını değiştir" title="Adını ve açıklamasını değiştir"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-pencil"/></svg></button>
+              <button type="button" class="btn-icon h-8 w-8 text-danger" x-show="role && !role.system" @click="remove()" aria-label="Rolü sil" title="Rolü sil"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-trash"/></svg></button>
+            </h2>
+            <p class="text-sm text-ink-2" x-text="role?.description"></p>
+            <p class="text-xs text-muted" x-text="role?.locked ? 'Yönetici bütün sayfaları görür ve bütün işlemleri yapar.' : visiblePages.length + ' sayfa görür · ' + draft.length + ' yetki' + (role?.customized ? ' · varsayılandan farklı' : '')"></p>
+          </div>
+          <div class="segmented" role="group" aria-label="Görünüm">
+            <button type="button" :aria-pressed="view === 'pages'" @click="view = 'pages'" data-testid="role-view-pages">Sayfalar</button>
+            <button type="button" :aria-pressed="view === 'caps'" @click="view = 'caps'" data-testid="role-view-caps">İşlem yetkileri</button>
+            <button type="button" :aria-pressed="view === 'menu'" @click="view = 'menu'" data-testid="role-view-menu">Yan Menü</button>
+          </div>
+          <input type="search" class="input max-w-xs" :placeholder="view === 'caps' ? 'Yetki ya da sayfa ara' : 'Sayfa ara'" x-model="q" aria-label="Ara">
+        </div>
+
+        {# ===== Sayfalar ===== #}
+        <template x-if="view === 'pages'">
+          <div class="flex flex-col gap-4" data-testid="role-pages">
+            <p class="text-sm text-ink-2" x-show="!role?.locked">İşaretli sayfalar bu roldeki herkesin menüsünde görünür. Sayfa içindeki işlemler (yayınlama, silme, kullanıcı ekleme) "İşlem yetkileri"nden verilir.</p>
+            <template x-for="g in filteredPageGroups" :key="g.name">
+              <div class="card">
+                <div class="card-header"><h3 class="card-title" x-text="g.name"></h3></div>
+                <ul class="divide-y divide-line">
+                  <template x-for="p in g.pages" :key="p.key">
+                    <li class="flex items-start gap-3 px-4 py-2.5 md:px-5">
+                      <input type="checkbox" class="mt-0.5 h-5 w-5 shrink-0 accent-primary" :id="'pg-' + p.key" :checked="seesPage(p)" :disabled="role?.locked || isOpenToAll(p)" @change="togglePage(p)">
+                      <label class="min-w-0 flex-1 cursor-pointer" :for="'pg-' + p.key">
+                        <span class="flex items-center gap-2 text-sm font-medium text-ink"><svg class="icon icon-sm text-muted" aria-hidden="true"><use :href="'#i-' + p.icon"/></svg><span x-text="p.label"></span></span>
+                        <span class="block text-xs text-muted" x-text="isOpenToAll(p) ? 'Herkese açık (her kullanıcı kendi kaydını görür)' : 'Yetki: ' + p.can.split('|').map((c) => capLabel(c)).join(' ya da ')"></span>
+                        <span class="block text-xs text-muted" x-show="siblingsOf(p).length" x-text="'Aynı yetkiyle: ' + siblingsOf(p).join(', ')"></span>
+                        <span class="block text-xs text-warning-ink" x-show="pageChanged(p)" x-text="seesPage(p) ? 'açılacak' : 'kapanacak'"></span>
+                      </label>
+                    </li>
+                  </template>
+                </ul>
+              </div>
+            </template>
+          </div>
+        </template>
+
+        {# ===== İşlem yetkileri ===== #}
+        <div class="card card-body" x-show="!role?.locked && view === 'caps'">
+          <p class="mb-2 text-xs font-semibold tracking-wide text-muted uppercase">Gördüğü sayfalar</p>
+          <div class="flex flex-wrap gap-1.5">
+            <template x-for="p in visiblePages" :key="p.key"><span class="badge badge-primary" x-text="p.label"></span></template>
+            <span class="text-sm text-muted" x-show="!visiblePages.length">Hiçbir sayfa açılmıyor.</span>
+          </div>
+        </div>
+
+        <template x-for="g in (view === 'caps' ? filteredGroups : [])" :key="g.label">
+          <div class="card" data-testid="role-caps">
+            <div class="card-header">
+              <h3 class="card-title" x-text="g.label"></h3>
+              <button type="button" class="btn btn-ghost btn-sm" x-show="!role?.locked" @click="toggleGroup(g)" x-text="groupState(g) === 'all' ? 'Hiçbiri' : 'Hepsi'"></button>
+            </div>
+            <ul class="divide-y divide-line">
+              <template x-for="c in g.items" :key="c.key">
+                <li class="flex items-start gap-3 px-4 py-2.5 md:px-5">
+                  <input type="checkbox" class="mt-0.5 h-5 w-5 shrink-0 accent-primary" :id="'cap-' + c.key" :checked="has(c.key)" :disabled="role?.locked || c.locked" @change="toggle(c.key)" :data-cap="c.key">
+                  <label class="min-w-0 flex-1 cursor-pointer" :for="'cap-' + c.key">
+                    <span class="block text-sm text-ink" x-text="c.label"></span>
+                    <span class="mt-0.5 flex flex-wrap gap-x-2" x-show="pagesFor(c.key).length">
+                      <template x-for="p in pagesFor(c.key)" :key="p.key"><span class="text-xs text-muted" x-text="'› ' + p.label"></span></template>
+                    </span>
+                    <span class="block text-xs text-muted" x-show="c.locked" x-text="c.key === 'km_manage_roles' ? 'Yalnızca Yönetici' : 'Her rolde açık'"></span>
+                    <span class="block text-xs text-warning-ink" x-show="changed(c.key)" x-text="has(c.key) ? 'eklenecek' : 'kaldırılacak'"></span>
+                  </label>
+                  <span class="badge badge-neutral shrink-0" x-show="differsFromDefault(c.key)" title="Varsayılandan farklı">özel</span>
+                </li>
+              </template>
+            </ul>
+          </div>
+        </template>
+
+        {# ===== Yan Menü ===== #}
+        <template x-if="view === 'menu'">
+          <div class="grid grid-cols-1 items-start gap-4 xl:grid-cols-[minmax(0,1fr)_20rem]" data-testid="role-menu">
+            <div class="flex flex-col gap-3">
+              <p class="text-sm text-ink-2">Bu roldeki kişilerin sol menüsü. Grup adını yazın, grupları ve sayfaları oklarla sıralayın; sayfa grubun başından ya da sonundan komşu gruba geçer. Menüde olmak sayfayı açmaz: yetkisi olmayan sayfa menüde görünmez. <strong x-show="!menuCustom">Şu an varsayılan menü.</strong></p>
+              <template x-for="(g, gi) in menuDraft" :key="g.key">
+                <div class="card">
+                  <div class="card-header gap-1.5">
+                    <input class="input min-w-0 flex-1 font-semibold" maxlength="40" x-model="g.label" placeholder="Başlıksız (açılıp kapanmaz)" :data-menu-group="gi" :aria-label="(gi + 1) + '. grubun adı'">
+                    <button type="button" class="btn-icon h-9 w-9" @click="moveGroup(gi, -1)" :disabled="gi === 0" :aria-label="g.label + ': yukarı al'"><svg class="icon icon-sm -rotate-90" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>
+                    <button type="button" class="btn-icon h-9 w-9" @click="moveGroup(gi, 1)" :disabled="gi === menuDraft.length - 1" :aria-label="g.label + ': aşağı al'"><svg class="icon icon-sm rotate-90" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>
+                    <button type="button" class="btn-icon h-9 w-9 text-danger" @click="removeGroup(gi)" :aria-label="g.label + ': grubu kaldır'" title="Grubu kaldır (sayfaları menüden çıkar)"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-trash"/></svg></button>
+                  </div>
+                  <ul class="divide-y divide-line">
+                    <template x-for="(item, ii) in g.items" :key="item">
+                      <li class="flex items-center gap-3 px-4 py-2 md:px-5">
+                        <svg class="icon icon-sm shrink-0 text-muted" aria-hidden="true"><use :href="'#i-' + (pageOf(item)?.icon || 'list')"/></svg>
+                        <span class="min-w-0 flex-1">
+                          <span class="block truncate text-sm font-medium text-ink" x-text="pageOf(item)?.label || item"></span>
+                          <span class="block text-xs text-warning-ink" x-show="!role?.locked && !seesItem(item)">Bu rolün yetkisi yok; menüde görünmez</span>
+                        </span>
+                        <button type="button" class="btn-icon h-9 w-9" @click="moveItem(gi, ii, -1)" :disabled="gi === 0 && ii === 0" :aria-label="(pageOf(item)?.label || item) + ': yukarı al'"><svg class="icon icon-sm -rotate-90" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>
+                        <button type="button" class="btn-icon h-9 w-9" @click="moveItem(gi, ii, 1)" :disabled="gi === menuDraft.length - 1 && ii === g.items.length - 1" :aria-label="(pageOf(item)?.label || item) + ': aşağı al'"><svg class="icon icon-sm rotate-90" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>
+                        <button type="button" class="btn-icon h-9 w-9 text-danger" @click="removeItem(gi, ii)" :aria-label="(pageOf(item)?.label || item) + ': menüden çıkar'"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-x"/></svg></button>
+                      </li>
+                    </template>
+                    <li class="px-4 py-3 text-sm text-muted md:px-5" x-show="!g.items.length">Boş grup kaydedilmez. Sağdaki listeden sayfa ekleyin.</li>
+                  </ul>
+                </div>
+              </template>
+              <button type="button" class="btn btn-secondary self-start" @click="addGroup()" data-testid="menu-add-group"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg> Grup ekle</button>
+            </div>
+
+            <aside class="card xl:sticky xl:top-20" aria-label="Menüde olmayan sayfalar">
+              <div class="card-header"><h3 class="card-title">Menüde olmayan sayfalar</h3></div>
+              <div class="card-body flex flex-col gap-3">
+                <label class="field" x-show="menuDraft.length">
+                  <span class="field-label">Eklenecek grup</span>
+                  <select class="input" x-model.number="addTarget">
+                    <template x-for="(g, gi) in menuDraft" :key="g.key"><option :value="gi" :selected="gi === addTarget" x-text="g.label || (gi + 1) + '. grup'"></option></template>
+                  </select>
+                </label>
+                <template x-for="pg in unusedPageGroups" :key="pg.name">
+                  <div>
+                    <p class="text-xs font-semibold tracking-wide text-muted uppercase" x-text="pg.name"></p>
+                    <ul class="mt-1 flex flex-col gap-0.5">
+                      <template x-for="p in pg.pages" :key="p.key">
+                        <li class="flex items-center gap-2">
+                          <svg class="icon icon-sm shrink-0 text-muted" aria-hidden="true"><use :href="'#i-' + (p.icon || 'list')"/></svg>
+                          <span class="min-w-0 flex-1 truncate text-sm" :class="role?.locked || seesPage(p) ? 'text-ink' : 'text-muted'" x-text="p.label" :title="role?.locked || seesPage(p) ? '' : 'Bu rolün yetkisi yok'"></span>
+                          <button type="button" class="btn btn-ghost btn-sm shrink-0" @click="addItem(p.key)" :aria-label="p.label + ': menüye ekle'"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-plus"/></svg> Ekle</button>
+                        </li>
+                      </template>
+                    </ul>
+                  </div>
+                </template>
+                <p class="text-sm text-muted" x-show="!unusedPageGroups.length">Bütün sayfalar menüde.</p>
+              </div>
+            </aside>
+          </div>
+        </template>
+
+        {# kaydet çubukları #}
+        <div class="pn-savebar" x-show="view === 'menu' && (menuDirty || menuCustom)" x-cloak>
+          <span class="flex-1 text-sm font-medium text-ink" x-text="menuDirty ? 'Yan menüde kaydedilmemiş değişiklik var' : 'Bu rolün menüsü varsayılandan farklı'"></span>
+          <button type="button" class="btn btn-ghost text-danger" x-show="menuCustom" @click="resetMenu()" :disabled="saving">Varsayılana dön</button>
+          <button type="button" class="btn btn-ghost" x-show="menuDirty" @click="undoMenu()" :disabled="saving">Vazgeç</button>
+          <button type="button" class="btn btn-primary" x-show="menuDirty" @click="saveMenu()" :disabled="saving" data-testid="menu-save">
+            <svg class="icon icon-sm animate-spin" x-show="saving" aria-hidden="true"><use href="#i-loader"/></svg> Menüyü kaydet
+          </button>
+        </div>
+
+        <div class="pn-savebar" x-show="view !== 'menu' && !role?.locked && (dirty || role?.customized)" x-cloak>
+          <span class="flex-1 text-sm font-medium text-ink" x-text="dirty ? changeCount + ' değişiklik' : 'Bu rol varsayılandan farklı'"></span>
+          <button type="button" class="btn btn-ghost text-danger" x-show="role?.customized" @click="resetRole()" :disabled="saving">Varsayılana dön</button>
+          <button type="button" class="btn btn-ghost" x-show="dirty" @click="undo()" :disabled="saving">Vazgeç</button>
+          <button type="button" class="btn btn-primary" x-show="dirty" @click="save()" :disabled="saving" data-testid="role-save">
+            <svg class="icon icon-sm animate-spin" x-show="saving" aria-hidden="true"><use href="#i-loader"/></svg> Kaydet
+          </button>
+        </div>
+      </section>
+    </div>
+  </template>
+
+  {# ============================================================ yeni rol / adlandır #}
+  <template x-if="creating || renaming">
+    <div class="fixed inset-0 z-[70] grid place-items-center bg-navy/50 p-4 backdrop-blur-sm" @keydown.escape.window="creating = null; renaming = null" @click.self="creating = null; renaming = null">
+      <form class="card w-full max-w-md p-5" role="dialog" aria-modal="true" :aria-label="creating ? 'Yeni rol' : 'Rolü adlandır'" @submit.prevent="creating ? create() : rename()" x-data="{ f: creating || renaming }">
+        <h3 class="h3" x-text="creating ? 'Yeni rol' : 'Rol bilgileri'"></h3>
+        <div class="mt-4 flex flex-col gap-4">
+          <label class="field">
+            <span class="field-label">Rol adı <span class="req">*</span></span>
+            <input class="input" x-model="f.label" maxlength="60" required x-init="$nextTick(() => $el.focus())" placeholder="ör. İçerik Stajyeri" data-testid="role-label">
+            <span class="field-error" x-show="f.errors.label" x-text="f.errors.label"></span>
+          </label>
+          <label class="field">
+            <span class="field-label">Açıklama</span>
+            <textarea class="input min-h-20" x-model="f.description" maxlength="255" placeholder="Bu rol ne yapar?"></textarea>
+          </label>
+          <label class="field" x-show="creating">
+            <span class="field-label">Başlangıç yetkileri</span>
+            <select class="input" x-model="f.copy_from">
+              <template x-for="ro in matrix.roles.filter((x) => !x.locked)" :key="ro.slug"><option :value="ro.slug" :selected="ro.slug === f.copy_from" x-text="ro.label + ' rolünden kopyala'"></option></template>
+              <option value="">Boş (yalnızca panele giriş)</option>
+            </select>
+            <span class="field-help">Ekledikten sonra sayfaları ve işlem yetkilerini değiştirebilirsiniz.</span>
+          </label>
+        </div>
+        <div class="mt-5 flex justify-end gap-2">
+          <button type="button" class="btn btn-ghost" @click="creating = null; renaming = null">Vazgeç</button>
+          <button type="submit" class="btn btn-primary" data-testid="role-create" x-text="creating ? 'Rolü ekle' : 'Kaydet'"></button>
+        </div>
+      </form>
+    </div>
+  </template>
+</div>

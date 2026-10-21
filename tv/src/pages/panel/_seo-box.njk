@@ -1,0 +1,64 @@
+{# Düzenleyicideki SEO kutusu (blog yazısı ve kendi sayfası olan kayıt, ör. proje). Mantık: panel/seo-box.js. kmEditor kapsamında. #}
+<section class="card pn-group-card" x-data="kmSeoBox(meta.record)" data-testid="seo-box">
+  <button type="button" class="flex w-full items-center justify-between gap-2 text-left" @click="seoOpen = !seoOpen" :aria-expanded="seoOpen">
+    <h3 class="pn-group-title flex items-center gap-2"><svg class="icon icon-sm text-primary" aria-hidden="true"><use href="#i-search"/></svg> SEO <span class="text-xs font-normal text-muted" x-show="meta.record !== 'post'" x-text="'(' + seoLocale.toUpperCase() + ')'"></span></h3>
+    <span class="flex items-center gap-2">
+      <template x-if="analysis">
+        <span class="badge" :class="'badge-' + scoreTone" x-text="analysis.score + ' puan'"></span>
+      </template>
+      <svg class="icon icon-sm text-muted transition-transform" :class="!seoOpen && '-rotate-90'" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+    </span>
+  </button>
+  <div class="flex flex-col gap-4" x-show="seoOpen" x-collapse>
+    <div class="rounded-control border border-line p-3" aria-label="Arama sonucu önizlemesi">
+      <p class="truncate text-xs text-muted" x-text="'kodmob.com › … › ' + (seoDefaults.slug || 'yeni-kayit')"></p>
+      <p class="line-clamp-2 text-base leading-snug text-[#1a0dab] dark:text-[#8ab4f8]" x-text="seoTitle || 'Başlık'"></p>
+      <p class="line-clamp-3 text-sm text-ink-2" x-text="seoDescription || 'Açıklama yok: arama motoru sayfadan bir parça seçer.'"></p>
+    </div>
+    <template x-if="seoModules.meta">
+      <div class="flex flex-col gap-4">
+        <label class="field">
+          <span class="field-label flex justify-between"><span>SEO başlığı</span><span class="text-xs" :class="lengthTone(seoTitle.length, 30, 52)" x-text="seoTitle.length"></span></span>
+          <input class="input" x-model="seoFields.title" :placeholder="seoDefaults.title" maxlength="120">
+          <span class="field-help">Boşsa kayıt başlığı. Sekmede sonuna site adı eklenir.</span>
+        </label>
+        <label class="field">
+          <span class="field-label flex justify-between"><span>Açıklama</span><span class="text-xs" :class="lengthTone(seoDescription.length, 120, 160)" x-text="seoDescription.length + ' / 160'"></span></span>
+          <textarea class="input min-h-20" x-model="seoFields.description" :placeholder="seoDefaults.description" maxlength="320"></textarea>
+        </label>
+        <label class="field" x-show="seoModules.analysis">
+          <span class="field-label">Odak kelime</span>
+          <input class="input" x-model="seoFields.focus" placeholder="ör. kurumsal web sitesi" maxlength="80">
+          <span class="field-help">Bu sayfanın aranmasını istediğiniz ifade; analiz başlık, açıklama, adres ve metinde arar.</span>
+        </label>
+      </div>
+    </template>
+    <template x-if="seoModules.analysis && analysis">
+      <ul class="flex flex-col gap-1.5" aria-label="SEO analizi">
+        <template x-for="c in analysis.checks" :key="c.key">
+          <li class="flex items-start gap-2 text-sm">
+            <span class="mt-1.5 h-2 w-2 shrink-0 rounded-full" :class="{ 'bg-success': c.status === 'good', 'bg-warning': c.status === 'ok', 'bg-danger': c.status === 'bad' }" aria-hidden="true"></span>
+            <span class="text-ink-2" x-text="c.message"></span>
+          </li>
+        </template>
+      </ul>
+    </template>
+    <details class="text-sm" x-show="seoModules.meta || seoModules.social">
+      <summary class="cursor-pointer font-medium text-ink">Gelişmiş</summary>
+      <div class="mt-3 flex flex-col gap-4">
+        <label class="pn-switch" x-show="seoModules.meta"><input type="checkbox" class="peer sr-only" x-model="seo.noindex"><span class="pn-switch-track" aria-hidden="true"></span><span><span class="field-label block">Arama motorlarından gizle</span><span class="field-help">noindex; site haritasından çıkar.</span></span></label>
+        <label class="field" x-show="seoModules.meta"><span class="field-label">Canonical adres</span><input class="input code" x-model="seo.canonical" placeholder="Boşsa sayfanın kendi adresi"></label>
+        <div class="field" x-show="seoModules.social">
+          <span class="field-label">Paylaşım görseli</span>
+          <div class="flex items-center gap-3">
+            <template x-if="seo.image"><img :src="seo.image.thumb || seo.image.src" alt="" class="h-12 w-20 rounded-control object-cover"></template>
+            <button type="button" class="btn btn-secondary btn-sm" @click="pickSeoImage()" x-text="seo.image ? 'Değiştir' : 'Seç'"></button>
+            <button type="button" class="btn btn-ghost btn-sm" x-show="seo.image" @click="seo.image = null; seo.image_id = 0">Kaldır</button>
+          </div>
+          <span class="field-help">Boşsa kapak görseli.</span>
+        </div>
+      </div>
+    </details>
+    <p class="text-xs text-warning-ink" x-show="seoDirty" x-cloak>SEO değişiklikleri kayıtla birlikte kaydedilir.</p>
+  </div>
+</section>

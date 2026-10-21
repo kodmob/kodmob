@@ -1,0 +1,43 @@
+{# Talepler. Mantık: panel/briefs.js. Tablo: ui/grid (kmGrid). #}
+<div class="pn-page" x-data="kmBriefs(r.id)">
+  <template x-if="grid">
+    <div x-data="kmGrid(grid)" @grid-open="show($event.detail.row)" @grid-action="onAction($event.detail)" @grid-bulk="onBulk($event.detail)">
+      {% include "ui/grid/grid.html" %}
+    </div>
+  </template>
+
+  {# ============================================================ detay #}
+  <div class="pn-drawer-backdrop" x-show="brief" x-transition.opacity x-cloak @click="brief = null"></div>
+  <aside class="pn-drawer" x-show="brief" x-cloak x-transition:enter="transition duration-200 ease-out" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0" x-transition:leave="transition duration-150 ease-in" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full" @keydown.escape.window="brief = null" aria-label="Talep detayı">
+    <template x-if="brief">
+      <div class="flex h-full flex-col">
+        <div class="pn-drawer-head">
+          <div class="min-w-0 flex-1">
+            <p class="truncate text-lg font-bold text-ink" x-text="brief.name"></p>
+            <p class="text-sm text-muted"><span x-text="source(brief.source)"></span> · <span x-text="relative((brief.created_at || '').replace(' ', 'T'))"></span> · <span x-text="(brief.locale || '').toUpperCase()"></span></p>
+          </div>
+          <button type="button" class="btn-icon" @click="brief = null" aria-label="Kapat"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button>
+        </div>
+        <div class="pn-drawer-body">
+          <dl class="pn-dl">
+            <dt>E-posta</dt><dd><a :href="'mailto:' + brief.email" class="text-primary" x-text="brief.email"></a></dd>
+            <dt>Telefon</dt><dd x-text="brief.phone || '—'"></dd>
+            <dt>Şirket</dt><dd x-text="brief.company || '—'"></dd>
+            <dt>Hizmetler</dt><dd x-text="services(brief) || '—'"></dd>
+            <dt>Bütçe</dt><dd x-text="brief.budget || '—'"></dd>
+            <dt>Süre</dt><dd x-text="brief.timeline || '—'"></dd>
+            <template x-if="brief.estimate"><dt>Hesaplayıcı</dt></template>
+            <template x-if="brief.estimate"><dd><span x-text="money(brief.estimate)"></span><span class="mt-1 block text-xs text-muted" x-text="(brief.estimate.items || []).join(', ')"></span></dd></template>
+          </dl>
+          <p class="mt-6 mb-2 text-sm font-semibold text-ink">Mesaj</p>
+          <div class="pn-message" x-text="brief.message"></div>
+        </div>
+        <div class="pn-drawer-foot">
+          <a :href="replyHref" class="btn btn-primary"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-mail"/></svg> Yanıtla</a>
+          <button type="button" class="btn btn-secondary" x-show="canManage" @click="toggleArchive()" x-text="brief.status === 'archived' ? 'Arşivden çıkar' : 'Arşive al'"></button>
+          <button type="button" class="btn btn-ghost ml-auto text-danger" x-show="$store.session.can('km_delete_briefs')" @click="remove()"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-trash"/></svg> Kalıcı sil</button>
+        </div>
+      </div>
+    </template>
+  </aside>
+</div>

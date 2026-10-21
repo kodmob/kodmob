@@ -1,0 +1,20 @@
+<section class="container-site section-sm">
+  <div class="grid gap-10 lg:grid-cols-[0.8fr_2fr]">
+    <div class="reveal">
+{{#eyebrow}}
+      <span class="eyebrow" data-km-field="eyebrow">{{eyebrow}}</span>
+{{/eyebrow}}
+      <h2 class="h2 mt-2"><span data-km-field="title">{{title}}</span>{{#titleAccent}}&#32;<span class="accent" data-km-field="titleAccent">{{titleAccent}}</span>{{/titleAccent}}</h2>
+    </div>
+    <ol class="steps">
+{{#steps}}
+      <li class="step reveal reveal-delay-{{@number}}">
+        <span class="step-icon"><svg class="icon" aria-hidden="true"><use href="#i-{{icon}}"/></svg></span>
+        <span class="step-no">0{{@number}}</span>
+        <span class="step-title" data-km-field="steps.{{@index}}.title">{{title}}</span>
+        <span class="step-text" data-km-field="steps.{{@index}}.text">{{text}}</span>
+      </li>
+{{/steps}}
+    </ol>
+  </div>
+</section>

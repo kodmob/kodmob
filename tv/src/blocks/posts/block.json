@@ -1,0 +1,15 @@
+{
+  "label": "Son yazılar",
+  "description": "Blogun son yazıları kartlarla; yazı yoksa bölüm görünmez.",
+  "category": "content",
+  "icon": "pencil",
+  "module": "blog",
+  "needs": ["posts"],
+  "fields": [
+    { "name": "eyebrow", "type": "text", "label": "Üst etiket", "localized": true, "max": 60, "default": "@blocks.posts.eyebrow" },
+    { "name": "title", "type": "text", "label": "Başlık", "localized": true, "max": 120, "default": "@blocks.posts.title" },
+    { "name": "cta", "type": "text", "label": "Bağlantı yazısı", "localized": true, "max": 40, "default": "@blocks.posts.cta" },
+    { "name": "ctaUrl", "type": "link", "label": "Bağlantı", "default": "route:blog" },
+    { "name": "count", "type": "select", "label": "Kaç yazı", "options": { "3": "3", "6": "6" }, "default": "3" }
+  ]
+}

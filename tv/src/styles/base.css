@@ -1,0 +1,64 @@
+@layer base {
+  :root {
+    color-scheme: light;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html {
+    font-size: 16px;
+    scroll-padding-top: calc(var(--spacing-header) + 1rem);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  body {
+    @apply bg-bg text-ink font-sans antialiased;
+    line-height: 1.6;
+    font-optical-sizing: auto;
+  }
+
+  h1, h2, h3, h4 {
+    @apply text-ink;
+    text-wrap: balance;
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    @apply bg-primary text-white;
+  }
+
+  img, svg, video {
+    display: block;
+    max-width: 100%;
+  }
+
+  /* Sayılar hizalı dursun (istatistik, fiyat). */
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  input,
+  select,
+  textarea,
+  button {
+    font: inherit;
+  }
+}
+
+/* Alpine başlamadan önce gizli kalması gerekenler. */
+[x-cloak] {
+  display: none !important;
+}

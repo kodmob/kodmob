@@ -1,0 +1,192 @@
+/*
+ * Panel bileşenleri + panelin
+ * siteden kullandığı birkaç sınıfın (check, icon-tile, link-arrow, h2/h3,
+ * prose, avatar, flag …) panelin diliyle karşılıkları.
+ */
+@layer components {
+  /* ------------------------------------------------------------ ikon */
+  .icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex: none;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .icon-sm { width: 1rem; height: 1rem; }
+  .icon-lg { width: 1.5rem; height: 1.5rem; }
+  .icon-xl { width: 1.75rem; height: 1.75rem; }
+  .icon-filled, .icon-fill { fill: currentColor; stroke: none; }
+
+  /* ------------------------------------------------------------ yazı */
+  .h2 { @apply text-xl font-semibold tracking-tight text-ink lg:text-2xl; }
+  .h3 { @apply text-base font-semibold text-ink; }
+  .link-arrow { @apply inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline; }
+
+  /* ------------------------------------------------------------ düğme */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-control border px-4 font-medium
+      transition-colors select-none whitespace-nowrap
+      disabled:cursor-not-allowed disabled:opacity-55;
+    min-height: var(--spacing-control);
+    font-size: 0.9375rem;
+  }
+  .btn-sm {
+    min-height: 2.25rem;
+    @apply px-3 text-sm;
+  }
+  .btn-lg {
+    min-height: 3.5rem;
+    @apply px-6 text-base;
+  }
+  .btn-block { @apply w-full; }
+  .btn-primary { @apply border-primary-strong bg-primary-strong text-white hover:bg-primary-hover hover:border-primary-hover; }
+  .btn-secondary { @apply border-line bg-surface text-ink hover:bg-surface-subtle hover:border-line-strong; }
+  .btn-success { @apply border-success bg-success text-white hover:brightness-95; }
+  .btn-danger { @apply border-danger bg-danger text-white hover:brightness-95; }
+  .btn-ghost { @apply border-transparent bg-transparent text-ink-2 hover:bg-surface-subtle hover:text-ink; }
+  .btn-icon {
+    @apply inline-flex items-center justify-center rounded-control text-ink-2 hover:bg-surface-subtle hover:text-ink transition-colors disabled:opacity-40;
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  /* ------------------------------------------------------------ form */
+  .field { @apply flex flex-col gap-1.5; }
+  .field-label { @apply text-sm font-medium text-ink; }
+  .field-label .req { @apply text-danger; }
+  .field-help { @apply text-xs text-muted; }
+  .field-error { @apply text-xs font-medium text-danger; }
+  .input {
+    @apply w-full rounded-control border border-line bg-surface px-3.5 text-ink
+      placeholder:text-muted transition-colors
+      hover:border-line-strong focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/12
+      disabled:bg-surface-subtle disabled:text-muted;
+    min-height: var(--spacing-field);
+    font-size: 1rem;
+  }
+  .input[aria-invalid="true"] { @apply border-danger focus:ring-danger/12; }
+  textarea.input { @apply py-3 leading-relaxed; resize: vertical; }
+  select.input {
+    @apply cursor-pointer appearance-none pr-10;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23667085' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+  }
+  .input-icon { @apply relative; }
+  .input-icon > .icon { @apply pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-muted; }
+  .input-icon > .input { @apply pl-10; }
+
+  .check { @apply inline-flex cursor-pointer items-start gap-2.5 text-sm text-ink-2; }
+  .check input {
+    @apply mt-px h-4.5 w-4.5 shrink-0 cursor-pointer appearance-none rounded border border-line-strong bg-surface transition
+      checked:border-primary-strong checked:bg-primary-strong focus-visible:ring-4 focus-visible:ring-primary/15 focus-visible:outline-none;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  .check input[type="radio"] { @apply rounded-full; }
+  .check input[type="checkbox"]:checked {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+  }
+  .check input[type="radio"]:checked { box-shadow: inset 0 0 0 3px var(--color-surface); }
+
+  /* ------------------------------------------------------------ kart */
+  .card {
+    @apply rounded-card border border-line bg-surface;
+    box-shadow: var(--shadow-card);
+  }
+  .card-header { @apply flex items-center justify-between gap-3 border-b border-line px-4 py-3 md:px-5; }
+  .card-title { @apply text-base font-semibold text-ink; }
+  .card-body { @apply p-4 md:p-5; }
+  .card-hover { @apply transition-colors hover:border-line-strong; }
+
+  /* ------------------------------------------------------------ rozet */
+  .badge {
+    @apply inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium whitespace-nowrap;
+  }
+  .badge-neutral { @apply border-line bg-surface-subtle text-ink-2; }
+  .badge-primary { @apply border-primary/20 bg-primary-soft text-primary-ink; }
+  .badge-success { @apply border-success/20 bg-success-soft text-success-ink; }
+  .badge-warning { @apply border-warning/25 bg-warning-soft text-warning-ink; }
+  .badge-danger { @apply border-danger/20 bg-danger-soft text-danger-ink; }
+  .badge-info { @apply border-info/20 bg-info-soft text-info-ink; }
+
+  /* ------------------------------------------------------------ sayfa */
+  .page { @apply flex flex-col gap-4 lg:gap-5; }
+  .page-header { @apply flex flex-wrap items-start justify-between gap-3; }
+  .page-title { @apply text-xl font-semibold tracking-tight text-ink lg:text-[1.625rem]; }
+  .page-subtitle { @apply mt-0.5 text-sm text-ink-2; }
+
+  /* ------------------------------------------------------------ ton */
+  .tone-icon { @apply grid h-10 w-10 shrink-0 place-items-center rounded-control; }
+  .tone-primary { @apply bg-primary-soft text-primary; }
+  .tone-success { @apply bg-success-soft text-success; }
+  .tone-warning { @apply bg-warning-soft text-warning; }
+  .tone-danger { @apply bg-danger-soft text-danger; }
+  .tone-info { @apply bg-info-soft text-info; }
+  .tone-neutral { @apply bg-surface-subtle text-ink-2; }
+
+  /* Site sınıflarının panel karşılıkları */
+  .icon-tile { @apply grid h-10 w-10 shrink-0 place-items-center rounded-control bg-primary-soft text-primary; }
+  .icon-tile-sm { @apply h-9 w-9; }
+  .icon-tile-round { @apply rounded-full; }
+  .avatar { @apply h-10 w-10 shrink-0 rounded-full object-cover; }
+  .flag { @apply h-3.5 w-5 shrink-0 rounded-[2px] object-cover ring-1 ring-line; }
+  .site-logo-text { @apply text-[1.375rem] leading-none font-bold tracking-tight; }
+  .prose { @apply text-sm leading-relaxed text-ink-2; }
+  .prose > * + * { margin-top: 0.75em; }
+  .prose strong { @apply font-semibold text-ink; }
+  .prose a { @apply text-primary underline underline-offset-2; }
+  .prose ul { @apply list-disc pl-5; }
+  .prose ol { @apply list-decimal pl-5; }
+  .prose code { @apply rounded bg-surface-subtle px-1 py-0.5 text-[0.85em] text-ink; }
+  .prose pre { @apply overflow-x-auto rounded-control bg-surface-subtle p-3 text-xs; }
+  .prose h1, .prose h2, .prose h3 { @apply font-semibold text-ink; }
+  .prose table { @apply w-full border-collapse text-xs; }
+  .prose th, .prose td { @apply border border-line px-2 py-1 text-left; }
+
+  /* ------------------------------------------------------------ pencere alt çubuğu */
+  .sheet-body { @apply flex flex-col; }
+  .sheet-body > :not(.sheet-footer) { @apply shrink-0; }
+  .sheet-body > :has(+ .sheet-footer) { @apply mb-5; }
+  .sheet-footer {
+    @apply sticky bottom-0 -mx-4 mt-auto flex flex-col-reverse gap-2 border-t border-line bg-surface px-4 py-3
+      sm:-mx-5 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end sm:px-5;
+    padding-bottom: calc(env(safe-area-inset-bottom) + 0.75rem);
+  }
+  .sheet-footer .btn { @apply w-full sm:w-auto; }
+  .sheet-footer .sheet-footer-start { @apply sm:mr-auto; }
+
+  .menu-item { @apply flex min-h-10 w-full items-center gap-2 rounded-control px-3 text-left text-sm text-ink hover:bg-surface-subtle; }
+
+  .facts { @apply grid grid-cols-2 gap-x-6 gap-y-3 text-sm sm:grid-cols-3; }
+  .facts dt { @apply text-xs text-ink-2; }
+  .facts dd { @apply min-w-0 truncate font-semibold text-ink; }
+
+  .section-title { @apply mb-2 text-sm font-semibold text-ink; }
+  .skeleton { @apply animate-pulse rounded-control bg-line/70; }
+
+  .toast-timer { @apply h-1 overflow-hidden rounded-full bg-line; }
+  .toast-timer > span { @apply block h-full origin-left rounded-full bg-success; animation: toast-timer linear forwards; }
+
+  /* İlerleme çubuğu (iş, yükleme) */
+  .progress { @apply h-2 overflow-hidden rounded-full bg-surface-subtle ring-1 ring-line ring-inset; }
+  .progress > span { @apply block h-full rounded-full bg-primary-strong transition-[width] duration-500; }
+  .progress.is-done > span { @apply bg-success; }
+
+  /* Segmentli seçim */
+  .segmented { @apply inline-flex flex-wrap gap-1 rounded-control border border-line bg-surface-subtle p-1; }
+  .segmented > button { @apply min-h-9 rounded-[6px] px-3 text-sm font-medium text-ink-2 transition-colors hover:text-ink; }
+  .segmented > button[aria-pressed="true"] { @apply bg-surface text-ink shadow-sm ring-1 ring-line; }
+
+  /* Çip (uzantı, kelime listesi seçimi) */
+  .chip { @apply inline-flex min-h-9 items-center gap-1.5 rounded-full border border-line bg-surface px-3 text-sm font-medium text-ink-2 transition-colors hover:border-line-strong hover:text-ink; }
+  .chip[aria-pressed="true"] { @apply border-primary/40 bg-primary-soft text-primary-ink; }
+}
+
+@keyframes toast-timer { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+@media (prefers-reduced-motion: reduce) {
+  .toast-timer > span { animation: none; }
+}

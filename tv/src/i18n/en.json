@@ -1,0 +1,695 @@
+{
+  "common": {
+    "close": "Close",
+    "prev": "Previous",
+    "next": "Next",
+    "prevImage": "Previous image",
+    "nextImage": "Next image",
+    "viewAll": "View all",
+    "readMore": "Read more",
+    "zoom": "Enlarge {name}",
+    "breadcrumb": "Breadcrumb"
+  },
+  "search": {
+    "open": "Search the site",
+    "placeholder": "Search pages or articles…",
+    "empty": "No results found.",
+    "hint": "Type to search",
+    "types": {
+      "page": "Page",
+      "post": "Article"
+    }
+  },
+  "whatsapp": {
+    "label": "Message us on WhatsApp",
+    "message": "Hello, I'd like to get information about my project.",
+    "online": "Online · usually replies quickly",
+    "offline": "Out of office · reply on the next business day"
+  },
+  "langBanner": {
+    "text": "This page is also available in English.",
+    "switch": "Switch to English",
+    "dismiss": "Dismiss"
+  },
+  "client": {
+    "contact": {
+      "nameRequired": "Please enter your name.",
+      "emailInvalid": "Please enter a valid email address.",
+      "messageShort": "Please write at least 20 characters.",
+      "consentRequired": "Please accept the privacy notice to send.",
+      "invalid": "Some fields are missing or invalid."
+    },
+    "toast": {
+      "done": "Done.",
+      "error": "Something went wrong."
+    },
+    "confirm": {
+      "ok": "Confirm",
+      "cancel": "Cancel"
+    },
+    "errors": {
+      "network": "Could not reach the server. Check your connection and try again.",
+      "timeout": "The server did not respond in time. Please try again shortly.",
+      "unauthenticated": "Your session has ended. Please sign in again.",
+      "sessionExpired": "Your session has expired. Please sign in again.",
+      "forbidden": "You are not allowed to do this.",
+      "internal": "Something went wrong. Please try again.",
+      "conflict": "This record changed while you were working. Refresh the page and try again.",
+      "rateLimited": "Too many submissions in a short time. Please try again later.",
+      "httpFailed": "The request failed (HTTP {status})."
+    },
+    "brief": {
+      "nameRequired": "Please enter your name.",
+      "emailInvalid": "Please enter a valid email address.",
+      "servicesRequired": "Please choose at least one service.",
+      "messageShort": "Please describe your project in at least 20 characters.",
+      "consentRequired": "Please accept the privacy notice to continue.",
+      "invalid": "Some fields are missing or invalid.",
+      "sent": "Thanks! We'll get back to you within one business day."
+    },
+    "post": {
+      "copied": "Link copied."
+    },
+    "search": {
+      "loading": "Searching…"
+    },
+    "shop": {
+      "added": "Added to cart.",
+      "updated": "Cart updated.",
+      "couponApplied": "Coupon applied.",
+      "invalid": "Please correct the marked fields.",
+      "terms": "Please accept the terms.",
+      "error": "Something went wrong; please try again.",
+      "booking": {
+        "group": "Group discount",
+        "season": "Season difference",
+        "early": "Early booking discount",
+        "left": "places left",
+        "groupTier": "{min}+ people",
+        "days": "{n} day(s)",
+        "persons": "People",
+        "adults": "Adults",
+        "adultsHint": "Age 12+",
+        "children": "Children",
+        "childrenHint": "Age 2–12",
+        "infants": "Infants",
+        "infantsHint": "Age 0–2",
+        "quantity": "Quantity",
+        "maxPersons": "Up to {max} people",
+        "perPerson": "per person",
+        "perDay": "per day",
+        "perBooking": "per booking",
+        "rooms": "Rooms",
+        "roomsHint": "How many rooms",
+        "perNight": "per night",
+        "nights": "{n} night(s)",
+        "roomFor": "for {n}",
+        "childrenStayHint": "Under 12",
+        "boards": {
+          "ro": "Room only",
+          "bb": "Bed & breakfast",
+          "hb": "Half board",
+          "fb": "Full board",
+          "ai": "All inclusive"
+        }
+      }
+    },
+    "newsletter": {
+      "emailInvalid": "Please enter a valid e-mail address.",
+      "consentRequired": "Please tick the consent box to continue.",
+      "rateLimited": "Too many attempts; please try again a little later.",
+      "error": "Could not be sent; please try again."
+    }
+  },
+  "contactForm": {
+    "name": "Your name",
+    "email": "Email",
+    "phone": "Phone",
+    "optional": "optional",
+    "message": "Your message",
+    "messagePlaceholder": "How can we help you?",
+    "consent": "I have read the {link} and agree that my details are processed to answer my request.",
+    "consentLink": "privacy notice",
+    "submit": "Send",
+    "sending": "Sending…",
+    "doneTitle": "We received your message",
+    "doneText": "We sent a confirmation to {email}. We will get back to you soon.",
+    "doneAgain": "Write another message"
+  },
+  "ui": {
+    "title": "Components"
+  },
+  "shop": {
+    "meta": {
+      "title": "Shop",
+      "description": "Our products: prices, availability and secure ordering."
+    },
+    "hero": {
+      "eyebrow": "Shop",
+      "title": "Our products",
+      "titleAccent": "",
+      "lead": "Choose, add to cart and order in a few steps."
+    },
+    "empty": "No products for sale right now.",
+    "addToCart": "Add to cart",
+    "quantity": "Quantity",
+    "outOfStock": "Sold out",
+    "taxIncluded": "VAT included",
+    "taxExcluded": "VAT excluded",
+    "digital": "Digital product",
+    "backToShop": "Back to shop",
+    "viewCart": "View cart",
+    "cart": {
+      "title": "Cart",
+      "empty": "Your cart is empty.",
+      "remove": "Remove",
+      "coupon": "Coupon code",
+      "applyCoupon": "Apply",
+      "removeCoupon": "Remove coupon",
+      "checkout": "Checkout",
+      "continue": "Continue shopping"
+    },
+    "totals": {
+      "subtotal": "Subtotal",
+      "discount": "Discount",
+      "shipping": "Shipping",
+      "free": "Free",
+      "fee": "Payment fee",
+      "tax": "VAT",
+      "total": "Total"
+    },
+    "checkout": {
+      "title": "Checkout",
+      "contact": "Contact",
+      "delivery": "Delivery address",
+      "payment": "Payment method",
+      "note": "Order note (optional)",
+      "name": "Full name",
+      "email": "Email",
+      "phone": "Phone",
+      "line": "Address",
+      "district": "District",
+      "city": "City",
+      "postal": "Postal code",
+      "country": "Country",
+      "terms": "I have read and accept the {link} and the {info}.",
+      "termsLink": "distance sales contract",
+      "submit": "Place order",
+      "sending": "Placing order…",
+      "noPayment": "No payment method is available right now; please contact us.",
+      "infoLink": "pre-contract information"
+    },
+    "order": {
+      "title": "Your order",
+      "thanks": "Thank you, we received your order.",
+      "number": "Order no",
+      "status": "Status",
+      "payment": "Payment",
+      "items": "Items",
+      "transfer": "Bank transfer details",
+      "notFound": "Order not found. Please use the link in the email.",
+      "mail": "The details were also sent to your email address.",
+      "payNow": "Complete payment",
+      "unpaid": "Your order is awaiting payment.",
+      "cancelled": "The payment was not completed. You can try again.",
+      "processing": "Your payment is being processed; the status turns to \"Paid\" when confirmed and you get an email."
+    },
+    "booking": {
+      "meta": {
+        "title": "Tours and activities",
+        "description": "Pick a date, enter the number of people and book in a few steps."
+      },
+      "hero": {
+        "eyebrow": "Booking",
+        "title": "Tours and activities",
+        "titleAccent": "",
+        "lead": "Pick a date, enter the number of people and reserve your place in a few steps."
+      },
+      "empty": "No tours to book right now.",
+      "perPerson": "per person",
+      "from": "from",
+      "date": "Date",
+      "adults": "Adults",
+      "children": "Children (2–12)",
+      "infants": "Infants (0–2)",
+      "total": "Total",
+      "book": "Book now",
+      "duration": "Duration",
+      "includes": "Included",
+      "meeting": "Meeting point",
+      "back": "Back to tours",
+      "soldOut": "No places left on this date",
+      "left": "places left",
+      "startingAt": "From",
+      "perDay": "per day",
+      "perBooking": "per booking",
+      "packages": "Package",
+      "pickup": "Pick-up date",
+      "return": "Return date",
+      "quantity": "Quantity",
+      "persons": "People",
+      "maxPersons": "Up to {max} people",
+      "groupTitle": "Group discount",
+      "listPrice": "List price",
+      "saving": "You save",
+      "close": "Close",
+      "increase": "Increase",
+      "decrease": "Decrease",
+      "highlights": "Highlights",
+      "itinerary": "Itinerary",
+      "excludes": "Not included",
+      "faq": "FAQ",
+      "guideLanguages": "Guide languages",
+      "details": "Details",
+      "checkIn": "Check-in",
+      "checkOut": "Check-out",
+      "perNight": "per night",
+      "roomsTitle": "Room and board",
+      "amenities": "Amenities",
+      "checkInTime": "Check-in time",
+      "checkOutTime": "Check-out time",
+      "location": "Location"
+    },
+    "hotels": {
+      "meta": {
+        "title": "Hotels",
+        "description": "Choose your dates, pick your room and board, and book in a few steps."
+      },
+      "hero": {
+        "eyebrow": "Stays",
+        "title": "Hotels and guesthouses",
+        "titleAccent": "",
+        "lead": "Choose your dates, pick your room and board; see the price instantly."
+      },
+      "empty": "There are no hotels available to book right now.",
+      "back": "Back to hotels"
+    }
+  },
+  "blocks": {
+    "marquee": {
+      "label": "Featured topics",
+      "row1": [
+        {
+          "text": "Culture tours",
+          "url": "",
+          "filled": false
+        },
+        {
+          "text": "Abroad",
+          "url": "",
+          "filled": true
+        },
+        {
+          "text": "Resorts",
+          "url": "",
+          "filled": false
+        },
+        {
+          "text": "Flights",
+          "url": "",
+          "filled": true
+        },
+        {
+          "text": "Hotels",
+          "url": "",
+          "filled": false
+        },
+        {
+          "text": "Early booking",
+          "url": "",
+          "filled": true
+        }
+      ],
+      "row2": [
+        {
+          "text": "Balkan tours",
+          "badge": "Popular",
+          "url": ""
+        },
+        {
+          "text": "Bosnia",
+          "badge": "New",
+          "url": ""
+        },
+        {
+          "text": "Mostar",
+          "badge": "Deal",
+          "url": ""
+        },
+        {
+          "text": "Rafting",
+          "badge": "Adventure",
+          "url": ""
+        },
+        {
+          "text": "Antalya hotels",
+          "badge": "All inclusive",
+          "url": ""
+        },
+        {
+          "text": "Visa-free tours",
+          "badge": "Easy",
+          "url": ""
+        }
+      ],
+      "row3": [
+        {
+          "text": "Travel guide",
+          "url": ""
+        },
+        {
+          "text": "Holiday deals",
+          "url": ""
+        },
+        {
+          "text": "Guided tours",
+          "url": ""
+        },
+        {
+          "text": "Travel insurance",
+          "url": ""
+        },
+        {
+          "text": "VIP transfer",
+          "url": ""
+        },
+        {
+          "text": "Honeymoon hotels",
+          "url": ""
+        },
+        {
+          "text": "City hotels",
+          "url": ""
+        }
+      ],
+      "footer": "Hover to pause; click a tag to open its page."
+    },
+    "letters": {
+      "line1": "Your dream holiday",
+      "line2": "is one message away"
+    },
+    "hero": {
+      "eyebrow": "Welcome",
+      "title": "Your new site",
+      "titleAccent": "is live.",
+      "lead": "Change this section in the panel's Page editor: click a text to type, drag sections to reorder.",
+      "primary": "Write to us",
+      "secondary": "Blog"
+    },
+    "features": {
+      "eyebrow": "What we offer",
+      "title": "Your business",
+      "titleAccent": "in three lines.",
+      "items": [
+        {
+          "icon": "zap",
+          "title": "First feature",
+          "text": "The first reason customers choose you. Keep it short and concrete."
+        },
+        {
+          "icon": "shield-check",
+          "title": "Second feature",
+          "text": "Something that builds trust: experience, certificates, guarantees or process."
+        },
+        {
+          "icon": "globe",
+          "title": "Third feature",
+          "text": "What sets you apart from competitors. One sentence is enough."
+        }
+      ]
+    },
+    "steps": {
+      "eyebrow": "How we work",
+      "title": "Four steps",
+      "titleAccent": "to results.",
+      "steps": [
+        {
+          "icon": "compass",
+          "title": "Meet",
+          "text": "We listen to your needs."
+        },
+        {
+          "icon": "pen-tool",
+          "title": "Plan",
+          "text": "We draw up the roadmap together."
+        },
+        {
+          "icon": "code",
+          "title": "Build",
+          "text": "We deliver on time."
+        },
+        {
+          "icon": "rocket",
+          "title": "Launch",
+          "text": "We review the results together."
+        }
+      ]
+    },
+    "posts": {
+      "eyebrow": "Blog",
+      "title": "Latest posts",
+      "cta": "All posts"
+    },
+    "cta": {
+      "title": "Have a question?",
+      "titleAccent": "Write, we'll get back.",
+      "lead": "Reach us through the contact form; we reply as soon as possible.",
+      "button": "Get in touch"
+    },
+    "text": {
+      "title": "Heading",
+      "body": "<p>Write your text here. You can add <strong>bold</strong>, <em>italic</em>, links and lists.</p>"
+    },
+    "stats": {
+      "eyebrow": "In numbers",
+      "title": "So far",
+      "items": [
+        {
+          "value": "10+",
+          "label": "Years of experience"
+        },
+        {
+          "value": "250+",
+          "label": "Happy clients"
+        },
+        {
+          "value": "98%",
+          "label": "Satisfaction"
+        },
+        {
+          "value": "24/7",
+          "label": "Support"
+        }
+      ]
+    },
+    "logos": {
+      "eyebrow": "Brands we work with",
+      "items": [
+        {
+          "name": "Brand A",
+          "image": 0
+        },
+        {
+          "name": "Brand B",
+          "image": 0
+        },
+        {
+          "name": "Brand C",
+          "image": 0
+        },
+        {
+          "name": "Brand D",
+          "image": 0
+        },
+        {
+          "name": "Brand E",
+          "image": 0
+        }
+      ]
+    },
+    "testimonials": {
+      "eyebrow": "Testimonials",
+      "title": "What our clients say",
+      "items": [
+        {
+          "quote": "The process was clear and fast from start to finish; we always knew what came next.",
+          "name": "Ayşe Yılmaz",
+          "role": "Business owner"
+        },
+        {
+          "quote": "Our questions were answered right away. The result exceeded our expectations.",
+          "name": "Mehmet Kaya",
+          "role": "Marketing manager"
+        },
+        {
+          "quote": "Thank you for the care and attention; we will work together again.",
+          "name": "Elif Demir",
+          "role": "Founder"
+        }
+      ]
+    },
+    "faq": {
+      "eyebrow": "FAQ",
+      "title": "On your mind",
+      "items": [
+        {
+          "q": "How do we start?",
+          "a": "Write to us via the contact form; we will listen and draw up the roadmap together."
+        },
+        {
+          "q": "How long does it take?",
+          "a": "It depends on the scope; we give a clear timeline in the first meeting."
+        },
+        {
+          "q": "How do payments work?",
+          "a": "Bank transfer or card; staged payment plans are possible too."
+        }
+      ]
+    },
+    "badges": {
+      "items": [
+        {
+          "icon": "lock",
+          "title": "Secure payment",
+          "text": "Your data is encrypted."
+        },
+        {
+          "icon": "rotate-ccw",
+          "title": "Easy cancellation",
+          "text": "Free cancellation before the date."
+        },
+        {
+          "icon": "message",
+          "title": "24/7 support",
+          "text": "We are here for every question."
+        },
+        {
+          "icon": "star",
+          "title": "Top rated",
+          "text": "4.9 / 5 from our clients."
+        }
+      ]
+    },
+    "split": {
+      "eyebrow": "About us",
+      "title": "A small team with great care",
+      "text": "Tell visitors who you are and what you do, and why, in a few sentences. Show with concrete examples why they can trust you.",
+      "button": "Meet us"
+    },
+    "tours": {
+      "eyebrow": "Tours",
+      "title": "Featured tours",
+      "cta": "All tours"
+    },
+    "products": {
+      "eyebrow": "Shop",
+      "title": "Featured products",
+      "cta": "All products"
+    },
+    "newsletter": {
+      "eyebrow": "Newsletter",
+      "title": "Be the first to hear what is new",
+      "lead": "Offers, new content and announcements in your inbox. Unsubscribe any time with one click.",
+      "placeholder": "Your e-mail address",
+      "name": "Your name",
+      "button": "Subscribe",
+      "consent": "I agree to receive offers and announcements by e-mail.",
+      "privacyLabel": "Privacy notice",
+      "done": "Almost done: confirm your subscription with the link we sent to your inbox."
+    }
+  },
+  "newsletter": {
+    "meta": {
+      "title": "Newsletter",
+      "description": "Subscribe to our e-mail newsletter: offers, new content and announcements."
+    },
+    "confirming": "Confirming your subscription…",
+    "activeTitle": "Subscription confirmed",
+    "activeText": "Thank you! Our newsletter will now arrive in your inbox.",
+    "unsubscribeTitle": "Leaving the newsletter?",
+    "unsubscribeText": "If you confirm, no more newsletters will be sent to this address.",
+    "unsubscribeButton": "Unsubscribe",
+    "unsubscribedTitle": "You have unsubscribed",
+    "unsubscribedText": "You will no longer receive our newsletter. If you change your mind, you can subscribe again.",
+    "invalidTitle": "Invalid link",
+    "invalidText": "The link may have expired or been copied incompletely. You can subscribe again below.",
+    "home": "Back to home"
+  },
+  "legal": {
+    "title": "Legal information",
+    "description": "Privacy policy, personal data notice, cookies, terms of use and contracts.",
+    "lead": "How we process your personal data and the terms of our services, in one place.",
+    "eyebrow": "Legal",
+    "updated": "Last updated",
+    "toc": "On this page",
+    "all": "Legal documents",
+    "open": "Read",
+    "groups": {
+      "general": "General",
+      "contact": "Contact",
+      "newsletter": "Newsletter",
+      "commerce": "Shopping",
+      "booking": "Bookings"
+    },
+    "privacy": {
+      "title": "Privacy policy",
+      "description": "Which personal data we process on our site, why and how.",
+      "lead": "We explain in plain language which data we process, why, who we share it with and what your rights are."
+    },
+    "kvkk": {
+      "title": "Personal data notice (KVKK)",
+      "description": "Information notice under the Turkish Personal Data Protection Law No. 6698 (KVKK).",
+      "lead": "As data controller, we inform you under Article 10 of the Turkish Personal Data Protection Law No. 6698."
+    },
+    "cookies": {
+      "title": "Cookie policy",
+      "description": "Cookies and browser storage used on our site.",
+      "lead": "Which cookies and browser storage we use, why, and how you can manage them."
+    },
+    "terms": {
+      "title": "Terms of use",
+      "description": "Terms of use of our site.",
+      "lead": "The rules that apply when you use our site."
+    },
+    "contactNotice": {
+      "title": "Contact and enquiry form notice",
+      "description": "Information on personal data processed in our contact and enquiry forms.",
+      "lead": "How your personal data is processed when you write to us through our forms."
+    },
+    "newsletterConsent": {
+      "title": "Newsletter notice and marketing consent",
+      "description": "E-mail newsletter: consent to commercial electronic messages and processing of personal data.",
+      "lead": "The consent you give when subscribing to our newsletter and how your data is processed."
+    },
+    "shopTerms": {
+      "title": "Distance sales contract",
+      "description": "The distance sales contract that applies to purchases on our site.",
+      "lead": "The contract concluded between you and us when you shop on our site."
+    },
+    "preInformation": {
+      "title": "Pre-contract information",
+      "description": "Pre-contract information under the Turkish Distance Contracts Regulation.",
+      "lead": "What you need to know before you confirm your order."
+    },
+    "delivery": {
+      "title": "Delivery and shipping",
+      "description": "Delivery times, shipping costs and delivery conditions.",
+      "lead": "When, how and at what cost your order reaches you."
+    },
+    "returns": {
+      "title": "Cancellation, returns and withdrawal",
+      "description": "Order cancellation, right of withdrawal and the return process.",
+      "lead": "How to cancel an order, withdraw from the contract and get your money back."
+    },
+    "orderNotice": {
+      "title": "Customer privacy notice",
+      "description": "Information on personal data processed for orders and payments.",
+      "lead": "How your personal data is processed when you shop with us."
+    },
+    "bookingTerms": {
+      "title": "Booking terms",
+      "description": "Terms for tour, activity and accommodation bookings.",
+      "lead": "How your booking is confirmed, changed and cancelled."
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{% extends "layouts/base.njk" %}
+{% import "macros/ui.njk" as ui %}
+{% import "macros/live.njk" as live %}
+
+{#
+  Mağaza (modül commerce; vite/commerce-routes.js): satıştaki ürünler ($store.km.products). Sunucu ilk kopyayı
+  HTML'e yazar (ListSsr): JavaScript'siz okuyucular ad, fiyat ve bağlantıyı görür.
+#}
+{% block content %}
+{% call ui.pageHero(tx('shop.hero.eyebrow'), tx('shop.hero.title'), tx('shop.hero.titleAccent'), tx('shop.hero.lead')) %}
+    <a href="{{ url('cart') }}" class="link-arrow fade-up fade-up-3 mt-6">{{ ui.icon('cart', 'icon icon-sm') }} {{ t('shop.viewCart') }}</a>
+{% endcall %}
+
+<section class="container-site pb-20">
+  <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3" x-show="$store.km.products.length">
+    <template x-for="(p, i) in $store.km.products" :key="p.id" data-km-ssr-list="products" data-km-ssr-route="product">
+      <a :href="p.url" class="card card-hover group flex flex-col overflow-hidden" data-testid="shop-product">
+        <div class="aspect-[4/3] overflow-hidden">
+          {{ live.img('p.cover', '(min-width: 1024px) 380px, (min-width: 640px) 50vw, 100vw', 'h-full w-full object-cover', alt='p.title') }}
+        </div>
+        <div class="card-body flex flex-1 flex-col gap-2">
+          <h2 class="h3" x-text="p.title"></h2>
+          <p class="text-sm text-ink-2" x-text="p.summary"></p>
+          <p class="mt-auto flex flex-wrap items-baseline gap-2 pt-2">
+            <strong class="text-lg text-ink" x-text="p.priceText"></strong>
+            <s class="text-sm text-muted" x-show="p.comparePrice" x-text="p.comparePriceText"></s>
+            <span class="badge badge-neutral ml-auto" x-show="!p.inStock">{{ t('shop.outOfStock') }}</span>
+          </p>
+        </div>
+      </a>
+    </template>
+  </div>
+  <p class="card card-body text-ink-2" x-show="!$store.km.products.length" x-cloak>{{ tx('shop.empty') }}</p>
+</section>
+{% endblock %}

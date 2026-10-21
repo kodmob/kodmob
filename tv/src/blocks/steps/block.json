@@ -1,0 +1,16 @@
+{
+  "label": "Süreç adımları",
+  "description": "Solda başlık, sağda numaralı adımlar: nasıl çalıştığınızı anlatın.",
+  "category": "section",
+  "icon": "list",
+  "fields": [
+    { "name": "eyebrow", "type": "text", "label": "Üst etiket", "localized": true, "max": 60, "default": "@blocks.steps.eyebrow" },
+    { "name": "title", "type": "text", "label": "Başlık", "localized": true, "max": 120, "default": "@blocks.steps.title" },
+    { "name": "titleAccent", "type": "text", "label": "Başlığın vurgulu devamı", "localized": true, "max": 80, "default": "@blocks.steps.titleAccent" },
+    { "name": "steps", "type": "rows", "label": "Adımlar", "localized": true, "max": 8, "columns": [
+      { "name": "icon", "type": "icon", "label": "İkon", "default": "check" },
+      { "name": "title", "type": "text", "label": "Başlık", "max": 80 },
+      { "name": "text", "type": "textarea", "label": "Metin", "max": 300 }
+    ], "default": "@blocks.steps.steps" }
+  ]
+}

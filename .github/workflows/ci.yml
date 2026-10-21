@@ -1,0 +1,107 @@
+# Tek depo CI: backend (pint + Larastan + PHPUnit; SQLite, MySQL ve PostgreSQL matrisi) ve ön yüz (birim + uçtan uca).
+# Uçtan uca testler <depo>/.e2e'de kendi SQLite veritabanı ve 8091 portuyla çalışır.
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  backend:
+    name: backend (${{ matrix.db }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        db: [sqlite, mysql, pgsql]
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: kodmob
+          MYSQL_DATABASE: kodmob_test
+        ports: ['3306:3306']
+        options: --health-cmd="mysqladmin ping -h 127.0.0.1 -pkodmob" --health-interval=5s --health-timeout=5s --health-retries=30
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_PASSWORD: kodmob
+          POSTGRES_DB: kodmob_test
+        ports: ['5432:5432']
+        options: --health-cmd="pg_isready -U postgres" --health-interval=5s --health-timeout=5s --health-retries=30
+    defaults:
+      run:
+        working-directory: kodmob-api
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: gd, intl, mbstring, pdo_sqlite, sqlite3, pdo_mysql, pdo_pgsql, zip
+          tools: composer
+          coverage: none
+      - run: composer install --no-interaction --prefer-dist --no-progress
+      - run: cp .env.example .env && php artisan key:generate --force
+      - name: Veritabanı (${{ matrix.db }})
+        run: |
+          case "${{ matrix.db }}" in
+            mysql) printf 'DB_CONNECTION=mysql\nDB_HOST=127.0.0.1\nDB_PORT=3306\nDB_DATABASE=kodmob_test\nDB_USERNAME=root\nDB_PASSWORD=kodmob\n' >> "$GITHUB_ENV" ;;
+            pgsql) printf 'DB_CONNECTION=pgsql\nDB_HOST=127.0.0.1\nDB_PORT=5432\nDB_DATABASE=kodmob_test\nDB_USERNAME=postgres\nDB_PASSWORD=kodmob\n' >> "$GITHUB_ENV" ;;
+          esac
+      - run: vendor/bin/pint --test
+        if: matrix.db == 'sqlite'
+      # Statik analiz (Larastan, seviye 5; eski uyarılar phpstan-baseline.neon'da).
+      - run: vendor/bin/phpstan analyse --memory-limit=1G --no-progress
+        if: matrix.db == 'sqlite'
+      - run: vendor/bin/phpunit
+
+  frontend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: gd, intl, mbstring, pdo_sqlite, sqlite3, zip
+          tools: composer
+      - name: kodmob-api kurulumu
+        working-directory: kodmob-api
+        run: |
+          composer install --no-interaction --prefer-dist --no-progress
+          cp .env.example .env
+          php artisan key:generate --force
+          sed -i "s/^JWT_SECRET=.*/JWT_SECRET=$(openssl rand -hex 32)/" .env
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: tv/package-lock.json
+      - run: npm ci
+        working-directory: tv
+      - run: npm test
+        working-directory: tv
+      - name: Uçtan uca testler (Chrome runner'da kurulu)
+        working-directory: tv
+        run: npm run e2e
+        env:
+          CI: 'true'
+          KM_PHP: php
+      # Mağaza, Rezervasyon, Oteller: başlangıç profili + modüller ortamdan (shop.spec).
+      - name: Uçtan uca testler (mağaza)
+        working-directory: tv
+        run: npm run e2e -- --shop
+        env:
+          CI: 'true'
+          KM_PHP: php
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: e2e-rapor
+          path: |
+            .e2e/report
+            .e2e/results
+            .e2e/requests.log
+            .e2e/storage/logs
+          retention-days: 7

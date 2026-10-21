@@ -1,0 +1,45 @@
+{{! Vorlage: KVKK-Art.-10-Hinweis für Bestellung und Zahlung. Keine Rechtsberatung. }}
+<h2>Verantwortlicher</h2>
+<p>Wenn Sie auf unserer Website einkaufen{{#modules.booking}} oder buchen{{/modules.booking}}, verarbeitet das unten genannte Unternehmen Ihre Daten als Verantwortlicher nach dem türkischen Datenschutzgesetz Nr. 6698 („KVKK“):</p>
+{{{controllerCard}}}
+
+<h2>Verarbeitete Daten</h2>
+<ul>
+  <li><strong>Identität:</strong> Name; für die Rechnung ggf. türkische Identitäts- oder Steuernummer.</li>
+  <li><strong>Kontakt:</strong> E-Mail-Adresse, Telefon, Liefer- und Rechnungsadresse.</li>
+  <li><strong>Kundenvorgang:</strong> Bestellinhalt, Betrag, Gutschein, Bestellnotiz, Bestell- und Rückgabehistorie.</li>
+  <li><strong>Finanzen:</strong> Zahlungsart, Zahlungsstatus und Transaktionsnummer des Zahlungsdienstleisters. Ihre Kartendaten erreichen unsere Server nicht.</li>
+{{#modules.booking}}
+  <li><strong>Buchung:</strong> Datum, Zahl der Erwachsenen, Kinder und Kleinkinder, gewähltes Paket{{#modules.hotels}}, Zimmertyp und Verpflegung{{/modules.hotels}}. Besondere Kategorien (Gesundheit usw.) erfragen wir nicht; falls für die Leistung nötig, holen wir Ihre ausdrückliche Einwilligung gesondert ein.</li>
+{{/modules.booking}}
+  <li><strong>Transaktionssicherheit:</strong> Bestelldatum, IP-Adresse und Browserangaben.</li>
+</ul>
+
+<h2>Zwecke und Rechtsgrundlagen</h2>
+<ul>
+  <li>Annahme, Vorbereitung und Lieferung Ihrer Bestellung{{#modules.booking}} sowie Erbringung der gebuchten Leistung{{/modules.booking}}, Kommunikation, Rückgaben und Beschwerden: <strong>Abschluss und Erfüllung eines Vertrags (KVKK Art. 5/2-c)</strong>,</li>
+  <li>Rechnungsstellung, Buchhaltung und verbraucherrechtliche Pflichten: <strong>rechtliche Verpflichtung (Art. 5/2-ç)</strong>,</li>
+  <li>Wahrung unserer Rechte bei Streitigkeiten: <strong>Begründung und Schutz eines Rechts (Art. 5/2-e)</strong>,</li>
+  <li>Betrugs- und Missbrauchsabwehr: <strong>berechtigtes Interesse (Art. 5/2-f)</strong>.</li>
+</ul>
+<p>Bestelldaten nutzen wir nicht für Werbung. Werbe-E-Mails senden wir nur mit Ihrer gesonderten Einwilligung.</p>
+
+<h2>Übermittlung</h2>
+<ul>
+  <li><strong>Versand- und Logistikunternehmen:</strong> Name, Adresse und Telefon für die Lieferung.</li>
+{{#modules.stripe}}
+  <li><strong>Stripe:</strong> Zahlungsbetrag, E-Mail-Adresse und Bestellnummer für Kartenzahlungen. Die Server von Stripe liegen im Ausland; die Übermittlung erfolgt gemäß Artikel 9 KVKK.</li>
+{{/modules.stripe}}
+{{#modules.paytr}}
+  <li><strong>PayTR, Zahlungs- und E-Geld-Institut:</strong> Name, E-Mail, Telefon, Adresse, Zahlungsbetrag und Bestellnummer für Kartenzahlungen.</li>
+{{/modules.paytr}}
+  <li><strong>Steuerberater und Buchhaltung:</strong> für Rechnungen und gesetzliche Aufzeichnungen.</li>
+  <li><strong>Hosting- und E-Mail-Anbieter:</strong> zur Erbringung der Leistung.</li>
+  <li><strong>Zuständige Behörden und Gerichte:</strong> auf Anforderung.</li>
+</ul>
+
+<h2>Speicherdauer</h2>
+<p>Bestell-, Rechnungs- und Zahlungsunterlagen werden für die Fristen des türkischen Handelsgesetzbuchs (10 Jahre) und Steuerverfahrensgesetzes (5 Jahre) aufbewahrt und dann gelöscht oder anonymisiert. Nicht abgeschlossene Warenkörbe werden nach 30 Tagen gelöscht.</p>
+
+<h2>Ihre Rechte</h2>
+<p>Ihre Rechte nach Artikel 11 KVKK können Sie per E-Mail mit Bestellnummer an <a href="mailto:{{controller.email}}">{{controller.email}}</a> ausüben.{{#links.kvkk}} Die vollständige Liste und das Antragsverfahren finden Sie im <a href="{{links.kvkk}}">Datenschutzhinweis (KVKK)</a>.{{/links.kvkk}}</p>

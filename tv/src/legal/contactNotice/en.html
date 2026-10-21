@@ -1,0 +1,30 @@
+{{! Template: forms of the enquiries module (contact, project brief, price calculator). }}
+<h2>Data controller</h2>
+<p>Personal data you send us through the contact and enquiry forms on our site is processed by the business below as data controller under the Turkish Personal Data Protection Law No. 6698 ("KVKK"):</p>
+{{{controllerCard}}}
+
+<h2>Personal data processed</h2>
+<ul>
+  <li><strong>Identity:</strong> your name; optionally your company.</li>
+  <li><strong>Contact:</strong> your e-mail address and optional phone number.</li>
+  <li><strong>Customer transaction:</strong> your message, the services you are interested in, budget and timing{{#modules.estimate}}, your choices in the price calculator{{/modules.estimate}}, the language of the request and which form it came from.</li>
+  <li><strong>Transaction security:</strong> the date of the request, your browser details and an irreversible hash of your IP address (the address itself is not stored).</li>
+</ul>
+
+<h2>Purposes and legal grounds</h2>
+<ul>
+  <li>To assess your request, reply to you and prepare an offer: <strong>conclusion of a contract (KVKK Art. 5/2-c)</strong>,</li>
+  <li>to send the automatic e-mail confirming that your request has reached us: <strong>conclusion of a contract (Art. 5/2-c)</strong>,</li>
+  <li>to prevent spam and abuse: <strong>legitimate interest (Art. 5/2-f)</strong>,</li>
+  <li>to protect our rights in possible disputes: <strong>establishing and protecting a right (Art. 5/2-e)</strong>.</li>
+</ul>
+<p>The consent box in the form is for you to confirm that you have read this notice; we do not ask for separate explicit consent for the processing above. We do not add you to a newsletter or use your data for marketing.</p>
+
+<h2>Transfers</h2>
+<p>Your data is shared only with the providers of the server hosting our site and the infrastructure that sends e-mails, to the extent needed to provide their service; it may be transferred to competent authorities upon request.</p>
+
+<h2>Retention</h2>
+<p>Requests are automatically and permanently deleted from our system after {{retention.briefs}} months. If your request becomes a contract, contract and invoice records are kept for the periods required by law.</p>
+
+<h2>Your rights</h2>
+<p>You can exercise your rights under Article 11 KVKK by writing to <a href="mailto:{{controller.email}}">{{controller.email}}</a>.{{#links.kvkk}} The full list of rights and how to apply are in our <a href="{{links.kvkk}}">Personal Data Notice (KVKK)</a>.{{/links.kvkk}}</p>

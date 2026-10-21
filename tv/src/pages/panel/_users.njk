@@ -1,0 +1,200 @@
+{# Kullanıcılar. Mantık: panel/users.js. Tablo: ui/grid (kmGrid). #}
+<div class="pn-page" x-data="kmUsers(r)">
+  <div class="pn-toolbar">
+    <p class="pn-hint flex-1">
+      <svg class="icon icon-sm" aria-hidden="true"><use href="#i-info"/></svg>
+      <span>Her kullanıcının gördüğü sayfalar ve yapabildiği işlemler rolünden gelir. Rolleri <a :href="$href('roles')" class="text-primary hover:underline" x-show="$store.session.can('km_manage_roles')">Roller ve İzinler</a><span x-show="!$store.session.can('km_manage_roles')">Yönetici</span> düzenler.</span>
+    </p>
+    <button type="button" class="btn btn-primary" x-show="canManage" @click="create()" data-testid="user-new">
+      <svg class="icon icon-sm" aria-hidden="true"><use href="#i-plus"/></svg> Yeni kullanıcı
+    </button>
+  </div>
+
+  <template x-if="grid">
+    <div x-data="kmGrid(grid)" @grid-open="edit($event.detail.row)" @grid-action="onAction($event.detail)" @grid-bulk="onBulk($event.detail)">
+      {% include "ui/grid/grid.html" %}
+    </div>
+  </template>
+
+  {# ============================================================ ekle / düzenle #}
+  <div class="pn-drawer-backdrop" x-show="user" x-transition.opacity x-cloak @click="close()"></div>
+  <aside class="pn-drawer flex flex-col" x-show="user" x-cloak x-transition:enter="transition duration-200 ease-out" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0" x-transition:leave="transition duration-150 ease-in" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full" @keydown.escape.window="compose.open || close()" aria-label="Kullanıcı" data-testid="user-drawer">
+    <template x-if="user">
+      <form class="flex h-full flex-col" @submit.prevent="save()" novalidate>
+        <div class="pn-drawer-head">
+          <span class="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-primary-strong text-sm font-semibold text-white" x-text="fmt.initials(form.display_name || 'Y')"></span>
+          <div class="min-w-0 flex-1">
+            <p class="truncate text-lg font-bold text-ink" x-text="isNew ? 'Yeni kullanıcı' : (user.display_name || '…')"></p>
+            <p class="text-sm text-muted" x-show="!isNew">
+              <span x-text="user.role_label"></span>
+              <span x-show="user.status === 'passive'" class="text-danger"> · pasif</span>
+              <span x-show="user.last_login_at" x-text="' · son giriş ' + fmt.relative(user.last_login_at)"></span>
+            </p>
+          </div>
+          <template x-if="!isNew && !loadingDetail">
+            <div class="flex gap-1">
+              <button type="button" class="btn-icon" x-show="canSms && user.phone" @click="openCompose('sms', [user])" aria-label="SMS gönder" title="SMS gönder" data-testid="user-sms"><svg class="icon" aria-hidden="true"><use href="#i-message"/></svg></button>
+              <button type="button" class="btn-icon" x-show="canMail && user.email" @click="openCompose('mail', [user])" aria-label="E-posta gönder" title="E-posta gönder" data-testid="user-mail"><svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg></button>
+            </div>
+          </template>
+          <button type="button" class="btn-icon" @click="close()" aria-label="Kapat"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button>
+        </div>
+
+        <div class="flex gap-1 border-b border-line px-5" role="tablist" x-show="!isNew">
+          <template x-for="t in [['info', 'Bilgiler'], ['sessions', 'Oturumlar'], ['history', 'Son işlemler']]" :key="t[0]">
+            <button type="button" role="tab" class="-mb-px border-b-2 px-3 py-3 text-sm font-semibold" :class="tab === t[0] ? 'border-primary-strong text-primary-ink' : 'border-transparent text-ink-2 hover:text-ink'" :aria-selected="tab === t[0]" @click="tab = t[0]" x-text="t[1]"></button>
+          </template>
+        </div>
+
+        <div class="pn-drawer-body">
+          <template x-if="loadingDetail"><div class="space-y-3"><span class="skeleton block h-11"></span><span class="skeleton block h-11"></span><span class="skeleton block h-11"></span></div></template>
+
+          {# Bilgiler #}
+          <div class="flex flex-col gap-4" x-show="!loadingDetail && tab === 'info'">
+            <p class="rounded-control bg-warning-soft p-3 text-sm text-warning-ink" x-show="readonly && !isNew">Bu hesabı düzenleme yetkiniz yok; bilgiler yalnızca görüntülenir.</p>
+            <label class="field">
+              <span class="field-label">Ad soyad <span class="req">*</span></span>
+              <input class="input" x-model="form.display_name" :disabled="readonly" autocomplete="off" :aria-invalid="!!errors.display_name" required>
+              <span class="field-error" x-show="errors.display_name" x-text="errors.display_name"></span>
+            </label>
+            <div class="grid gap-4 sm:grid-cols-2">
+              <label class="field">
+                <span class="field-label">Kullanıcı adı <span class="req">*</span></span>
+                <input class="input code" x-model="form.username" :disabled="readonly" autocomplete="off" autocapitalize="none" spellcheck="false" :aria-invalid="!!errors.username" required>
+                <span class="field-help">Küçük harf, rakam, nokta, tire. Giriş için kullanılır.</span>
+                <span class="field-error" x-show="errors.username" x-text="errors.username"></span>
+              </label>
+              <label class="field">
+                <span class="field-label">Telefon</span>
+                <input class="input" type="tel" x-model="form.phone" :disabled="readonly" autocomplete="off" :aria-invalid="!!errors.phone">
+                <span class="field-error" x-show="errors.phone" x-text="errors.phone"></span>
+              </label>
+            </div>
+            <label class="field">
+              <span class="field-label">E-posta <span class="req">*</span></span>
+              <input class="input" type="email" x-model="form.email" :disabled="readonly" autocomplete="off" :aria-invalid="!!errors.email" required>
+              <span class="field-help">E-posta ile de giriş yapılabilir.</span>
+              <span class="field-error" x-show="errors.email" x-text="errors.email"></span>
+            </label>
+            <label class="field">
+              <span class="field-label">Rol <span class="req">*</span></span>
+              <select class="input" x-model="form.role" :disabled="readonly || user.is_self" :aria-invalid="!!errors.role">
+                <template x-for="r in options.roles" :key="r.value">
+                  <option :value="r.value" x-text="r.label" :selected="r.value === form.role" :disabled="r.value === 'admin' && !$store.session.isAdmin"></option>
+                </template>
+              </select>
+              <span class="field-help" x-text="user.is_self ? 'Kendi rolünüzü değiştiremezsiniz.' : roleDescription(form.role)"></span>
+              <span class="field-error" x-show="errors.role" x-text="errors.role"></span>
+            </label>
+            <div class="field" x-show="!readonly">
+              <span class="field-label"><span x-text="isNew ? 'Şifre' : 'Yeni şifre'"></span> <span class="req" x-show="isNew">*</span></span>
+              <div class="flex gap-2">
+                <input class="input code flex-1" :type="showPassword ? 'text' : 'password'" x-model="form.password" autocomplete="new-password" :placeholder="isNew ? '' : 'Değiştirmek için yazın'" :aria-invalid="!!errors.password">
+                <button type="button" class="btn-icon" @click="showPassword = !showPassword" :aria-label="showPassword ? 'Şifreyi gizle' : 'Şifreyi göster'"><svg class="icon icon-sm" aria-hidden="true"><use :href="showPassword ? '#i-eye-off' : '#i-eye'"/></svg></button>
+                <button type="button" class="btn-icon" @click="copyPassword()" x-show="form.password" aria-label="Şifreyi kopyala"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg></button>
+                <button type="button" class="btn btn-secondary btn-sm" @click="newPassword()">Üret</button>
+              </div>
+              <span class="field-help" x-text="'En az ' + options.password_min + ' karakter, harf ve rakam. ' + (isNew ? 'Kullanıcıya güvenli bir yoldan iletin; ilk girişte Profilim\'den değiştirebilir.' : 'Değişince kullanıcının açık oturumları kapanır.')"></span>
+              <span class="field-error" x-show="errors.password" x-text="errors.password"></span>
+            </div>
+          </div>
+
+          {# Oturumlar #}
+          <div x-show="!loadingDetail && tab === 'sessions'">
+            <p class="text-sm text-ink-2" x-show="!(user.session_list || []).length">Açık oturum yok.</p>
+            <ul class="divide-y divide-line rounded-control border border-line" x-show="(user.session_list || []).length">
+              <template x-for="s in user.session_list || []" :key="s.id">
+                <li class="flex items-center gap-3 px-3 py-2.5 text-sm">
+                  <svg class="icon text-muted" aria-hidden="true"><use :href="/iPhone|Android/.test(s.device) ? '#i-smartphone' : '#i-monitor'"/></svg>
+                  <span class="min-w-0 flex-1">
+                    <span class="block font-medium text-ink" x-text="s.device"></span>
+                    <span class="block text-xs text-muted" x-text="s.ip + ' · son etkinlik ' + fmt.relative(s.last_seen_at || s.started_at) + ' · giriş ' + fmt.dateTime(s.started_at)"></span>
+                  </span>
+                </li>
+              </template>
+            </ul>
+            <button type="button" class="btn btn-secondary mt-4" x-show="canManage && !user.is_self && (user.session_list || []).length" @click="endSessions(user)">
+              <svg class="icon icon-sm" aria-hidden="true"><use href="#i-logout"/></svg> Bütün oturumlarını kapat
+            </button>
+          </div>
+
+          {# Son işlemler #}
+          <div x-show="!loadingDetail && tab === 'history'">
+            <p class="text-sm text-ink-2" x-show="!(user.history || []).length">Görebileceğiniz işlem yok.</p>
+            <ul class="flex flex-col gap-3" x-show="(user.history || []).length">
+              <template x-for="h in user.history || []" :key="h.id">
+                <li class="text-sm">
+                  <a :href="$href('history', { tab: 'all', id: h.id })" class="font-medium text-ink hover:underline" x-text="h.title"></a>
+                  <span class="text-ink-2" x-show="h.subject?.label" x-text="' · ' + (h.subject?.label || '')"></span>
+                  <span class="block text-xs text-muted" x-text="fmt.dateTime(h.at) + (h.text ? ' · ' + h.text : '')"></span>
+                </li>
+              </template>
+            </ul>
+            <a :href="$href('history', { tab: 'all' }, { user_id: user.id })" class="link-arrow mt-4 text-sm" x-show="$store.session.can('km_view_all_history')">Bütün işlemleri <svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+          </div>
+        </div>
+
+        <div class="pn-drawer-foot" x-show="tab === 'info' && !readonly">
+          <button type="submit" class="btn btn-primary" :disabled="saving" data-testid="user-save">
+            <svg class="icon icon-sm animate-spin" aria-hidden="true" x-show="saving" x-cloak><use href="#i-loader"/></svg>
+            <span x-text="isNew ? 'Kullanıcıyı ekle' : 'Kaydet'"></span>
+          </button>
+          <button type="button" class="btn btn-ghost" @click="close()">Vazgeç</button>
+          <template x-if="!isNew && !user.is_self">
+            <button type="button" class="btn btn-ghost ml-auto" :class="user.status === 'active' ? 'text-danger' : 'text-success'" @click="setActive(user, user.status !== 'active')" x-text="user.status === 'active' ? 'Pasife al' : 'Aktifleştir'"></button>
+          </template>
+        </div>
+      </form>
+    </template>
+  </aside>
+
+  {# ============================================================ SMS / e-posta yaz (users.js compose) #}
+  <template x-if="compose.open">
+    <div>
+      <div class="pn-modal-backdrop" @click="closeCompose()"></div>
+      <div class="pn-modal-wrap">
+        <form class="pn-modal max-w-xl" role="dialog" aria-modal="true" aria-labelledby="compose-title" @submit.prevent="sendCompose()" @keydown.escape.window="closeCompose()" novalidate data-testid="compose">
+          <header class="pn-modal-head">
+            <svg class="icon text-muted" aria-hidden="true"><use :href="compose.channel === 'sms' ? '#i-message' : '#i-mail'"/></svg>
+            <h2 id="compose-title" class="h3" x-text="compose.channel === 'sms' ? 'SMS gönder' : 'E-posta gönder'"></h2>
+            <button type="button" class="btn-icon ml-auto" @click="closeCompose()" aria-label="Kapat"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button>
+          </header>
+          <div class="flex flex-col gap-4 overflow-y-auto p-5">
+            <div class="text-sm">
+              <span class="text-muted">Alıcı: </span>
+              <span class="font-medium text-ink" x-text="names(composeTargets)"></span>
+              <span class="block text-xs text-warning-ink" x-show="composeSkipped.length" x-text="(compose.channel === 'sms' ? 'Telefonu yok, gönderilmeyecek: ' : 'E-postası yok, gönderilmeyecek: ') + names(composeSkipped)"></span>
+              <span class="field-error" x-show="compose.errors.ids" x-text="compose.errors.ids"></span>
+            </div>
+            <label class="field" x-show="compose.channel === 'mail'">
+              <span class="field-label">Konu <span class="req">*</span></span>
+              <input class="input" x-model="compose.subject" maxlength="150" :data-compose-first="compose.channel === 'mail'" :aria-invalid="!!compose.errors.subject" data-testid="compose-subject">
+              <span class="field-error" x-show="compose.errors.subject" x-text="compose.errors.subject"></span>
+            </label>
+            <label class="field">
+              <span class="field-label">Mesaj <span class="req">*</span></span>
+              <textarea class="input min-h-28" :rows="compose.channel === 'sms' ? 4 : 9" x-model="compose.message" :maxlength="compose.channel === 'sms' ? 1000 : 10000" :data-compose-first="compose.channel === 'sms'" :aria-invalid="!!compose.errors.message" data-testid="compose-message"></textarea>
+              <template x-if="compose.channel === 'sms'">
+                <span class="field-help flex flex-wrap gap-x-3">
+                  <span x-text="smsInfo.length + ' karakter · ' + smsInfo.parts + ' SMS' + (smsInfo.encoding ? ' (Türkçe karakterli: boy ' + smsInfo.perPart + ')' : '')" data-testid="compose-count"></span>
+                  <span x-show="smsInfo.parts && composeTargets.length > 1" x-text="'toplam ≈ ' + (smsInfo.parts * composeTargets.length) + ' SMS'"></span>
+                </span>
+              </template>
+              <span class="field-help" x-show="compose.channel === 'mail'">Boş satır paragraf ayırır. Sitenin e-posta şablonuyla gider, altına adınız eklenir; yanıtlar size gelir.</span>
+              <span class="field-error" x-show="compose.channel === 'sms' && smsInfo.unsupported.length" x-text="'SMS ile gönderilemeyen karakter: ' + smsInfo.unsupported.join(' ')"></span>
+              <span class="field-error" x-show="compose.channel === 'sms' && smsInfo.parts > MAX_PARTS" x-text="'En fazla ' + MAX_PARTS + ' SMS boyu; kısaltın.'"></span>
+              <span class="field-error" x-show="compose.errors.message" x-text="compose.errors.message"></span>
+            </label>
+          </div>
+          <footer class="pn-modal-foot">
+            <button type="button" class="btn btn-ghost" @click="closeCompose()" :disabled="compose.sending">Vazgeç</button>
+            <button type="submit" class="btn btn-primary" :disabled="!composeReady" data-testid="compose-send">
+              <svg class="icon icon-sm" :class="compose.sending && 'animate-spin'" aria-hidden="true"><use :href="compose.sending ? '#i-loader' : '#i-send'"/></svg>
+              <span x-text="compose.sending ? 'Gönderiliyor…' : (composeTargets.length > 1 ? composeTargets.length + ' kişiye gönder' : 'Gönder')"></span>
+            </button>
+          </footer>
+        </form>
+      </div>
+    </div>
+  </template>
+</div>

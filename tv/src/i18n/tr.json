@@ -1,0 +1,695 @@
+{
+  "common": {
+    "close": "Kapat",
+    "prev": "Önceki",
+    "next": "Sonraki",
+    "prevImage": "Önceki görsel",
+    "nextImage": "Sonraki görsel",
+    "viewAll": "Tümünü Gör",
+    "readMore": "Devamını oku",
+    "zoom": "{name} görselini büyüt",
+    "breadcrumb": "Konum"
+  },
+  "search": {
+    "open": "Sitede ara",
+    "placeholder": "Sayfa ya da yazı ara…",
+    "empty": "Sonuç bulunamadı.",
+    "hint": "Aramak için yazın",
+    "types": {
+      "page": "Sayfa",
+      "post": "Yazı"
+    }
+  },
+  "whatsapp": {
+    "label": "WhatsApp ile yazın",
+    "message": "Merhaba, projem hakkında bilgi almak istiyorum.",
+    "online": "Çevrimiçi · genelde hızlı yanıt verir",
+    "offline": "Mesai dışı · ilk iş gününde yanıt"
+  },
+  "langBanner": {
+    "text": "Bu sayfa Türkçe olarak da mevcut.",
+    "switch": "Türkçeye geç",
+    "dismiss": "Kapat"
+  },
+  "client": {
+    "contact": {
+      "nameRequired": "Adınızı yazın.",
+      "emailInvalid": "Geçerli bir e-posta adresi yazın.",
+      "messageShort": "Mesajınızı en az 20 karakterle yazın.",
+      "consentRequired": "Göndermek için aydınlatma metnini onaylayın.",
+      "invalid": "Formda eksik ya da hatalı alanlar var."
+    },
+    "toast": {
+      "done": "İşlem tamamlandı.",
+      "error": "Beklenmeyen bir hata oluştu."
+    },
+    "confirm": {
+      "ok": "Onayla",
+      "cancel": "Vazgeç"
+    },
+    "errors": {
+      "network": "Sunucuya ulaşılamadı. Bağlantınızı kontrol edip tekrar deneyin.",
+      "timeout": "Sunucu zamanında yanıt vermedi. Biraz sonra tekrar deneyin.",
+      "unauthenticated": "Oturumunuz kapanmış. Lütfen yeniden giriş yapın.",
+      "sessionExpired": "Oturumunuz sona erdi. Lütfen yeniden giriş yapın.",
+      "forbidden": "Bu işlem için yetkiniz yok.",
+      "internal": "Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.",
+      "conflict": "Kayıt siz işlem yaparken değişti. Sayfayı yenileyip tekrar deneyin.",
+      "rateLimited": "Kısa sürede çok fazla gönderim yapıldı. Lütfen biraz sonra tekrar deneyin.",
+      "httpFailed": "İstek başarısız oldu (HTTP {status})."
+    },
+    "brief": {
+      "nameRequired": "Adınızı yazın.",
+      "emailInvalid": "Geçerli bir e-posta adresi yazın.",
+      "servicesRequired": "En az bir hizmet seçin.",
+      "messageShort": "Projenizi en az 20 karakterle anlatın.",
+      "consentRequired": "Devam etmek için KVKK metnini onaylayın.",
+      "invalid": "Formda eksik ya da hatalı alanlar var.",
+      "sent": "Brifiniz alındı. En geç 1 iş günü içinde dönüş yapacağız."
+    },
+    "post": {
+      "copied": "Bağlantı kopyalandı."
+    },
+    "search": {
+      "loading": "Aranıyor…"
+    },
+    "shop": {
+      "added": "Sepete eklendi.",
+      "updated": "Sepet güncellendi.",
+      "couponApplied": "Kupon uygulandı.",
+      "invalid": "Formdaki işaretli alanları düzeltin.",
+      "terms": "Sözleşmeyi onaylayın.",
+      "error": "İşlem yapılamadı; lütfen tekrar deneyin.",
+      "booking": {
+        "group": "Grup indirimi",
+        "season": "Sezon farkı",
+        "early": "Erken rezervasyon indirimi",
+        "left": "yer kaldı",
+        "groupTier": "{min}+ kişi",
+        "days": "{n} gün",
+        "persons": "Kişi",
+        "adults": "Yetişkin",
+        "adultsHint": "12 yaş ve üstü",
+        "children": "Çocuk",
+        "childrenHint": "2–12 yaş",
+        "infants": "Bebek",
+        "infantsHint": "0–2 yaş",
+        "quantity": "Adet",
+        "maxPersons": "En çok {max} kişi",
+        "perPerson": "kişi başı",
+        "perDay": "günlük",
+        "perBooking": "rezervasyon başı",
+        "rooms": "Oda",
+        "roomsHint": "Kaç oda",
+        "perNight": "gecelik",
+        "nights": "{n} gece",
+        "roomFor": "{n} kişilik",
+        "childrenStayHint": "12 yaş altı",
+        "boards": {
+          "ro": "Sadece oda",
+          "bb": "Oda kahvaltı",
+          "hb": "Yarım pansiyon",
+          "fb": "Tam pansiyon",
+          "ai": "Her şey dahil"
+        }
+      }
+    },
+    "newsletter": {
+      "emailInvalid": "Geçerli bir e-posta adresi yazın.",
+      "consentRequired": "Devam etmek için onay kutusunu işaretleyin.",
+      "rateLimited": "Çok sayıda deneme yapıldı; biraz sonra tekrar deneyin.",
+      "error": "Gönderilemedi; lütfen tekrar deneyin."
+    }
+  },
+  "contactForm": {
+    "name": "Adınız",
+    "email": "E-posta",
+    "phone": "Telefon",
+    "optional": "isteğe bağlı",
+    "message": "Mesajınız",
+    "messagePlaceholder": "Size nasıl yardımcı olabiliriz?",
+    "consent": "{link} okudum; bilgilerimin talebimi yanıtlamak için işlenmesini kabul ediyorum.",
+    "consentLink": "Aydınlatma metnini",
+    "submit": "Gönder",
+    "sending": "Gönderiliyor…",
+    "doneTitle": "Mesajınız bize ulaştı",
+    "doneText": "{email} adresine bir onay e-postası gönderdik. En kısa sürede dönüş yapacağız.",
+    "doneAgain": "Yeni mesaj yaz"
+  },
+  "ui": {
+    "title": "Bileşenler"
+  },
+  "shop": {
+    "meta": {
+      "title": "Mağaza",
+      "description": "Ürünlerimiz: fiyatlar, stok durumu ve güvenli sipariş."
+    },
+    "hero": {
+      "eyebrow": "Mağaza",
+      "title": "Ürünlerimiz",
+      "titleAccent": "",
+      "lead": "Seçin, sepete ekleyin, birkaç adımda sipariş verin."
+    },
+    "empty": "Şu anda satışta ürün yok.",
+    "addToCart": "Sepete ekle",
+    "quantity": "Adet",
+    "outOfStock": "Tükendi",
+    "taxIncluded": "KDV dahil",
+    "taxExcluded": "KDV hariç",
+    "digital": "Dijital ürün",
+    "backToShop": "Mağazaya dön",
+    "viewCart": "Sepete git",
+    "cart": {
+      "title": "Sepet",
+      "empty": "Sepetiniz boş.",
+      "remove": "Kaldır",
+      "coupon": "Kupon kodu",
+      "applyCoupon": "Uygula",
+      "removeCoupon": "Kuponu kaldır",
+      "checkout": "Ödemeye geç",
+      "continue": "Alışverişe devam et"
+    },
+    "totals": {
+      "subtotal": "Ara toplam",
+      "discount": "İndirim",
+      "shipping": "Kargo",
+      "free": "Ücretsiz",
+      "fee": "Ödeme ücreti",
+      "tax": "KDV",
+      "total": "Toplam"
+    },
+    "checkout": {
+      "title": "Ödeme",
+      "contact": "İletişim",
+      "delivery": "Teslimat adresi",
+      "payment": "Ödeme yöntemi",
+      "note": "Sipariş notu (isteğe bağlı)",
+      "name": "Ad soyad",
+      "email": "E-posta",
+      "phone": "Telefon",
+      "line": "Adres",
+      "district": "İlçe",
+      "city": "Şehir",
+      "postal": "Posta kodu",
+      "country": "Ülke",
+      "terms": "{link} ve {info} okudum, onaylıyorum.",
+      "termsLink": "Mesafeli satış sözleşmesini",
+      "submit": "Siparişi ver",
+      "sending": "Sipariş veriliyor…",
+      "noPayment": "Şu anda ödeme yöntemi açık değil; lütfen bizimle iletişime geçin.",
+      "infoLink": "ön bilgilendirme formunu"
+    },
+    "order": {
+      "title": "Siparişiniz",
+      "thanks": "Teşekkürler, siparişinizi aldık.",
+      "number": "Sipariş no",
+      "status": "Durum",
+      "payment": "Ödeme",
+      "items": "Ürünler",
+      "transfer": "Havale / EFT bilgileri",
+      "notFound": "Sipariş bulunamadı. E-postadaki bağlantıyı kullanın.",
+      "mail": "Ayrıntılar e-posta adresinize de gönderildi.",
+      "payNow": "Ödemeyi tamamla",
+      "unpaid": "Siparişinizin ödemesi bekleniyor.",
+      "cancelled": "Ödeme tamamlanmadı. Yeniden deneyebilirsiniz.",
+      "processing": "Ödemeniz işleniyor; onaylanınca durum \"Ödendi\" olur ve e-posta gelir."
+    },
+    "booking": {
+      "meta": {
+        "title": "Turlar ve etkinlikler",
+        "description": "Tarih seçin, kişi sayısını girin, birkaç adımda rezervasyon yapın."
+      },
+      "hero": {
+        "eyebrow": "Rezervasyon",
+        "title": "Turlar ve etkinlikler",
+        "titleAccent": "",
+        "lead": "Tarih seçin, kişi sayısını girin, birkaç adımda yerinizi ayırtın."
+      },
+      "empty": "Şu anda rezerve edilebilecek tur yok.",
+      "perPerson": "kişi başı",
+      "from": "başlayan fiyatlarla",
+      "date": "Tarih",
+      "adults": "Yetişkin",
+      "children": "Çocuk (2–12)",
+      "infants": "Bebek (0–2)",
+      "total": "Toplam",
+      "book": "Rezervasyon yap",
+      "duration": "Süre",
+      "includes": "Dahil olanlar",
+      "meeting": "Buluşma noktası",
+      "back": "Turlara dön",
+      "soldOut": "Bu tarihte yer kalmadı",
+      "left": "yer kaldı",
+      "startingAt": "Başlayan fiyat",
+      "perDay": "günlük",
+      "perBooking": "rezervasyon başı",
+      "packages": "Paket",
+      "pickup": "Alış tarihi",
+      "return": "Teslim tarihi",
+      "quantity": "Adet",
+      "persons": "Kişi sayısı",
+      "maxPersons": "En çok {max} kişi",
+      "groupTitle": "Grup indirimi",
+      "listPrice": "Liste fiyatı",
+      "saving": "Kazancınız",
+      "close": "Kapat",
+      "increase": "Artır",
+      "decrease": "Azalt",
+      "highlights": "Öne çıkanlar",
+      "itinerary": "Program",
+      "excludes": "Dahil olmayanlar",
+      "faq": "Sık sorulanlar",
+      "guideLanguages": "Rehberlik dilleri",
+      "details": "Bilgiler",
+      "checkIn": "Giriş",
+      "checkOut": "Çıkış",
+      "perNight": "gecelik",
+      "roomsTitle": "Oda ve pansiyon",
+      "amenities": "Olanaklar",
+      "checkInTime": "Giriş saati",
+      "checkOutTime": "Çıkış saati",
+      "location": "Konum"
+    },
+    "hotels": {
+      "meta": {
+        "title": "Oteller",
+        "description": "Giriş ve çıkış tarihini seçin, odanızı ve pansiyonunuzu belirleyin, birkaç adımda rezervasyon yapın."
+      },
+      "hero": {
+        "eyebrow": "Konaklama",
+        "title": "Oteller ve pansiyonlar",
+        "titleAccent": "",
+        "lead": "Tarihlerinizi seçin, odanızı ve pansiyonunuzu belirleyin; fiyatı anında görün."
+      },
+      "empty": "Şu anda rezerve edilebilecek otel yok.",
+      "back": "Otellere dön"
+    }
+  },
+  "blocks": {
+    "marquee": {
+      "label": "Öne çıkan başlıklar",
+      "row1": [
+        {
+          "text": "Kültür turları",
+          "url": "",
+          "filled": false
+        },
+        {
+          "text": "Yurt dışı",
+          "url": "",
+          "filled": true
+        },
+        {
+          "text": "Tatil köyleri",
+          "url": "",
+          "filled": false
+        },
+        {
+          "text": "Uçak bileti",
+          "url": "",
+          "filled": true
+        },
+        {
+          "text": "Otel",
+          "url": "",
+          "filled": false
+        },
+        {
+          "text": "Erken rezervasyon",
+          "url": "",
+          "filled": true
+        }
+      ],
+      "row2": [
+        {
+          "text": "Balkan turları",
+          "badge": "Popüler",
+          "url": ""
+        },
+        {
+          "text": "Bosna",
+          "badge": "Yeni",
+          "url": ""
+        },
+        {
+          "text": "Mostar",
+          "badge": "Fırsat",
+          "url": ""
+        },
+        {
+          "text": "Rafting",
+          "badge": "Macera",
+          "url": ""
+        },
+        {
+          "text": "Antalya otelleri",
+          "badge": "Her şey dahil",
+          "url": ""
+        },
+        {
+          "text": "Vizesiz turlar",
+          "badge": "Kolay",
+          "url": ""
+        }
+      ],
+      "row3": [
+        {
+          "text": "Turizm rehberi",
+          "url": ""
+        },
+        {
+          "text": "Tatil fırsatları",
+          "url": ""
+        },
+        {
+          "text": "Rehberli turlar",
+          "url": ""
+        },
+        {
+          "text": "Seyahat sigortası",
+          "url": ""
+        },
+        {
+          "text": "VIP transfer",
+          "url": ""
+        },
+        {
+          "text": "Balayı otelleri",
+          "url": ""
+        },
+        {
+          "text": "Şehir otelleri",
+          "url": ""
+        }
+      ],
+      "footer": "Üzerine gelince durur; etikete tıklayın, ilgili sayfaya gidin."
+    },
+    "letters": {
+      "line1": "Hayalinizdeki tatil",
+      "line2": "bir mesaj uzağınızda"
+    },
+    "hero": {
+      "eyebrow": "Hoş geldiniz",
+      "title": "Yeni siteniz",
+      "titleAccent": "yayında.",
+      "lead": "Bu bölümü panelde Sayfa düzenleyici'den değiştirin: yazıya tıklayın, yazın; bölümleri sürükleyip sıralayın.",
+      "primary": "Bize yazın",
+      "secondary": "Blog"
+    },
+    "features": {
+      "eyebrow": "Neler sunuyoruz",
+      "title": "Üç cümlede",
+      "titleAccent": "işiniz.",
+      "items": [
+        {
+          "icon": "zap",
+          "title": "Birinci özellik",
+          "text": "Müşterinizin sizi seçmesi için ilk neden. Kısa ve somut yazın."
+        },
+        {
+          "icon": "shield-check",
+          "title": "İkinci özellik",
+          "text": "Güven veren bir bilgi: deneyim, belge, garanti ya da süreç."
+        },
+        {
+          "icon": "globe",
+          "title": "Üçüncü özellik",
+          "text": "Sizi rakiplerinizden ayıran şey. Bir cümle yeter."
+        }
+      ]
+    },
+    "steps": {
+      "eyebrow": "Nasıl çalışıyoruz",
+      "title": "Dört adımda",
+      "titleAccent": "sonuca.",
+      "steps": [
+        {
+          "icon": "compass",
+          "title": "Tanışma",
+          "text": "İhtiyacınızı dinliyoruz."
+        },
+        {
+          "icon": "pen-tool",
+          "title": "Plan",
+          "text": "Yol haritasını birlikte çıkarıyoruz."
+        },
+        {
+          "icon": "code",
+          "title": "Uygulama",
+          "text": "İşi zamanında yapıyoruz."
+        },
+        {
+          "icon": "rocket",
+          "title": "Teslim",
+          "text": "Sonucu birlikte değerlendiriyoruz."
+        }
+      ]
+    },
+    "posts": {
+      "eyebrow": "Blog",
+      "title": "Son yazılar",
+      "cta": "Tüm yazılar"
+    },
+    "cta": {
+      "title": "Bir sorunuz mu var?",
+      "titleAccent": "Yazın, dönelim.",
+      "lead": "İletişim formundan bize ulaşın; en kısa sürede yanıt veriyoruz.",
+      "button": "İletişime geçin"
+    },
+    "text": {
+      "title": "Başlık",
+      "body": "<p>Buraya metninizi yazın. <strong>Kalın</strong>, <em>italik</em>, bağlantı ve liste ekleyebilirsiniz.</p>"
+    },
+    "stats": {
+      "eyebrow": "Rakamlarla",
+      "title": "Bugüne kadar",
+      "items": [
+        {
+          "value": "10+",
+          "label": "Yıllık deneyim"
+        },
+        {
+          "value": "250+",
+          "label": "Mutlu müşteri"
+        },
+        {
+          "value": "%98",
+          "label": "Memnuniyet"
+        },
+        {
+          "value": "7/24",
+          "label": "Destek"
+        }
+      ]
+    },
+    "logos": {
+      "eyebrow": "Birlikte çalıştığımız markalar",
+      "items": [
+        {
+          "name": "Marka A",
+          "image": 0
+        },
+        {
+          "name": "Marka B",
+          "image": 0
+        },
+        {
+          "name": "Marka C",
+          "image": 0
+        },
+        {
+          "name": "Marka D",
+          "image": 0
+        },
+        {
+          "name": "Marka E",
+          "image": 0
+        }
+      ]
+    },
+    "testimonials": {
+      "eyebrow": "Yorumlar",
+      "title": "Müşterilerimiz ne diyor?",
+      "items": [
+        {
+          "quote": "Süreç baştan sona açık ve hızlıydı; ne zaman ne olacağını hep biliyorduk.",
+          "name": "Ayşe Yılmaz",
+          "role": "İşletme sahibi"
+        },
+        {
+          "quote": "Sorularımıza hemen yanıt aldık. Sonuç beklediğimizden iyi oldu.",
+          "name": "Mehmet Kaya",
+          "role": "Pazarlama müdürü"
+        },
+        {
+          "quote": "Ekibin ilgisi ve özeni için teşekkürler; yeniden çalışacağız.",
+          "name": "Elif Demir",
+          "role": "Kurucu"
+        }
+      ]
+    },
+    "faq": {
+      "eyebrow": "Sık sorulanlar",
+      "title": "Aklınızdakiler",
+      "items": [
+        {
+          "q": "Nasıl başlıyoruz?",
+          "a": "İletişim formundan yazın; ihtiyacınızı dinleyip yol haritasını birlikte çıkaralım."
+        },
+        {
+          "q": "Ne kadar sürer?",
+          "a": "İşin kapsamına göre değişir; ilk görüşmede net bir takvim veriyoruz."
+        },
+        {
+          "q": "Ödeme nasıl yapılıyor?",
+          "a": "Havale ya da kartla; aşamalara bölünmüş ödeme planı da mümkün."
+        }
+      ]
+    },
+    "badges": {
+      "items": [
+        {
+          "icon": "lock",
+          "title": "Güvenli ödeme",
+          "text": "Bilgileriniz şifreli korunur."
+        },
+        {
+          "icon": "rotate-ccw",
+          "title": "Kolay iptal",
+          "text": "Tarihten önce ücretsiz iptal."
+        },
+        {
+          "icon": "message",
+          "title": "7/24 destek",
+          "text": "Her soruda yanınızdayız."
+        },
+        {
+          "icon": "star",
+          "title": "Yüksek puan",
+          "text": "Müşterilerimizden 4,9 / 5."
+        }
+      ]
+    },
+    "split": {
+      "eyebrow": "Hakkımızda",
+      "title": "Küçük bir ekip, büyük bir özen",
+      "text": "Kim olduğunuzu, neyi neden yaptığınızı birkaç cümleyle anlatın. Ziyaretçinin size neden güvenmesi gerektiğini somut örneklerle gösterin.",
+      "button": "Tanışalım"
+    },
+    "tours": {
+      "eyebrow": "Turlar",
+      "title": "Öne çıkan turlar",
+      "cta": "Tüm turlar"
+    },
+    "products": {
+      "eyebrow": "Mağaza",
+      "title": "Öne çıkan ürünler",
+      "cta": "Tüm ürünler"
+    },
+    "newsletter": {
+      "eyebrow": "Bülten",
+      "title": "Yeniliklerden ilk siz haberdar olun",
+      "lead": "Kampanyalar, yeni içerikler ve duyurular e-posta kutunuzda. İstediğiniz zaman tek tıkla ayrılabilirsiniz.",
+      "placeholder": "E-posta adresiniz",
+      "name": "Adınız",
+      "button": "Abone ol",
+      "consent": "Kampanya ve duyuru e-postaları almayı kabul ediyorum.",
+      "privacyLabel": "Aydınlatma metni",
+      "done": "Neredeyse tamam: e-posta kutunuza gönderdiğimiz bağlantıyla aboneliğinizi onaylayın."
+    }
+  },
+  "newsletter": {
+    "meta": {
+      "title": "Bülten",
+      "description": "E-posta bültenimize abone olun: kampanyalar, yeni içerikler ve duyurular."
+    },
+    "confirming": "Aboneliğiniz onaylanıyor…",
+    "activeTitle": "Aboneliğiniz onaylandı",
+    "activeText": "Teşekkürler! Bültenimiz artık e-posta kutunuza gelecek.",
+    "unsubscribeTitle": "Bültenden ayrılıyor musunuz?",
+    "unsubscribeText": "Onaylarsanız bu adrese artık bülten gönderilmez.",
+    "unsubscribeButton": "Abonelikten çık",
+    "unsubscribedTitle": "Abonelikten çıktınız",
+    "unsubscribedText": "Artık bülten e-postası almayacaksınız. Fikrinizi değiştirirseniz yeniden abone olabilirsiniz.",
+    "invalidTitle": "Bağlantı geçersiz",
+    "invalidText": "Bağlantının süresi dolmuş ya da eksik kopyalanmış olabilir. Aşağıdan yeniden abone olabilirsiniz.",
+    "home": "Ana sayfaya dön"
+  },
+  "legal": {
+    "title": "Yasal bilgiler",
+    "description": "Gizlilik politikası, KVKK aydınlatma metni, çerezler, kullanım koşulları ve sözleşmeler.",
+    "lead": "Kişisel verilerinizi nasıl işlediğimiz ve hizmetlerimizin koşulları tek yerde.",
+    "eyebrow": "Yasal",
+    "updated": "Son güncelleme",
+    "toc": "Bu sayfada",
+    "all": "Yasal belgeler",
+    "open": "Oku",
+    "groups": {
+      "general": "Genel",
+      "contact": "İletişim",
+      "newsletter": "Bülten",
+      "commerce": "Alışveriş",
+      "booking": "Rezervasyon"
+    },
+    "privacy": {
+      "title": "Gizlilik politikası",
+      "description": "Sitemizde hangi kişisel verileri, neden ve nasıl işlediğimiz.",
+      "lead": "Hangi bilgileri neden işlediğimizi, kimlerle paylaştığımızı ve haklarınızı sade bir dille anlatıyoruz."
+    },
+    "kvkk": {
+      "title": "KVKK aydınlatma metni",
+      "description": "6698 sayılı Kişisel Verilerin Korunması Kanunu kapsamında aydınlatma metni.",
+      "lead": "6698 sayılı Kanun'un 10. maddesi uyarınca veri sorumlusu olarak sizi bilgilendiriyoruz."
+    },
+    "cookies": {
+      "title": "Çerez politikası",
+      "description": "Sitemizde kullanılan çerezler ve tarayıcı kayıtları.",
+      "lead": "Hangi çerezleri ve tarayıcı kayıtlarını neden kullandığımız ve nasıl yöneteceğiniz."
+    },
+    "terms": {
+      "title": "Kullanım koşulları",
+      "description": "Sitemizin kullanım koşulları.",
+      "lead": "Sitemizi kullanırken geçerli olan kurallar."
+    },
+    "contactNotice": {
+      "title": "İletişim ve talep formu aydınlatma metni",
+      "description": "İletişim ve talep formlarında işlenen kişisel veriler hakkında aydınlatma.",
+      "lead": "Formlarımızdan bize yazdığınızda kişisel verilerinizin nasıl işlendiği."
+    },
+    "newsletterConsent": {
+      "title": "Bülten aydınlatma metni ve ticari ileti onayı",
+      "description": "E-posta bülteni: ticari elektronik ileti onayı ve kişisel verilerin işlenmesi.",
+      "lead": "Bültenimize abone olduğunuzda verdiğiniz onay ve kişisel verilerinizin işlenmesi."
+    },
+    "shopTerms": {
+      "title": "Mesafeli satış sözleşmesi",
+      "description": "Sitemizden yapılan alışverişlerde geçerli mesafeli satış sözleşmesi.",
+      "lead": "Sitemizden yaptığınız alışverişlerde sizinle aramızda kurulan sözleşme."
+    },
+    "preInformation": {
+      "title": "Ön bilgilendirme formu",
+      "description": "Mesafeli Sözleşmeler Yönetmeliği uyarınca ön bilgilendirme.",
+      "lead": "Siparişinizi onaylamadan önce bilmeniz gerekenler."
+    },
+    "delivery": {
+      "title": "Teslimat ve kargo koşulları",
+      "description": "Siparişlerin teslim süresi, kargo ücreti ve teslimat koşulları.",
+      "lead": "Siparişiniz ne zaman, nasıl ve hangi ücretle ulaşır."
+    },
+    "returns": {
+      "title": "İptal, iade ve cayma koşulları",
+      "description": "Sipariş iptali, cayma hakkı ve iade süreci.",
+      "lead": "Siparişinizi nasıl iptal eder, cayma hakkınızı nasıl kullanır ve ücretinizi nasıl geri alırsınız."
+    },
+    "orderNotice": {
+      "title": "Müşteri aydınlatma metni",
+      "description": "Sipariş ve ödeme süreçlerinde işlenen kişisel veriler hakkında aydınlatma.",
+      "lead": "Alışveriş yaptığınızda kişisel verilerinizin nasıl işlendiği."
+    },
+    "bookingTerms": {
+      "title": "Rezervasyon koşulları",
+      "description": "Tur, etkinlik ve konaklama rezervasyonlarında geçerli koşullar.",
+      "lead": "Rezervasyonunuzun kesinleşmesi, değişiklik ve iptal koşulları."
+    }
+  }
+}

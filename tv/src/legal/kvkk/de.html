@@ -1,0 +1,101 @@
+{{! Vorlage: türkisches Gesetz Nr. 6698 Art. 10 und Mitteilung zur Informationspflicht. Keine Rechtsberatung. }}
+<h2>Verantwortlicher</h2>
+<p>Nach dem türkischen Datenschutzgesetz Nr. 6698 („KVKK“) werden Ihre personenbezogenen Daten von dem unten genannten Unternehmen als Verantwortlichem verarbeitet:</p>
+{{{controllerCard}}}
+<p>Dieser Hinweis gilt für Personen, die {{site.name}} besuchen{{#modules.briefs}}, uns über die Formulare der Website schreiben{{/modules.briefs}}{{#modules.newsletter}}, unseren Newsletter abonnieren{{/modules.newsletter}}{{#modules.commerce}} oder auf unserer Website einkaufen{{#modules.booking}} oder buchen{{/modules.booking}}{{/modules.commerce}}.</p>
+
+<h2>Verarbeitete Daten und Zwecke</h2>
+<div class="table-wrap">
+  <table>
+    <thead><tr><th>Vorgang</th><th>Datenkategorien</th><th>Zweck</th></tr></thead>
+    <tbody>
+      <tr><td>Besuch der Website</td><td><strong>Transaktionssicherheit:</strong> IP-Adresse, Browserangaben, Anfrage-Logs</td><td>Betrieb der Website, Abwehr von Angriffen und Missbrauch, Informationssicherheit</td></tr>
+{{#modules.briefs}}
+      <tr><td>Kontakt- und Anfrageformulare</td><td><strong>Identität:</strong> Name · <strong>Kontakt:</strong> E-Mail, Telefon · <strong>Kundenvorgang:</strong> Nachricht, Betreff · <strong>Transaktionssicherheit:</strong> IP-Hash, Browserangaben</td><td>Bearbeitung und Beantwortung Ihrer Anfrage, Spamschutz</td></tr>
+{{/modules.briefs}}
+{{#modules.newsletter}}
+      <tr><td>E-Mail-Newsletter</td><td><strong>Kontakt:</strong> E-Mail · <strong>Identität:</strong> Name (optional) · <strong>Marketing:</strong> Sprache, Einwilligungs- und Widerrufsnachweise (Datum, IP-Hash)</td><td>Versand von Newslettern und Ankündigungen, Nachweis der Einwilligung</td></tr>
+{{/modules.newsletter}}
+{{#modules.commerce}}
+      <tr><td>Bestellung und Zahlung</td><td><strong>Identität:</strong> Name · <strong>Kontakt:</strong> E-Mail, Telefon, Liefer- und Rechnungsadresse · <strong>Kundenvorgang:</strong> Bestellinhalt, Betrag, Bestellhistorie · <strong>Finanzen:</strong> Zahlungsart und Transaktionsnummer des Zahlungsdienstleisters (keine Kartendaten)</td><td>Abschluss und Erfüllung des Kaufvertrags, Lieferung, Rechnungsstellung, Rückgaben und Beschwerden, gesetzliche Pflichten</td></tr>
+{{/modules.commerce}}
+{{#modules.booking}}
+      <tr><td>Buchungen</td><td><strong>Kundenvorgang:</strong> Datum, Zahl der Erwachsenen, Kinder und Kleinkinder, gewähltes Paket{{#modules.hotels}} oder Zimmer und Verpflegung{{/modules.hotels}}</td><td>Durchführung der Buchung, Kapazitätsplanung, Erbringung der Leistung</td></tr>
+{{/modules.booking}}
+    </tbody>
+  </table>
+</div>
+<p>Wir verkaufen keine Daten zu Werbezwecken an Dritte und nutzen keine automatisierten Entscheidungen oder Profiling. Bitte geben Sie in Formularen keine besonderen Kategorien personenbezogener Daten (Gesundheit, Weltanschauung usw.) an, sofern nicht nötig.</p>
+
+<h2>Rechtsgrundlagen</h2>
+<p>Ihre Daten werden auf folgenden Grundlagen von Artikel 5 KVKK verarbeitet:</p>
+<ul>
+  <li><strong>Abschluss oder Erfüllung eines Vertrags (Art. 5/2-c):</strong> zur Bearbeitung Ihrer Anfrage{{#modules.commerce}} sowie zur Annahme, Lieferung und Abrechnung Ihrer Bestellung{{/modules.commerce}},</li>
+  <li><strong>Rechtliche Verpflichtung (Art. 5/2-ç):</strong> Aufzeichnungs- und Meldepflichten aus Steuer-, Handels- und Verbraucherrecht,</li>
+  <li><strong>Begründung, Ausübung oder Schutz eines Rechts (Art. 5/2-e):</strong> bei möglichen Streitigkeiten,</li>
+  <li><strong>Berechtigtes Interesse (Art. 5/2-f):</strong> Sicherheitsprotokolle, Spamschutz und Ratenbegrenzung (sofern Ihre Grundrechte nicht beeinträchtigt werden).</li>
+{{#modules.newsletter}}
+  <li><strong>Ausdrückliche Einwilligung (Art. 5/1):</strong> für Newsletter und kommerzielle elektronische Nachrichten; Sie können sie jederzeit widerrufen.</li>
+{{/modules.newsletter}}
+</ul>
+
+<h2>Art der Erhebung</h2>
+<p>Ihre Daten werden elektronisch über die Formulare unserer Website{{#modules.commerce}} und den Bestellvorgang{{/modules.commerce}} erhoben, teilweise automatisiert (Formularversand, Sicherheitsprotokolle). Wenn Sie uns direkt per E-Mail oder Messenger schreiben, erreichen uns Ihre Angaben über diese Kanäle.</p>
+
+<h2>Übermittlung</h2>
+<p>Nach Artikel 8 und 9 KVKK können Ihre Daten nur im erforderlichen Umfang übermittelt werden an:</p>
+<ul>
+  <li>die Anbieter unseres Hosting-Servers und der E-Mail-Infrastruktur,</li>
+{{#modules.commerce}}
+  <li>Versand- und Logistikunternehmen (für die Lieferung),</li>
+  <li>Steuerberater und Buchhaltungsdienstleister (für Rechnungen und gesetzliche Aufzeichnungen),</li>
+{{/modules.commerce}}
+{{#modules.stripe}}
+  <li>Stripe (Kartenzahlungen; Server im Ausland),</li>
+{{/modules.stripe}}
+{{#modules.paytr}}
+  <li>PayTR, Zahlungs- und E-Geld-Institut (Kartenzahlungen),</li>
+{{/modules.paytr}}
+  <li>zuständige Behörden und Gerichte auf Anforderung.</li>
+</ul>
+<p>Übermittlungen ins Ausland erfolgen gemäß den Verfahren und Garantien von Artikel 9 KVKK.</p>
+
+<h2>Speicherdauer</h2>
+<ul>
+  <li><strong>Sicherheitseinträge:</strong> {{retention.security}} Tage.</li>
+{{#modules.briefs}}
+  <li><strong>Kontakt- und Anfrageformulare:</strong> {{retention.briefs}} Monate, danach automatische und endgültige Löschung.</li>
+{{/modules.briefs}}
+{{#modules.newsletter}}
+  <li><strong>Newsletter-Abonnement:</strong> bis zur Abmeldung; Einwilligungs- und Widerrufsnachweise für die gesetzliche Frist (drei Jahre) nach Ende der Einwilligung. Unbestätigte Anmeldungen werden nach 7 Tagen gelöscht.</li>
+{{/modules.newsletter}}
+{{#modules.commerce}}
+  <li><strong>Bestell-, Rechnungs- und Zahlungsunterlagen:</strong> für die Fristen des türkischen Handelsgesetzbuchs (10 Jahre) und Steuerverfahrensgesetzes (5 Jahre).</li>
+{{/modules.commerce}}
+</ul>
+<p>Verlangen Sie die Löschung vor Fristende, kommen wir dem unverzüglich nach, sofern keine gesetzliche Aufbewahrungspflicht besteht.</p>
+
+<h2>Ihre Rechte nach KVKK</h2>
+<p>Nach Artikel 11 KVKK können Sie beim Verantwortlichen beantragen:</p>
+<ul>
+  <li>zu erfahren, ob Ihre Daten verarbeitet werden,</li>
+  <li>Auskunft über die Verarbeitung zu erhalten,</li>
+  <li>den Zweck der Verarbeitung und dessen Einhaltung zu erfahren,</li>
+  <li>die Dritten im In- oder Ausland zu kennen, an die Daten übermittelt wurden,</li>
+  <li>die Berichtigung unvollständiger oder unrichtiger Daten,</li>
+  <li>die Löschung oder Vernichtung unter den Voraussetzungen von Artikel 7 KVKK,</li>
+  <li>die Mitteilung von Berichtigungen und Löschungen an die Empfänger,</li>
+  <li>Widerspruch gegen ein für Sie nachteiliges Ergebnis ausschließlich automatisierter Auswertung,</li>
+  <li>Ersatz des Schadens aus rechtswidriger Verarbeitung.</li>
+</ul>
+
+<h2>Antragsverfahren</h2>
+<p>Senden Sie Ihren Antrag mit Angaben, die uns Ihre Identifizierung ermöglichen (Name, die uns mitgeteilte E-Mail-Adresse oder Bestellnummer), und dem Gegenstand Ihres Anliegens:</p>
+<ul>
+  <li>per E-Mail von der uns mitgeteilten Adresse an <a href="mailto:{{controller.email}}">{{controller.email}}</a>,</li>
+{{#controller.kep}}
+  <li>an unsere KEP-Adresse (registrierte E-Mail) <strong>{{controller.kep}}</strong> mit sicherer elektronischer oder mobiler Signatur,</li>
+{{/controller.kep}}
+  <li>per unterschriebenem Brief an die obige Adresse.</li>
+</ul>
+<p>Ihr Antrag wird nach der Mitteilung über Anträge an den Verantwortlichen spätestens innerhalb von 30 Tagen kostenlos bearbeitet; entstehen zusätzliche Kosten, kann die vom Datenschutzrat festgelegte Gebühr erhoben werden. Bei Ablehnung, unzureichender oder verspäteter Antwort können Sie sich beim türkischen Datenschutzrat (KVKK) beschweren. Besucher aus der EU können sich außerdem nach der DSGVO bei ihrer zuständigen Aufsichtsbehörde beschweren.</p>

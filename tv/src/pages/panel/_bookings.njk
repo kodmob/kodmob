@@ -1,0 +1,8 @@
+{# Mağaza › Rezervasyonlar. Mantık: panel/bookings.js. Tablo: ui/grid (kmGrid). #}
+<div class="pn-page" x-data="kmBookings" data-testid="bookings">
+  <template x-if="grid">
+    <div x-data="kmGrid(grid)" @grid-action="onAction($event.detail)">
+      {% include "ui/grid/grid.html" %}
+    </div>
+  </template>
+</div>

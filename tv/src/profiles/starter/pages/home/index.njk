@@ -1,0 +1,12 @@
+{% extends "layouts/base.njk" %}
+
+{#
+  Ana sayfa (başlangıç profili): bölümleri bloklardan (panel › Sayfa düzenleyici; docs/done-onyuz-raporu.md). İlk
+  bloklar ve metinleri profilin site.config.js `zones['home.main']`'ında (metinler i18n/<dil>.json → home);
+  düzenleyicide yayınlanan düzen bunların yerine geçer. Yeni blok türü: tv/src/blocks/ ya da profilin blocks/
+  klasörü (vite/blocks.js).
+#}
+
+{% block content %}
+{{ zone('home.main', 'Ana sayfa bölümleri') }}
+{% endblock %}

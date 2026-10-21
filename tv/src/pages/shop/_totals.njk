@@ -1,0 +1,9 @@
+{# Sepet / ödeme / sipariş tutarları; `c`: totals ve amounts taşıyan nesnenin ifadesi (cart, order). #}
+<dl class="flex flex-col gap-2 text-sm">
+  <div class="flex justify-between"><dt class="text-ink-2">{{ t('shop.totals.subtotal') }}</dt><dd x-text="{{ c }}.totals.subtotal"></dd></div>
+  <div class="flex justify-between text-success" x-show="{{ c }}.amounts.discount"><dt>{{ t('shop.totals.discount') }}</dt><dd x-text="'− ' + {{ c }}.totals.discount"></dd></div>
+  <div class="flex justify-between" x-show="{{ c }}.shippable !== false"><dt class="text-ink-2">{{ t('shop.totals.shipping') }}</dt><dd x-text="{{ c }}.amounts.shipping ? {{ c }}.totals.shipping : '{{ t('shop.totals.free') }}'"></dd></div>
+  <div class="flex justify-between" x-show="{{ c }}.amounts.fee"><dt class="text-ink-2">{{ t('shop.totals.fee') }}</dt><dd x-text="{{ c }}.totals.fee"></dd></div>
+  <div class="flex justify-between text-muted"><dt>{{ t('shop.totals.tax') }}</dt><dd x-text="{{ c }}.totals.tax"></dd></div>
+  <div class="flex justify-between border-t border-line pt-3 text-base font-semibold text-ink"><dt>{{ t('shop.totals.total') }}</dt><dd x-text="{{ c }}.totals.total" data-testid="shop-total"></dd></div>
+</dl>

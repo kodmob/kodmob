@@ -1,0 +1,50 @@
+{{! Template: Turkish Consumer Protection Law No. 6502 and Distance Contracts Regulation. Not legal advice. }}
+<h2>Parties</h2>
+<p><strong>Seller:</strong></p>
+{{{controllerCard}}}
+<p><strong>Buyer:</strong> the person who places an order on {{site.name}} and whose name, address and contact details appear in the order form. The buyer's details are shown in the order summary and the order confirmation e-mail.</p>
+
+<h2>Subject</h2>
+<p>This contract sets out the rights and obligations of the parties regarding the sale and delivery of the goods{{#modules.booking}} and services{{/modules.booking}} the buyer orders electronically on {{site.name}}, under Turkish Consumer Protection Law No. 6502 and the Distance Contracts Regulation.</p>
+
+<h2>Goods, price and payment</h2>
+<p>The main characteristics, quantity, sales price including taxes, any delivery charge and the total amount of the goods{{#modules.booking}} and services{{/modules.booking}} ordered are shown at checkout and in the order confirmation e-mail; this information forms part of the contract.</p>
+<ul>
+{{#commerce.shippingFee}}
+  <li><strong>Shipping:</strong> {{commerce.shippingFee}}{{#commerce.freeOver}}; free for orders of {{commerce.freeOver}} or more{{/commerce.freeOver}}.</li>
+{{/commerce.shippingFee}}
+{{^commerce.shippingFee}}
+  <li><strong>Shipping:</strong> free.</li>
+{{/commerce.shippingFee}}
+  <li><strong>Payment methods:</strong> {{commerce.payments}}.</li>
+</ul>
+<p>For card payments, card details are entered on the payment provider's secure page; the seller neither sees nor stores them.</p>
+
+<h2>Delivery</h2>
+<p>Goods are delivered to the address given by the buyer within the promised time and in any case within 30 days of order confirmation (for bank transfers, of receipt of payment). Digital goods are delivered electronically once payment is confirmed.{{#links.delivery}} Details: <a href="{{links.delivery}}">Delivery and Shipping</a>.{{/links.delivery}}</p>
+
+<h2>Right of withdrawal</h2>
+<p>The buyer may withdraw from the contract within 14 days of delivery of the goods to them or a third party they name, without giving reasons or paying a penalty. For service contracts the period starts on the day the contract is concluded.</p>
+<p>Notice of withdrawal is given in writing to <a href="mailto:{{controller.email}}">{{controller.email}}</a> before the period ends, stating the order number. The seller refunds all payments received, including any delivery costs, within 14 days of receiving the notice, using the payment method the buyer used. The buyer returns the goods within 10 days of the notice.{{#links.returns}} Details: <a href="{{links.returns}}">Cancellation, Returns and Withdrawal</a>.{{/links.returns}}</p>
+
+<h2>Exceptions to the right of withdrawal</h2>
+<p>Under Article 15 of the Distance Contracts Regulation, the right of withdrawal does not apply to, among others:</p>
+<ul>
+  <li>goods made to the buyer's specifications or clearly personalised,</li>
+  <li>goods that deteriorate quickly or may expire,</li>
+  <li>goods unsealed after delivery that are unsuitable for return for health or hygiene reasons,</li>
+  <li>services performed instantly online and intangible goods delivered instantly (digital content),</li>
+  <li>accommodation, transport of goods, car rental, catering and leisure services to be provided on a specific date or period.</li>
+</ul>
+
+{{#modules.booking}}
+<h2>Bookings</h2>
+<p>Tours, activities{{#modules.hotels}} and accommodation{{/modules.hotels}} provided on a specific date fall under the exception above; instead of the right of withdrawal, the cancellation and refund rules in the booking terms apply.{{#links.bookingTerms}} Details: <a href="{{links.bookingTerms}}">Booking Terms</a>.{{/links.bookingTerms}}</p>
+{{/modules.booking}}
+
+<h2>General provisions</h2>
+<p>At checkout the buyer confirms having read and accepted this contract and the{{#links.preInformation}} <a href="{{links.preInformation}}">Pre-contract Information</a>{{/links.preInformation}}. The contract is concluded when the order is completed and is stored by the seller; a copy is sent to the buyer with the order confirmation e-mail.</p>
+<p>For defective goods, the buyer's rights under Article 11 of Law No. 6502 (withdrawal, price reduction, free repair, replacement) remain reserved.</p>
+
+<h2>Dispute resolution</h2>
+<p>Disputes arising from this contract are handled by the consumer arbitration committees at the buyer's or seller's place of residence within the monetary limits set annually by the Ministry of Trade, and by consumer courts above these limits. Mandatory consumer protection rules of the buyer's country of residence remain unaffected.</p>

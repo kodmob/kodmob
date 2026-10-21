@@ -1,0 +1,35 @@
+{% extends "layouts/base.njk" %}
+{% import "macros/ui.njk" as ui %}
+
+{% import "macros/live.njk" as live %}
+
+{#
+  Blog listesi (bu dildeki yazılar, ziyaret anında: $store.km.posts). Kategori
+  hapları yalnızca görünürlüğü değiştirir; yalnızca yazısı olan kategoriler
+  gösterilir. RSS: <dil>/blog/feed.xml (render.php üretir).
+#}
+{% block content %}
+{% call ui.pageHero(tx('blog.hero.eyebrow'), tx('blog.hero.title'), tx('blog.hero.titleAccent'), tx('blog.hero.lead')) %}
+    <a href="{{ url('blog') }}feed.xml" class="link-arrow fade-up fade-up-3 mt-6">{{ ui.icon('rss', 'icon icon-sm') }} {{ tx('blog.rss') }}</a>
+{% endcall %}
+
+<section class="container-site pb-20" x-data="kmFilter()">
+  <template x-if="$store.km.categoriesOf($store.km.posts, 'category', 'blogCategories').length > 1">
+    <div class="pills reveal mb-8" role="group" aria-label="{{ t('blog.filterLabel') }}">
+      <button type="button" class="pill" @click="set('all')" :aria-pressed="is('all')">{{ tx('blog.all') }}</button>
+      <template x-for="c in $store.km.categoriesOf($store.km.posts, 'category', 'blogCategories')" :key="c.key">
+        <button type="button" class="pill" @click="set(c.key)" :aria-pressed="is(c.key)" x-text="c.label"></button>
+      </template>
+    </div>
+  </template>
+
+  <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3" x-show="$store.km.posts.length">
+    <template x-for="(post, i) in $store.km.posts" :key="post.id" data-km-ssr-list="posts" data-km-ssr-route="post">
+      <div x-show="shows(post.category)" x-transition.opacity>
+        {{ live.blogCard('post', 2, "'reveal reveal-delay-' + (i % 3 + 1)") }}
+      </div>
+    </template>
+  </div>
+  <p class="card card-body text-ink-2" x-show="!$store.km.posts.length" x-cloak>{{ tx('blog.empty') }}</p>
+</section>
+{% endblock %}

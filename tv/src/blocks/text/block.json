@@ -1,0 +1,12 @@
+{
+  "label": "Metin",
+  "description": "Başlık ve biçimli metin (paragraf, liste, bağlantı, alıntı): duyuru, hakkımızda, açıklama.",
+  "category": "content",
+  "icon": "book",
+  "fields": [
+    { "name": "eyebrow", "type": "text", "label": "Üst etiket", "localized": true, "max": 60, "default": "" },
+    { "name": "title", "type": "text", "label": "Başlık", "localized": true, "max": 120, "default": "@blocks.text.title" },
+    { "name": "body", "type": "html", "label": "Metin", "localized": true, "default": "@blocks.text.body" },
+    { "name": "width", "type": "select", "label": "Genişlik", "options": { "narrow": "Dar (okuma)", "wide": "Geniş" }, "default": "narrow" }
+  ]
+}

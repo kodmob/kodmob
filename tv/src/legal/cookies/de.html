@@ -1,0 +1,30 @@
+{{! Vorlage: Werden Analyse- oder Werbewerkzeuge ergänzt, diesen Text anpassen und ein Einwilligungsbanner einbauen. }}
+<h2>Was ist ein Cookie?</h2>
+<p>Cookies sind kleine Textdateien, die eine Website in Ihrem Browser speichert. Der Browserspeicher (localStorage) ermöglicht ebenso, kleine Informationen im Browser abzulegen. Diese Richtlinie behandelt beides.</p>
+
+<h2>Verwendete Cookies und Speicher</h2>
+<p>{{site.name}} verwendet nur die folgenden Einträge. Alle gehören zu dieser Website und sind für ihren Betrieb erforderlich:</p>
+<div class="table-wrap">
+  <table>
+    <thead><tr><th>Name</th><th>Art</th><th>Zweck</th><th>Dauer</th></tr></thead>
+    <tbody>
+      <tr><td><code>km_lang</code></td><td>Cookie</td><td>Merkt sich die im Sprachwähler gewählte Sprache.</td><td>1 Jahr</td></tr>
+      <tr><td><code>km_theme</code></td><td>localStorage</td><td>Merkt sich ein selbst gewähltes helles oder dunkles Design.</td><td>Bis Sie es löschen</td></tr>
+      <tr><td><code>km_lang_banner</code></td><td>localStorage</td><td>Merkt sich, dass Sie den Sprachhinweis geschlossen haben.</td><td>Bis Sie es löschen</td></tr>
+{{#modules.commerce}}
+      <tr><td><code>km_cart</code></td><td>Cookie (HttpOnly)</td><td>Merkt sich Ihren Warenkorb. Es enthält nur einen zufälligen Schlüssel; der Inhalt liegt auf unserem Server.</td><td>30 Tage</td></tr>
+{{/modules.commerce}}
+      <tr><td><code>km_refresh</code></td><td>Cookie (HttpOnly)</td><td>Hält nur die Sitzung von Administratoren im Verwaltungsbereich aufrecht; wird für Besucher nie gesetzt.</td><td>30 Tage</td></tr>
+    </tbody>
+  </table>
+</div>
+<p>Diese Einträge entstehen nur, wenn Sie die jeweilige Funktion nutzen. Da sie technisch notwendig sind, ist keine Einwilligung erforderlich.</p>
+
+<h2>Was wir nicht verwenden</h2>
+<p>Wir verwenden keine Werbe-, Retargeting-, Social-Media- oder Analyse-Cookies. Unsere Seiten enthalten keine Skripte, Pixel oder eingebetteten Inhalte Dritter; daher zeigen wir kein Cookie-Banner.</p>
+
+<h2>Cookies verwalten</h2>
+<p>Sie können Cookies und Websitedaten jederzeit in den Browsereinstellungen ansehen und löschen. Die Website funktioniert weiter; nur Ihre Sprach- und Designeinstellung{{#modules.commerce}} sowie Ihr Warenkorb{{/modules.commerce}} gehen verloren.</p>
+
+<h2>Kontakt</h2>
+<p>Bei Fragen schreiben Sie an <a href="mailto:{{controller.email}}">{{controller.email}}</a>.{{#links.privacy}} Wie wir personenbezogene Daten verarbeiten, lesen Sie in unserer <a href="{{links.privacy}}">Datenschutzerklärung</a>.{{/links.privacy}}</p>

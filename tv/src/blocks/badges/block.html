@@ -1,0 +1,7 @@
+<section class="container-site section-sm">
+  <ul class="km-badges is-{{tone}} reveal">
+{{#items}}
+    <li><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-{{icon}}"/></svg></span><span><strong data-km-field="items.{{@index}}.title">{{title}}</strong><small data-km-field="items.{{@index}}.text">{{text}}</small></span></li>
+{{/items}}
+  </ul>
+</section>

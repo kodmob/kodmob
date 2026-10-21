@@ -1,0 +1,18 @@
+{
+  "label": "Öne çıkanlar",
+  "description": "Kaydın öne çıkan maddeleri (ikonlu liste).",
+  "category": "entry",
+  "icon": "sparkles",
+  "module": "booking",
+  "scope": "entry",
+  "fields": [
+    {
+      "name": "title",
+      "type": "text",
+      "label": "Başlık",
+      "localized": true,
+      "max": 60,
+      "default": "@shop.booking.highlights"
+    }
+  ]
+}

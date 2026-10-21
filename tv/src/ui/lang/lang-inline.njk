@@ -1,0 +1,7 @@
+{# Satır içi dil seçici: TR | EN | DE #}
+<nav class="lang-inline" aria-label="{{ t('nav.language') }}" x-data="kmLangSwitch">
+{% for item in switcher %}
+  {% if not loop.first %}<span class="sep" aria-hidden="true" x-show="on('{{ item.locale }}')">|</span>{% endif %}
+  <a href="{{ item.href }}"{% if page.dynamic or page.name == 'notFound' %} :href="$store.km.alt('{{ item.locale }}', '{{ item.href }}')"{% endif %} x-show="on('{{ item.locale }}')" hreflang="{{ item.locale }}" lang="{{ item.locale }}"{% if item.current %} aria-current="true"{% endif %} @click="choose($event)" title="{{ item.label }}">{{ item.short }}</a>
+{% endfor %}
+</nav>

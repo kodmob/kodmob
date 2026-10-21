@@ -1,0 +1,16 @@
+{
+    "meta": {
+        "siteName": "Örnek Marka",
+        "titleSuffix": " · Örnek Marka",
+        "description": "Örnek Marka: aynı altyapıdan kurulmuş alt site."
+    },
+    "nav": {
+        "brand": "örnek",
+        "brandSub": "marka"
+    },
+    "home": {
+        "meta": {
+            "title": "Örnek Marka · Alt site"
+        }
+    }
+}

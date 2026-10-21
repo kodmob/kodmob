@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "categories": { "section": "Bölümler", "content": "İçerik", "animation": "Animasyon", "commerce": "Mağaza" },
+  "icons": ["check", "star", "zap"],
+  "blocks": {
+    "note": {
+      "label": "Not", "description": "Bağlantılı kısa not.", "category": "content", "icon": "check", "library": true, "needs": [], "module": null,
+      "source": "framework", "script": false, "preview": "",
+      "fields": [
+        { "name": "text", "type": "text", "label": "Metin", "localized": true, "max": 80 },
+        { "name": "url", "type": "link", "label": "Bağlantı" },
+        { "name": "tone", "type": "select", "label": "Ton", "options": { "plain": "Sade", "loud": "Belirgin" } }
+      ],
+      "template": "<p class=\"note is-{{tone}}\"><a href=\"{{url}}\" data-km-field=\"text\">{{text}}</a><svg><use href=\"#i-check\"/></svg></p>",
+      "defaults": { "data": { "url": "route:blog", "tone": "plain" }, "i18n": { "tr": { "text": "Varsayılan not" }, "en": { "text": "Default note" } } }
+    },
+    "list": {
+      "label": "Liste", "description": "Görselli satırlar ve son yazılar.", "category": "section", "icon": "star", "library": true, "needs": ["posts"], "module": null,
+      "source": "framework", "script": false, "preview": "",
+      "fields": [
+        { "name": "items", "type": "rows", "label": "Satırlar", "localized": true, "max": 5, "columns": [
+          { "name": "title", "type": "text", "label": "Başlık", "max": 40 },
+          { "name": "icon", "type": "icon", "label": "İkon" },
+          { "name": "url", "type": "link", "label": "Bağlantı" }
+        ] },
+        { "name": "body", "type": "html", "label": "Metin", "localized": true },
+        { "name": "cover", "type": "image", "label": "Görsel" }
+      ],
+      "template": "<ul>{{#items}}<li data-n=\"{{@number}}\"><a href=\"{{url}}\">{{title}}</a><i>{{icon}}</i></li>{{/items}}</ul><div class=\"body\">{{{body}}}</div>{{#cover}}<img src=\"{{cover.src}}\" alt=\"{{cover.alt}}\">{{/cover}}",
+      "defaults": { "data": { "cover": 0 }, "i18n": { "tr": { "items": [], "body": "" }, "en": { "items": [], "body": "" } } }
+    },
+    "extra": {
+      "label": "Ek", "description": "Keşfet'ten eklenen animasyon.", "category": "animation", "icon": "zap", "library": false, "needs": [], "module": null,
+      "source": "framework", "script": true, "preview": "",
+      "fields": [{ "name": "text", "type": "text", "label": "Metin", "localized": true }],
+      "template": "<div class=\"extra\">{{text}}</div>",
+      "defaults": { "data": {}, "i18n": { "tr": { "text": "Kayan" }, "en": { "text": "Sliding" } } }
+    },
+    "shopnote": {
+      "label": "Mağaza notu", "description": "Mağaza kapalıysa görünmez.", "category": "commerce", "icon": "star", "library": true, "needs": [], "module": "commerce",
+      "source": "framework", "script": false, "preview": "",
+      "fields": [],
+      "template": "<p>Mağaza</p>",
+      "defaults": { "data": {}, "i18n": { "tr": {}, "en": {} } }
+    }
+  },
+  "zones": {
+    "home.main": { "label": "Ana sayfa bölümleri", "routes": ["home"], "blocks": [
+      { "id": "d1", "type": "note", "hidden": false, "data": { "url": "route:blog", "tone": "plain" }, "i18n": { "tr": { "text": "Varsayılan not" }, "en": { "text": "Default note" } }, "texts": { "text": "home.note" } }
+    ] },
+    "site.bottom": { "label": "Bütün sayfalar · altta", "routes": ["home", "notFound", "page"], "blocks": [] },
+    "post.bottom": { "label": "Bu sayfa · altta", "routes": ["post"], "blocks": [] },
+    "page.main": { "label": "Sayfa içeriği", "routes": ["page"], "blocks": [] }
+  },
+  "pages": [
+    { "name": "home", "label": "Ana Sayfa", "dynamic": null, "paths": { "tr": "/", "en": "/en/" }, "zones": ["home.main", "site.bottom"] },
+    { "name": "post", "label": "Blog", "dynamic": "post", "paths": { "tr": "/blog/:slug/", "en": "/en/blog/:slug/" }, "zones": ["post.bottom"] },
+    { "name": "notFound", "label": "Sayfa bulunamadı", "dynamic": null, "paths": { "tr": "/404.html" }, "zones": ["site.bottom"] },
+    { "name": "page", "label": "Blok sayfası", "dynamic": "page", "records": true, "paths": { "tr": "/:slug/", "en": "/en/:slug/" }, "zones": ["page.main", "site.bottom"] }
+  ]
+}

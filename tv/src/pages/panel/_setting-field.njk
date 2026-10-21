@@ -1,0 +1,49 @@
+{# Tek ayar alanı (Ayarlar ve Güvenlik > Ayarlar). Kapsam: s (tanım), values, errors, hasOptions(s). #}
+<div class="pn-field pn-w-half" :data-setting="s.key">
+  <template x-if="s.type === 'bool'">
+    <label class="pn-switch">
+      <input type="checkbox" class="peer sr-only" x-model="values[s.key]">
+      <span class="pn-switch-track" aria-hidden="true"></span>
+      <span class="field-label" x-text="s.label"></span>
+    </label>
+  </template>
+  <template x-if="s.type !== 'bool'">
+    <label class="field-label" :for="'set-' + s.key" x-text="s.label"></label>
+  </template>
+  <template x-if="hasOptions(s)">
+    <select class="input" :id="'set-' + s.key" x-model="values[s.key]">
+      <template x-for="(label, value) in s.options" :key="value"><option :value="value" x-text="label" :selected="value === values[s.key]"></option></template>
+    </select>
+  </template>
+  <template x-if="!hasOptions(s) && s.type === 'string' && s.format !== 'color' && s.format !== 'secret'">
+    <input class="input" :id="'set-' + s.key" x-model="values[s.key]" :aria-invalid="!!errors[s.key]" autocomplete="off">
+  </template>
+  {# Gizli değer (API anahtarı): panele geri gelmez; doluysa "kayıtlı" yazar, yeni değer yazılınca değişir. #}
+  <template x-if="s.format === 'secret'">
+    <input class="input font-mono" type="password" :id="'set-' + s.key" x-model="values[s.key]" :placeholder="s.set ? 'Kayıtlı (değiştirmek için yenisini yazın)' : ''" :aria-invalid="!!errors[s.key]" autocomplete="new-password" spellcheck="false">
+  </template>
+  {# Renk (#rrggbb ya da boş = derlemedeki) #}
+  <template x-if="s.format === 'color'">
+    <div class="flex items-center gap-2">
+      <input type="color" class="h-11 w-14 shrink-0 cursor-pointer rounded-control border border-line bg-surface p-1" :value="values[s.key] || '#000000'" @input="values[s.key] = $event.target.value" :aria-label="s.label + ' seç'">
+      <input class="input font-mono" :id="'set-' + s.key" x-model="values[s.key]" placeholder="Boş: derlemedeki renk" maxlength="7" :aria-invalid="!!errors[s.key]" autocomplete="off">
+      <button type="button" class="btn btn-ghost btn-sm" x-show="values[s.key]" @click="values[s.key] = ''">Sıfırla</button>
+    </div>
+  </template>
+  {# Görsel (medya kimliği; 0 = yok) #}
+  <template x-if="s.format === 'image'">
+    <div class="flex flex-wrap items-center gap-2">
+      <span class="text-sm text-ink-2" x-text="values[s.key] ? 'Görsel #' + values[s.key] : 'Seçilmedi'"></span>
+      <button type="button" class="btn btn-secondary btn-sm" @click="$store.media.pick({ current: values[s.key] ? [{ id: values[s.key] }] : null }).then((picked) => { if (picked?.[0]) values[s.key] = picked[0].id })">Seç</button>
+      <button type="button" class="btn btn-ghost btn-sm" x-show="values[s.key]" @click="values[s.key] = 0">Kaldır</button>
+    </div>
+  </template>
+  <template x-if="(s.type === 'int' || s.type === 'float') && s.format !== 'image'">
+    <div class="pn-number">
+      <input class="input" type="number" :id="'set-' + s.key" x-model.number="values[s.key]" :min="s.min ?? null" :max="s.max ?? null" :step="s.type === 'float' ? 'any' : 1" :aria-invalid="!!errors[s.key]">
+      <span class="pn-unit" x-show="s.unit" x-text="s.unit"></span>
+    </div>
+  </template>
+  <p class="field-help" x-show="s.help && !errors[s.key]" x-text="s.help"></p>
+  <p class="field-error" x-show="errors[s.key]" x-text="errors[s.key]"></p>
+</div>

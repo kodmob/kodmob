@@ -1,0 +1,41 @@
+<!-- Tek onay penceresi (shell/overlays.html). Metinler x-text ile basılır. -->
+<div class="fixed inset-0 z-[80] flex items-end justify-center p-0 sm:items-center sm:p-4" x-data x-show="$store.confirm.open" x-cloak
+  @keydown.escape.window="$store.confirm.open && $store.confirm.answer(false)" role="alertdialog" aria-modal="true" :aria-label="$store.confirm.title">
+  <div class="absolute inset-0 bg-ink/50" x-show="$store.confirm.open" x-transition.opacity.duration.150ms @click="$store.confirm.answer(false)"></div>
+  <div class="relative w-full rounded-t-card bg-surface p-5 pb-[calc(env(safe-area-inset-bottom)+1.25rem)] shadow-pop sm:max-w-md sm:rounded-card sm:pb-5"
+    x-show="$store.confirm.open" x-transition:enter="transition duration-200 ease-out" x-transition:enter-start="translate-y-4 opacity-0" x-transition:enter-end="translate-y-0 opacity-100"
+    x-init="$watch('$store.confirm.open', (v) => v && $nextTick(() => $refs.ok.focus()))">
+    <div class="flex gap-4">
+      <span class="grid h-10 w-10 shrink-0 place-items-center rounded-full" :class="$store.confirm.iconClass"><svg class="icon" aria-hidden="true"><use :href="$store.confirm.iconHref"/></svg></span>
+      <div class="min-w-0 flex-1">
+        <h2 class="text-base font-semibold text-ink" x-text="$store.confirm.title"></h2>
+        <p class="mt-1 text-sm text-ink-2" x-show="$store.confirm.message" x-text="$store.confirm.message"></p>
+      </div>
+    </div>
+    <dl class="mt-4 grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-1.5 rounded-control border border-line bg-surface-subtle px-4 py-3 text-sm" x-show="$store.confirm.summary.length">
+      <template x-for="item in $store.confirm.summary" :key="item.label">
+        <div class="contents">
+          <dt class="text-ink-2" x-text="item.label"></dt>
+          <dd class="num truncate font-medium text-ink" x-text="item.value"></dd>
+        </div>
+      </template>
+    </dl>
+    <template x-if="$store.confirm.field">
+      <label class="mt-4 flex flex-col gap-1.5">
+        <span class="field-label" x-text="$store.confirm.field.label"></span>
+        <input class="input" :type="$store.confirm.field.type || 'text'" x-model="$store.confirm.field.value" :placeholder="$store.confirm.field.placeholder || ''"
+          autocomplete="off" @keydown.enter.prevent="$store.confirm.answer(true)" data-testid="confirm-field">
+      </label>
+    </template>
+    <template x-if="$store.confirm.option">
+      <label class="mt-4 flex items-start gap-2 text-sm text-ink">
+        <input type="checkbox" class="mt-0.5 h-4.5 w-4.5 shrink-0 accent-primary" x-model="$store.confirm.option.checked" data-testid="confirm-option">
+        <span><span class="font-medium" x-text="$store.confirm.option.label"></span><span class="block text-xs text-muted" x-show="$store.confirm.option.hint" x-text="$store.confirm.option.hint"></span></span>
+      </label>
+    </template>
+    <div class="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+      <button type="button" class="btn btn-secondary" @click="$store.confirm.answer(false)" x-text="$store.confirm.cancelText"></button>
+      <button type="button" x-ref="ok" class="btn" :class="$store.confirm.confirmClass" @click="$store.confirm.answer(true)" x-text="$store.confirm.confirmText"></button>
+    </div>
+  </div>
+</div>

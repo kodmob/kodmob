@@ -1,0 +1,60 @@
+{% extends "layouts/base.njk" %}
+{% import "macros/ui.njk" as ui %}
+
+{#
+  Müşterinin sipariş sayfası (features/shop.js shopOrder): adresteki numara + bağlantı anahtarıyla
+  (`?no=…&anahtar=…`; e-postadaki bağlantı). Ödeme bekleyen havale siparişinde banka bilgileri.
+#}
+{% block content %}
+<section class="container-site max-w-3xl py-10 lg:py-16" x-data="shopOrder()" data-testid="order-page">
+  <template x-if="loading"><span class="skeleton block h-64"></span></template>
+  <template x-if="missing">
+    <div class="card card-body flex flex-col items-start gap-4">
+      <p class="text-ink-2">{{ t('shop.order.notFound') }}</p>
+      <a href="{{ url('shop') }}" class="btn btn-primary">{{ t('shop.backToShop') }}</a>
+    </div>
+  </template>
+  <template x-if="order">
+    <div class="flex flex-col gap-6">
+      <div>
+        <p class="eyebrow eyebrow-pill" x-show="fresh">{{ ui.icon('check-circle', 'icon icon-sm') }} {{ t('shop.order.thanks') }}</p>
+        <h1 class="h2 mt-4">{{ t('shop.order.title') }} <span class="font-mono" x-text="order.number" data-testid="order-number"></span></h1>
+        <p class="mt-2 text-sm text-muted" x-show="fresh">{{ t('shop.order.mail') }}</p>
+      </div>
+
+      {# Online ödeme: sağlayıcıdan dönüş (?odeme=tamam | iptal) ve ödeme bekleyen siparişte "Ödemeyi tamamla". #}
+      <p class="card card-body text-sm text-ink-2" x-show="result === 'tamam' && order.payable">{{ t('shop.order.processing') }}</p>
+      <div class="card card-body flex flex-wrap items-center gap-4" x-show="order.payable" data-testid="order-pay">
+        <p class="min-w-0 flex-1 text-sm text-ink-2" x-text="result === 'iptal' ? '{{ t('shop.order.cancelled') }}' : '{{ t('shop.order.unpaid') }}'"></p>
+        <button type="button" class="btn btn-primary" @click="pay()" :disabled="paying">{{ ui.icon('lock', 'icon icon-sm') }} {{ t('shop.order.payNow') }}</button>
+      </div>
+
+      <dl class="card card-body grid gap-3 text-sm sm:grid-cols-2">
+        <div><dt class="text-muted">{{ t('shop.order.status') }}</dt><dd class="font-medium text-ink" x-text="order.statusLabel" data-testid="order-status"></dd></div>
+        <div><dt class="text-muted">{{ t('shop.order.payment') }}</dt><dd class="font-medium text-ink" x-text="order.paymentLabel"></dd></div>
+      </dl>
+
+      <template x-if="order.payment?.instructions && Object.keys(order.payment.instructions).length">
+        <div class="card card-body">
+          <h2 class="h4 mb-3">{{ t('shop.order.transfer') }}</h2>
+          <dl class="grid gap-2 text-sm">
+            <template x-for="[label, value] in Object.entries(order.payment.instructions)" :key="label">
+              <div class="flex flex-wrap justify-between gap-2"><dt class="text-muted" x-text="label"></dt><dd class="font-mono text-ink" x-text="value"></dd></div>
+            </template>
+          </dl>
+        </div>
+      </template>
+
+      <div class="card card-body flex flex-col gap-4">
+        <h2 class="h4">{{ t('shop.order.items') }}</h2>
+        <ul class="flex flex-col gap-2 text-sm">
+          <template x-for="(item, i) in order.items" :key="i">
+            <li class="flex justify-between gap-3"><span><span x-text="item.quantity"></span> × <span x-text="item.title"></span></span><span x-text="item.totalText"></span></li>
+          </template>
+        </ul>
+        {% set c = 'order' %}{% include "pages/shop/_totals.njk" %}
+      </div>
+    </div>
+  </template>
+</section>
+{% endblock %}

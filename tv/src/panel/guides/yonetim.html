@@ -1,0 +1,87 @@
+<p class="lead">Kimin neyi göreceği, sitenin gönderim ve yapay zekâ ayarları, yedekler ve aynı kurulumdan açılan alt siteler. Her değişiklik İşlem Geçmişi'ne yazılır.</p>
+
+<h2 id="kullanicilar">Kullanıcılar</h2>
+<ol class="steps">
+  <li><a data-route="users">Kullanıcılar</a> › <strong>Yeni kullanıcı</strong>: ad soyad, kullanıcı adı (küçük harf, rakam, nokta, tire; girişte kullanılır), e-posta (girişte kullanıcı adı yerine de geçer), telefon ve rol.</li>
+  <li>Şifreyi yazın ya da <em>Üret</em> ile güçlü bir şifre üretip kopyalayın; kişiye güvenli bir yoldan iletin.</li>
+  <li>Ayrılan kişiyi silmek yerine <strong>pasife alın</strong>: giriş yapamaz, geçmişi durur. Açık oturumlarını <em>Bütün oturumlarını kapat</em> hemen düşürür.</li>
+</ol>
+<p>Kullanıcının detayından <strong>SMS</strong> ya da <strong>e-posta</strong> gönderebilirsiniz (gönderim ayarları yapılmış olmalı); e-posta sitenin şablonuyla gider, yanıtlar size gelir.</p>
+
+<h2 id="roller">Roller ve izinler</h2>
+<p>Her kullanıcının gördüğü sayfalar ve yapabildiği işlemler rolünden gelir. Hazır roller:</p>
+<div class="table-wrap"><table>
+  <thead><tr><th>Rol</th><th>Ne yapar</th></tr></thead>
+  <tbody>
+    <tr><td>Yönetici</td><td>Bütün sayfalar ve işlemler. Yetkileri değişmez; menüsü düzenlenebilir.</td></tr>
+    <tr><td>Editör</td><td>İçerik, görseller, sayfa metinleri, SEO ve diller; yayınlar, siler; talepleri görür; Jarvis.</td></tr>
+    <tr><td>Yazar</td><td>Blog yazısı yazar, görsel yükler; yayına almayı Editör ya da Yönetici yapar.</td></tr>
+    <tr><td>Satış</td><td>Talepleri yönetir, teklif hesaplayıcı fiyatlarını düzenler, domain arar.</td></tr>
+  </tbody>
+</table></div>
+<p><a data-route="roles">Roller ve İzinler</a>'de rolü seçin:</p>
+<ul>
+  <li><strong>Sayfalar</strong>: rolün açabildiği sayfalar. <strong>İşlem yetkileri</strong>: sayfa içindeki işler (yayınlama, silme, kullanıcı ekleme…).</li>
+  <li><strong>Yan Menü</strong>: o roldeki herkesin sol menüsü. Grup adı yazın, grupları ve sayfaları oklarla sıralayın. Menüde olmak sayfayı açmaz: yetkisi olmayan sayfa menüde görünmez.</li>
+  <li><strong>Yeni rol</strong>: ad, açıklama ve başlangıç yetkileri (hazır bir rolden ya da boş); sonra değiştirilir.</li>
+</ul>
+
+<h2 id="guvenlik">Güvenlik</h2>
+<ul>
+  <li><a data-route="security">Güvenlik</a> özeti: açık oturumlar, son 24 saatte hatalı girişler ve engellenen istekler, IP engelleri; denetim listesi.</li>
+  <li><strong>Oturumlar</strong>: herkesin açık oturumu; tek tek ya da topluca kapatılır. Bir oturum bir cihazdır, kapatılan oturum hemen düşer.</li>
+  <li><strong>IP engelleri</strong>: bir adresi ya da aralığı (ör. <code>203.0.113.0/24</code>) belli bir süre ya da süresiz engelleyin.</li>
+  <li><strong>Kilitli girişler</strong>: art arda hatalı denemede giriş kilitlenir, süre dolunca açılır; <em>Kilidi aç</em> beklemeden açar.</li>
+  <li><strong>Oturum imza anahtarı</strong>: <em>Anahtarı yenile</em> bütün oturumları geçersiz kılar, herkes (siz de) yeniden girer. Ele geçmiş bir oturumdan şüphelenince kullanın.</li>
+</ul>
+
+<h2 id="ayarlar">Proje Ayarları ve Sistem Ayarları</h2>
+<p><a data-route="projectSettings">Proje Ayarları</a>: bu projenin Kimlik (site adı, logo yazısı ve görseli, renkler), İletişim, Sosyal medya, Yasal, Talepler, Görseller ve araçların ayarları. Kaydedince sitede hemen güncellenir. <a data-route="settings">Sistem Ayarları</a> kurulumun tamamı içindir: e-posta, SMS, yapay zekâ, arka plan işleri, yedekleme ve sistem sağlığı raporu. Ayarları üstteki aramadan da bulabilirsiniz.</p>
+
+<h2 id="gonderim">E-posta ve SMS</h2>
+<ul>
+  <li><a data-route="settings" data-tab="mail">E-posta</a>: talep bildirimleri ve ziyaretçilere giden yanıtlar bu yolla gider. Hostinger için SMTP: <code>smtp.hostinger.com</code>, 465, SSL; kullanıcı adı e-posta adresinin kendisi. <em>Deneme gönder</em> hemen dener; gönderilemezse sunucunun hatası görünür. Şifre şifreli saklanır, bir daha gösterilmez.</li>
+  <li><a data-route="settings" data-tab="sms">SMS</a>: NetGSM abone numarası, API şifresi ve onaylı gönderici başlığı. <em>Bağlantıyı dene</em> onaylı başlıkları getirir; deneme SMS'i kredi harcar. Ticari ileti yalnızca İYS'de onayı olan alıcıya gider.</li>
+</ul>
+
+<h2 id="yapay-zeka">Yapay zekâ sağlayıcısı</h2>
+<p><a data-route="settings" data-tab="ai">Yapay zekâ</a>: Jarvis, içerik çevirisi ve Site Sihirbazı bu ayarla çalışır.</p>
+<ol class="steps">
+  <li>Sağlayıcıyı (Claude, OpenAI ya da Gemini) seçin, API anahtarını yapıştırın. Anahtar şifreli saklanır.</li>
+  <li><em>Modelleri getir</em> ile modeli seçin, <em>Deneme isteği</em> ile çalıştığını görün.</li>
+  <li>İsterseniz düşünme düzeyini, Jarvis'in bir cevapta kaç araç çağıracağını ve web aramasını ayarlayın.</li>
+</ol>
+<p class="note note-info">Sağlayıcı sohbet ortasında değiştirilebilir, geçmiş korunur. Talep sahiplerinin kişisel verisi hiçbir sağlayıcıya gönderilmez.</p>
+
+<h2 id="arka-plan">Arka plan işleri</h2>
+<p><a data-route="settings" data-tab="jobs">Arka plan</a>: e-postalar, otomatik yedek, domain taramaları ve günlük bakım (ör. saklama süresi dolan taleplerin silinmesi) zamanlanmış görevlerle çalışır. Bunun için sunucuda <strong>cron</strong> gerekir: Hostinger › Cron Jobs'ta her dakika <code>php …/kodmob-core/artisan schedule:run</code>. Cron'un çalışıp çalışmadığı sayfanın başında görünür; başarısız işler listelenir, <em>Yeniden dene</em> ile tekrar çalıştırılır.</p>
+
+<h2 id="yedek">Yedekleme</h2>
+<ul>
+  <li><a data-route="settings" data-tab="backup">Yedekleme</a> › <strong>Yedek al</strong>: bütün içerik, ayarlar, sayfa metinleri, SEO bilgileri ve görsellerin alt metinleri tek bir dosyaya yazılır ve bilgisayarınıza iner. Görsel dosyaları sunucuda kalır. Siparişler, talepler ve bülten aboneleri (kişisel veri) yalnızca <em>Kişisel kayıtları da ekle</em> işaretliyse girer.</li>
+  <li><strong>Geri yükle</strong>: indirdiğiniz yedek dosyasını (ya da otomatik yedeğin zip'ini) seçin. Kişisel kayıtlar ayrıca sorulur; işaretlemezseniz sitedeki siparişler ve talepler olduğu gibi kalır. Geri yüklemeden önce sitenin o anki hâli kendiliğinden saklanır (son 10); yanlışlıkta oradan dönersiniz.</li>
+  <li><strong>Otomatik yedek</strong>: her gün ya da haftada bir; kaç yedek saklanacağı, görsellerin eklenip eklenmeyeceği. Sunucuyla birlikte yedek de kaybolmasın diye S3 uyumlu bir depoya (Cloudflare R2, Backblaze B2…) da gönderilebilir; oraya giden kopya <strong>yedek şifresiyle</strong> şifrelenir. Şifreyi bir parola yöneticisinde saklayın: sunucu kaybolursa uzak depodaki dosya (<code>.kmbak</code>) buradan yüklenip bu şifreyle açılır. Cron gerekir.</li>
+</ul>
+<p class="note note-warn">Büyük bir değişiklikten (toplu içe aktarma, sürüm yükseltme) önce elle yedek alın ve dosyayı bilgisayarınızda saklayın.</p>
+
+<h2 id="saglik">Sistem sağlığı</h2>
+<p><a data-route="health">Sistem Sağlığı</a> kurulumun tek bakışta özetidir: sunucu, güvenlik, hız, veritabanı, depolama, arka plan, yedekleme (ana sitede alt siteler de). Dikkat gerekenler en üstte <strong>Bulgular</strong>'da, ne yapılacağıyla birlikte.</p>
+<ul>
+  <li><strong>Hata kodları</strong>: panelde ya da sitede beklenmeyen bir hata olursa kullanıcı mesajda bir kod görür (ör. <code>DB-3F9A1C</code>). Kullanıcı kodu iletince buradaki aramaya yazın: ne zaman, kimde, hangi işlemde ve hatanın kendisi görünür.</li>
+  <li><strong>Bildir</strong>: özeti rapor alıcısına e-postayla gönderir. Alıcı ve "ayda bir kendiliğinden gönder" <a data-route="settings">Sistem Ayarları</a> › Genel'dedir. Yalnızca kartların özeti gider; içerik, talep ya da kişisel veri gitmez.</li>
+  <li>Sayfa yalnızca okur; bir şeyi düzeltmek için bulgunun yanındaki bağlantıdan ilgili sayfaya geçin.</li>
+</ul>
+
+<h2 id="siteler">Projeler ve Site Sihirbazı</h2>
+<p><a data-route="sites">Projeler</a> (yalnızca ana projede; menünün üstündeki proje seçiciden de): aynı kurulumdan yeni projeler (siteler). Her birinin alan adı, veritabanı, kullanıcıları, ayarları ve görselleri ayrıdır; kod ve yeni sürümler ortaktır.</p>
+<ol class="steps">
+  <li><strong>Yeni site</strong> › <strong>Sihirbazla kur</strong>: site adı, sektör, şehir ve işletmeyi anlatan birkaç cümle. "Gerçek bilgiler" alanına yalnızca doğru rakamları yazın (kuruluş yılı, şube sayısı); yapay zekâ rakam, yıl ya da müşteri adı uydurmaz. Dil tonunu, ana rengi ve dilleri seçin.</li>
+  <li><strong>Öneri oluştur</strong>: yapay zekâ logo yazısı, renkler, site açıklaması, sayfa metinleri ve hizmetler önerir (yaklaşık bir dakika). Yapay zekâ anahtarı yoksa yalnızca logo yazısı ve renk önerilir. Önizlemede her şeyi düzeltebilirsiniz.</li>
+  <li>Alan adlarını, modülleri, veritabanını ve sitenin <strong>ilk yöneticisini</strong> girip kurun. Hizmetler taslak olarak gelir; gözden geçirip yayına alın.</li>
+  <li>Alan adını sunucuda ana siteyle <strong>aynı klasöre</strong> yönlendirin. Hostinger: alt alan adı için klasör olarak <code>public_html</code>; başka bir alan adını ana siteye takma alan adı (alias) olarak ekleyin. Sonra yeni sitenin paneline ilk yöneticiyle girin.</li>
+</ol>
+<ul>
+  <li><strong>Boş site</strong>: öneri olmadan, ana sitenin şablon metinleriyle kurar.</li>
+  <li>Yeni sürüm yüklenince <em>Tümünü güncelle</em> bütün sitelerin tablolarını günceller; tek site için <em>Tabloları güncelle</em>.</li>
+  <li><em>Kayıttan çıkar</em>: alan adları artık ana siteyi açar. Veritabanı, ayarlar ve görseller silinmez; aynı anahtarla yeniden kurunca site geri gelir.</li>
+</ul>

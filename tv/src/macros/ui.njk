@@ -1,0 +1,62 @@
+{#
+  Sabit şablon parçaları (makrolar). İçerikten gelen kartlar (proje, blog,
+  yorum) Alpine'a bağlı oldukları için macros/live.njk'dedir. Kullanım:
+    {% import "macros/ui.njk" as ui %}
+    {{ ui.img({ src: '/assets/img/x.webp', width: 800, height: 600 }, '100vw') }}
+#}
+
+{# İkon (shell/icons.html'deki sembol) #}
+{% macro icon(name, class='icon') %}<svg class="{{ class }}" aria-hidden="true"><use href="#i-{{ name }}"/></svg>{% endmacro %}
+
+{#
+  Kitaplık görseli (kodmob-api MediaPayload): srcset (WebP ara boyutlar), genişlik/yükseklik (yerleşim
+  kaymaz), tembel yükleme. `eager`: ilk ekrandaki görsel (LCP) hemen ve öncelikli
+  yüklenir. Görsel yoksa ızgaralı yer tutucu çizilir.
+#}
+{% macro img(image, sizes='100vw', class='', eager=false, alt=null, attrs='') %}
+{% if image and image.src %}
+<img src="{{ image.src }}"{% if image.srcset %} srcset="{{ image.srcset }}" sizes="{{ sizes }}"{% endif %} width="{{ image.width }}" height="{{ image.height }}" alt="{{ alt if alt != null else image.alt }}" class="{{ class }}" decoding="async" {% if eager %}fetchpriority="high"{% else %}loading="lazy"{% endif %} {{ attrs | safe }}>
+{% else %}
+<div class="media-ph {{ class }}" {{ attrs | safe }}><svg class="icon h-10 w-10" aria-hidden="true"><use href="#i-image"/></svg></div>
+{% endif %}
+{% endmacro %}
+
+{# Breadcrumb: items = [{ label, url }] (sonuncu geçerli sayfa, url'siz) #}
+{% macro breadcrumb(items) %}
+<nav class="breadcrumb" aria-label="{{ t('common.breadcrumb') }}">
+{% for item in items %}
+  {% if item.url %}<a href="{{ item.url }}">{{ item.label }}</a>{{ icon('chevron-right', 'icon icon-sm') }}{% else %}<span aria-current="page">{{ item.label }}</span>{% endif %}
+{% endfor %}
+</nav>
+{% endmacro %}
+
+{# Bölüm başlığı: eyebrow + başlık (+ vurgu) + açıklama, sağda isteğe bağlı bağlantı #}
+{% macro sectionHead(eyebrow, title, accent='', lead='', link=null, id='', reveal='reveal') %}
+<div class="section-head {{ reveal }}">
+  <div>
+    <span class="eyebrow">{{ eyebrow }}</span>
+    <h2{% if id %} id="{{ id }}"{% endif %} class="h2 mt-2">{{ title }}{% if accent %} <span class="accent">{{ accent }}</span>{% endif %}</h2>
+{% if lead %}
+    <p class="lead max-w-2xl">{{ lead }}</p>
+{% endif %}
+  </div>
+{% if link %}
+  <a href="{{ link.url }}" class="link-arrow">{{ link.label }} {{ icon('arrow-right', 'icon icon-sm') }}</a>
+{% endif %}
+</div>
+{% endmacro %}
+
+{# Sayfa başı (iç sayfalar) #}
+{% macro pageHero(eyebrow, title, accent, lead, crumbs=null) %}
+<section class="hero pt-10 pb-12 sm:pt-14 sm:pb-16">
+  <div class="container-site">
+{% if crumbs %}
+    <div class="fade-up mb-6">{{ breadcrumb(crumbs) }}</div>
+{% endif %}
+    <span class="eyebrow eyebrow-pill fade-up">{{ eyebrow }}</span>
+    <h1 class="display fade-up fade-up-1 mt-5 max-w-4xl">{{ title }} <span class="accent">{{ accent }}</span></h1>
+    <p class="lead fade-up fade-up-2 mt-5 max-w-2xl">{{ lead }}</p>
+{{ caller() if caller }}
+  </div>
+</section>
+{% endmacro %}

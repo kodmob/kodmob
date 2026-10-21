@@ -1,0 +1,127 @@
+/*
+ * Kullanım Kılavuzu (panel/guide.js): ekran turu ve rehber okuyucu.
+ * Belirteçler (renk, köşe, gölge) tokens.css'ten. Tur kartı ve gölgeler konumla taşınır (tour.js).
+ */
+@layer components {
+  /* ============================================================ tur */
+  html.tour-open body { overflow: hidden; }
+
+  .tour { position: fixed; inset: 0; z-index: 90; }
+  .tour-block { position: absolute; inset: 0; }
+
+  .tour-shade {
+    position: absolute;
+    pointer-events: none;
+    background: rgb(11 23 51 / 0.42);
+    -webkit-backdrop-filter: blur(5px) saturate(0.9);
+    backdrop-filter: blur(5px) saturate(0.9);
+    transition: top 0.32s ease, left 0.32s ease, width 0.32s ease, height 0.32s ease;
+  }
+
+  .tour-ring {
+    position: absolute;
+    pointer-events: none;
+    border-radius: 12px;
+    box-shadow: 0 0 0 2px var(--color-primary), 0 0 0 7px color-mix(in oklab, var(--color-primary) 28%, transparent), 0 10px 30px -6px rgb(11 23 51 / 0.45);
+    transition: top 0.32s ease, left 0.32s ease, width 0.32s ease, height 0.32s ease, opacity 0.2s ease;
+  }
+  .tour-ring.is-hidden { opacity: 0; }
+
+  .tour-card {
+    @apply absolute flex flex-col overflow-hidden rounded-card border border-line bg-surface shadow-pop;
+    width: min(22.5rem, calc(100vw - 1.5rem));
+    opacity: 0;
+    transition: top 0.32s ease, left 0.32s ease, opacity 0.2s ease;
+  }
+  .tour-card.is-placed { opacity: 1; }
+  .tour-card.is-wide { width: min(33rem, calc(100vw - 1.5rem)); }
+
+  .tour-progress { @apply h-1 bg-line; }
+  .tour-progress > span { @apply block h-full bg-primary; transition: width 0.32s ease; }
+
+  .tour-body { @apply flex flex-col gap-2 px-5 pt-4 pb-3; }
+  .tour-eyebrow { @apply flex items-center justify-between gap-3 text-xs font-semibold tracking-wider text-primary uppercase; }
+  .tour-eyebrow .num { @apply font-medium tracking-normal text-muted normal-case; }
+  .tour-title { @apply text-lg leading-snug font-semibold text-ink; }
+  .tour-card.is-wide .tour-title { @apply text-xl lg:text-2xl; }
+  .tour-text { @apply text-sm leading-relaxed text-ink-2; }
+  .tour-keys { @apply text-xs text-muted; }
+
+  .tour-flow { @apply mt-1 flex flex-wrap items-center gap-1; }
+  .tour-flow li { @apply flex items-center gap-1 text-xs font-medium text-ink; }
+  .tour-flow li > span { @apply rounded-full border border-primary/20 bg-primary-soft px-2.5 py-1 text-primary-ink; }
+  .tour-flow .icon { @apply text-muted; }
+
+  .tour-actions { @apply flex flex-wrap items-center gap-2 border-t border-line bg-surface-subtle px-4 py-3; }
+
+  /* Otomatik oynatma: duraklat simgesinin çevresinde sıradaki karta kalan süre. Halka 12'den başlar, ucu saat
+     yönünün tersine çekilerek erir (r=10 → çevre 62,83); süre tour.js'ten (--tour-dur). */
+  .tour-auto-icon { @apply relative inline-grid h-6 w-6 place-items-center text-[0.6875rem] leading-none; }
+  .tour-timer { @apply pointer-events-none absolute inset-0 h-full w-full -rotate-90; }
+  .tour-timer circle { fill: none; stroke-width: 2; }
+  .tour-timer-track { stroke: color-mix(in oklab, var(--color-primary) 18%, transparent); }
+  .tour-timer-left {
+    stroke: var(--color-primary);
+    stroke-linecap: round;
+    stroke-dasharray: 62.83;
+    stroke-dashoffset: 0;
+    animation: tour-timer var(--tour-dur, 8s) linear forwards;
+  }
+  @keyframes tour-timer { to { stroke-dashoffset: 62.83; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tour-shade, .tour-ring, .tour-card, .tour-progress > span { transition: none; }
+  }
+
+  /* ============================================================ rehber listesi */
+  .guide-flow { @apply flex flex-wrap items-center gap-1.5 text-xs font-medium; counter-reset: flow; }
+  .guide-flow li { @apply flex items-center gap-1.5 rounded-full border border-line bg-surface-subtle py-1 pr-2.5 pl-1 text-ink; counter-increment: flow; }
+  .guide-flow li::before { content: counter(flow); @apply grid h-5 w-5 place-items-center rounded-full bg-primary text-[0.6875rem] font-semibold text-white; }
+
+  /* ============================================================ okuyucu */
+  .guide-toc { @apply sticky top-20 self-start; }
+  .guide-toc a { @apply block border-l-2 border-line py-1.5 pl-3 text-sm text-ink-2 hover:text-ink; }
+  .guide-toc a.is-active { @apply border-primary font-medium text-primary; }
+
+  .guide { @apply max-w-none text-[0.9375rem] leading-relaxed text-ink; }
+  .guide > * + * { @apply mt-3; }
+  .guide .lead { @apply text-base text-ink-2; }
+  .guide h2 { @apply mt-8 scroll-mt-20 border-t border-line pt-6 text-lg font-semibold text-ink first:mt-0 first:border-t-0 first:pt-0; }
+  .guide h3 { @apply mt-6 text-base font-semibold text-ink; }
+  .guide p, .guide li { @apply text-ink-2; }
+  .guide strong { @apply font-semibold text-ink; }
+  .guide a { @apply font-medium text-primary underline-offset-2 hover:underline; }
+  .guide ul { @apply flex list-disc flex-col gap-1.5 pl-5; }
+  .guide ol { @apply flex list-decimal flex-col gap-1.5 pl-5; }
+  .guide li::marker { @apply text-muted; }
+  .guide code, .guide kbd {
+    @apply rounded border border-line bg-surface-subtle px-1.5 py-0.5 font-mono text-[0.8125rem] text-ink;
+    overflow-wrap: anywhere;
+  }
+
+  .guide .table-wrap { @apply -mx-1 overflow-x-auto px-1; }
+  .guide table { @apply w-full min-w-[32rem] border-collapse text-sm; }
+  .guide th { @apply border-b border-line-strong px-3 py-2 text-left text-xs font-semibold tracking-wide text-muted uppercase; }
+  .guide td { @apply border-b border-line px-3 py-2.5 align-top text-ink-2; }
+  .guide td:first-child { @apply font-medium text-ink; }
+
+  .guide .note { @apply rounded-control border px-4 py-3 text-sm; }
+  .guide .note-info { @apply border-primary/20 bg-primary-soft text-primary-ink; }
+  .guide .note-warn { @apply border-warning/25 bg-warning-soft text-warning-ink; }
+  .guide .note-danger { @apply border-danger/20 bg-danger-soft text-danger-ink; }
+  .guide .note strong, .guide .note p, .guide .note li, .guide .note a { color: inherit; }
+
+  .guide .steps { @apply flex list-none flex-col gap-3 pl-0; counter-reset: step; }
+  .guide .steps > li { @apply relative pl-10; counter-increment: step; }
+  .guide .steps > li::before {
+    content: counter(step);
+    @apply absolute top-0 left-0 grid h-7 w-7 place-items-center rounded-full bg-primary text-xs font-semibold text-white;
+  }
+
+  /* Yazdırma: yalnızca rehber (kabuk print:hidden). */
+  @media print {
+    .guide { font-size: 10.5pt; }
+    .guide h2 { break-after: avoid; }
+    .guide .note, .guide table { break-inside: avoid; }
+  }
+}
