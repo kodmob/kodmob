@@ -271,3 +271,28 @@
     }
   }
 }
+
+/* Koyu temada beyaz düğme: beyaz zemin üstünde açık mavi yazı okunmuyordu; zemin koyu, yazı açık, ince açık kenar
+   (açık temadaki üzerine gelme görünümü). Üzerine gelince zemin biraz açılır. */
+@layer components {
+  :root.theme-dark .btn-white {
+    border-color: rgb(255 255 255 / 0.35);
+    background: var(--color-primary-soft);
+    color: var(--color-primary-ink);
+  }
+  :root.theme-dark .btn-white:hover {
+    border-color: rgb(255 255 255 / 0.6);
+    background: color-mix(in oklab, var(--color-primary-soft) 82%, white);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not(.theme-light) .btn-white {
+      border-color: rgb(255 255 255 / 0.35);
+      background: var(--color-primary-soft);
+      color: var(--color-primary-ink);
+    }
+    :root:not(.theme-light) .btn-white:hover {
+      border-color: rgb(255 255 255 / 0.6);
+      background: color-mix(in oklab, var(--color-primary-soft) 82%, white);
+    }
+  }
+}

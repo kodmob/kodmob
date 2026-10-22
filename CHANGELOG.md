@@ -4,6 +4,12 @@ Kodmob'un sürümleri. Biçim: her sürümde **Eklendi**, **Değişti**, **Düze
 yapılacaklar **Yükseltme** başlığında. Sürüm numarası `tv/package.json`, `kodmob-api/config/kodmob.php` ve
 `kodmob.json`'da aynıdır (`node build.mjs --bump minor` üçünü birlikte yükseltir).
 
+## Yayımlanmadı
+
+**Düzeltildi**
+- Koyu temada beyaz düğme (`btn-white`; ör. Çağrı bandı, Öne çıkan projeler): beyaz zemin üstünde açık mavi yazı
+  okunmuyordu; artık koyu zemin, açık yazı ve ince açık kenar, üzerine gelince zemin açılır.
+
 ## 3.0.0 — 2026-10-22
 
 İlk açık kaynak sürüm (MIT): [github.com/kodmob/kodmob](https://github.com/kodmob/kodmob), geliştirici belgeleri
