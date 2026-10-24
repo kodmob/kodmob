@@ -4,7 +4,7 @@
  * Pazarı'ndan eklenince satış belgeleri ve gizlilik politikasındaki alışveriş bölümü gelir, çıkarılınca gider.
  */
 import { test, expect } from '@playwright/test';
-import { confirmYes, consoleErrors, login, stamp, statusOf } from '../helpers.js';
+import { confirmYes, consoleErrors, login, stamp, statusOf, openFromMenu } from '../helpers.js';
 
 test('Yasal belgeler: adresler, modüle göre belgeler, panelden özelleştirme', async ({ page, request }) => {
     test.setTimeout(120000);
@@ -64,7 +64,7 @@ test('Yasal belgeler: adresler, modüle göre belgeler, panelden özelleştirme'
     // Mağaza eklenince: satış belgeleri ve alışveriş bölümü; çıkarılınca gider.
     await page.goto('/panel/araclar/kesfet');
     await page.locator('[data-testid=tools] [data-tool=commerce] [data-testid=tool-install]').click();
-    await expect(page.locator('aside nav a[href="/panel/siparisler"]').first()).toBeVisible();
+    await openFromMenu(page, 'inbox', '/panel/siparisler');
     await page.goto('/yasal/');
     for (const name of ['shopTerms', 'preInformation', 'delivery', 'returns', 'orderNotice']) await expect(index.locator(`[data-legal=${name}]`)).toBeVisible();
     await page.goto('/yasal/gizlilik-politikasi/');

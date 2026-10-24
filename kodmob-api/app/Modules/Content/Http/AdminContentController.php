@@ -11,6 +11,7 @@ use App\Core\Exceptions\NotFoundException;
 use App\Core\Http\Controller;
 use App\Core\Http\ListQuery;
 use App\Core\Security\Capability;
+use App\Core\Setup\Onboarding;
 use App\Core\Support\Text;
 use App\Modules\Blog\BlogPosts;
 use App\Modules\Briefs\Domain\Brief;
@@ -215,6 +216,8 @@ final class AdminContentController extends Controller
                 'latest' => $briefs->paginate(new ListQuery(1, 5, 'created_at', 'desc', '', []))->items,
             ] : null,
             'cache' => PageCache::count(),
+            // Sıradaki adımlar (modüllerin `steps()`'i; kişinin yetkisine göre).
+            'steps' => Onboarding::for(static fn (string $cap) => (bool) $request->user()?->can($cap)),
         ];
     }
 

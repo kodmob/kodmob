@@ -5,24 +5,20 @@
  * - Sol: roller (kullanıcı sayısı, yetki sayısı, "Değişti"). Yönetici kilitli (bütün yetkiler).
  *   "Yeni rol" ile ad, açıklama ve başlangıç yetkileri (bir rolden kopya) verilir; kullanıcısı
  *   olmayan eklenmiş rol silinir. Hazır rollerin adı değişir, kendisi silinmez.
- * - Sağ, üç görünüm:
+ * - Sağ, iki görünüm (yan menü herkese aynı: bölümler, yetkiye göre; meta.js SECTIONS):
  *   · Sayfalar: rolün göreceği sayfalar tek tek açılıp kapatılır. Sayfayı açmak sayfanın yetkisini
  *     ekler; kapatmak o sayfayı açan yetkileri kaldırır (aynı yetkiyi kullanan sayfalar satırda yazar).
  *   · İşlem yetkileri: bütün yetkiler gruplu (yayınlama, silme, kullanıcı yönetimi…); her yetkinin
  *     altında o yetkiyle açılan sayfalar.
- *   · Yan Menü: rolün sol menüsü (gruplar, sıra, menüde olmayan sayfalardan ekleme). Menüde olmak
- *     sayfayı açmaz; yetkisi olmayan öğe görünmez. Ayarı olmayan rol varsayılan menüyü görür.
  * - Kaydet rolün yetkilerini hemen değiştirir: o roldeki kişilerin paneli nabızla (`role`) tazelenir,
  *   sunucu her uçta yeni yetkiyle denetler. Varsayılana Dön koddaki tanıma döner.
  */
 import { api } from './api.js';
-import { PAGES, GROUPS, defaultMenu, pageByKey } from './meta.js';
+import { PAGES, SECTIONS } from './meta.js';
 import { toast } from '../ui/toast.js';
 import { confirmAction } from '../ui/confirm/confirm.js';
 
 const MENU_PAGES = PAGES.filter((p) => !p.hidden);
-const GROUP_LABELS = Object.fromEntries(GROUPS.map((g) => [g.key, g.label]));
-const clone = (v) => JSON.parse(JSON.stringify(v));
 const fold = (s) => String(s || '').toLocaleLowerCase('tr-TR');
 const capsOf = (page) => (page.can ? page.can.split('|') : []);
 
@@ -34,13 +30,10 @@ export function kmRoles() {
         slug: '',
         draft: [],
         q: '',
-        /** 'pages' | 'caps' | 'menu' */
+        /** 'pages' | 'caps' */
         view: 'pages',
-        menuDraft: [],
-        addTarget: 0,
         creating: null,
         renaming: null,
-        groupLabels: GROUP_LABELS,
 
         async init() {
             await this.load();
@@ -73,19 +66,17 @@ export function kmRoles() {
         },
 
         get pageGroups() {
-            return GROUPS.map((g) => ({ key: g.key, name: g.label, pages: this.menuPages.filter((p) => p.group === g.key) })).filter((g) => g.pages.length);
+            return SECTIONS.map((g) => ({ key: g.key, name: g.label, pages: this.menuPages.filter((p) => p.section === g.key) })).filter((g) => g.pages.length);
         },
 
         async pick(slug, force = false) {
             if (!force && slug === this.slug) return;
-            if (!force && (this.dirty || this.menuDirty)) {
+            if (!force && this.dirty) {
                 const ok = await confirmAction({ title: 'Kaydedilmemiş değişiklik', message: `${this.role?.label} rolündeki değişiklikler kaydedilmedi. Bırakılsın mı?`, confirmText: 'Bırak', tone: 'danger' });
                 if (!ok) return;
             }
             this.slug = slug;
             this.draft = [...(this.role?.caps || [])];
-            this.menuDraft = clone(this.menuBase);
-            this.addTarget = 0;
         },
 
         // ------------------------------------------------------------ yetkiler
@@ -230,119 +221,6 @@ export function kmRoles() {
                 await api.saveRoleCaps(this.slug, null);
                 await this.load(this.slug);
                 toast.success(`${label} rolü varsayılan izinlere döndü.`);
-                this.refreshOwn();
-            } catch (error) {
-                toast.error(error);
-            } finally {
-                this.saving = false;
-            }
-        },
-
-        // ------------------------------------------------------------ yan menü
-        get menuCustom() {
-            return !!this.role?.menu;
-        },
-
-        get menuBase() {
-            return this.role?.menu ? clone(this.role.menu) : defaultMenu().filter((g) => g.items.length);
-        },
-
-        get menuDirty() {
-            const norm = (m) => JSON.stringify(m.map((g) => ({ label: String(g.label).trim(), items: g.items })));
-            return !!this.slug && norm(this.menuDraft) !== norm(this.menuBase);
-        },
-
-        pageOf(key) {
-            return pageByKey(key);
-        },
-
-        seesItem(key) {
-            const page = this.pageOf(key);
-            return !!page && this.seesPage(page);
-        },
-
-        get unusedPageGroups() {
-            const used = new Set(this.menuDraft.flatMap((g) => g.items));
-            const q = fold(this.q.trim());
-            const list = this.menuPages.filter((p) => !used.has(p.key) && (!q || fold(`${p.label} ${p.href}`).includes(q)));
-            return GROUPS.map((g) => ({ key: g.key, name: g.label, pages: list.filter((p) => p.group === g.key) })).filter((g) => g.pages.length);
-        },
-
-        addGroup() {
-            this.menuDraft.push({ key: `g-${Date.now().toString(36)}`, label: 'Yeni grup', items: [] });
-            this.addTarget = this.menuDraft.length - 1;
-            this.$nextTick(() => this.$root.querySelector(`[data-menu-group="${this.menuDraft.length - 1}"]`)?.select());
-        },
-
-        removeGroup(gi) {
-            this.menuDraft.splice(gi, 1);
-            this.addTarget = Math.min(this.addTarget, Math.max(0, this.menuDraft.length - 1));
-        },
-
-        moveGroup(gi, step) {
-            const to = gi + step;
-            if (to < 0 || to >= this.menuDraft.length) return;
-            this.menuDraft.splice(to, 0, this.menuDraft.splice(gi, 1)[0]);
-        },
-
-        /** Sayfayı grupta kaydırır; grubun başından yukarı ya da sonundan aşağı komşu gruba geçer. */
-        moveItem(gi, ii, step) {
-            const group = this.menuDraft[gi];
-            const to = ii + step;
-            if (to >= 0 && to < group.items.length) {
-                group.items.splice(to, 0, group.items.splice(ii, 1)[0]);
-                return;
-            }
-            const next = this.menuDraft[gi + step];
-            if (!next) return;
-            const [key] = group.items.splice(ii, 1);
-            if (step < 0) next.items.push(key);
-            else next.items.unshift(key);
-        },
-
-        removeItem(gi, ii) {
-            this.menuDraft[gi].items.splice(ii, 1);
-        },
-
-        addItem(key) {
-            if (!this.menuDraft.length) this.menuDraft.push({ key: `g-${Date.now().toString(36)}`, label: 'Menü', items: [] });
-            const group = this.menuDraft[Math.min(this.addTarget, this.menuDraft.length - 1)];
-            if (!group.items.includes(key)) group.items.push(key);
-        },
-
-        undoMenu() {
-            this.menuDraft = clone(this.menuBase);
-        },
-
-        async saveMenu() {
-            if (!this.menuDirty || this.saving) return;
-            const groups = this.menuDraft.map((g) => ({ ...g, label: String(g.label).trim() })).filter((g) => g.items.length);
-            if (!groups.length) {
-                toast.warning('Menüde en az bir sayfa olmalı.');
-                return;
-            }
-            this.saving = true;
-            try {
-                const label = this.role.label;
-                await api.saveRoleMenu(this.slug, groups);
-                await this.load(this.slug);
-                toast.success(`${label} rolünün yan menüsü kaydedildi.`);
-                this.refreshOwn();
-            } catch (error) {
-                toast.error(error);
-            } finally {
-                this.saving = false;
-            }
-        },
-
-        async resetMenu() {
-            const ok = await confirmAction({ title: 'Varsayılan menüye dön', message: `${this.role.label} rolü varsayılan yan menüyü görsün mü?`, confirmText: 'Varsayılana Dön', tone: 'danger' });
-            if (!ok) return;
-            this.saving = true;
-            try {
-                await api.saveRoleMenu(this.slug, null);
-                await this.load(this.slug);
-                toast.success(`${this.role.label} rolü varsayılan yan menüye döndü.`);
                 this.refreshOwn();
             } catch (error) {
                 toast.error(error);

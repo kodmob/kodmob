@@ -13,6 +13,40 @@
     </div>
   </div>
 
+  {# Sıradaki adımlar: siteyi yayına hazırlarken sırayla; adım yapılınca kendiliğinden işaretlenir. #}
+  <template x-if="!loading && steps.length && !stepsHidden">
+    <section class="card pn-steps" data-testid="next-steps">
+      <div class="flex flex-wrap items-center gap-3">
+        <div class="min-w-0 flex-1">
+          <h2 class="text-base font-semibold text-ink" x-text="nextStep ? 'Sıradaki adımlar' : 'Siteniz hazır'"></h2>
+          <p class="text-sm text-ink-2" x-text="nextStep ? 'Siteyi yayına hazırlamak için sırayla; yaptıkça kendiliğinden işaretlenir.' : 'Bütün adımlar tamam. Bu kartı gizleyebilirsiniz.'"></p>
+        </div>
+        <span class="pn-steps-count" x-text="stepsDone + ' / ' + steps.length"></span>
+        <button type="button" class="btn btn-ghost btn-sm" @click="toggleSteps(true)" data-testid="next-steps-hide">Gizle</button>
+      </div>
+      <div class="pn-steps-bar" role="progressbar" :aria-valuenow="stepsDone" aria-valuemin="0" :aria-valuemax="steps.length"><span :style="{ width: Math.round(stepsDone / steps.length * 100) + '%' }"></span></div>
+      <ol class="pn-steps-list">
+        <template x-for="(step, i) in steps" :key="step.key">
+          <li :class="step.done ? 'is-done' : (step === nextStep ? 'is-next' : '')" :data-step="step.key">
+            <span class="pn-steps-num" aria-hidden="true">
+              <svg class="icon icon-sm" x-show="step.done"><use href="#i-check"/></svg>
+              <span x-show="!step.done" x-text="i + 1"></span>
+            </span>
+            <span class="min-w-0 flex-1">
+              <span class="block font-medium text-ink" x-text="step.label"></span>
+              <span class="block text-sm text-ink-2" x-show="!step.done" x-text="step.hint"></span>
+            </span>
+            <a :href="stepHref(step)" class="btn btn-sm" :class="step === nextStep ? 'btn-primary' : 'btn-ghost'" x-text="step.done ? 'Aç' : 'Başla'"></a>
+          </li>
+        </template>
+      </ol>
+    </section>
+  </template>
+  <p class="text-sm text-muted" x-show="!loading && steps.length && stepsHidden" x-cloak>
+    <button type="button" class="font-medium text-primary hover:underline" @click="toggleSteps(false)" data-testid="next-steps-show">Sıradaki adımları göster</button>
+    <span x-text="'(' + stepsDone + ' / ' + steps.length + ' tamam)'"></span>
+  </p>
+
   <div class="pn-stats">
     <template x-for="(t, key) in types" :key="key">
       <a :href="$store.session.can(t.can) ? $href('list', { type: key }) : null" class="card pn-stat" :class="$store.session.can(t.can) && 'card-hover'">

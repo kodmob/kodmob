@@ -10,22 +10,29 @@ const title = (page) => page.locator('h1[x-text="title"]');
 test('menüdeki ve Tüm İşlemler\'deki her sayfa açılıyor, konsol hatası yok', async ({ page }) => {
     const errors = consoleErrors(page);
     await login(page);
-    const links = await page.locator('aside nav a[href^="/panel"]:visible').evaluateAll((anchors) => [
-        // Etiket: sayaç rozeti (gizli "0" dahil) çıkarılmış ad.
-        ...new Map(anchors.map((a) => [a.getAttribute('href'), a.textContent.replace(/\s+/g, ' ').replace(/\s*\d+$/, '').trim()])).entries(),
-    ]);
-    // Varsayılan menü: Genel bakış, Temel, Proje modülleri, Proje Ayarları, altta Sistem; seyrek sayfalar Tüm İşlemler'de.
-    expect(links.length, 'menü sayfaları').toBeGreaterThan(8);
-    expect(links.map(([href]) => href)).not.toContain('/panel/roller');
-    expect(links.map(([href]) => href)).not.toContain('/panel/diger-islemler');
-    expect(links.map(([href]) => href)).toEqual(expect.arrayContaining(['/panel/proje-ayarlari', '/panel/sistem-ayarlari']));
-    await expect(page.locator('[data-testid=nav-system] a[href="/panel/sistem-ayarlari"]').first()).toBeVisible();
+    // Yan menü: yalnızca beş bölüm; her bölümün sayfaları üstte sekme.
+    const sections = await page.locator('aside nav a[data-section]:visible').evaluateAll((anchors) => anchors.map((a) => a.dataset.section));
+    expect(sections).toEqual(['overview', 'content', 'inbox', 'growth', 'settings']);
     await expect(page.locator('[data-testid=project-name]').first()).not.toBeEmpty();
 
-    for (const [href, label] of links) {
-        await page.locator(`aside nav a[href="${href}"]:visible`).first().click();
-        // Kısayol öğesi ("Araç ekle") sayfanın kendi başlığını gösterir.
-        await expect(title(page), href).toHaveText(href === '/panel/araclar/kesfet' ? 'Araç Pazarı' : label);
+    const links = new Map();
+    for (const key of sections) {
+        await page.locator(`aside nav a[data-section="${key}"]`).first().click();
+        await expect(page.locator(`aside nav a[data-section="${key}"][aria-current=page]`).first(), `${key} açıldı`).toBeVisible();
+        await expect(page.locator('main [aria-busy=true]')).toHaveCount(0);
+        const tabs = await page.locator('[data-testid=section-tabs] a:visible').evaluateAll((anchors) => anchors.map((a) => a.getAttribute('href')));
+        for (const href of tabs.length ? tabs : [new URL(page.url()).pathname]) links.set(href, key);
+    }
+    expect([...links.keys()]).not.toContain('/panel/roller');
+    expect([...links.keys()]).not.toContain('/panel/diger-islemler');
+    expect([...links.keys()]).toEqual(expect.arrayContaining(['/panel/blog', '/panel/talepler', '/panel/seo', '/panel/proje-ayarlari', '/panel/sistem-ayarlari']));
+
+    for (const [href, key] of links) {
+        await page.locator(`aside nav a[data-section="${key}"]`).first().click();
+        await expect(page.locator(`aside nav a[data-section="${key}"][aria-current=page]`).first()).toBeVisible();
+        const tab = page.locator(`[data-testid=section-tabs] a[href="${href}"]`);
+        if (await tab.count()) await tab.first().click();
+        await expect.poll(() => new URL(page.url()).pathname, { message: href }).toBe(href);
         await expect(page.locator('[data-testid=forbidden]')).toHaveCount(0);
         await expect(page.locator('main [aria-busy=true]'), `${href} görünümü yüklendi`).toHaveCount(0);
         if (href === '/panel/sayfa-duzenleyici') {
@@ -33,12 +40,14 @@ test('menüdeki ve Tüm İşlemler\'deki her sayfa açılıyor, konsol hatası y
             await expect(page.locator('[data-testid=builder]')).toBeVisible();
             await page.getByRole('button', { name: 'Panele dön' }).click();
             await expect(page.locator('[data-testid=builder]')).toHaveCount(0);
+        } else {
+            await expect(page.locator(`[data-testid=section-tabs] a[href="${href}"][aria-current=page]`).or(page.locator(`aside nav a[data-section="${key}"][aria-current=page]`)).first()).toBeVisible();
         }
     }
 
     // Menüde olmayan sayfalar Tüm İşlemler'den açılır (sayfa satırları; sekme kısayolları değil).
     await page.goto('/panel/diger-islemler');
-    const menu = new Set(links.map(([href]) => href));
+    const menu = new Set(links.keys());
     const others = (await page.locator('[data-op] > a:not(.ml-4)').evaluateAll((anchors) => anchors.map((a) => a.getAttribute('href'))))
         .filter((href, i, all) => all.indexOf(href) === i && !menu.has(href));
     for (const href of ['/panel/roller', '/panel/guvenlik', '/panel/islem-gecmisi']) expect(others).toContain(href);

@@ -21,6 +21,7 @@ use Illuminate\Console\Scheduling\Schedule;
  * - `contentTypes()`: modülün içerik türleri (ör. Mağaza'nın ürünleri); modül kapalıyken yoktur.
  * - `legal()`: yasal belgelerin şablonuna veri (kargo ücreti, saklama süresi…); belgeler tv/src/legal'da.
  * - `backup()`: yedeğe giren tabloları (siparişler, talepler…); kişisel veri ayrıca seçilir.
+ * - `steps()`: panelde Genel bakış'taki "Sıradaki adımlar"a adım (Core\Setup\Onboarding).
  *
  * Modül listesi: App\Core\Modules (çekirdek + açık isteğe bağlılar + config/project.php 'modules').
  */
@@ -92,6 +93,18 @@ abstract class Module
      * @return list<BackupPart>
      */
     public function backup(): array
+    {
+        return [];
+    }
+
+    /**
+     * Genel bakış'taki "Sıradaki adımlar"a katkı (Core\Setup\Onboarding): siteyi yayına hazırlarken yapılacak iş.
+     * `done` gerçek veriden hesaplanır (ayar dolu, sayfa yayında…); `route` / `params` / `tab` panelde açılacak ekran
+     * (tv/src/panel/routes.js); `can` adımı görecek yetki; `order` sıra (küçük önce).
+     *
+     * @return list<array{key:string,label:string,hint?:string,done:bool,route:string,params?:array<string,mixed>,tab?:?string,can?:?string,order?:int}>
+     */
+    public function steps(): array
     {
         return [];
     }

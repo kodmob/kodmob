@@ -5,7 +5,7 @@
  */
 
 /**
- * Çatının panel içerik türleri: blog ve blok sayfaları (Temel) ve Mağaza'nın ürünleri (Proje modülleri; `group`).
+ * Çatının panel içerik türleri: blog, blok sayfaları ve Mağaza'nın ürünleri (yan menüde İçerik bölümünün sekmeleri).
  * Modülü kapalı olan türün yetkisi yoktur, menüde görünmez. `menu: false`: menüde değil, Tüm İşlemler'de (blok
  * sayfaları Sayfa düzenleyiciden açılır). `blocks`: içeriği Sayfa düzenleyicide (düzenleyicide bağlantı).
  */
@@ -27,12 +27,13 @@ export const panelTypes = (projectTypes = {}) => ({ ...projectTypes, ...FRAMEWOR
 /**
  * Projenin özel sayfaları (panel.js `PAGES`), boşlukları doldurulmuş:
  *
- *   { key: 'reports', path: 'raporlar/:tab?', label: 'Raporlar', icon: 'chart', group: 'project',
+ *   { key: 'reports', path: 'raporlar/:tab?', label: 'Raporlar', icon: 'chart', section: 'inbox',
  *     can: 'km_view_reports', guide: 'Turdaki tanıtım.', hint: 'Tüm İşlemler kartındaki açıklama.',
  *     menu: false, load: () => import('./panel/reports.js'), template: 'panel/_reports.njk' }
  *
  * - `key`: sayfa ve görünüm adı: küçük harf, rakam, tire (Hızlı İşlem anahtarı olur; çatının sayfalarıyla çakışamaz) · `path`: adres (routes.js söz dizimi)
- * - `group`: menü grubu (varsayılan project: Proje modülleri; base, system) · `can`: yetki (projenin modülü verir)
+ * - `section`: yan menünün bölümü (varsayılan content: İçerik; inbox, growth, settings); sayfa o bölümde sekme olur ·
+ *   `can`: yetki (projenin modülü verir)
  * - `load`: görünümün bileşenleri (modülün dışa açtığı işlevler Alpine'a kaydedilir; şablondaki x-data)
  * - `template`: profil klasöründe Nunjucks şablonu (sayfa açıkken çizilir)
  */

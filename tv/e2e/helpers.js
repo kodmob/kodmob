@@ -28,8 +28,23 @@ export async function login(page) {
     await page.fill('#login-user', USER);
     await page.fill('#login-pass', password());
     await page.click('button[type=submit]');
-    // Menü çizildi (Blog her profilde: çatının türü); senaryolar sitenin profiline bağlı değil.
-    await expect(page.locator('aside nav a[href="/panel/blog"]').first()).toBeVisible({ timeout: 20000 });
+    // Menü çizildi (Genel bakış her yöneticide); senaryolar sitenin profiline bağlı değil.
+    await expect(section(page, 'overview')).toBeVisible({ timeout: 20000 });
+}
+
+/** Yan menünün bölümü (src/panel/meta.js SECTIONS: overview, content, inbox, growth, settings). */
+export const section = (page, key) => page.locator(`aside nav a[data-section="${key}"]`).first();
+
+/** Bölümün sekmelerinde sayfa bağlantısı (sekmeler bölümün bir sayfası açıkken görünür). */
+export const tabLink = (page, href) => page.locator(`[data-testid=section-tabs] a[href="${href}"]`);
+
+/** Sayfaya menüden gider: bölüme tıklar (ilk sayfası açılır), gerekirse bölümün sekmesine. */
+export async function openFromMenu(page, key, href) {
+    await section(page, key).click();
+    const here = () => new URL(page.url()).pathname === href;
+    await expect.poll(async () => here() || (await tabLink(page, href).count()) > 0, { message: `${key} › ${href}` }).toBeTruthy();
+    if (!here()) await tabLink(page, href).first().click();
+    await expect.poll(here, { message: href }).toBeTruthy();
 }
 
 /** API istemcisi: `{ status, json }` döner. */

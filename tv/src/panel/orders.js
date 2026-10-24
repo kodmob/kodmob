@@ -25,6 +25,9 @@ const NEXT = {
     refunded: { label: 'İade et', icon: 'rotate-ccw', tone: 'btn-ghost text-danger' },
 };
 
+/** Siparişin ana hattı (adım göstergesi). */
+const FLOW = ['pending', 'paid', 'processing', 'shipped', 'completed'];
+
 export function kmOrders(openId = null) {
     return {
         relative,
@@ -94,6 +97,20 @@ export function kmOrders(openId = null) {
 
         next(key) {
             return NEXT[key] || { label: key, icon: 'arrow-right', tone: 'btn-secondary' };
+        },
+
+        /**
+         * Siparişin yolu (kodmob-api Orders::FLOW'un ana hattı): ödeme bekliyor → ödendi → hazırlanıyor → kargoda →
+         * tamamlandı. Atlanan adım (ör. ödenmeden hazırlanan, kargosuz tamamlanan) geçilmiş sayılır. İptal / iade hat
+         * dışıdır: `flowStop` uyarı olarak gösterilir.
+         */
+        flow(sale) {
+            const at = FLOW.indexOf(sale?.status);
+            return FLOW.map((key, i) => ({ key, label: status('order', key).label, state: at < 0 ? 'off' : i < at ? 'done' : i === at ? 'now' : 'todo' }));
+        },
+
+        flowStop(sale) {
+            return ['cancelled', 'refunded'].includes(sale?.status) ? status('order', sale.status).label : '';
         },
 
         address(a = {}) {

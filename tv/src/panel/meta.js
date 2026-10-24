@@ -41,7 +41,7 @@ export const PAGES = [
     page('languages', 'languages', 'Sayfalar ve Diller', 'globe', 'base', 'km_manage_languages|km_manage_texts'),
     page('texts', 'texts', 'Sayfa metinleri', 'book', 'base', 'km_manage_texts', { hidden: true, parent: 'languages' }),
     // Sayfa düzenleyici: sayfaların bölümleri (bloklar), sürükle-bırak, önizleme, Jarvis.
-    page('builder', 'builder', 'Sayfa düzenleyici', 'pen-tool', 'base', 'km_edit_layout'),
+    page('builder', 'builder', 'Sayfa düzenleyici', 'pen-tool', 'base', 'km_edit_layout', { fullscreen: true }),
     page('seo', 'seo', 'SEO', 'search', 'base', 'km_manage_seo'),
     page('legal', 'legal', 'Yasal belgeler', 'file-check', 'base', 'km_manage_legal'),
     // Araçlar (isteğe bağlı modüller; kapalıysa yetkisi yok, menüde görünmez). Jarvis üst bardaki düğmeden açılır.
@@ -56,7 +56,7 @@ export const PAGES = [
     // Proje modüllerinin sonunda: Araç Pazarı'nın Keşfet sekmesi.
     page('tools-add', 'tools', 'Araç ekle', 'plus', 'project', 'km_manage_settings', { href: href('tools', { tab: 'discover' }), alias: true }),
     // Projenin özel sayfaları (profilin panel.js PAGES): kendi gruplarında (varsayılan Proje modülleri).
-    ...PROJECT_PAGES.map((p) => page(p.key, p.key, p.label, p.icon, p.group, p.can, { project: true, ...(p.menu === false ? { menu: false } : {}), ...(p.hidden ? { hidden: true } : {}) })),
+    ...PROJECT_PAGES.map((p) => page(p.key, p.key, p.label, p.icon, p.group, p.can, { project: true, ...(p.section ? { section: p.section } : {}), ...(p.menu === false ? { menu: false } : {}), ...(p.hidden ? { hidden: true } : {}) })),
     page('project-settings', 'projectSettings', 'Proje Ayarları', 'sliders', 'project-settings', 'km_manage_settings|km_manage_ai'),
     // Sistem: kurulumun tamamı (menünün altında).
     page('system-settings', 'settings', 'Sistem Ayarları', 'cog', 'system', 'km_manage_settings|km_manage_ai|km_manage_backups|km_manage_sms'),
@@ -85,6 +85,61 @@ export const GROUPS = [
     { key: 'project-settings', label: '' },
     { key: 'system', label: 'Sistem', bottom: true },
 ];
+
+/**
+ * Yan menünün bölümleri: menüde yalnızca bunlar durur (sade menü; kişi ne yapacağına göre bulur). Bir bölüme
+ * tıklayınca ilk yetkili sayfası açılır; bölümün sayfaları içerik alanının üstünde sekme olur (`buildSections`).
+ * Sayfanın adresi değişmez.
+ */
+export const SECTIONS = [
+    { key: 'overview', label: 'Genel bakış', icon: 'home' },
+    { key: 'content', label: 'İçerik', icon: 'layers' },
+    { key: 'inbox', label: 'Gelenler', icon: 'inbox' },
+    { key: 'growth', label: 'Görünürlük', icon: 'bar-chart' },
+    { key: 'settings', label: 'Ayarlar', icon: 'cog' },
+];
+
+/** Sayfanın bölümü; içerik türleri ve projenin özel sayfaları (yazmazsa) İçerik'te. */
+const SECTION_OF = {
+    overview: 'overview',
+    builder: 'content', estimate: 'content',
+    briefs: 'inbox', orders: 'inbox', coupons: 'inbox', bookings: 'inbox', domains: 'inbox',
+    seo: 'growth', newsletter: 'growth', languages: 'growth', texts: 'growth',
+    legal: 'settings', 'project-settings': 'settings', 'system-settings': 'settings', users: 'settings', health: 'settings',
+    tools: 'settings', history: 'settings', roles: 'settings', security: 'settings', sites: 'settings',
+};
+
+/** Sekmede kısa ad (bölümün adı zaten üstte). */
+const TAB_LABEL = {
+    builder: 'Sayfalar', languages: 'Diller', legal: 'Yasal', 'project-settings': 'Proje', 'system-settings': 'Sistem',
+    users: 'Kullanıcılar', health: 'Sağlık', tools: 'Araçlar',
+};
+
+/** Bölüm içindeki sıra: sayfalar ve blog önce, sonra projenin türleri, sonra araçlar (katalog sırasıyla). */
+const TAB_FIRST = ['builder', 'posts', 'briefs', 'seo', 'project-settings'];
+
+for (const p of PAGES) {
+    p.section ??= SECTION_OF[p.key] || (p.view === 'list' || p.project ? 'content' : null);
+    p.tab = TAB_LABEL[p.key] || p.label;
+}
+
+const tabRank = (p) => (TAB_FIRST.includes(p.key) ? TAB_FIRST.indexOf(p.key) : TAB_FIRST.length);
+
+/** Sekmede görünen sayfa: menüye giren (gizli, seyrek, kısayol olmayan) ve yetkili. */
+const tabbable = (p, can) => !p.hidden && p.menu !== false && !p.alias && can(p.can);
+
+/**
+ * Kişinin yan menüsü: yetkili sayfası olan bölümler, her biri sayfalarıyla (sekmeler) ve açılış adresiyle (ilk sayfa;
+ * tam ekran olan atlanır).
+ * `can`: (yetki) => bool.
+ */
+export function buildSections(can) {
+    return SECTIONS.map((s) => {
+        const pages = PAGES.filter((p) => p.section === s.key && tabbable(p, can)).sort((a, b) => tabRank(a) - tabRank(b));
+        // Bölüm tam ekran açılan sayfayla (Sayfa düzenleyici) başlamaz: sekmeler görünsün.
+        return { ...s, pages, href: (pages.find((p) => !p.fullscreen) || pages[0])?.href || null };
+    }).filter((s) => s.pages.length);
+}
 
 const BY_KEY = new Map(PAGES.map((p) => [p.key, p]));
 

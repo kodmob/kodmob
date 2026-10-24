@@ -36,6 +36,32 @@
 
   /* ============================================================ liste */
   .pn-toolbar { @apply flex flex-col gap-3 md:flex-row md:items-center; }
+  /* Genel bakış › Sıradaki adımlar: numaralı adımlar, ilerleme çubuğu; sıradaki vurgulu, yapılanlar soluk. */
+  .pn-steps { @apply flex flex-col gap-4 p-5; }
+  .pn-steps-count { @apply rounded-full bg-primary-soft px-2.5 py-1 text-sm font-semibold text-primary-ink tabular-nums; }
+  .pn-steps-bar { @apply h-1.5 overflow-hidden rounded-full bg-surface-subtle; }
+  .pn-steps-bar > span { @apply block h-full rounded-full bg-primary transition-[width] duration-500; }
+  .pn-steps-list { @apply flex flex-col divide-y divide-line; }
+  .pn-steps-list > li { @apply flex items-center gap-3 py-3; }
+  .pn-steps-list > li.is-done { @apply opacity-70; }
+  .pn-steps-num { @apply grid h-8 w-8 shrink-0 place-items-center rounded-full border border-line text-sm font-semibold text-ink-2 tabular-nums; }
+  .is-next .pn-steps-num { @apply border-primary bg-primary text-white; }
+  .is-done .pn-steps-num { @apply border-success bg-success-soft text-success-ink; }
+  /* Siparişin yolu (Siparişler › ayrıntı): yatay adımlar; geçilenler yeşil, şimdiki vurgulu. */
+  .pn-flow { @apply mb-5 grid grid-cols-5 gap-1; }
+  .pn-flow > li { @apply relative flex flex-col items-center gap-1.5 text-center; }
+  .pn-flow > li:not(:first-child)::before { content: ''; @apply absolute top-3 right-1/2 h-0.5 w-full -translate-y-1/2 bg-line; }
+  .pn-flow > li.is-done::before, .pn-flow > li.is-now::before { @apply bg-success; }
+  .pn-flow-dot { @apply relative z-10 grid h-6 w-6 place-items-center rounded-full border-2 border-line bg-surface text-white; }
+  .is-done .pn-flow-dot { @apply border-success bg-success; }
+  .is-now .pn-flow-dot { @apply border-primary bg-primary ring-4 ring-primary/20; }
+  .pn-flow-label { @apply text-xs leading-tight text-muted; }
+  .is-now .pn-flow-label { @apply font-semibold text-ink; }
+  .is-done .pn-flow-label { @apply text-ink-2; }
+  /* Bölüm sekmeleri (üst barın altında; yan menüde yalnızca bölümler var): alt çizgili, yatay kaydırılır. */
+  .pn-section-tabs { @apply flex gap-1 overflow-x-auto px-2 sm:px-4 lg:px-6; scrollbar-width: none; }
+  .pn-section-tab { @apply -mb-px flex shrink-0 items-center gap-1.5 border-b-2 border-transparent px-3 py-2.5 text-sm font-semibold whitespace-nowrap text-ink-2 transition-colors hover:text-ink; }
+  .pn-section-tab[aria-current="page"] { @apply border-primary text-primary-ink; }
   .pn-tabs { @apply flex shrink-0 gap-1 rounded-control border border-line bg-surface p-1; }
   .pn-tab { @apply flex items-center gap-1.5 rounded-[9px] px-3 py-1.5 text-sm font-semibold text-ink-2 transition-colors hover:text-ink; }
   .pn-tab > span:last-child { @apply text-xs font-medium text-muted tabular-nums; }

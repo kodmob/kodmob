@@ -4,15 +4,14 @@
  * projenin ayarını okur, Araç Pazarı'nda "Topluluk" olarak görünür ve kapatılınca menüden kalkar.
  */
 import { test, expect } from '@playwright/test';
-import { confirmYes, consoleErrors, login } from '../helpers.js';
+import { confirmYes, consoleErrors, login, openFromMenu } from '../helpers.js';
 
 test.skip(process.env.KM_PROFILE === 'starter', 'başlangıç profilinin senaryosu paketsiz');
 
 test('araç paketi: sayfası, ayarı, Araç Pazarı\'nda aç / kapat', async ({ page }) => {
     const errors = consoleErrors(page);
     await login(page);
-    const link = page.locator('aside nav a[href="/panel/merhaba"]');
-    await link.first().click();
+    await openFromMenu(page, 'content', '/panel/merhaba');
     await expect(page.locator('[data-testid=tool-merhaba-message]')).toHaveText('Merhaba!');
 
     // Paketin ayarı Proje Ayarları'nda; değişince sayfası yeni metni okur.
@@ -31,11 +30,11 @@ test('araç paketi: sayfası, ayarı, Araç Pazarı\'nda aç / kapat', async ({ 
     await card.locator('[data-testid=tool-toggle]').dispatchEvent('click');
     await confirmYes(page);
     await expect(card.locator('[data-testid=tool-state]')).toHaveText('Bu projede kapalı');
-    await expect(link).toHaveCount(0);
+    await expect(page.locator('aside a[href="/panel/merhaba"], [data-testid=section-tabs] a[href="/panel/merhaba"]')).toHaveCount(0);
     await expect(card.locator('[data-testid=tool-toggle]')).toBeEnabled();
     await card.locator('[data-testid=tool-toggle]').dispatchEvent('click');
     await expect(card.locator('[data-testid=tool-state]')).toHaveText('Bu projede açık');
-    await expect(link.first()).toBeVisible();
+    await openFromMenu(page, 'content', '/panel/merhaba');
     await expect(page.locator('[data-testid=tool-problem]')).toHaveCount(0);
     expect(errors()).toEqual([]);
 });

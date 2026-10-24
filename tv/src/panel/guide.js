@@ -2,9 +2,9 @@
  * Kullanım Kılavuzu (/panel/kilavuz): sayfa açılınca menüyü
  * tanıtan tur başlar (arka plan bulanık, hedef açıkta; panel/tour.js); tur bitince rehberler okunur.
  *
- * - Tur adımları kişinin gördüğü menüden kurulur (rolün yan menüsü, yetkiye göre; meta.js
- *   `buildMenu`): menüde olmayan sayfa turda da yoktur. Metinler NAV_TEXT'te, sayfa anahtarıyla;
- *   `kodmob:module` ile eklenen içerik türü genel metinle anlatılır (test her menü sayfasını arar).
+ * - Tur adımları kişinin gördüğü yan menüden kurulur (bölümler, yetkiye göre; meta.js `buildSections`): her
+ *   bölüm bir adım (SECTION_TEXT), adımda bölümün sekmeleri sayılır. Sayfaların metni NAV_TEXT'te (Tüm İşlemler,
+ *   arama); `kodmob:module` ile eklenen içerik türü genel metinle anlatılır (test her menü sayfasını arar).
  * - Rehberler `panel/guides/*.html` parçalarıdır; yalnızca açılınca ayrı dosya olarak iner
  *   (`?raw` dinamik içe aktarma) ve bellekte kalır. Rehberdeki panel bağlantısı adres yazmaz:
  *   `<a data-route="seo" data-tab="ai">` rota tablosundan çözülür (routes.js `href`).
@@ -12,10 +12,19 @@
  *   açıp kapamak adresi değiştirir; tarayıcının geri tuşu listeye döner (kmPanel `km-route`).
  */
 import { tour } from './tour.js';
-import { buildMenu, TYPES } from './meta.js';
+import { buildSections } from './meta.js';
 import { PROJECT_PAGES } from './project.js';
 import { href, navigate } from './routes.js';
 import { toast } from '../ui/toast.js';
+
+/** Yan menünün bölümleri: turda ne anlatılır. Anahtar meta.js SECTIONS `key`. */
+export const SECTION_TEXT = {
+    overview: 'Panelin açılış sayfası. "Sıradaki adımlar" siteyi yayına hazırlarken sizi adım adım götürür; altında bugünün özeti: yeni talepler, son değişen kayıtlar, süren işler.',
+    content: 'Sitede görünen her şey: sayfaların bölümleri (Sayfalar), blog ve projenizin kayıtları. Bölümün sayfaları üstte sekme olarak durur.',
+    inbox: 'Siteden size gelenler: iletişim ve teklif talepleri; Mağaza ya da Rezervasyon açıksa siparişler ve rezervasyonlar. Yeni olanların sayısı menüde görünür.',
+    growth: 'Sitenin bulunması ve büyümesi: SEO (arama motorları ve yapay zekâ), diller ve sayfa metinleri, açıksa bülten.',
+    settings: 'Projenin ve kurulumun ayarları: kimlik, iletişim ve yasal bilgiler (Proje), yasal belgeler, kullanıcılar, e-posta ve yedek (Sistem), sistem sağlığı ve araçlar.',
+};
 
 /** Menü sayfaları: ne işe yarar. Anahtar meta.js PAGES `key`. */
 export const NAV_TEXT = {
@@ -49,9 +58,6 @@ export const NAV_TEXT = {
 // Projenin özel sayfaları kendi metnini getirir (profilin panel.js PAGES `guide`); içerik türleri `TYPES[…].guide`.
 for (const p of PROJECT_PAGES) NAV_TEXT[p.key] = p.guide || `${p.label}: bu projeye özel ekran.`;
 
-/** Metni olmayan içerik türü (kodmob:module ile eklenen). */
-const contentText = (label) => `${label}: kayıt ekleme, düzenleme, çeviri ve yayın durumu. Taslaktaki kayıt sitede görünmez.`;
-
 const FLOW = ['İçerik ekle', 'Çevir', 'SEO', 'Yayınla', 'Talepleri yanıtla'];
 
 /** Üst bar adımları (kimlik `top-`: menüdeki aynı adlı sayfayla karışmasın). `can`: yalnızca yetkisi olana. */
@@ -64,10 +70,10 @@ const TOP = [
 ];
 
 /**
- * Tur adımları: karşılama, üst bar, kişinin menüsündeki her sayfa (menü sırasıyla), kapanış.
- * `groups`: buildMenu sonucu; `can`: (yetki) => bool.
+ * Tur adımları: karşılama, üst bar, yan menünün her bölümü (sekmeleriyle), kapanış.
+ * `sections`: buildSections sonucu; `can`: (yetki) => bool.
  */
-export function tourSteps(groups, can = () => true) {
+export function tourSteps(sections, can = () => true) {
     const steps = [
         {
             id: 'welcome',
@@ -80,10 +86,9 @@ export function tourSteps(groups, can = () => true) {
         // Menünün üstü: hangi projede olduğunuz (ana projede diğer projelere geçiş, yeni proje).
         { id: 'project', target: 'project', area: 'nav', eyebrow: 'Menü', title: 'Proje', text: 'Menünün üstünde bu proje yazar. Aynı kurulumda başka projeler varsa (ör. alt siteler) yönetici buradan onlara geçer ya da yeni proje kurar; her projenin içeriği, kullanıcıları ve ayarları ayrıdır.' },
     ];
-    groups.forEach((group) => {
-        group.items.forEach((item) => {
-            steps.push({ id: item.key, target: `nav-${item.key}`, area: 'nav', eyebrow: group.label || 'Menü', title: item.label, text: NAV_TEXT[item.key] || TYPES[item.type]?.guide || (item.view === 'list' ? contentText(item.label) : '') });
-        });
+    sections.forEach((section) => {
+        const tabs = section.pages.length > 1 ? ` Sekmeler: ${section.pages.map((p) => p.tab).join(', ')}.` : '';
+        steps.push({ id: section.key, target: `nav-${section.key}`, area: 'nav', eyebrow: 'Menü', title: section.label, text: `${SECTION_TEXT[section.key] || ''}${tabs}` });
     });
     steps.push({
         id: 'done',
@@ -245,7 +250,7 @@ export function kmGuideTour() {
     const session = () => window.Alpine.store('session');
     const can = (cap) => session().can(cap);
     return tour({
-        steps: () => tourSteps(buildMenu(session().menu, can), can),
+        steps: () => tourSteps(buildSections(can), can),
         autoStart: !new URLSearchParams(window.location.search).has('rehber'),
     });
 }

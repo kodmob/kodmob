@@ -25,7 +25,7 @@ import { storage } from '../services/storage.js';
 import { STORAGE_KEYS } from '../services/config.js';
 import { confirmAction } from '../ui/confirm/confirm.js';
 import { fmt } from '../domain/format.js';
-import { TYPES, BOTTOM_CANDIDATES, buildMenu, pageByView } from './meta.js';
+import { TYPES, BOTTOM_CANDIDATES, PAGES, buildSections, pageByView } from './meta.js';
 import { match, isPanelPath, toPanelUrl, href } from './routes.js';
 import { api } from './api.js';
 import { isLazyView, loadView, preloadViews } from './views.js';
@@ -122,9 +122,6 @@ export function kmPanel() {
         authed: auth.hasSession(),
         route: parse(start),
         navOpen: false,
-        collapsed: storage.getJSON('km_nav_collapsed', []),
-        /** Kılavuz turu menüyü anlatırken kapalı gruplar da açık görünür (kayıtlı tercih değişmez). */
-        tourNav: false,
         types: TYPES,
         lastUrl: start,
         now: new Date(),
@@ -138,10 +135,9 @@ export function kmPanel() {
             // Görünüm adresi kendisi değiştirdi (sekme, sohbet, süzgeç): yalnızca hatırlanır.
             window.addEventListener('km-url-replaced', (event) => (this.lastUrl = event.detail));
             window.addEventListener('km-signed-out', () => this.signedOut());
-            // Kılavuz turu (panel/tour.js): menü adımlarında mobilde çekmece, masaüstünde gruplar açılır.
+            // Kılavuz turu (panel/tour.js): menü adımlarında mobilde çekmece açılır.
             window.addEventListener('km-tour-nav', (event) => {
                 this.navOpen = !!event.detail?.drawer;
-                this.tourNav = !!event.detail?.expand;
             });
             document.addEventListener('click', (event) => this.onLinkClick(event));
             window.addEventListener('beforeunload', (event) => {
@@ -269,9 +265,9 @@ export function kmPanel() {
             return !page || this.$store.session.can(page.can);
         },
 
-        /** Genel bakış yetkisi olmayanın açılış sayfası: menüsündeki ilk sayfa. */
+        /** Genel bakış yetkisi olmayanın açılış sayfası: menüsündeki ilk bölüm. */
         get homeUrl() {
-            return this.groups[0]?.items[0]?.href || href('profile');
+            return this.sections[0]?.href || href('profile');
         },
 
         // ------------------------------------------------------------ menü
@@ -288,22 +284,40 @@ export function kmPanel() {
             return this.project.main && this.$store.session.can('km_manage_sites');
         },
 
-        get groups() {
-            return buildMenu(this.$store.session.menu, (cap) => this.$store.session.can(cap));
+        /** Yan menü: bölümler (Genel bakış, İçerik, Gelenler, Görünürlük, Ayarlar), her biri sayfalarıyla. */
+        get sections() {
+            return buildSections((cap) => this.$store.session.can(cap));
+        },
+
+        /** Açık sayfanın katalogdaki karşılığı (alt görünüm, ör. Metinler → Sayfalar ve Diller). */
+        get currentPage() {
+            const page = PAGES.find((p) => !p.alias && !p.hidden && this.isActive(p)) || pageByView(this.route.view);
+            return page?.hidden && page.parent ? PAGES.find((p) => p.key === page.parent) : page;
+        },
+
+        get currentSection() {
+            return this.sections.find((s) => s.key === this.currentPage?.section) || null;
+        },
+
+        /** Bölümün sekmeleri; seyrek sayfadaysanız (ör. Roller) o da sekme olarak eklenir. Tek sayfalık bölümde yok. */
+        get sectionTabs() {
+            const section = this.currentSection;
+            if (!section) return [];
+            const tabs = section.pages.some((p) => p.key === this.currentPage.key) ? section.pages : [...section.pages, this.currentPage];
+            return tabs.length > 1 ? tabs : [];
+        },
+
+        isSectionActive(section) {
+            return section.key === this.currentPage?.section;
+        },
+
+        sectionBadge(section) {
+            return section.pages.reduce((sum, p) => sum + (Number(this.badgeFor(p)) || 0), 0);
         },
 
         get bottomNav() {
             const list = BOTTOM_CANDIDATES.filter((i) => this.$store.session.can(i.can)).slice(0, 4);
             return [...list, { action: 'menu', label: 'Menü', icon: 'menu' }];
-        },
-
-        isOpen(group) {
-            return this.tourNav || !this.collapsed.includes(group.key) || group.items.some((i) => this.isActive(i));
-        },
-
-        toggleGroup(group) {
-            this.collapsed = this.collapsed.includes(group.key) ? this.collapsed.filter((k) => k !== group.key) : [...this.collapsed, group.key];
-            storage.setJSON('km_nav_collapsed', this.collapsed);
         },
 
         isActive(item) {
@@ -338,7 +352,7 @@ export function kmPanel() {
             const fold = (s) => String(s || '').toLocaleLowerCase('tr-TR');
             const words = fold(this.route.path).replace(/^\/panel\/?/, '').split(/[/\-_.]+/).filter((w) => w.length >= 3);
             const score = (p) => words.reduce((n, w) => n + (fold(`${p.href} ${p.label}`).includes(w.slice(0, 4)) ? 1 : 0), 0);
-            return this.groups.flatMap((g) => g.items).map((p) => [p, score(p)]).filter(([, n]) => n > 0).sort((a, b) => b[1] - a[1]).slice(0, 4).map(([p]) => p);
+            return this.sections.flatMap((s) => s.pages).map((p) => [p, score(p)]).filter(([, n]) => n > 0).sort((a, b) => b[1] - a[1]).slice(0, 4).map(([p]) => p);
         },
 
         get initials() {

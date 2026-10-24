@@ -139,6 +139,15 @@
         </div>
       </div>
     </div>
+    {# Bölümün sayfaları (yan menüde yalnızca bölümler var): sekmeler; adres sayfanın kendi adresi. #}
+    <nav class="pn-section-tabs" x-show="sectionTabs.length" x-cloak :aria-label="currentSection?.label" data-testid="section-tabs">
+      <template x-for="tab in sectionTabs" :key="tab.key">
+        <a :href="tab.href" class="pn-section-tab" :aria-current="tab.key === currentPage?.key ? 'page' : null" :data-tab-page="tab.key">
+          <span x-text="tab.tab"></span>
+          <span class="pn-nav-badge" x-show="badgeFor(tab)" x-text="badgeFor(tab)" x-cloak></span>
+        </a>
+      </template>
+    </nav>
   </header>
 
   {# ============================================================ içerik #}

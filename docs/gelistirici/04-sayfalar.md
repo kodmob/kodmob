@@ -51,7 +51,7 @@ export const PAGES = [{
 }];
 ```
 
-Menü (Proje modülleri), Tüm İşlemler ("Siteye özel" kartı), panel araması, Kullanım Kılavuzu turu, adres tablosu
+Menü (yan menünün bölümünde sekme: `section`, varsayılan `content` İçerik; `inbox`, `growth`, `settings`), Tüm İşlemler ("Siteye özel" kartı), panel araması, Kullanım Kılavuzu turu, adres tablosu
 (sunucu `PanelUrl` dahil) ve tembel yükleme kendiliğinden. Anahtar küçük harf ve tire; çatının sayfalarıyla
 çakışamaz. Uçları çağırmak: `import { http } from '@/services/http.js'` (`http.get('/raporlar')` → `/api/v1/raporlar`).
 Tablolar için dfGrid (`tv/src/ui/grid`), bildirim için `toast` (`tv/src/ui/toast.js`).

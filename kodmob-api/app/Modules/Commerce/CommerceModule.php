@@ -83,6 +83,15 @@ final class CommerceModule extends Module
         ], personal: true, contentLinks: ['commerce_order_items' => ['product_id']])];
     }
 
+    /** Sıradaki adımlar: ödeme yöntemi olmadan sipariş verilemez. */
+    public function steps(): array
+    {
+        $methods = array_filter(Payments::all(), static fn ($m) => $m->available(true) || $m->available(false));
+
+        return [['key' => 'payments', 'order' => 45, 'label' => 'Ödeme yöntemini seçin', 'hint' => 'Havale / EFT, kapıda ödeme ya da Araç Pazarı\'ndan Stripe, PayTR; yoksa ziyaretçi sipariş veremez.',
+            'done' => $methods !== [], 'route' => 'projectSettings', 'can' => 'km_manage_settings']];
+    }
+
     public function settings(): array
     {
         $g = 'Mağaza';

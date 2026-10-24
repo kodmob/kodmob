@@ -44,7 +44,6 @@
           <div class="segmented" role="group" aria-label="Görünüm">
             <button type="button" :aria-pressed="view === 'pages'" @click="view = 'pages'" data-testid="role-view-pages">Sayfalar</button>
             <button type="button" :aria-pressed="view === 'caps'" @click="view = 'caps'" data-testid="role-view-caps">İşlem yetkileri</button>
-            <button type="button" :aria-pressed="view === 'menu'" @click="view = 'menu'" data-testid="role-view-menu">Yan Menü</button>
           </div>
           <input type="search" class="input max-w-xs" :placeholder="view === 'caps' ? 'Yetki ya da sayfa ara' : 'Sayfa ara'" x-model="q" aria-label="Ara">
         </div>
@@ -108,79 +107,8 @@
           </div>
         </template>
 
-        {# ===== Yan Menü ===== #}
-        <template x-if="view === 'menu'">
-          <div class="grid grid-cols-1 items-start gap-4 xl:grid-cols-[minmax(0,1fr)_20rem]" data-testid="role-menu">
-            <div class="flex flex-col gap-3">
-              <p class="text-sm text-ink-2">Bu roldeki kişilerin sol menüsü. Grup adını yazın, grupları ve sayfaları oklarla sıralayın; sayfa grubun başından ya da sonundan komşu gruba geçer. Menüde olmak sayfayı açmaz: yetkisi olmayan sayfa menüde görünmez. <strong x-show="!menuCustom">Şu an varsayılan menü.</strong></p>
-              <template x-for="(g, gi) in menuDraft" :key="g.key">
-                <div class="card">
-                  <div class="card-header gap-1.5">
-                    <input class="input min-w-0 flex-1 font-semibold" maxlength="40" x-model="g.label" placeholder="Başlıksız (açılıp kapanmaz)" :data-menu-group="gi" :aria-label="(gi + 1) + '. grubun adı'">
-                    <button type="button" class="btn-icon h-9 w-9" @click="moveGroup(gi, -1)" :disabled="gi === 0" :aria-label="g.label + ': yukarı al'"><svg class="icon icon-sm -rotate-90" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>
-                    <button type="button" class="btn-icon h-9 w-9" @click="moveGroup(gi, 1)" :disabled="gi === menuDraft.length - 1" :aria-label="g.label + ': aşağı al'"><svg class="icon icon-sm rotate-90" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>
-                    <button type="button" class="btn-icon h-9 w-9 text-danger" @click="removeGroup(gi)" :aria-label="g.label + ': grubu kaldır'" title="Grubu kaldır (sayfaları menüden çıkar)"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-trash"/></svg></button>
-                  </div>
-                  <ul class="divide-y divide-line">
-                    <template x-for="(item, ii) in g.items" :key="item">
-                      <li class="flex items-center gap-3 px-4 py-2 md:px-5">
-                        <svg class="icon icon-sm shrink-0 text-muted" aria-hidden="true"><use :href="'#i-' + (pageOf(item)?.icon || 'list')"/></svg>
-                        <span class="min-w-0 flex-1">
-                          <span class="block truncate text-sm font-medium text-ink" x-text="pageOf(item)?.label || item"></span>
-                          <span class="block text-xs text-warning-ink" x-show="!role?.locked && !seesItem(item)">Bu rolün yetkisi yok; menüde görünmez</span>
-                        </span>
-                        <button type="button" class="btn-icon h-9 w-9" @click="moveItem(gi, ii, -1)" :disabled="gi === 0 && ii === 0" :aria-label="(pageOf(item)?.label || item) + ': yukarı al'"><svg class="icon icon-sm -rotate-90" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>
-                        <button type="button" class="btn-icon h-9 w-9" @click="moveItem(gi, ii, 1)" :disabled="gi === menuDraft.length - 1 && ii === g.items.length - 1" :aria-label="(pageOf(item)?.label || item) + ': aşağı al'"><svg class="icon icon-sm rotate-90" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>
-                        <button type="button" class="btn-icon h-9 w-9 text-danger" @click="removeItem(gi, ii)" :aria-label="(pageOf(item)?.label || item) + ': menüden çıkar'"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-x"/></svg></button>
-                      </li>
-                    </template>
-                    <li class="px-4 py-3 text-sm text-muted md:px-5" x-show="!g.items.length">Boş grup kaydedilmez. Sağdaki listeden sayfa ekleyin.</li>
-                  </ul>
-                </div>
-              </template>
-              <button type="button" class="btn btn-secondary self-start" @click="addGroup()" data-testid="menu-add-group"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg> Grup ekle</button>
-            </div>
-
-            <aside class="card xl:sticky xl:top-20" aria-label="Menüde olmayan sayfalar">
-              <div class="card-header"><h3 class="card-title">Menüde olmayan sayfalar</h3></div>
-              <div class="card-body flex flex-col gap-3">
-                <label class="field" x-show="menuDraft.length">
-                  <span class="field-label">Eklenecek grup</span>
-                  <select class="input" x-model.number="addTarget">
-                    <template x-for="(g, gi) in menuDraft" :key="g.key"><option :value="gi" :selected="gi === addTarget" x-text="g.label || (gi + 1) + '. grup'"></option></template>
-                  </select>
-                </label>
-                <template x-for="pg in unusedPageGroups" :key="pg.key">
-                  <div>
-                    <p class="text-xs font-semibold tracking-wide text-muted uppercase" x-text="pg.name"></p>
-                    <ul class="mt-1 flex flex-col gap-0.5">
-                      <template x-for="p in pg.pages" :key="p.key">
-                        <li class="flex items-center gap-2">
-                          <svg class="icon icon-sm shrink-0 text-muted" aria-hidden="true"><use :href="'#i-' + (p.icon || 'list')"/></svg>
-                          <span class="min-w-0 flex-1 truncate text-sm" :class="role?.locked || seesPage(p) ? 'text-ink' : 'text-muted'" x-text="p.label" :title="role?.locked || seesPage(p) ? '' : 'Bu rolün yetkisi yok'"></span>
-                          <button type="button" class="btn btn-ghost btn-sm shrink-0" @click="addItem(p.key)" :aria-label="p.label + ': menüye ekle'"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-plus"/></svg> Ekle</button>
-                        </li>
-                      </template>
-                    </ul>
-                  </div>
-                </template>
-                <p class="text-sm text-muted" x-show="!unusedPageGroups.length">Bütün sayfalar menüde.</p>
-              </div>
-            </aside>
-          </div>
-        </template>
-
-        {# kaydet çubukları #}
-        <div class="pn-savebar" x-show="view === 'menu' && (menuDirty || menuCustom)" x-cloak>
-          <span class="flex-1 text-sm font-medium text-ink" x-text="menuDirty ? 'Yan menüde kaydedilmemiş değişiklik var' : 'Bu rolün menüsü varsayılandan farklı'"></span>
-          <button type="button" class="btn btn-ghost text-danger" x-show="menuCustom" @click="resetMenu()" :disabled="saving">Varsayılana dön</button>
-          <button type="button" class="btn btn-ghost" x-show="menuDirty" @click="undoMenu()" :disabled="saving">Vazgeç</button>
-          <button type="button" class="btn btn-primary" x-show="menuDirty" @click="saveMenu()" :disabled="saving" data-testid="menu-save">
-            <svg class="icon icon-sm animate-spin" x-show="saving" aria-hidden="true"><use href="#i-loader"/></svg> Menüyü kaydet
-          </button>
-        </div>
-
-        <div class="pn-savebar" x-show="view !== 'menu' && !role?.locked && (dirty || role?.customized)" x-cloak>
+        {# kaydet çubuğu #}
+        <div class="pn-savebar" x-show="!role?.locked && (dirty || role?.customized)" x-cloak>
           <span class="flex-1 text-sm font-medium text-ink" x-text="dirty ? changeCount + ' değişiklik' : 'Bu rol varsayılandan farklı'"></span>
           <button type="button" class="btn btn-ghost text-danger" x-show="role?.customized" @click="resetRole()" :disabled="saving">Varsayılana dön</button>
           <button type="button" class="btn btn-ghost" x-show="dirty" @click="undo()" :disabled="saving">Vazgeç</button>

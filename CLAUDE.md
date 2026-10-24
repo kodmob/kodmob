@@ -64,7 +64,8 @@ SEO, llms.txt, IndexNow, 404 önerileri, arama bunu dolaşır).
 - Modül kancaları: `Core\Module` → `settings()`, `events()`, `search()`, `boot()`, `schedule()`, `health()`
   (Sistem Sağlığı kartı: `Core\Health\Health::section()`; panelde kod gerekmez), `capabilities()` (modülün yetkileri),
   `contentTypes()` (modülün içerik türleri; modülle açılıp kapanır), `legal()` (yasal metne değer), `backup()`
-  (yedeğe giren tabloları: `Core\Database\BackupPart`; kişisel veri `personal: true`, geri yüklemede ayrıca seçilir)
+  (yedeğe giren tabloları: `Core\Database\BackupPart`; kişisel veri `personal: true`, geri yüklemede ayrıca seçilir),
+  `steps()` (Genel bakış'taki Sıradaki adımlar; `done` gerçek veriden)
 - Yetki: `Core\Security\Capability` (sabit + etiket) ve hazır rollerde yeri (`Roles::DEFAULTS`)
 - Ayar: `SettingDefinition` (anahtar `grup.ad`, etiket, grup, açıklama; `format: 'color' | 'image'` renk / görsel
   seçici); panelde kendiliğinden çizilir ve aranır
@@ -117,13 +118,15 @@ Migration'lar taşınabilir yazılır. Canlıda yayında olan tabloya değişikl
 `tests/fixtures/blocks/template.json`). Blok sayfası (panelden açılan sayfa): tür `pages` (`Modules/Site/Pages`),
 çatının rotası `page` kökte `/:slug/` ve `last: true` (sunucu en son dener), blokları `page.main@<kimlik>` bölgesinde.
 
-**Panel.** Menü proje odaklı ve sadedir (docs/gelistirici/04-sayfalar.md): üstte proje seçici, Genel bakış, **Temel**
-(`base`: Blog, Talepler, Sayfalar ve Diller, Sayfa düzenleyici, SEO), **Proje modülleri** (`project`: projenin türleri, sayfaları,
-araçlar), Proje Ayarları, en altta **Sistem** (`system`). Seyrek sayfa `PAGES`'te `menu: false` (Tüm İşlemler'de
-kalır; Tüm İşlemler üst bardan açılır). Ayarlar iki sayfa: Proje Ayarları (`projectSettings`) ve Sistem Ayarları
+**Panel.** Yan menü yalnızca beş bölümdür (`meta.js` `SECTIONS`; docs/gelistirici/04-sayfalar.md): Genel bakış
+(Sıradaki adımlar), **İçerik** (`content`: sayfalar, blog, içerik türleri), **Gelenler** (`inbox`: talepler, siparişler,
+rezervasyonlar), **Görünürlük** (`growth`: SEO, diller, bülten), **Ayarlar** (`settings`). Bölümün sayfaları içerik
+alanının üstünde sekme (`buildSections`); sayfanın bölümü `SECTION_OF` ya da sayfa tanımında `section`, sekme adı
+`TAB_LABEL`. Seyrek sayfa `PAGES`'te `menu: false` (Tüm İşlemler'de kalır; Tüm İşlemler üst bardan açılır).
+Sıradaki adımlar modülün `steps()` kancasından (`Core\Setup\Onboarding`). Ayarlar iki sayfa: Proje Ayarları (`projectSettings`) ve Sistem Ayarları
 (rota `settings`); ayar tanımının kapsamı `SettingDefinition` `scope` (`project` | `system`). Sayfa anahtarları
 küçük harf ve tire (Hızlı İşlem anahtarı olur). **Projenin** panel sayfası çatıya dokunmadan profilin `panel.js`
-`PAGES`'ine yazılır (`key`, `path`, `label`, `group`, `can`, `guide`, `load`, `template`; biçim
+`PAGES`'ine yazılır (`key`, `path`, `label`, `section`, `can`, `guide`, `load`, `template`; biçim
 `tv/src/panel/extension.js`): menü, Tüm İşlemler ("Siteye özel"), tur, arama, adresler ve tembel yükleme
 kendiliğinden; yetkisi projenin modülünün `capabilities()`'inden. **Çatının** yeni sayfası: `tv/src/panel/routes.js` (rota), `meta.js` (`PAGES`, yetki), `views.js` (tembel yükleme),
 `src/pages/panel/index.njk` + `_<ad>.njk`, `api.js`, `operations.js` (Diğer İşlemler; test her sayfayı arar),

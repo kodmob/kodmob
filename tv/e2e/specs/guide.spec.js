@@ -27,11 +27,10 @@ async function ringOn(page, selector) {
     expect(Math.abs(ring.y + 6 - target.y)).toBeLessThan(3);
 }
 
-test('kılavuz: tur, menü grupları, rehberler', async ({ page }) => {
+test('kılavuz: tur, menünün bölümleri, rehberler', async ({ page }) => {
     const errors = consoleErrors(page);
     await login(page);
     // Sistem grubu kapalı: tur onu açar, bitince tercih aynen kalır.
-    await page.evaluate(() => localStorage.setItem('km_nav_collapsed', JSON.stringify(['system'])));
     await page.goto('/panel/diger-islemler');
     await page.click('[data-testid=other-guide]');
     await expect(page).toHaveURL(/\/panel\/kilavuz$/);
@@ -49,13 +48,11 @@ test('kılavuz: tur, menü grupları, rehberler', async ({ page }) => {
     await page.keyboard.press('ArrowLeft');
     await expect(card(page).locator('.tour-title')).toHaveText('Kodmob Kullanım Kılavuzuna Hoş Geldiniz');
 
-    // Kapalı gruptaki sayfa turda görünür.
-    const users = page.locator('aside nav a[href="/panel/kullanicilar"]').first();
-    await expect(users).toBeHidden();
-    await stepTo(page, 'Kullanıcılar ve Roller');
-    await expect(users).toBeVisible();
+    // Menü adımları yan menünün bölümleri; adımda bölümün sekmeleri sayılır.
+    await stepTo(page, 'Ayarlar');
+    await expect(card(page)).toContainText('Kullanıcılar');
     await page.waitForTimeout(600);
-    await ringOn(page, 'aside [data-tour=nav-users]');
+    await ringOn(page, 'aside [data-tour=nav-settings]');
     const box = await card(page).boundingBox();
     expect(box.x + box.width).toBeLessThanOrEqual(1360);
     // Düğme satırı karta sığar (taşan "İleri" görünmez kalıyordu).
@@ -72,12 +69,10 @@ test('kılavuz: tur, menü grupları, rehberler', async ({ page }) => {
     await auto.click();
     await expect(timer).toHaveCount(0);
 
-    // Esc turu kapatır; grup yine kapalı, kayıtlı tercih değişmedi.
+    // Esc turu kapatır.
     await page.keyboard.press('Escape');
     await expect(page.locator('[data-testid=tour]')).toBeHidden();
     await expect(page.locator('html')).not.toHaveClass(/tour-open/);
-    await expect(users).toBeHidden();
-    expect(await page.evaluate(() => localStorage.getItem('km_nav_collapsed'))).toBe('["system"]');
 
     // Turu yeniden başlat → sonuna kadar → "Rehberlere geç".
     await page.click('[data-testid=guide-tour]');

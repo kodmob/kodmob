@@ -3,7 +3,7 @@
  * alanı, Bildir (alıcı yokken uyarı; alıcıyla gönderim). Sonunda alıcı ayarı geri alınır.
  */
 import { test, expect } from '@playwright/test';
-import { apiClient, consoleErrors, login } from '../helpers.js';
+import { apiClient, consoleErrors, login, openFromMenu } from '../helpers.js';
 
 const toasts = (page) => page.locator('[aria-live=polite]');
 
@@ -14,7 +14,7 @@ test('sistem sağlığı: kartlar, bulgular, bildir', async ({ page, request }) 
     expect((await api.put('/admin/backups/auto', { enabled: false })).status).toBe(200);
 
     await login(page);
-    await page.locator('aside nav a[href="/panel/sistem-sagligi"]').first().click();
+    await openFromMenu(page, 'settings', '/panel/sistem-sagligi');
     await expect(page).toHaveURL(/\/panel\/sistem-sagligi$/);
     for (const key of ['server', 'security', 'speed', 'database', 'storage', 'background', 'backup']) {
         await expect(page.locator(`[data-health=${key}]`)).toBeVisible();

@@ -4,7 +4,7 @@
  * ziyaretçiye görünmemesi, yayın, geri al. Blok sayfası (yeni sayfa, yayın). Keşfet'te Animasyon blokları.
  */
 import { test, expect } from '@playwright/test';
-import { apiClient, consoleErrors, login, stamp } from '../helpers.js';
+import { apiClient, consoleErrors, login, stamp, openFromMenu } from '../helpers.js';
 
 test.skip(process.env.KM_PROFILE === 'starter', 'kodmob.com derlemesiyle');
 
@@ -119,7 +119,7 @@ test('sayfa düzenleyici: panele dönüp menüden yeniden girince önizleme aç�
     const frame = page.frameLocator('[data-testid=builder-frame]');
     await expect(frame.locator('[data-km-zone="home.main"]')).toBeAttached({ timeout: 20000 });
     await page.getByRole('button', { name: 'Panele dön' }).click();
-    await page.locator('aside nav a[href="/panel/sayfa-duzenleyici"]').first().click();
+    await openFromMenu(page, 'content', '/panel/sayfa-duzenleyici');
     await expect(frame.locator('[data-km-zone="home.main"]')).toBeAttached({ timeout: 20000 });
     await expect(page.locator('.bd-loading')).toBeHidden();
 });

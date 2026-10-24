@@ -6,6 +6,18 @@ yapılacaklar **Yükseltme** başlığında. Sürüm numarası `tv/package.json`
 
 ## Yayımlanmadı
 
+**Değişti**
+- Panelin yan menüsü sadeleşti: yalnızca beş bölüm (Genel bakış, İçerik, Gelenler, Görünürlük, Ayarlar). Bölümün
+  sayfaları içerik alanının üstünde sekme; adresler değişmedi. Rolün özel yan menüsü (Roller › Yan Menü) kalktı: herkes
+  aynı bölümleri yetkisine göre görür. Kılavuz turu bölümleri anlatır.
+
+**Eklendi**
+- Genel bakış › **Sıradaki adımlar**: siteyi yayına hazırlarken sırayla (kimlik ve logo, iletişim ve yasal bilgiler,
+  ana sayfa, ilk içerikler, e-posta denemesi, otomatik yedek; Mağaza açıksa ödeme yöntemi). Her adım ilgili ekranı açar
+  ve gerçek veriden kendiliğinden işaretlenir. Modüller adım ekler: `Module::steps()`.
+- Siparişler › ayrıntı: siparişin yolu (ödeme bekliyor → ödendi → hazırlanıyor → kargoda → tamamlandı); şimdiki adım
+  vurgulu, iptal / iade kapanış olarak yazar.
+
 **Düzeltildi**
 - Koyu temada beyaz düğme (`btn-white`; ör. Çağrı bandı, Öne çıkan projeler): beyaz zemin üstünde açık mavi yazı
   okunmuyordu; artık koyu zemin, açık yazı ve ince açık kenar, üzerine gelince zemin açılır.

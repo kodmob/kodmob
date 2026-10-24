@@ -4,7 +4,7 @@
  * İngilizce, 404; panel profilin modülleriyle (blog, talepler), kodmob.com'un türleri ve araçları yok.
  */
 import { test, expect } from '@playwright/test';
-import { apiClient, consoleErrors, password, USER } from '../helpers.js';
+import { apiClient, consoleErrors, password, USER, openFromMenu, section } from '../helpers.js';
 import { PROFILE } from '../../profile.js';
 
 test.skip(PROFILE !== 'starter', 'yalnızca başlangıç profiliyle (npm run e2e -- --starter)');
@@ -58,11 +58,11 @@ test('başlangıç: panel profilin modülleriyle', async ({ page, request }) => 
     await page.fill('#login-user', USER);
     await page.fill('#login-pass', password());
     await page.click('button[type=submit]');
-    const nav = page.locator('aside nav');
-    await expect(nav.locator('a[href="/panel/blog"]').first()).toBeVisible({ timeout: 20000 });
-    await expect(nav.locator('a[href="/panel/talepler"]').first()).toBeVisible();
+    await expect(section(page, 'overview')).toBeVisible({ timeout: 20000 });
+    await openFromMenu(page, 'inbox', '/panel/talepler');
+    await openFromMenu(page, 'content', '/panel/blog');
     for (const href of ['/panel/projeler', '/panel/hizmetler', '/panel/referanslar', '/panel/teklif-hesaplayici', '/panel/siteler']) {
-        await expect(nav.locator(`a[href="${href}"]`)).toHaveCount(0);
+        await expect(page.locator(`aside a[href="${href}"], [data-testid=section-tabs] a[href="${href}"]`)).toHaveCount(0);
     }
     expect(errors()).toEqual([]);
 });

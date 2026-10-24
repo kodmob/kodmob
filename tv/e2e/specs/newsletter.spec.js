@@ -6,7 +6,7 @@
  */
 import { execFileSync } from 'node:child_process';
 import { test, expect } from '@playwright/test';
-import { confirmYes, consoleErrors, login, stamp } from '../helpers.js';
+import { confirmYes, consoleErrors, login, stamp, openFromMenu } from '../helpers.js';
 import { DB, PHP } from '../env.js';
 
 /** Abonenin onay / çıkma anahtarı (e-postadaki bağlantının parçası). */
@@ -22,7 +22,7 @@ test('Bülten: ekle, abone ol ve onayla, bülten gönder, abonelikten çık, ç�
 
     await page.goto('/panel/araclar/kesfet');
     await page.locator('[data-testid=tools] [data-tool=newsletter] [data-testid=tool-install]').click();
-    await expect(page.locator('aside nav a[href="/panel/bulten"]').first()).toBeVisible();
+    await openFromMenu(page, 'growth', '/panel/bulten');
 
     // Ziyaretçi: Bülten sayfası (bölgenin ilk bloğu Bülten aboneliği); onay kutusu zorunlu.
     await page.goto('/bulten/');

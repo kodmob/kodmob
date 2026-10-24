@@ -2,11 +2,15 @@
 
 namespace App\Modules\Site;
 
+use App\Core\Content\Types;
 use App\Core\Module;
+use App\Core\Security\Capability;
 use App\Core\Settings\SettingDefinition;
 use App\Core\Settings\SettingsService;
 use App\Modules\Briefs\BriefsModule;
+use App\Modules\Site\Legal\LegalData;
 use App\Modules\Site\Pages\PageType;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Site geneli: iletişim bilgileri, WhatsApp, çalışma saatleri, sosyal medya ve
@@ -50,6 +54,27 @@ final class SiteModule extends Module
     public const LEGAL_KEP = 'legal.kep';
 
     public const LEGAL_COURT = 'legal.court';
+
+    /** Sıradaki adımlar: kimlik, iletişim ve yasal bilgiler, ana sayfa, ilk içerik. */
+    public function steps(): array
+    {
+        $s = SettingsService::instance();
+        $filled = static fn (string ...$keys) => array_filter($keys, static fn ($k) => trim($s->string($k)) !== '') !== [];
+        // Blok sayfası (kampanya…) ilk içerik sayılmaz: içerik türlerinin kayıtları ya da blog.
+        $published = static fn (string $table) => DB::table($table)->where('status', 'publish')->whereNull('deleted_at')
+            ->when($table === 'contents', static fn ($q) => $q->where('type', '!=', PageType::POST_TYPE))->exists();
+
+        return [
+            ['key' => 'identity', 'order' => 10, 'label' => 'Kimlik ve logo', 'hint' => 'Site adı, logo ve ana renk: sitede ve e-postalarda görünür.',
+                'done' => $filled(SiteProfile::NAME, SiteProfile::LOGO) || $s->int(SiteProfile::LOGO_IMAGE) > 0, 'route' => 'projectSettings', 'can' => Capability::MANAGE_SETTINGS],
+            ['key' => 'contact', 'order' => 20, 'label' => 'İletişim ve yasal bilgiler', 'hint' => 'E-posta, telefon, adres; yasal belgelerdeki unvan ve yetkili mahkeme.',
+                'done' => $filled(self::EMAIL) && $filled(self::PHONE) && LegalData::missing() === [], 'route' => 'projectSettings', 'can' => Capability::MANAGE_SETTINGS],
+            ['key' => 'home', 'order' => 30, 'label' => 'Ana sayfayı düzenleyin', 'hint' => 'Sayfa düzenleyicide bölümleri kendi metninizle yazıp Yayınla.',
+                'done' => DB::table('page_layouts')->where('zone', 'like', 'home.%')->whereNotNull('published_at')->exists(), 'route' => 'builder', 'can' => Capability::EDIT_LAYOUT],
+            ['key' => 'content', 'order' => 40, 'label' => 'İlk içerikleri ekleyin', 'hint' => 'Blog yazısı ya da projenizin kayıtları; taslak sitede görünmez.',
+                'done' => $published('contents') || $published('posts'), 'route' => 'list', 'params' => ['type' => 'posts'], 'can' => Types::capabilities()],
+        ];
+    }
 
     public function settings(): array
     {

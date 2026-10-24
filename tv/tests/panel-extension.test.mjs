@@ -12,18 +12,18 @@ import { extensionPanels, extensionsSource, loadExtensionPanels } from '../vite/
 import { href, match, panelManifest, usePages, ROUTES } from '../src/panel/routes.js';
 import { TYPES } from '../src/panel/types.js';
 import { tourSteps } from '../src/panel/guide.js';
-import { buildMenu } from '../src/panel/meta.js';
+import { buildSections } from '../src/panel/meta.js';
 
 test('türler: projeninkiler önce, blog çatıdan; tur metni türün tanımından', () => {
     assert.deepEqual(Object.keys(panelTypes({ courses: { slug: 'kurslar' } })), ['courses', 'posts', 'pages', 'products', 'tours', 'hotels']);
     assert.deepEqual(Object.keys(TYPES), ['projects', 'services', 'references', 'posts', 'pages', 'products', 'tours', 'hotels']);
     assert.equal(TYPES.posts, FRAMEWORK_TYPES.posts);
     // Blok sayfaları menüde değil (Sayfa düzenleyiciden açılır); Tüm İşlemler'de.
-    const pages = buildMenu(null, () => true).flatMap((g) => g.items).map((p) => p.key);
-    assert.ok(pages.includes('posts') && !pages.includes('pages'));
+    const content = buildSections(() => true).find((s) => s.key === 'content').pages.map((p) => p.key);
+    assert.ok(content.includes('posts') && content.includes('projects') && !content.includes('pages'));
     const all = () => true;
-    const step = tourSteps(buildMenu(null, all), all).find((s) => s.id === 'projects');
-    assert.equal(step.text, TYPES.projects.guide);
+    const step = tourSteps(buildSections(all), all).find((s) => s.id === 'content');
+    assert.match(step.text, /Portföy/, 'projenin türü İçerik sekmelerinde');
 });
 
 test('özel sayfalar: anahtar ve şablon denetlenir, boşluklar dolar', () => {

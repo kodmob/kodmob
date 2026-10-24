@@ -57,7 +57,7 @@ birleştirilir (`['retention' => ['orders' => 24]]` → `{{retention.orders}}`).
 - Derleme `km-legal.json` yazar (belgeler, dillerdeki başlık ve açıklama, şablonlar). `Modules\Site\Legal`:
   `LegalDocs` (liste, açık olanlar), `LegalData` (veri), `LegalPages` (çizim, özelleştirme, yedek), `LegalSsr` (sayfanın
   `<!--km:legal-…-->` işaretleri: gövde, içindekiler, yan menü, tarih, özet).
-- Panel › Temel › **Yasal belgeler** (`/panel/yasal-belgeler`, yetki `km_manage_legal`): belge ve dil başına "Şablon"
+- Panel › Ayarlar › **Yasal** (`/panel/yasal-belgeler`, yetki `km_manage_legal`): belge ve dil başına "Şablon"
   ya da "Özelleştirildi"; Düzenle ile metin o dilde sabitlenir (`legal_documents`), "Şablona dön" siler. Özelleştirilmiş
   metne sonradan açılan modülün bölümü eklenmez.
 - Formların onay bağlantıları belgeye gider: iletişim ve brif formu `contactNotice`, Bülten bloğu `newsletterConsent`,

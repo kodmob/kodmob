@@ -3,7 +3,7 @@
  * yedek kod bir kez, kapat. Sonraki senaryolar şifreyle girebilsin diye sonda kapatılır.
  */
 import { test, expect } from '@playwright/test';
-import { USER, apiClient, consoleErrors, login, password, totp } from '../helpers.js';
+import { USER, apiClient, consoleErrors, login, password, totp, section } from '../helpers.js';
 
 async function signIn(page, code) {
     await page.goto('/panel/');
@@ -30,7 +30,7 @@ test('oturum: jeton depoda değil, yenileme HttpOnly çerezde; yenilemede sürer
 
     // Yenilemede oturum çerezle sürer (erişim jetonu bellekteydi).
     await page.reload();
-    await expect(page.locator('aside nav a[href="/panel/blog"]').first()).toBeVisible();
+    await expect(section(page, 'overview')).toBeVisible();
 
     // İkinci sekme: birinde çıkış yapılınca öbürü de giriş ekranına döner.
     const other = await context.newPage();
@@ -80,14 +80,14 @@ test('iki adımlı doğrulama: aç, kodla gir, yedek kod, kapat', async ({ page,
         // Onayda kullanılan adım ikinci kez geçmez; bir sonraki adımın kodu (±1 pencere) geçer.
         await fresh.fill('#login-code', totp(secret, 1));
         await fresh.click('button[type=submit]');
-        await expect(fresh.locator('aside nav a[href="/panel/blog"]').first()).toBeVisible();
+        await expect(section(fresh, 'overview')).toBeVisible();
         await context.close();
 
         // Yedek kod bir kez geçer.
         const context2 = await browser.newContext({ baseURL });
         const second = await context2.newPage();
         await signIn(second, recovery);
-        await expect(second.locator('aside nav a[href="/panel/blog"]').first()).toBeVisible();
+        await expect(section(second, 'overview')).toBeVisible();
         await context2.close();
         const reuse = await request.post('/api/v1/auth/token', { data: { username: USER, password: password(), code: recovery } });
         expect(reuse.status(), 'yedek kod ikinci kez geçmez').toBe(403);

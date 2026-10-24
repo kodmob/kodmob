@@ -6,6 +6,7 @@ use App\Core\Activity\ActivityCatalog;
 use App\Core\Health\Health;
 use App\Core\Module;
 use App\Core\Modules;
+use App\Core\Security\Capability;
 use App\Core\Settings\SettingDefinition;
 use App\Core\Sites\SiteRegistry;
 use App\Core\Sites\Sites;
@@ -13,6 +14,7 @@ use App\Core\Support\Clock;
 use App\Modules\Content\AutoBackup;
 use App\Modules\Users\UserSearch;
 use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Bütün modüllerin kullandığı sistem altyapısı: ayarlar, olay defteri, işlem
@@ -30,6 +32,20 @@ final class SystemModule extends Module
     public function search(): array
     {
         return [new UserSearch];
+    }
+
+    /** Sıradaki adımlar: e-posta denemesi (ayar ana projede) ve otomatik yedek. */
+    public function steps(): array
+    {
+        $steps = [];
+        if (Sites::isMain()) {
+            $steps[] = ['key' => 'mail', 'order' => 50, 'label' => 'E-postayı deneyin', 'hint' => 'Talepler ve bildirimler e-postayla gider: Deneme gönder ile gelip gelmediğine bakın.',
+                'done' => DB::table('mail_log')->where('status', 'sent')->exists(), 'route' => 'settings', 'tab' => 'mail', 'can' => Capability::MANAGE_SETTINGS];
+        }
+        $steps[] = ['key' => 'backup', 'order' => 60, 'label' => 'Otomatik yedeği açın', 'hint' => 'Her gün yedek; mümkünse uzak depoya da (şifreli).',
+            'done' => (bool) AutoBackup::settings()['enabled'], 'route' => 'settings', 'tab' => 'backup', 'can' => Capability::MANAGE_BACKUPS];
+
+        return $steps;
     }
 
     public function settings(): array

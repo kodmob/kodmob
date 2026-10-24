@@ -4,7 +4,7 @@
  * ile sipariş verir, sipariş sayfasında banka bilgilerini görür; panelde sipariş "Ödendi" yapılır, stok düşer.
  */
 import { test, expect } from '@playwright/test';
-import { apiClient, consoleErrors, password, USER } from '../helpers.js';
+import { apiClient, consoleErrors, password, USER, openFromMenu, section } from '../helpers.js';
 
 test.skip(!process.env.E2E_SHOP, 'yalnızca Mağaza kipiyle (npm run e2e -- --shop)');
 
@@ -58,12 +58,16 @@ test('mağaza: ürün, sepet, havale ile sipariş, panelde ödendi', async ({ pa
     await page.fill('#login-user', USER);
     await page.fill('#login-pass', password());
     await page.click('button[type=submit]');
-    await page.locator('aside nav a[href="/panel/siparisler"]').first().click();
+    await openFromMenu(page, 'inbox', '/panel/siparisler');
     await page.locator('[data-testid=orders] tr', { hasText: number }).getByRole('button', { name: 'Aç' }).click();
     const drawer = page.locator('[data-testid=order]');
     await expect(drawer.locator('[data-testid=order-status]')).toHaveText('Ödeme bekliyor');
+    // Siparişin yolu: şimdiki adım vurgulu, ilerleyince bir önceki geçilmiş.
+    await expect(drawer.locator('[data-flow=pending][aria-current=step]')).toBeVisible();
     await drawer.locator('[data-status=paid]').click();
     await expect(drawer.locator('[data-testid=order-status]')).toHaveText('Ödendi');
+    await expect(drawer.locator('[data-flow=paid][aria-current=step]')).toBeVisible();
+    await expect(drawer.locator('[data-flow=pending]')).toHaveClass(/is-done/);
     const product = (await api.get(`/admin/content/products/${created.json.id}`)).json;
     expect(product.stock ?? product.data?.stock).toBe(3);
     expect(errors()).toEqual([]);
@@ -197,7 +201,8 @@ test('panel: satırdaki para sütunu TL olarak görünür, kaydetmek fiyatı de�
     await page.fill('#login-user', USER);
     await page.fill('#login-pass', password());
     await page.click('button[type=submit]');
-    await expect(page.locator('aside nav a[href="/panel/oteller"]').first()).toBeVisible({ timeout: 20000 });
+    await expect(section(page, 'overview')).toBeVisible({ timeout: 20000 });
+    await openFromMenu(page, 'content', '/panel/oteller');
     await page.goto(`/panel/oteller/${created.json.id}`);
     const price = page.getByRole('textbox', { name: 'Oda kahvaltı' }).first();
     await expect(price).toHaveValue('1500,00');

@@ -16,7 +16,7 @@ export const TYPES = {
 };
 
 /**
- * `PAGES`: projenin özel ekranları. Menüye (Proje modülleri), Tüm İşlemler'e ("Siteye özel" kartı),
+ * `PAGES`: projenin özel ekranları. Menüye (bölümünün sekmesi; varsayılan İçerik), Tüm İşlemler'e ("Siteye özel" kartı),
  * panel aramasına, tura ve panel adreslerine kendiliğinden girer; bileşenleri ilk açılışta iner.
  *
  *     {
