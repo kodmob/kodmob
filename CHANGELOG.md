@@ -7,6 +7,8 @@ yapılacaklar **Yükseltme** başlığında. Sürüm numarası `kodmob-frontend/
 ## Yayımlanmadı
 
 **Değişti**
+- E-posta: gönderen adı panelde ya da `.env`'de (`MAIL_FROM_NAME`) verilmemişse sitenin adı; talebe yanıtın konusu
+  sitenin adıyla ("<site> · Talebiniz"). `.env.example`'da kodmob.com değerleri yerine örnek değerler.
 - Klasör adları: `kodmob-api/` → **`kodmob-core/`**, `tv/` → **`kodmob-frontend/`**. Komutlar aynı, yalnızca klasör
   adı değişti (`cd kodmob-core && php artisan test`, `cd kodmob-frontend && npm test`). `kodmob:module`'ün ön yüz
   klasörü seçeneği `--tv` yerine `--frontend`. Canlı sunucunun düzeni değişmedi (Laravel klasörü zaten `kodmob-core/`).
@@ -18,6 +20,16 @@ yapılacaklar **Yükseltme** başlığında. Sürüm numarası `kodmob-frontend/
   gelinince alanın sekmesi açılır ve alan vurgulanır. Ayar vurgusu yavaş sunucuda 10 sn'ye kadar alanı bekler.
 
 **Eklendi**
+- **Bildirimler sayfası** (`/panel/bildirimler`): kişinin bütün bildirimleri sayfa sayfa; Tümü / Okunmamış / Okunmuş
+  ve türe göre süzgeç (adreste), tek tek ya da seçerek okundu / okunmadı say ve sil, okunmuşları temizle. Zilde
+  "Tümünü gör", kullanıcı menüsünde "Bildirimler". Uçlar: `GET /notifications?page=…`, `POST /notifications/unread`,
+  `POST /notifications/delete`.
+- Site alt bilgisinde **"Bu proje Kodmob Core ile geliştirildi"** rozeti (telif yazısının yanında; TR / EN / DE).
+  Profil `site.config.js` `builtWith: false` ile kapatır.
+- Kullanım Kılavuzu › **Hız, önbellek ve ölçek** rehberi: sayfa önbelleği, görseller ve WebP, hızı ölçmek, yük testi,
+  CDN, VPS, PostgreSQL ve Redis.
+- Uçtan uca testlerde `--tools` kipi (başlangıç profili + Jarvis, Domain, SMS, Siteler); CI'de ayrı adım: açık depoda
+  atlanan 7 senaryo artık koşuyor.
 - Genel bakış › **Sıradaki adımlar**: siteyi yayına hazırlarken sırayla (kimlik ve logo, iletişim ve yasal bilgiler,
   ana sayfa, ilk içerikler, e-posta denemesi, otomatik yedek; Mağaza açıksa ödeme yöntemi). Her adım ilgili ekranı açar
   ve gerçek veriden kendiliğinden işaretlenir. Modüller adım ekler: `Module::steps()`.

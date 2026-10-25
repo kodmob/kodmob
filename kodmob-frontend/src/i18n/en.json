@@ -691,5 +691,9 @@
       "description": "Terms for tour, activity and accommodation bookings.",
       "lead": "How your booking is confirmed, changed and cancelled."
     }
+  },
+  "builtWith": {
+    "before": "Built with",
+    "after": ""
   }
 }

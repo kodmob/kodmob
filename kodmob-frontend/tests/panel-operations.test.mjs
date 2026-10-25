@@ -39,8 +39,8 @@ test('varsayılan Hızlı İşlemler katalogda; yetkiye göre süzme', () => {
     assert.ok(DEFAULT_QUICK.length <= QUICK_MAX);
     for (const key of DEFAULT_QUICK) assert.ok(ITEMS.has(key), key);
 
-    // Hiç yetkisi olmayan: yalnızca herkese açık bağlantılar (kendi işlem geçmişi, Profilim, Kullanım Kılavuzu) kalır.
-    assert.deepEqual(cardsFor(() => false).map((c) => [c.key, c.links.map((l) => l.key)]), [['admin', ['history']], ['account', ['profile', 'guide']]]);
+    // Hiç yetkisi olmayan: yalnızca herkese açık bağlantılar (kendi işlem geçmişi, Profilim, Bildirimler, Kullanım Kılavuzu) kalır.
+    assert.deepEqual(cardsFor(() => false).map((c) => [c.key, c.links.map((l) => l.key)]), [['admin', ['history']], ['account', ['profile', 'notifications', 'guide']]]);
     // "a|b" yetkilerinden biri yeter.
     const settings = cardsFor((cap) => cap === 'km_manage_backups').find((c) => c.key === 'settings');
     assert.deepEqual(settings.links.map((l) => l.key), ['system-settings', 'settings-backup']);

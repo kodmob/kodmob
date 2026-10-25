@@ -144,10 +144,11 @@ export const CARDS = [
     },
     {
         key: 'account', title: 'Hesabım', icon: 'user', tone: 'neutral',
-        text: 'Genel bakış, profiliniz, şifre, iki adımlı doğrulama, oturumlarınız ve kullanım kılavuzu.',
+        text: 'Genel bakış, profiliniz, bildirimleriniz, şifre, iki adımlı doğrulama, oturumlarınız ve kullanım kılavuzu.',
         links: () => [
             page('overview', 'İçerik sayıları, son işlemler, dikkat gerekenler.'),
             page('profile', 'Bilgileriniz, şifre, iki adımlı doğrulama, oturumlarınız.'),
+            page('notifications', 'Bütün bildirimleriniz: okunmamışlar, türe göre, okundu say, sil.'),
             page('guide', 'Menüyü tanıtan tur ve panel rehberleri.'),
         ],
     },

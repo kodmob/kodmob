@@ -122,6 +122,10 @@ export const api = {
     // Bildirim zili (Modules/Notifications)
     notifications: () => http.get('/notifications'),
     notificationsRead: (body) => http.post('/notifications/read', body),
+    /** Bildirimler sayfası: { page, per_page, status, kind } → { items, total, pages, unread, kinds }. */
+    notificationsPage: (params) => http.get('/notifications', params),
+    notificationsUnread: (body) => http.post('/notifications/unread', body),
+    notificationsDelete: (body) => http.post('/notifications/delete', body),
 
     // Jarvis (Modules/Jarvis)
     jarvis: () => http.get('/jarvis'),

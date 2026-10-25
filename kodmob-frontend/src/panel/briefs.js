@@ -149,7 +149,9 @@ export function kmBriefs(openId = null) {
 
         get replyHref() {
             if (!this.brief) return '';
-            return `mailto:${this.brief.email}?subject=${encodeURIComponent('Kodmob · Proje talebiniz')}`;
+            // Konu sitenin adıyla (Proje Ayarları > Kimlik ya da derlemedeki ad); çatıda sabit ad yok.
+            const site = this.$store.session.me?.project?.name || '';
+            return `mailto:${this.brief.email}?subject=${encodeURIComponent(site ? `${site} · Talebiniz` : 'Talebiniz')}`;
         },
 
         async toggleArchive() {

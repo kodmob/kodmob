@@ -70,6 +70,8 @@ export const PAGES = [
     // Projeler (çok site): üstteki proje seçiciden; yetki yalnızca ana projede vardır.
     page('sites', 'sites', 'Projeler', 'layers', 'system', 'km_manage_sites', { menu: false }),
     page('profile', 'profile', 'Profilim', 'user', 'account', null, { hidden: true }),
+    // Bildirimler: zilden ("Tümünü gör") ve kullanıcı menüsünden; herkes kendi bildirimlerini görür.
+    page('notifications', 'notifications', 'Bildirimler', 'bell', 'account', null, { hidden: true }),
     // Kullanım Kılavuzu: menüde değil; Tüm İşlemler ve kullanıcı menüsünden açılır, herkes görür.
     page('guide', 'guide', 'Kullanım Kılavuzu', 'book', 'account', null, { hidden: true }),
 ];

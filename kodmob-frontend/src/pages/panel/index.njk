@@ -106,6 +106,7 @@
               </button>
             </template>
           </div>
+          <a :href="$href('notifications')" class="block border-t border-line px-4 py-2.5 text-center text-sm font-medium text-primary hover:bg-surface-subtle" @click="open = false" data-testid="notifications-all">Tümünü gör</a>
         </div>
       </div>
 
@@ -126,6 +127,7 @@
             <p class="mt-1"><span class="badge badge-primary" x-text="$store.session.role.label" x-show="$store.session.role.label"></span></p>
           </div>
           <a :href="$href('profile')" class="menu-item mt-1 min-h-11" role="menuitem" @click="open = false"><svg class="icon" aria-hidden="true"><use href="#i-user"/></svg> Profilim</a>
+          <a :href="$href('notifications')" class="menu-item min-h-11" role="menuitem" @click="open = false"><svg class="icon" aria-hidden="true"><use href="#i-bell"/></svg> Bildirimler</a>
           <a :href="$href('history')" class="menu-item min-h-11" role="menuitem" @click="open = false"><svg class="icon" aria-hidden="true"><use href="#i-history"/></svg> İşlemlerim</a>
           <a :href="$href('guide')" class="menu-item min-h-11" role="menuitem" @click="open = false"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg> Kullanım Kılavuzu</a>
           <a href="/" target="_blank" rel="noopener" class="menu-item min-h-11" role="menuitem"><svg class="icon" aria-hidden="true"><use href="#i-external"/></svg> Siteyi aç</a>
@@ -197,6 +199,7 @@
         <template x-if="r.view === 'security'">{% include "pages/panel/_security.njk" %}</template>
         <template x-if="r.view === 'profile'">{% include "pages/panel/_profile.njk" %}</template>
         <template x-if="r.view === 'guide'">{% include "pages/panel/_guide.njk" %}</template>
+        <template x-if="r.view === 'notifications'">{% include "pages/panel/_notifications.njk" %}</template>
         <template x-if="r.view === 'notFound'">{% include "pages/panel/_not-found.njk" %}</template>
         {# Projenin özel sayfaları (profilin panel.js PAGES; şablon profil klasöründen). #}
         {% for p in panelPages %}

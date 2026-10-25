@@ -356,6 +356,8 @@ export function i18nPages({ srcDir, routes: allRoutes, site = {}, locales, defau
             switcher,
             robots: indexable && !route.noindex ? 'index, follow' : 'noindex, nofollow',
             year: new Date().getFullYear(),
+            // Alt bilgideki "Kodmob Core ile geliştirildi" rozeti (ui/site/built-with.njk); profil `builtWith: false` ile kapatır.
+            builtWith: site.builtWith !== false,
             organization: organization(locale),
             clientPayload: clientPayload(page, alternates),
         };

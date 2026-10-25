@@ -330,6 +330,7 @@
             "health": "sistem-sagligi",
             "profile": "profilim",
             "guide": "kilavuz",
+            "notifications": "bildirimler",
             "editor": ":type/:idOrNew",
             "list": ":type"
         }

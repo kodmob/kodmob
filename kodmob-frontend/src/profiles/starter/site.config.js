@@ -12,6 +12,7 @@
  *   `php artisan kodmob:module` ile eklenir (buraya da yazar).
  * - `zones`: sayfa düzenleyicinin bölgelerindeki ilk bloklar (`{ type, data }`; `@anahtar` sözlükten). Panelde
  *   yayınlanan düzen bunların yerine geçer (vite/blocks.js, docs/done-onyuz-raporu.md).
+ * - `builtWith`: alt bilgideki "Bu proje Kodmob Core ile geliştirildi" rozeti (varsayılan açık; `false` kapatır).
  */
 export const SITE = {
     url: 'https://ornek.com',

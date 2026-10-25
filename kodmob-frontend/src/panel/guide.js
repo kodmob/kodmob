@@ -123,8 +123,14 @@ export const GUIDES = [
         key: 'yonetim', icon: 'shield-check', tone: 'danger', minutes: 8, audience: 'Yönetici',
         can: 'km_view_users|km_manage_roles|km_manage_settings|km_manage_ai|km_manage_backups|km_manage_security|km_manage_sites|km_view_health',
         title: 'Yönetici: kullanıcılar, roller, ayarlar, yedek, sistem sağlığı ve siteler',
-        summary: 'Kullanıcı ve rol yönetimi, yan menü, güvenlik; e-posta, SMS ve yapay zekâ ayarları, arka plan işleri, yedekleme; alt siteler ve Site Sihirbazı.',
+        summary: 'Kullanıcı ve rol yönetimi, güvenlik; e-posta, SMS ve yapay zekâ ayarları, arka plan işleri, yedekleme; alt siteler ve Site Sihirbazı.',
         load: () => import('./guides/yonetim.html?raw'),
+    },
+    {
+        key: 'hiz', icon: 'zap', tone: 'warning', minutes: 6, audience: 'Yönetici, geliştirici', can: 'km_view_health|km_manage_settings',
+        title: 'Hız, önbellek ve ölçek',
+        summary: 'Sayfa önbelleği ve ne zaman yenilendiği, görseller ve WebP, tarayıcı önbelleği, hızı ölçmek, yük testi; trafik artınca CDN, VPS, PostgreSQL ve Redis.',
+        load: () => import('./guides/hiz.html?raw'),
     },
 ];
 

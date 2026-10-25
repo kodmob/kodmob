@@ -87,6 +87,8 @@ export const ROUTES = [
     { name: 'tools', path: 'araclar/:tab?' },
     { name: 'health', path: 'sistem-sagligi' },
     { name: 'profile', path: 'profilim' },
+    // Bildirimler: kişinin bütün bildirimleri (zilde son 30); `?durum=okunmamis&tur=brief&sayfa=2`.
+    { name: 'notifications', path: 'bildirimler' },
     // Kullanım Kılavuzu: menüyü tanıtan tur ve rehberler; `?rehber=<anahtar>` rehberi açar.
     { name: 'guide', path: 'kilavuz' },
     { name: 'editor', path: ':type/:idOrNew', key: (p) => `editor-${p.type}-${p.id}` },

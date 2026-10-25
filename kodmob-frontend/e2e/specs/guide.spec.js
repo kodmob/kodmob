@@ -82,8 +82,8 @@ test('kılavuz: tur, menünün bölümleri, rehberler', async ({ page }) => {
     await expect(page.locator('[data-testid=tour]')).toBeHidden();
     await expect(page.locator('#guides-title')).toBeFocused();
 
-    // Rehberler: dördü de (Yönetici); okuyucu, içindekiler, bağlantılar rota tablosundan.
-    await expect(page.locator('[data-guide]')).toHaveCount(4);
+    // Rehberler: beşi de (Yönetici); okuyucu, içindekiler, bağlantılar rota tablosundan.
+    await expect(page.locator('[data-guide]')).toHaveCount(5);
     await page.locator('[data-guide=baslangic]').getByRole('button').click();
     await expect(page).toHaveURL(/\/panel\/kilavuz\?rehber=baslangic$/);
     const article = page.locator('[data-testid=guide-article]');
@@ -96,12 +96,16 @@ test('kılavuz: tur, menünün bölümleri, rehberler', async ({ page }) => {
     // Geri tuşu listeye döner; paylaşılan adres rehberi açar, tur başlamaz.
     await page.goBack();
     await expect(page).toHaveURL(/\/panel\/kilavuz$/);
-    await expect(page.locator('[data-guide]')).toHaveCount(4);
+    await expect(page.locator('[data-guide]')).toHaveCount(5);
     await page.goto('/panel/kilavuz?rehber=yonetim');
     await expect(page.locator('[data-testid=guide-article] h2#siteler')).toBeVisible();
     await expect(page.locator('[data-testid=tour]')).toBeHidden();
     await page.click('[data-testid=guide-back]');
     await expect(page).toHaveURL(/\/panel\/kilavuz$/);
+    // Hız rehberi: bağlantıları panel adreslerine çözülür.
+    await page.goto('/panel/kilavuz?rehber=hiz');
+    await expect(page.locator('[data-testid=guide-article] h2#sayfa-onbellegi')).toHaveText('Sayfa önbelleği');
+    await expect(page.locator('[data-testid=guide-article] a[data-route=health]')).toHaveAttribute('href', '/panel/sistem-sagligi');
 
     expect(errors()).toEqual([]);
 });

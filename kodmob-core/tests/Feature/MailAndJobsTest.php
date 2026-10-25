@@ -8,6 +8,7 @@ use App\Core\Mail\SendMail;
 use App\Core\Mail\SiteMail;
 use App\Core\Support\Clock;
 use App\Core\Support\Options;
+use App\Core\Support\SiteManifest;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -37,6 +38,22 @@ class MailAndJobsTest extends TestCase
             config('mail.default'), config('mail.mailers.smtp.host'), config('mail.mailers.smtp.scheme'), config('mail.mailers.smtp.password'), config('mail.from.address'),
         ]);
         $this->putJson('/v1/system/mail', ['clear_password' => true], $h)->assertJsonPath('password_set', false);
+    }
+
+    public function test_sender_name_defaults_to_the_site_name(): void
+    {
+        // Ne panelde ne .env'de (MAIL_FROM_NAME) ad yok: sitenin adı.
+        config(['app.name' => 'Kodmob', 'mail.from.name' => 'Kodmob']);
+        MailSettings::apply();
+        $this->assertSame(SiteManifest::siteName(), config('mail.from.name'));
+
+        // .env'de verilmiş ad korunur; paneldeki ad ikisinin de üstündedir.
+        config(['mail.from.name' => 'Şirket A.Ş.']);
+        MailSettings::apply();
+        $this->assertSame('Şirket A.Ş.', config('mail.from.name'));
+        $this->putJson('/v1/system/mail', ['from_name' => 'Paneldeki Ad'], $this->admin())->assertOk();
+        MailSettings::apply();
+        $this->assertSame('Paneldeki Ad', config('mail.from.name'));
     }
 
     public function test_test_mail_is_sent_and_logged(): void

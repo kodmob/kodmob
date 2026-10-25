@@ -53,6 +53,7 @@ cd kodmob-frontend && npm run test:db                   # backend üç veritaban
 cd kodmob-frontend && npm run test:db -- sqlite pgsql   # yerelde MySQL yoksa
 cd kodmob-frontend && npm run e2e                       # uçtan uca (kurulu Chrome; ayrı .e2e/ ortamı, ~7 dk)
 cd kodmob-frontend && npm run e2e -- --starter          # başlangıç profiliyle (sonra npm run build:dev)
+cd kodmob-frontend && npm run e2e -- --shop | --tools   # başlangıç profili + Mağaza / Jarvis, Domain, SMS, Siteler açık
 ```
 
 Uçtan uca testler kendi veritabanını ve rastgele şifreli `e2e` yöneticisini kurar; yerel sitenize dokunmaz.

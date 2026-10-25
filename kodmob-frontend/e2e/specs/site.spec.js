@@ -21,6 +21,8 @@ test('ana sayfa: dil bağlantıları ve ayrı ikon dosyası', async ({ page }) =
             return 0;
         }
     }), { timeout: 20000 }).toBeGreaterThan(0);
+    // Alt bilgide "Kodmob Core ile geliştirildi" rozeti (sayfanın dilinde).
+    await expect(page.locator('footer [data-testid=built-with]')).toContainText('Bu proje Kodmob Core ile geliştirildi');
     expect(errors()).toEqual([]);
 });
 

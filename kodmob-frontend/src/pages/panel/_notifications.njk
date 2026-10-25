@@ -1,0 +1,90 @@
+{# Bildirimler. Mantık: panel/notifications-page.js. #}
+<div class="pn-page" x-data="kmNotificationsPage(r)" data-testid="notifications-page">
+  <div class="pn-toolbar flex-wrap">
+    <div class="pn-tabs" role="tablist" aria-label="Durum" data-testid="notifications-status">
+      <template x-for="t in statusTabs" :key="t.key">
+        <button type="button" role="tab" class="pn-tab" :aria-selected="status === t.key" @click="go({ status: t.key })" :data-status="t.key || 'all'">
+          <span x-text="t.label"></span>
+          <span class="badge badge-primary" x-show="t.key === 'unread' && unread" x-text="unread"></span>
+        </button>
+      </template>
+    </div>
+    <label class="sr-only" for="notifications-kind">Tür</label>
+    <select id="notifications-kind" class="input w-auto" x-model="kind" @change="go({ kind })" x-show="kinds.length > 1 || kind" data-testid="notifications-kind">
+      <option value="">Bütün türler</option>
+      <template x-for="k in kinds" :key="k.key">
+        <option :value="k.key" x-text="`${k.label} (${k.count})`" :selected="kind === k.key"></option>
+      </template>
+    </select>
+    <div class="ms-auto flex flex-wrap gap-2">
+      <button type="button" class="btn btn-secondary btn-sm" @click="markAll()" :disabled="busy || !unread" data-testid="notifications-read-all">
+        <svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"/></svg> Tümünü okundu say
+      </button>
+      <button type="button" class="btn btn-ghost btn-sm text-danger" @click="remove(null)" :disabled="busy || total === unread && !status" data-testid="notifications-clear">
+        <svg class="icon icon-sm" aria-hidden="true"><use href="#i-trash"/></svg> Okunmuşları sil
+      </button>
+    </div>
+  </div>
+
+  <div class="card overflow-hidden">
+    {# Seçim çubuğu #}
+    <div class="flex min-h-12 flex-wrap items-center gap-3 border-b border-line px-4 py-2" x-show="items.length">
+      <label class="flex items-center gap-2 text-sm text-ink-2">
+        <input type="checkbox" class="h-4.5 w-4.5 accent-primary" :checked="allSelected" @change="toggleAll()" aria-label="Bu sayfadakilerin hepsini seç">
+        <span x-text="selected.length ? `${selected.length} seçili` : `${total} bildirim`"></span>
+      </label>
+      <div class="flex flex-wrap gap-2" x-show="selected.length" x-cloak data-testid="notifications-bulk">
+        <button type="button" class="btn btn-ghost btn-sm" @click="mark(selected, true)">Okundu say</button>
+        <button type="button" class="btn btn-ghost btn-sm" @click="mark(selected, false)">Okunmadı say</button>
+        <button type="button" class="btn btn-ghost btn-sm text-danger" @click="remove(selected)">Sil</button>
+      </div>
+    </div>
+
+    <template x-if="loading && !loaded">
+      <div class="space-y-3 p-4"><div class="skeleton h-14"></div><div class="skeleton h-14"></div><div class="skeleton h-14"></div></div>
+    </template>
+    <template x-if="loaded && !items.length">
+      <div class="p-10 text-center" data-testid="notifications-empty">
+        <svg class="icon mx-auto mb-3 h-8 w-8 text-muted" aria-hidden="true"><use href="#i-bell"/></svg>
+        <p class="text-sm text-ink-2" x-text="emptyText"></p>
+      </div>
+    </template>
+
+    <ul class="divide-y divide-line" x-show="items.length">
+      <template x-for="n in items" :key="n.id">
+        <li class="flex items-start gap-3 px-4 py-3" :class="!n.is_read && 'bg-primary-soft/60'" :data-notification="n.id" :data-read="n.is_read ? '1' : '0'">
+          <input type="checkbox" class="mt-1 h-4.5 w-4.5 accent-primary" :value="n.id" x-model.number="selected" :aria-label="n.title">
+          <span class="mt-2 h-2 w-2 shrink-0 rounded-full" :class="n.is_read ? 'bg-transparent' : 'bg-primary'" aria-hidden="true"></span>
+          <button type="button" class="min-w-0 flex-1 text-left" @click="open(n)">
+            <span class="block text-sm text-ink" :class="!n.is_read && 'font-semibold'" x-text="n.title"></span>
+            <span class="mt-0.5 block text-sm text-ink-2" x-show="n.message" x-text="n.message"></span>
+            <span class="mt-1 block text-xs text-muted">
+              <time :datetime="n.created_at" :title="fmt.dateTime(n.created_at)" x-text="fmt.relative(n.created_at)"></time>
+              <span x-show="n.url"> · Açmak için tıklayın</span>
+            </span>
+          </button>
+          <div class="flex shrink-0 gap-1">
+            <button type="button" class="btn-icon" @click="mark([n.id], !n.is_read)" :aria-label="n.is_read ? 'Okunmadı say' : 'Okundu say'" :title="n.is_read ? 'Okunmadı say' : 'Okundu say'">
+              <svg class="icon icon-sm" aria-hidden="true"><use :href="n.is_read ? '#i-mail' : '#i-check'"/></svg>
+            </button>
+            <button type="button" class="btn-icon text-danger" @click="remove([n.id])" aria-label="Sil" title="Sil">
+              <svg class="icon icon-sm" aria-hidden="true"><use href="#i-trash"/></svg>
+            </button>
+          </div>
+        </li>
+      </template>
+    </ul>
+
+    {# Sayfalar #}
+    <div class="flex items-center justify-between border-t border-line px-4 py-3 text-sm text-ink-2" x-show="pages > 1">
+      <button type="button" class="btn btn-ghost btn-sm" @click="go({ page: page - 1 })" :disabled="page <= 1">
+        <svg class="icon icon-sm" aria-hidden="true"><use href="#i-chevron-left"/></svg> Önceki
+      </button>
+      <span x-text="`Sayfa ${page} / ${pages}`"></span>
+      <button type="button" class="btn btn-ghost btn-sm" @click="go({ page: page + 1 })" :disabled="page >= pages" data-testid="notifications-next">
+        Sonraki <svg class="icon icon-sm" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+      </button>
+    </div>
+  </div>
+  <p class="text-xs text-muted">Bildirimler 90 gün saklanır.</p>
+</div>

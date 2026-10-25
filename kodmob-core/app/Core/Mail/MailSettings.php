@@ -5,6 +5,7 @@ namespace App\Core\Mail;
 use App\Core\Exceptions\ValidationException;
 use App\Core\Support\Options;
 use App\Core\Support\Secret;
+use App\Core\Support\SiteManifest;
 use App\Core\Support\Text;
 use Illuminate\Support\Facades\Mail;
 
@@ -149,6 +150,9 @@ final class MailSettings
         }
         if ($s['from_name'] !== '') {
             config(['mail.from.name' => $s['from_name']]);
+        } elseif (in_array((string) config('mail.from.name'), ['', 'Laravel', (string) config('app.name')], true)) {
+            // Gönderen adı ne panelde ne .env'de (MAIL_FROM_NAME) verilmişse sitenin adı: her proje kendi adıyla yazar.
+            config(['mail.from.name' => SiteManifest::siteName()]);
         }
     }
 }

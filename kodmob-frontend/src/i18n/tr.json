@@ -691,5 +691,9 @@
       "description": "Tur, etkinlik ve konaklama rezervasyonlarında geçerli koşullar.",
       "lead": "Rezervasyonunuzun kesinleşmesi, değişiklik ve iptal koşulları."
     }
+  },
+  "builtWith": {
+    "before": "Bu proje",
+    "after": "ile geliştirildi"
   }
 }

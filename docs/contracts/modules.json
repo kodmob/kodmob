@@ -1419,7 +1419,17 @@
                 },
                 {
                     "method": "POST",
+                    "path": "/v1/notifications/delete",
+                    "auth": true
+                },
+                {
+                    "method": "POST",
                     "path": "/v1/notifications/read",
+                    "auth": true
+                },
+                {
+                    "method": "POST",
+                    "path": "/v1/notifications/unread",
                     "auth": true
                 }
             ],

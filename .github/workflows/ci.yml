@@ -95,6 +95,14 @@ jobs:
         env:
           CI: 'true'
           KM_PHP: php
+      # Jarvis, Domain, SMS, Siteler: başlangıç profilinde kapalı araçlar ortamdan açık (ai, jarvis-operator, messages,
+      # other, site-wizard, sites, tools senaryoları).
+      - name: Uçtan uca testler (araçlar)
+        working-directory: kodmob-frontend
+        run: npm run e2e -- --tools
+        env:
+          CI: 'true'
+          KM_PHP: php
       - uses: actions/upload-artifact@v4
         if: failure()
         with:

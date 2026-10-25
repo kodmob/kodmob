@@ -57,7 +57,8 @@
         { "name": "security", "params": {}, "url": "/panel/guvenlik" },
         { "name": "security", "params": { "tab": "blocks" }, "url": "/panel/guvenlik/ip-engelleri" },
         { "name": "profile", "params": {}, "url": "/panel/profilim" },
-        { "name": "guide", "params": {}, "url": "/panel/kilavuz" }
+        { "name": "guide", "params": {}, "url": "/panel/kilavuz" },
+        { "name": "notifications", "params": {}, "url": "/panel/bildirimler" }
     ],
     "fallbacks": [
         { "name": "seo", "params": { "tab": "overview" }, "url": "/panel/seo", "why": "varsayılan sekme adrese yazılmaz" },

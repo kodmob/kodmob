@@ -46,6 +46,7 @@ const VIEWS = {
     tools: mod(() => import('./tools.js'), 'kmTools'),
     profile: all(mod(() => import('./profile.js'), 'kmProfile'), mod(() => import('./two-factor.js'), 'kmTwoFactor')),
     guide: mod(() => import('./guide.js'), 'kmGuide', 'kmGuideTour'),
+    notifications: mod(() => import('./notifications-page.js'), 'kmNotificationsPage'),
 };
 
 // Projenin özel sayfaları (profilin panel.js PAGES `load`): modülün dışa açtığı işlevler bileşen olarak kaydedilir.

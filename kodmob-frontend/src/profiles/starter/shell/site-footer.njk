@@ -37,7 +37,10 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <p>{{ t('footer.rights', { year: year }) }}</p>
+      <div class="footer-copy">
+        <p>{{ t('footer.rights', { year: year }) }}</p>
+        {% include "ui/site/built-with.njk" %}
+      </div>
       <nav class="flex gap-5" aria-label="{{ t('footer.legal') }}">
 {% for name in ['kvkk', 'privacy', 'cookies', 'legal'] %}
 {% if url(name) %}

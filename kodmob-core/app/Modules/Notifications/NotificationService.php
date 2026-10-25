@@ -26,6 +26,12 @@ final class NotificationService
 
     private const TONES = ['primary', 'success', 'warning', 'danger', 'info', 'neutral'];
 
+    /** Bildirimler sayfasındaki tür süzgeci: türün ilk parçası (`brief.received` → brief); listede olmayan adıyla. */
+    public const KINDS = [
+        'brief' => 'Talepler', 'commerce' => 'Mağaza', 'booking' => 'Rezervasyon', 'seo' => 'SEO',
+        'jarvis' => 'Domain taraması', 'newsletter' => 'Bülten', 'system' => 'Sistem',
+    ];
+
     /** Yetkisi olan bütün aktif kullanıcılara (ör. yeni talep → `km_view_briefs`). */
     public static function notifyCapable(string $capability, string $type, string $title, string $message = '', string $url = '', string $tone = 'primary', array $data = []): void
     {
@@ -68,6 +74,48 @@ final class NotificationService
         ];
     }
 
+    /**
+     * Bildirimler sayfası: sayfalı, `status` (unread | read) ve `kind` (türün ilk parçası) süzgeçli; türlerin sayısıyla.
+     *
+     * @return array{items:list<array>,total:int,page:int,per_page:int,pages:int,unread:int,kinds:list<array{key:string,label:string,count:int}>}
+     */
+    public function page(int $userId, int $page = 1, int $perPage = 20, string $status = '', string $kind = ''): array
+    {
+        $perPage = max(1, min(self::LIST_LIMIT, $perPage));
+        $page = max(1, $page);
+        $query = DB::table('notifications')->where('user_id', $userId);
+        if ($status === 'unread' || $status === 'read') {
+            $query->where('is_read', $status === 'read' ? 1 : 0);
+        }
+        // Tür adı harf, rakam ve alt çizgi (LIKE'ta kaçış gerekmez; `_` en çok tek karakter eşler).
+        if ($kind !== '' && preg_match('/^[a-z0-9_]{1,40}$/', $kind)) {
+            $query->where(static fn ($q) => $q->where('type', $kind)->orWhere('type', 'like', $kind.'.%'));
+        }
+        $total = (clone $query)->count();
+        $rows = $query->orderByDesc('id')->offset(($page - 1) * $perPage)->limit($perPage)->get();
+
+        $counts = [];
+        foreach (DB::table('notifications')->where('user_id', $userId)->select('type', DB::raw('count(*) as n'))->groupBy('type')->get() as $row) {
+            $key = strtok((string) $row->type, '.') ?: 'other';
+            $counts[$key] = ($counts[$key] ?? 0) + (int) $row->n;
+        }
+        $kinds = [];
+        foreach ($counts as $key => $count) {
+            $kinds[] = ['key' => $key, 'label' => self::KINDS[$key] ?? ucfirst($key), 'count' => $count];
+        }
+        usort($kinds, static fn ($a, $b) => $b['count'] <=> $a['count']);
+
+        return [
+            'items' => $rows->map(fn ($row) => $this->present((array) $row))->all(),
+            'total' => $total,
+            'page' => $page,
+            'per_page' => $perPage,
+            'pages' => (int) ceil($total / $perPage),
+            'unread' => $this->unread($userId),
+            'kinds' => $kinds,
+        ];
+    }
+
     public function unread(int $userId): int
     {
         return DB::table('notifications')->where('user_id', $userId)->where('is_read', 0)->count();
@@ -85,6 +133,46 @@ final class NotificationService
             $query->whereIn('id', $ids);
         }
         $count = $query->update(['is_read' => 1, 'read_at' => Clock::now()]);
+        if ($count > 0) {
+            PulseFile::touch('notification');
+        }
+
+        return $count;
+    }
+
+    /** @param list<int> $ids okunmadı sayılır */
+    public function markUnread(int $userId, array $ids): int
+    {
+        $ids = array_values(array_filter(array_map('intval', $ids)));
+        if (! $ids) {
+            return 0;
+        }
+        $count = DB::table('notifications')->where('user_id', $userId)->whereIn('id', $ids)->where('is_read', 1)->update(['is_read' => 0, 'read_at' => null]);
+        if ($count > 0) {
+            PulseFile::touch('notification');
+        }
+
+        return $count;
+    }
+
+    /**
+     * Kişinin bildirimlerini siler: verilen kimlikler ya da (`$ids` null) okunmuşların hepsi.
+     *
+     * @param  list<int>|null  $ids
+     */
+    public function delete(int $userId, ?array $ids): int
+    {
+        $query = DB::table('notifications')->where('user_id', $userId);
+        if ($ids === null) {
+            $query->where('is_read', 1);
+        } else {
+            $ids = array_values(array_filter(array_map('intval', $ids)));
+            if (! $ids) {
+                return 0;
+            }
+            $query->whereIn('id', $ids);
+        }
+        $count = $query->delete();
         if ($count > 0) {
             PulseFile::touch('notification');
         }

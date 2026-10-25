@@ -140,6 +140,8 @@ Route::prefix('v1')->group(function () use ($content) {
         Route::get('changes', [ChangesController::class, 'index']);
         Route::get('notifications', [NotificationController::class, 'index']);
         Route::post('notifications/read', [NotificationController::class, 'read'])->defaults('activity', false);
+        Route::post('notifications/unread', [NotificationController::class, 'unread'])->defaults('activity', false);
+        Route::post('notifications/delete', [NotificationController::class, 'delete'])->defaults('activity', false);
 
         // Panel araması (üst çubuk): kayıtlar; sayfalar ve ayarlar panelde aranır.
         Route::get('search', [SearchController::class, 'index'])->middleware('throttle:120,1');

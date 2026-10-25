@@ -1,0 +1,44 @@
+<p class="lead">Site paylaşımlı hostingde de hızlı açılsın diye sayfalar hazır kopyadan gönderilir, dosyalar uzun süre tarayıcıda kalır, görseller küçültülür. Bu rehber neyin kendiliğinden olduğunu, hızın nasıl ölçüleceğini ve trafik büyüyünce ne yapılacağını anlatır.</p>
+
+<h2 id="sayfa-onbellegi">Sayfa önbelleği</h2>
+<ul>
+  <li>Ziyaretçi bir sayfayı ilk açtığında sunucu sayfayı içerikle tamamlar ve bir kopyasını saklar. Sonraki ziyaretçilere bu kopya gönderilir; veritabanına hiç gidilmez, bu yüzden yoğunlukta da hızlıdır.</li>
+  <li>Kopya <strong>kendiliğinden yenilenir</strong>: bir kayıt, sayfa metni, ayar, dil ya da sayfa düzeni değişince bütün kopyalar silinir; yeni sürüm yüklenince ya da kopya 24 saati geçince de yeniden üretilir. Elle temizlemeniz gerekmez.</li>
+  <li>Tarayıcı aynı sayfayı yeniden isteyince sayfa değişmediyse sunucu yalnızca "değişmedi" der (304); sayfa yeniden inmez.</li>
+  <li>Sayfaların içeriği sunucuda yazılır: JavaScript kapalıyken de okunur, arama motorları ve yapay zekâ botları içeriği doğrudan görür.</li>
+</ul>
+
+<h2 id="dosyalar">Dosyalar ve görseller</h2>
+<ul>
+  <li>Stil, betik ve yazı tipi dosyalarının adında sürüm izi vardır; tarayıcı onları bir yıl saklar, yeni sürümde ad değiştiği için eskisi kullanılmaz. Görseller 30 gün saklanır. Metin dosyaları sunucuda sıkıştırılarak (Brotli ya da gzip) gönderilir.</li>
+  <li>Yüklenen her görselin küçük boyları kendiliğinden üretilir; tarayıcı ekrana uyan boyu seçer. <a data-route="projectSettings">Proje Ayarları</a> › Görseller'de <strong>WebP</strong> açıksa boyutlar WebP olarak da üretilir (genellikle üçte bir daha küçük).</li>
+  <li>Görsel en çok 10 MB olabilir. Telefondan çekilmiş büyük fotoğrafı yüklemeden önce bir kez küçültmek yüklemeyi hızlandırır; sitede gösterilen boyları zaten küçültülür.</li>
+  <li>Panel de parça parça iner: ilk açılışta yalnızca menü ve kabuk gelir, her sayfanın kodu o sayfaya ilk girişte iner.</li>
+</ul>
+
+<h2 id="olcmek">Hızı ölçmek</h2>
+<ol class="steps">
+  <li>Sitenin adresini <strong>PageSpeed Insights</strong>'a (ya da Chrome › Geliştirici araçları › Lighthouse) yazın; mobil sonuca bakın. Ölçümü ikinci kez yapın: ilk istekte sayfa önbelleğe yazılıyor olabilir.</li>
+  <li><a data-route="health">Sistem Sağlığı</a> › Hız kartı OPcache'i, PHP bellek ve yükleme sınırını ve sayfa önbelleğinde kaç sayfa olduğunu gösterir; eksik olanı ne yapılacağıyla yazar.</li>
+  <li>Yavaşlık yalnızca panelde ise genellikle sunucunun PHP sürümü ya da OPcache'tir; Sistem Sağlığı'ndaki bulguya bakın.</li>
+</ol>
+
+<h2 id="yuk-testi">Yük testi</h2>
+<p>Kampanya ya da reklam öncesinde sitenin kaç ziyaretçiyi kaldıracağını görmek için yük testi yapılır. Bunu geliştiriciniz kendi bilgisayarından yapar (ör. <code>k6</code> ya da <code>ab</code> araçlarıyla):</p>
+<ul>
+  <li>Önce <strong>ana sayfa ve sık açılan sayfalar</strong> denenir: bunlar önbellekten gelir ve paylaşımlı hostingde bile saniyede çok sayıda isteği kaldırır.</li>
+  <li>Sonra form gönderimi ve sepet gibi <strong>önbelleğe girmeyen</strong> işler: asıl sınır bunlardadır. Testi canlı sitede yaparken gerçek sipariş ve talep oluşturmayın; deneme alt sitesi (<a data-route="sites">Projeler</a>) bunun için uygundur.</li>
+  <li>Barındırma firmanızın kurallarına uyun; bazı firmalar yoğun istekleri saldırı sayıp geçici olarak engeller.</li>
+</ul>
+
+<h2 id="olcek">Trafik büyüyünce</h2>
+<div class="table-wrap"><table>
+  <thead><tr><th>Adım</th><th>Ne kazandırır</th></tr></thead>
+  <tbody>
+    <tr><td><strong>CDN</strong> (ör. Cloudflare)</td><td>Dosyalar ve görseller ziyaretçiye yakın sunuculardan gider. Sayfaların kendisi her seferinde sitenizden doğrulanır, değişiklikler hemen görünür.</td></tr>
+    <tr><td><strong>VPS ya da bulut sunucu</strong></td><td>Paylaşımlı hostingin işlemci ve bağlantı sınırları kalkar. PHP 8.4, OPcache açık, cron her dakika.</td></tr>
+    <tr><td><strong>PostgreSQL ya da MySQL</strong></td><td>SQLite küçük sitede yeter; çok yazma olan sitede (sipariş, talep, bülten) sunucu veritabanına geçin. Taşıma tek komuttur: <code>php artisan kodmob:db-move</code>.</td></tr>
+    <tr><td><strong>Redis</strong></td><td>İsteğe bağlı: geliştiriciniz <code>.env</code>'de <code>CACHE_STORE=redis</code> ve <code>QUEUE_CONNECTION=redis</code> yaparsa sınırlayıcılar ve arka plan işleri bellekten çalışır. Sayfa önbelleği dosyada kalır, ona Redis gerekmez.</td></tr>
+  </tbody>
+</table></div>
+<p class="note note-info">Çok proje tek kurulumda çalışır: her projenin veritabanı ve önbelleği ayrıdır. Bir proje büyüyünce kendi veritabanına taşınabilir, diğerleri etkilenmez.</p>

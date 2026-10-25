@@ -33,6 +33,7 @@ cd kodmob-frontend && npm test                          # ön yüz birim testler
 cd kodmob-frontend && npm run test:db                   # backend: SQLite + MySQL + PostgreSQL
 cd kodmob-frontend && npm run e2e                       # uçtan uca (Playwright, .e2e/ ayrı ortam, ~6 dk)
 cd kodmob-frontend && npm run e2e -- --starter          # başlangıç profiliyle (KM_PROFILE=starter) derleyip starter.spec
+cd kodmob-frontend && npm run e2e -- --shop | --tools   # başlangıç profili + Mağaza / Jarvis, Domain, SMS, Siteler (CI'de ayrı adım)
 cd kodmob-frontend && npm run deploy:local && npm run serve:local   # yerel site http://127.0.0.1:8090 (.local/)
 cd kodmob-core && php artisan kodmob:install --profile=<ad>   # yeni projenin yerel kurulumu (SQLite; MAMP gerekmez)
 cd kodmob-core && php artisan kodmob:pack | kodmob:lock | kodmob:upgrade --from=<zip> --dry-run   # çatı paketi ve güncelleme

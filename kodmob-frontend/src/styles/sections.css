@@ -305,6 +305,14 @@
   .footer-contact li { @apply flex items-start gap-2.5; }
   .footer-contact .icon { @apply mt-0.5 text-primary; }
   .footer-bottom { @apply flex flex-col gap-3 border-t border-line py-6 text-xs text-muted sm:flex-row sm:items-center sm:justify-between; }
+  .footer-copy { @apply flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4; }
+  /* "Kodmob Core ile geliştirildi" rozeti (ui/site/built-with.njk): ince kenarlı hap, işaret degrade kutuda. */
+  .built-with { @apply inline-flex w-max items-center gap-2 rounded-full border border-line bg-surface py-1 ps-1 pe-3 text-xs text-ink-2 shadow-sm transition hover:-translate-y-px hover:border-primary hover:text-ink hover:shadow-md; }
+  .built-with strong { @apply font-semibold text-ink; }
+  .built-with-mark { @apply grid h-6 w-6 place-items-center rounded-full bg-linear-to-br from-primary to-primary-strong text-white; }
+  .built-with-mark svg { @apply h-3.5 w-3.5; }
+  .built-with:hover .built-with-mark { @apply rotate-[-8deg]; }
+  .built-with-mark { @apply transition-transform; }
   .social { @apply flex items-center gap-2; }
   .social a { @apply grid h-9 w-9 place-items-center rounded-full border border-line text-ink-2 transition-colors hover:border-primary hover:bg-primary hover:text-white; }
 }

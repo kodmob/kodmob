@@ -691,5 +691,9 @@
       "description": "Bedingungen für Touren, Aktivitäten und Unterkünfte.",
       "lead": "Wie Ihre Buchung bestätigt, geändert und storniert wird."
     }
+  },
+  "builtWith": {
+    "before": "Entwickelt mit",
+    "after": ""
   }
 }
