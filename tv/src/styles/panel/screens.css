@@ -47,8 +47,8 @@
   .pn-steps-num { @apply grid h-8 w-8 shrink-0 place-items-center rounded-full border border-line text-sm font-semibold text-ink-2 tabular-nums; }
   .is-next .pn-steps-num { @apply border-primary bg-primary text-white; }
   .is-done .pn-steps-num { @apply border-success bg-success-soft text-success-ink; }
-  /* Siparişin yolu (Siparişler › ayrıntı): yatay adımlar; geçilenler yeşil, şimdiki vurgulu. */
-  .pn-flow { @apply mb-5 grid grid-cols-5 gap-1; }
+  /* İşin yolu (sipariş, talep ayrıntısı): yatay adımlar; geçilenler yeşil, şimdiki vurgulu. */
+  .pn-flow { @apply mb-5 grid auto-cols-fr grid-flow-col gap-1; }
   .pn-flow > li { @apply relative flex flex-col items-center gap-1.5 text-center; }
   .pn-flow > li:not(:first-child)::before { content: ''; @apply absolute top-3 right-1/2 h-0.5 w-full -translate-y-1/2 bg-line; }
   .pn-flow > li.is-done::before, .pn-flow > li.is-now::before { @apply bg-success; }

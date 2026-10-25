@@ -15,10 +15,13 @@ yapılacaklar **Yükseltme** başlığında. Sürüm numarası `tv/package.json`
 - Genel bakış › **Sıradaki adımlar**: siteyi yayına hazırlarken sırayla (kimlik ve logo, iletişim ve yasal bilgiler,
   ana sayfa, ilk içerikler, e-posta denemesi, otomatik yedek; Mağaza açıksa ödeme yöntemi). Her adım ilgili ekranı açar
   ve gerçek veriden kendiliğinden işaretlenir. Modüller adım ekler: `Module::steps()`.
+- Talepler: yeni durum **Yanıtlandı** (Yeni → Okundu → Yanıtlandı); ayrıntıda talebin yolu ve "Yanıtladım" düğmesi,
+  listede "Yanıtlandı say" ve sekmesi.
 - Siparişler › ayrıntı: siparişin yolu (ödeme bekliyor → ödendi → hazırlanıyor → kargoda → tamamlandı); şimdiki adım
   vurgulu, iptal / iade kapanış olarak yazar.
 
 **Düzeltildi**
+- Talepler listesinde "Okundu say" 409 hatası veriyordu (panelin durum adresi yalnızca arşivi biliyordu).
 - Koyu temada beyaz düğme (`btn-white`; ör. Çağrı bandı, Öne çıkan projeler): beyaz zemin üstünde açık mavi yazı
   okunmuyordu; artık koyu zemin, açık yazı ve ince açık kenar, üzerine gelince zemin açılır.
 

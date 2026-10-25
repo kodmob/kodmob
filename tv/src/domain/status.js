@@ -97,6 +97,7 @@ export const STATUS = {
     brief: {
         new: S('Yeni', 'primary', 'mail'),
         read: S('Okundu', 'neutral', 'check'),
+        replied: S('Yanıtlandı', 'success', 'send'),
         archived: S('Arşiv', 'neutral', 'inbox'),
     },
 };

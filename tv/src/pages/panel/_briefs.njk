@@ -19,6 +19,16 @@
           <button type="button" class="btn-icon" @click="brief = null" aria-label="Kapat"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button>
         </div>
         <div class="pn-drawer-body">
+          {# Talebin yolu: yeni → okundu → yanıtlandı (Yanıtladım ilerletir). #}
+          <ol class="pn-flow" x-show="brief.status !== 'archived'" aria-label="Talebin durumu" data-testid="brief-flow">
+            <template x-for="step in flow(brief)" :key="step.key">
+              <li :class="'is-' + step.state" :aria-current="step.state === 'now' ? 'step' : null" :data-flow="step.key">
+                <span class="pn-flow-dot" aria-hidden="true"><svg class="icon h-3.5 w-3.5" x-show="step.state === 'done'"><use href="#i-check"/></svg></span>
+                <span class="pn-flow-label" x-text="step.label"></span>
+              </li>
+            </template>
+          </ol>
+          <p class="mb-4 rounded-control border border-line bg-surface-subtle px-3 py-2 text-sm text-ink-2" x-show="brief.status === 'archived'">Bu talep arşivde.</p>
           <dl class="pn-dl">
             <dt>E-posta</dt><dd><a :href="'mailto:' + brief.email" class="text-primary" x-text="brief.email"></a></dd>
             <dt>Telefon</dt><dd x-text="brief.phone || '—'"></dd>
@@ -34,6 +44,7 @@
         </div>
         <div class="pn-drawer-foot">
           <a :href="replyHref" class="btn btn-primary"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-mail"/></svg> Yanıtla</a>
+          <button type="button" class="btn btn-secondary" x-show="canManage && ['new', 'read'].includes(brief.status)" @click="move('replied')" data-testid="brief-replied"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"/></svg> Yanıtladım</button>
           <button type="button" class="btn btn-secondary" x-show="canManage" @click="toggleArchive()" x-text="brief.status === 'archived' ? 'Arşivden çıkar' : 'Arşive al'"></button>
           <button type="button" class="btn btn-ghost ml-auto text-danger" x-show="$store.session.can('km_delete_briefs')" @click="remove()"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-trash"/></svg> Kalıcı sil</button>
         </div>

@@ -5,6 +5,9 @@ namespace App\Modules\Briefs\Repository;
 use App\Core\Database\TableRepository;
 use App\Modules\Briefs\Domain\Brief;
 
+/**
+ * @method Brief get(int $id)
+ */
 final class BriefRepository extends TableRepository
 {
     protected function tableName(): string

@@ -12,7 +12,8 @@ use App\Modules\Briefs\Service\SubmitBrief;
 /**
  * Ziyaretçiden gelen proje brifi ya da iletişim talebi.
  *
- * Durum akışı: new → read → archived (arşivden read'e geri alınabilir).
+ * Durum akışı: new → read → replied (yanıtlandı) → archived; her durumdan arşive, arşivden read'e geri alınabilir.
+ * Yanıtlanan talep yeniden "okundu" olmaz.
  * Alanların doğrulaması `Service\SubmitBrief`'tedir; entity yalnızca geçerli
  * durum geçişlerine izin verir.
  */
@@ -22,9 +23,11 @@ final class Brief extends Entity
 
     public const READ = 'read';
 
+    public const REPLIED = 'replied';
+
     public const ARCHIVED = 'archived';
 
-    public const STATUSES = [self::NEW => 'Yeni', self::READ => 'Okundu', self::ARCHIVED => 'Arşiv'];
+    public const STATUSES = [self::NEW => 'Yeni', self::READ => 'Okundu', self::REPLIED => 'Yanıtlandı', self::ARCHIVED => 'Arşiv'];
 
     /**
      * @param  list<string>  $services
@@ -78,6 +81,14 @@ final class Brief extends Entity
         if ($this->status === self::NEW) {
             $this->transition(self::READ);
         }
+    }
+
+    public function markReplied(): void
+    {
+        if ($this->status === self::ARCHIVED) {
+            throw new ConflictException('km_brief_archived', 'Talep arşivde: önce arşivden çıkarın.');
+        }
+        $this->transition(self::REPLIED);
     }
 
     public function archive(): void

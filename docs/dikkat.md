@@ -45,7 +45,7 @@
 ## Kod kalitesi
 
 - **Mimari kurallar otomatik denetleniyor (`tests/Feature/ArchitectureTest.php`), ama izin listeleriyle.** Yetkisiz uç, tanımsız yetki, işlem geçmişinde başlığı olmayan rota, çekirdekten modüle yeni bağımlılık, site değişiminde sıfırlanmayan statik önbellek, `Core\Database` dışında sürüme özgü SQL testi düşürür. Bugünkü istisnalar listede gerekçesiyle duruyor; liste büyümemeli.
-- **Statik analiz (Larastan seviye 5) CI'da, ama 47 eski uyarı `phpstan-baseline.neon`'da donduruldu** (çoğu tür açıklaması eksikliği). Yeni kod uyarısız olmalı; eskiler düzeltildikçe baseline yeniden üretilir.
+- **Statik analiz (Larastan seviye 5) CI'da, ama 36 eski uyarı `phpstan-baseline.neon`'da donduruldu** (çoğu tür açıklaması eksikliği). Yeni kod uyarısız olmalı; eskiler düzeltildikçe baseline yeniden üretilir.
 - **Yapay zekâ araçları için kurallar kökte `CLAUDE.md`'de** (diğer araçlar `AGENTS.md` üzerinden). Mimari değişince bu dosya da güncellenmeli; yoksa yapay zekâ eski kurala göre çalışır.
 
 ## Build ve sürüm

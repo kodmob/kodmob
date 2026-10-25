@@ -109,52 +109,10 @@ parameters:
 			path: app/Modules/Auth/Services/TwoFactor.php
 
 		-
-			message: '#^Call to an undefined method App\\Core\\Database\\Entity\:\:archive\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Modules/Briefs/BriefsController.php
-
-		-
-			message: '#^Call to an undefined method App\\Core\\Database\\Entity\:\:markRead\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Modules/Briefs/BriefsController.php
-
-		-
-			message: '#^Call to an undefined method App\\Core\\Database\\Entity\:\:reopen\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Modules/Briefs/BriefsController.php
-
-		-
 			message: '#^Parameter \#1 \$array \(list\<string\>\) of array_values is already a list, call has no effect\.$#'
 			identifier: arrayValues.list
 			count: 1
 			path: app/Modules/Briefs/Domain/Brief.php
-
-		-
-			message: '#^Call to an undefined method App\\Core\\Database\\Entity\:\:archive\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Modules/Content/Http/AdminContentController.php
-
-		-
-			message: '#^Call to an undefined method App\\Core\\Database\\Entity\:\:markRead\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Modules/Content/Http/AdminContentController.php
-
-		-
-			message: '#^Call to an undefined method App\\Core\\Database\\Entity\:\:reopen\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Modules/Content/Http/AdminContentController.php
-
-		-
-			message: '#^Call to an undefined method App\\Core\\Database\\Entity\:\:status\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Modules/Content/Http/AdminContentController.php
 
 		-
 			message: '#^Method App\\Modules\\History\\HistoryRepository\:\:stats\(\) should return array\{total\: array\{count\: int, previous\: int\}, groups\: array\<string, int\>, users\: int\} but returns array\{range\: array\{from\: non\-falsy\-string, to\: non\-falsy\-string\}, total\: array\{count\: int, previous\: int\}, groups\: stdClass, users\: int\}\.$#'

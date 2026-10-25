@@ -8,6 +8,7 @@ use App\Core\Content\PageCache;
 use App\Core\Content\Types;
 use App\Core\Exceptions\DomainException;
 use App\Core\Exceptions\NotFoundException;
+use App\Core\Exceptions\ValidationException;
 use App\Core\Http\Controller;
 use App\Core\Http\ListQuery;
 use App\Core\Security\Capability;
@@ -224,7 +225,7 @@ final class AdminContentController extends Controller
     public function briefs(Request $request): mixed
     {
         $status = Text::key($request->query('status', ''));
-        $filters = in_array($status, [Brief::NEW, Brief::READ, Brief::ARCHIVED], true) ? ['status' => $status] : [];
+        $filters = array_key_exists($status, Brief::STATUSES) ? ['status' => $status] : [];
         $page = max(1, (int) $request->query('page', 1));
 
         return (new BriefRepository)->paginate(new ListQuery($page, 20, 'created_at', 'desc', Text::field($request->query('search', '')), $filters));
@@ -246,8 +247,15 @@ final class AdminContentController extends Controller
     {
         $briefs = new BriefRepository;
         $brief = $briefs->get($id);
-        $status = ($this->input($request)['status'] ?? '') === Brief::ARCHIVED ? Brief::ARCHIVED : 'reopen';
-        $status === Brief::ARCHIVED ? $brief->archive() : $brief->reopen();
+        // Talebin yolu (Brief): okundu, yanıtlandı, arşiv, arşivden geri.
+        $status = (string) ($this->input($request)['status'] ?? '');
+        match ($status) {
+            Brief::READ => $brief->markRead(),
+            Brief::REPLIED => $brief->markReplied(),
+            Brief::ARCHIVED => $brief->archive(),
+            'reopen' => $brief->reopen(),
+            default => throw ValidationException::field('status', 'Geçersiz durum.'),
+        };
         $briefs->save($brief);
         Activity::type('briefs.status_changed');
         Activity::subject('brief', $id, $brief->toArray()['name'] ?? '');

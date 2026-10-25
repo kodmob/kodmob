@@ -10,6 +10,7 @@
 import { api } from './api.js';
 import { relative, localeLabels } from './meta.js';
 import { fmt } from '../domain/format.js';
+import { status } from '../domain/status.js';
 import { toast } from '../ui/toast.js';
 import { deleteRecord } from '../ui/records/records.js';
 import { confirmAction } from '../ui/confirm/confirm.js';
@@ -23,6 +24,11 @@ export const BRIEF_STATUS = {
 const SOURCE_LABELS = { brief: 'Proje brifi', calculator: 'Teklif hesaplayıcı', contact: 'İletişim formu' };
 /** Hizmet adları sunucudan (`service_labels`, sitenin sözlüğü: tv/src/i18n → brief.services). */
 const services = (brief) => (brief?.service_labels || brief?.services || []).join(', ');
+
+/** Talebin ana hattı (adım göstergesi; kodmob-api Brief). */
+const FLOW = ['new', 'read', 'replied'];
+
+const DONE = { read: 'Okundu sayıldı.', replied: 'Yanıtlandı olarak işaretlendi.', archived: 'Arşive alındı.', reopen: 'Arşivden çıkarıldı.' };
 
 export function kmBriefs(openId = null) {
     return {
@@ -77,6 +83,7 @@ export function kmBriefs(openId = null) {
                 rowActions: [
                     { key: 'open', label: 'Aç', primary: true, open: true },
                     { key: 'read', label: 'Okundu say', icon: 'check', can: 'km_manage_briefs', when: (r) => r.status === 'new' },
+                    { key: 'replied', label: 'Yanıtlandı say', icon: 'send', can: 'km_manage_briefs', when: (r) => ['new', 'read'].includes(r.status) },
                     { key: 'archive', label: 'Arşive al', icon: 'inbox', can: 'km_manage_briefs', when: (r) => r.status !== 'archived' },
                     { key: 'reopen', label: 'Arşivden çıkar', icon: 'rotate-ccw', can: 'km_manage_briefs', when: (r) => r.status === 'archived' },
                 ],
@@ -93,11 +100,11 @@ export function kmBriefs(openId = null) {
         },
 
         async onAction({ action, row }) {
-            const status = { read: 'read', archive: 'archived', reopen: 'reopen' }[action];
+            const status = { read: 'read', replied: 'replied', archive: 'archived', reopen: 'reopen' }[action];
             if (!status) return;
             try {
-                await api.briefStatus(row.id, status === 'reopen' ? 'read' : status);
-                toast.success({ read: 'Okundu sayıldı.', archived: 'Arşive alındı.', reopen: 'Arşivden çıkarıldı.' }[status]);
+                await api.briefStatus(row.id, status);
+                toast.success(DONE[status]);
                 this.reload();
             } catch (error) {
                 toast.error(error);
@@ -146,14 +153,24 @@ export function kmBriefs(openId = null) {
         },
 
         async toggleArchive() {
-            const next = this.brief.status === 'archived' ? 'read' : 'archived';
+            await this.move(this.brief.status === 'archived' ? 'reopen' : 'archived');
+        },
+
+        /** Talebin durumunu ilerletir (okundu, yanıtlandı, arşiv, arşivden geri). */
+        async move(status) {
             try {
-                this.brief = await api.briefStatus(this.brief.id, next);
-                toast.success(next === 'archived' ? 'Arşive alındı.' : 'Arşivden çıkarıldı.');
+                this.brief = await api.briefStatus(this.brief.id, status);
+                toast.success(DONE[status]);
                 this.reload();
             } catch (error) {
                 toast.error(error);
             }
+        },
+
+        /** Talebin yolu: yeni → okundu → yanıtlandı (arşiv yolun dışında; ayrıntıda not olarak). */
+        flow(brief) {
+            const at = FLOW.indexOf(brief?.status);
+            return FLOW.map((key, i) => ({ key, label: status('brief', key).label, state: at < 0 ? 'off' : i < at ? 'done' : i === at ? 'now' : 'todo' }));
         },
 
         async remove() {

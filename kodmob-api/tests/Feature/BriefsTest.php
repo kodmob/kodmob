@@ -35,6 +35,24 @@ class BriefsTest extends TestCase
         $this->assertSame(0, DB::table('events')->where('subject_type', 'brief')->where('subject_id', $id)->count());
     }
 
+    /** Talebin yolu: yeni → okundu → yanıtlandı; listeden "Okundu say", arşiv ve geri alma. */
+    public function test_status_flow_read_replied_archive(): void
+    {
+        $h = $this->admin();
+        $id = $this->postJson('/v1/briefs', $this->valid)->assertCreated()->json('id');
+        $url = "/v1/admin/briefs/$id/status";
+
+        // Listeden okundu sayılır (açmadan); talep yeniyken önceden 409 dönüyordu.
+        $this->postJson($url, ['status' => 'read'], $h)->assertOk()->assertJsonPath('status', 'read');
+        $this->postJson($url, ['status' => 'replied'], $h)->assertOk()->assertJsonPath('status', 'replied');
+        $this->postJson($url, ['status' => 'read'], $h)->assertOk()->assertJsonPath('status', 'replied', 'yanıtlanan geri "okundu" olmaz');
+        $this->getJson('/v1/admin/briefs?status=replied', $h)->assertJsonPath('total', 1);
+        $this->postJson($url, ['status' => 'archived'], $h)->assertJsonPath('status', 'archived');
+        $this->postJson($url, ['status' => 'replied'], $h)->assertStatus(409);
+        $this->postJson($url, ['status' => 'reopen'], $h)->assertJsonPath('status', 'read');
+        $this->postJson($url, ['status' => 'bilinmeyen'], $h)->assertStatus(422);
+    }
+
     public function test_spam_trap_validation_and_rate_limit(): void
     {
         $this->postJson('/v1/briefs', $this->valid + ['website' => 'spam'])->assertCreated()->assertJsonPath('id', null);

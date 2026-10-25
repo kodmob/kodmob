@@ -14,7 +14,7 @@ use Illuminate\Http\Request;
 /**
  * - `POST /briefs` (herkese açık): proje brifi / iletişim talebi → 201 `{ id, received }`.
  * - `GET /briefs` (yönetici): liste, arama, durum sekmeleri.
- * - `POST /briefs/{id}/status` (yönetici): `{ status: read|archived|reopen }`.
+ * - `POST /briefs/{id}/status` (yönetici): `{ status: read|replied|archived|reopen }`.
  */
 final class BriefsController extends Controller
 {
@@ -37,6 +37,7 @@ final class BriefsController extends Controller
         $status = (string) ($this->input($request)['status'] ?? '');
         match ($status) {
             'read' => $brief->markRead(),
+            'replied' => $brief->markReplied(),
             'archived' => $brief->archive(),
             'reopen' => $brief->reopen(),
             default => throw ValidationException::field('status', 'Geçersiz durum.'),
