@@ -2,7 +2,9 @@
  * Ayarlar iki sayfa, tek bileşen (`kmSettings(r, kapsam)`):
  *
  * - Proje Ayarları (/panel/proje-ayarlari; `project`): kimlik, iletişim, sosyal medya, yasal bilgiler,
- *   görseller, talepler ve araçların ayarları (kayıttaki `scope: project`).
+ *   görseller, talepler ve araçların ayarları (kayıttaki `scope: project`). Her grup üstte bir sekme
+ *   (`?grup=magaza`); "Mağaza: Stripe" gibi alt gruplar ana grubun sekmesinde. Aramadan ya da `#ayar=` bağlantısıyla
+ *   gelinince alanın sekmesi açılır (ui/spotlight.js `km-spotlight`). Kaydet bütün sekmelerin değişikliğini gönderir.
  * - Sistem Ayarları (/panel/sistem-ayarlari; `system`, rota adı `settings`): Genel (sistem kapsamlı
  *   ayarlar: sistem sağlığı raporu), E-posta, SMS, Yapay zekâ, Arka plan (panel/system.js), Yedekleme
  *   (panel/backup.js). Sekmeler adreste (`/panel/sistem-ayarlari/yedekleme`). E-posta, SMS ve Yapay zekâ
@@ -15,6 +17,7 @@
 import { href, replaceUrl } from './routes.js';
 import { api } from './api.js';
 import { toast } from '../ui/toast.js';
+import { pendingSpotlight } from '../ui/spotlight.js';
 
 /** Grupların paneldeki sırası (listede olmayanlar sona). */
 const ORDER = ['Kimlik', 'İletişim', 'Sosyal medya', 'Yasal', 'Talepler', 'Görseller', 'Sistem sağlığı'];
@@ -34,6 +37,14 @@ const TABS = [
 
 const PROJECT_TABS = [{ key: 'general', label: 'Proje', icon: 'sliders', can: 'km_manage_settings|km_manage_ai' }];
 
+/** Grubun sekmesi: "Mağaza: Stripe" → Mağaza. */
+const head = (group) => String(group).split(':')[0].trim();
+
+/** Sekmenin adresteki adı: Mağaza → magaza, Sosyal medya → sosyal-medya. */
+const slug = (text) => String(text).toLocaleLowerCase('tr-TR')
+    .replace(/[çğıöşü]/g, (c) => ({ ç: 'c', ğ: 'g', ı: 'i', ö: 'o', ş: 's', ü: 'u' })[c])
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
 export function kmSettings(route = {}, scope = 'system') {
     const tabs = scope === 'project' ? PROJECT_TABS : TABS;
     const routeName = scope === 'project' ? 'projectSettings' : 'settings';
@@ -42,9 +53,12 @@ export function kmSettings(route = {}, scope = 'system') {
         // init / destroy'da atananlar burada tanımlı olmalı: Alpine bileşende olmayan özelliği en dıştaki bileşene
         // (panel) yazar; ör. kapanan görünümün `destroyed`'ı sonraki görünüme geçerdi.
         _onRoute: null,
+        _onSpot: null,
         tabs,
         scope,
         tab: null,
+        /** Proje Ayarları'nda açık grup sekmesi (slug). */
+        group: '',
         items: [],
         values: {},
         original: {},
@@ -53,8 +67,14 @@ export function kmSettings(route = {}, scope = 'system') {
         saving: false,
 
         async init() {
+            // Adresteki grup (?grup=) show() adresi kanonikleştirmeden önce okunur.
+            const asked = new URLSearchParams(window.location.search).get('grup');
             this.show(route.tab);
-            this._onRoute = (e) => this.show(e.detail?.tab);
+            this._onRoute = (e) => {
+                this.show(e.detail?.tab);
+                // Aynı sayfada başka gruba bağlantı (?grup=…).
+                if (scope === 'project' && this.items.length) this.pickGroup(new URLSearchParams(window.location.search).get('grup') || this.group);
+            };
             window.addEventListener('km-route', this._onRoute);
             // Yalnızca yedek yetkisi olan, ayar formunu görmez.
             if (!this.visible(tabs[0])) {
@@ -68,10 +88,47 @@ export function kmSettings(route = {}, scope = 'system') {
             } finally {
                 this.loading = false;
             }
+            if (scope === 'project') {
+                // Aramadan gelinen ayarın sekmesi, yoksa adresteki, yoksa ilki.
+                this._onSpot = (e) => this.openSettingTab(e.detail?.key);
+                window.addEventListener('km-spotlight', this._onSpot);
+                if (!this.openSettingTab(pendingSpotlight())) this.pickGroup(asked);
+            }
         },
 
         destroy() {
             window.removeEventListener('km-route', this._onRoute);
+            if (this._onSpot) window.removeEventListener('km-spotlight', this._onSpot);
+        },
+
+        /** Proje Ayarları'nın sekmeleri (grupların ana adları, sırayla); sekmede kaydedilmemiş değişiklik var mı. */
+        get groupTabs() {
+            const tabs = [];
+            for (const g of this.groups) {
+                const key = slug(head(g.name));
+                const tab = tabs.find((t) => t.key === key) || tabs[tabs.push({ key, label: head(g.name), keys: [] }) - 1];
+                tab.keys.push(...g.items.map((i) => i.key));
+            }
+            return tabs.map((t) => ({ ...t, dirty: t.keys.some((k) => this.changed.includes(k)) }));
+        },
+
+        /** Açık sekmenin grupları (Proje Ayarları); Sistem Ayarları'nda hepsi. */
+        get shownGroups() {
+            return scope === 'project' ? this.groups.filter((g) => slug(head(g.name)) === this.group) : this.groups;
+        },
+
+        pickGroup(key) {
+            const tabs = this.groupTabs;
+            this.group = (tabs.find((t) => t.key === key) || tabs[0])?.key || '';
+            if (this.tab === 'general') replaceUrl(href(routeName, {}, this.group ? { grup: this.group } : {}));
+        },
+
+        /** Ayarın (ya da üst bölümünün: `commerce` → commerce.*) sekmesini açar; bulduysa true. */
+        openSettingTab(key) {
+            if (!key) return false;
+            const tab = this.groupTabs.find((t) => t.keys.some((k) => k === key || k.startsWith(`${key}.`)));
+            if (tab) this.pickGroup(tab.key);
+            return !!tab;
         },
 
         visible(t) {
@@ -87,7 +144,7 @@ export function kmSettings(route = {}, scope = 'system') {
         show(key) {
             const tab = tabs.find((t) => t.key === key && this.visible(t)) || tabs.find((t) => this.visible(t)) || tabs[0];
             this.tab = tab.key;
-            replaceUrl(href(routeName, { tab: tab.key }));
+            replaceUrl(href(routeName, { tab: tab.key }, scope === 'project' && this.group ? { grup: this.group } : {}));
         },
 
         apply(items) {
@@ -124,6 +181,8 @@ export function kmSettings(route = {}, scope = 'system') {
                 this.apply(mine(result.items));
                 Object.assign(this.values, keep);
                 failed.length ? toast.error('Bazı ayarlar kaydedilemedi; işaretli alanları düzeltin.') : toast.success('Ayarlar kaydedildi.');
+                // Hatalı alan başka sekmedeyse oraya geçilir.
+                if (failed.length && scope === 'project') this.openSettingTab(failed[0]);
             } catch (error) {
                 toast.error(error);
             } finally {

@@ -26,6 +26,7 @@ class OnboardingTest extends TestCase
         $this->assertSame([], array_keys(array_filter($steps, static fn ($s) => $s['done'])), 'yeni kurulumda hiçbiri yapılmadı');
         $this->assertSame(['route' => 'settings', 'tab' => 'mail'], array_intersect_key($steps['mail'], ['route' => 1, 'tab' => 1]));
         $this->assertSame(['type' => 'posts'], $steps['content']['params']);
+        $this->assertSame('site.email', $steps['contact']['anchor'], 'ayar adımı alanın kendisine götürür');
 
         $s = SettingsService::instance();
         $s->set(SiteProfile::NAME, 'Harman');

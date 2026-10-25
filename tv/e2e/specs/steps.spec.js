@@ -36,3 +36,35 @@ test('sıradaki adımlar: sırayla, ilgili ekrana götürür, yapılınca işare
     await expect(card).toBeVisible();
     expect(errors()).toEqual([]);
 });
+
+test('Proje Ayarları: her grup bir sekme; adım ve ayar bağlantısı doğru sekmeyi açar', async ({ page }) => {
+    const errors = consoleErrors(page);
+    await login(page);
+    await page.goto('/panel/proje-ayarlari');
+    const tabs = page.locator('[data-testid=settings-groups]');
+    await expect(tabs.locator('[data-group=kimlik][aria-selected=true]')).toBeVisible();
+    await expect(page.locator('[data-setting="site.email"]')).toBeHidden();
+
+    // Sekme: yalnızca o grubun alanları; adres ?grup= ile.
+    await tabs.locator('[data-group=iletisim]').click();
+    await expect(page).toHaveURL(/\?grup=iletisim$/);
+    await expect(page.locator('[data-setting="site.email"]')).toBeVisible();
+    await expect(page.locator('[data-setting="site.name"]')).toBeHidden();
+    // Doğrudan bağlantı da aynı sekmeyi açar.
+    await page.goto('/panel/proje-ayarlari?grup=iletisim');
+    await expect(tabs.locator('[data-group=iletisim][aria-selected=true]')).toBeVisible();
+    await expect(page).toHaveURL(/\?grup=iletisim$/);
+
+    // Değişiklik sekmede işaretlenir, başka sekmeye geçince kaybolmaz.
+    await page.fill('#set-site\\.phone', '0212 000 00 00');
+    await tabs.locator('[data-group=kimlik]').click();
+    await expect(tabs.locator('[data-group=iletisim]')).toContainText('●');
+    await page.getByRole('button', { name: 'Vazgeç' }).click();
+
+    // Sıradaki adım "İletişim ve yasal bilgiler" alanın kendisine götürür.
+    await page.goto('/panel/');
+    await page.locator('[data-testid=next-steps] [data-step=contact] a').click();
+    await expect(page).toHaveURL(/\/panel\/proje-ayarlari\?grup=iletisim/);
+    await expect(page.locator('[data-setting="site.email"]')).toHaveClass(/pn-spotlight/, { timeout: 12000 });
+    expect(errors()).toEqual([]);
+});

@@ -3,18 +3,18 @@
  * alana odaklanır. Ayar şablonda `data-setting="<anahtar>"` ile işaretlidir (panel araması,
  * `#ayar=<anahtar>` bağlantıları).
  *
- * Sayfa ve sekme yeni açılıyorsa alan birkaç yüz milisaniye sonra çizilir: 5 sn'ye kadar beklenir.
+ * Sayfa ve sekme yeni açılıyorsa alan veri gelince çizilir (yavaş sunucuda saniyeler): 10 sn'ye kadar beklenir.
  * Alan yoksa (ör. SMTP seçili değilken SMTP sunucusu) bir üst bölüm denenir: `mail.host` → `mail`.
  *
  * Önce `km-spotlight` olayı gider: alan kapalı bir pencerede ise görünüm onu açar
  * (ör. Jarvis, `ai.` ile başlayan anahtarda Claude ayarlarını).
  */
 const FLASH_MS = 2400;
-const WAIT_MS = 5000;
+const WAIT_MS = 10000;
 
 let pending = null;
 
-/** Az önce istenen anahtar (5 sn): tembel yüklenen görünüm açılışta okur (olay ondan önce gitmiş olabilir). */
+/** Az önce istenen anahtar (10 sn): tembel yüklenen görünüm açılışta okur (olay ondan önce gitmiş olabilir). */
 export function pendingSpotlight() {
     return pending && Date.now() - pending.at < WAIT_MS ? pending.key : '';
 }

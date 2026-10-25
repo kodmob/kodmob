@@ -25,7 +25,8 @@ test('panel araması: sayfa, ayar ve kayıt', async ({ page, request }) => {
     await expect(smtp.locator('mark').first()).toHaveText(/SMTP/i);
     await input.press('Enter');
     await expect(page).toHaveURL(/\/panel\/sistem-ayarlari\/e-posta$/);
-    await expect(page.locator('[data-setting="mail"]')).toHaveClass(/pn-spotlight/, { timeout: 6000 });
+    // Vurgu (pn-spotlight) 2,4 sn sürer, yavaş çalışmada kaçabilir: kalıcı olan odak denetlenir (bölümün ilk alanı).
+    await expect(page.locator('[data-setting="mail"]').locator('input:not([type=hidden]):not([disabled]), select:not([disabled]), textarea:not([disabled])').first()).toBeFocused({ timeout: 12000 });
     await expect(input).toHaveValue('');
 
     // Ayar kaydındaki ayar (Talepler grubu): Proje Ayarları'nda alan ortalanır, odak alanda.
@@ -34,9 +35,9 @@ test('panel araması: sayfa, ayar ve kayıt', async ({ page, request }) => {
     const notify = results.locator('[data-search-key="set:brief.notify_email"]');
     await expect(notify).toContainText('Proje Ayarları › Talepler');
     await notify.click();
-    await expect(page).toHaveURL(/\/panel\/proje-ayarlari$/);
+    await expect(page).toHaveURL(/\/panel\/proje-ayarlari\?grup=talepler$/, { timeout: 12000 });
     const field = page.locator('[data-setting="brief.notify_email"]');
-    await expect(field).toHaveClass(/pn-spotlight/, { timeout: 6000 });
+    await expect(field).toHaveClass(/pn-spotlight/, { timeout: 12000 });
     await expect(field.locator('input')).toBeFocused();
 
     // Türkçe karakter yazmadan: "iki adimli" → İki adımlı doğrulama (Profilim).
@@ -74,6 +75,6 @@ test('panel araması: sayfa, ayar ve kayıt', async ({ page, request }) => {
     await mobileInput.fill('sms saglayici');
     await page.locator('[data-search-list=mobile] [data-search-key="field:sms.provider"]').click();
     await expect(page).toHaveURL(/\/panel\/sistem-ayarlari\/sms$/);
-    await expect(page.locator('[data-setting="sms.provider"]')).toHaveClass(/pn-spotlight/, { timeout: 6000 });
+    await expect(page.locator('[data-setting="sms.provider"]')).toHaveClass(/pn-spotlight/, { timeout: 12000 });
     expect(errors()).toEqual([]);
 });

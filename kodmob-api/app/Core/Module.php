@@ -100,9 +100,10 @@ abstract class Module
     /**
      * Genel bakış'taki "Sıradaki adımlar"a katkı (Core\Setup\Onboarding): siteyi yayına hazırlarken yapılacak iş.
      * `done` gerçek veriden hesaplanır (ayar dolu, sayfa yayında…); `route` / `params` / `tab` panelde açılacak ekran
-     * (tv/src/panel/routes.js); `can` adımı görecek yetki; `order` sıra (küçük önce).
+     * (tv/src/panel/routes.js), `anchor` o ekranda gösterilecek ayar (`#ayar=`; sekmesi açılır, alan vurgulanır); `can`
+     * adımı görecek yetki; `order` sıra (küçük önce).
      *
-     * @return list<array{key:string,label:string,hint?:string,done:bool,route:string,params?:array<string,mixed>,tab?:?string,can?:?string,order?:int}>
+     * @return list<array{key:string,label:string,hint?:string,done:bool,route:string,params?:array<string,mixed>,tab?:?string,anchor?:?string,can?:?string,order?:int}>
      */
     public function steps(): array
     {

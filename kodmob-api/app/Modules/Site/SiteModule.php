@@ -66,9 +66,9 @@ final class SiteModule extends Module
 
         return [
             ['key' => 'identity', 'order' => 10, 'label' => 'Kimlik ve logo', 'hint' => 'Site adı, logo ve ana renk: sitede ve e-postalarda görünür.',
-                'done' => $filled(SiteProfile::NAME, SiteProfile::LOGO) || $s->int(SiteProfile::LOGO_IMAGE) > 0, 'route' => 'projectSettings', 'can' => Capability::MANAGE_SETTINGS],
+                'done' => $filled(SiteProfile::NAME, SiteProfile::LOGO) || $s->int(SiteProfile::LOGO_IMAGE) > 0, 'route' => 'projectSettings', 'anchor' => SiteProfile::NAME, 'can' => Capability::MANAGE_SETTINGS],
             ['key' => 'contact', 'order' => 20, 'label' => 'İletişim ve yasal bilgiler', 'hint' => 'E-posta, telefon, adres; yasal belgelerdeki unvan ve yetkili mahkeme.',
-                'done' => $filled(self::EMAIL) && $filled(self::PHONE) && LegalData::missing() === [], 'route' => 'projectSettings', 'can' => Capability::MANAGE_SETTINGS],
+                'done' => $filled(self::EMAIL) && $filled(self::PHONE) && LegalData::missing() === [], 'route' => 'projectSettings', 'anchor' => self::EMAIL, 'can' => Capability::MANAGE_SETTINGS],
             ['key' => 'home', 'order' => 30, 'label' => 'Ana sayfayı düzenleyin', 'hint' => 'Sayfa düzenleyicide bölümleri kendi metninizle yazıp Yayınla.',
                 'done' => DB::table('page_layouts')->where('zone', 'like', 'home.%')->whereNotNull('published_at')->exists(), 'route' => 'builder', 'can' => Capability::EDIT_LAYOUT],
             ['key' => 'content', 'order' => 40, 'label' => 'İlk içerikleri ekleyin', 'hint' => 'Blog yazısı ya da projenizin kayıtları; taslak sitede görünmez.',

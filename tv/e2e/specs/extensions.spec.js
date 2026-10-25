@@ -15,7 +15,8 @@ test('araç paketi: sayfası, ayarı, Araç Pazarı\'nda aç / kapat', async ({ 
     await expect(page.locator('[data-testid=tool-merhaba-message]')).toHaveText('Merhaba!');
 
     // Paketin ayarı Proje Ayarları'nda; değişince sayfası yeni metni okur.
-    await page.goto('/panel/proje-ayarlari');
+    // Paketin grubu Proje Ayarları'nda kendi sekmesinde; ayar bağlantısı o sekmeyi açar.
+    await page.goto('/panel/proje-ayarlari#ayar=merhaba.greeting');
     await page.fill('#set-merhaba\\.greeting', 'Selam, e2e!');
     await page.getByRole('button', { name: 'Kaydet' }).click();
     await expect(page.locator('[data-setting="merhaba.greeting"] input')).toHaveValue('Selam, e2e!');

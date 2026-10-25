@@ -61,8 +61,10 @@ export function kmOverview() {
             return this.steps.find((s) => !s.done) || null;
         },
 
+        /** Adımın ekranı; ayar adımında alanın kendisine (`#ayar=`: sekmesi açılır, alan vurgulanır). */
         stepHref(step) {
-            return href(step.route, { ...step.params, ...(step.tab ? { tab: step.tab } : {}) });
+            const url = href(step.route, { ...step.params, ...(step.tab ? { tab: step.tab } : {}) });
+            return step.anchor ? `${url}#ayar=${encodeURIComponent(step.anchor)}` : url;
         },
 
         toggleSteps(hidden) {

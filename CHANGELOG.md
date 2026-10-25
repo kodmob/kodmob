@@ -10,6 +10,9 @@ yapılacaklar **Yükseltme** başlığında. Sürüm numarası `tv/package.json`
 - Panelin yan menüsü sadeleşti: yalnızca beş bölüm (Genel bakış, İçerik, Gelenler, Görünürlük, Ayarlar). Bölümün
   sayfaları içerik alanının üstünde sekme; adresler değişmedi. Rolün özel yan menüsü (Roller › Yan Menü) kalktı: herkes
   aynı bölümleri yetkisine göre görür. Kılavuz turu bölümleri anlatır.
+- Ayarlar › Proje sekmeli: her grup üstte bir sekme (Kimlik, İletişim, Sosyal medya, Yasal, Talepler, Mağaza…);
+  adres `?grup=magaza`, değişiklik olan sekmede nokta, Kaydet hepsini gönderir. Aramadan ya da Sıradaki adımlardan
+  gelinince alanın sekmesi açılır ve alan vurgulanır. Ayar vurgusu yavaş sunucuda 10 sn'ye kadar alanı bekler.
 
 **Eklendi**
 - Genel bakış › **Sıradaki adımlar**: siteyi yayına hazırlarken sırayla (kimlik ve logo, iletişim ve yasal bilgiler,

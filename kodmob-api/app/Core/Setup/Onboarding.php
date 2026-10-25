@@ -13,7 +13,7 @@ use App\Core\Modules;
 final class Onboarding
 {
     /**
-     * @return list<array{key:string,label:string,hint:string,done:bool,route:string,params:array<string,mixed>,tab:?string}>
+     * @return list<array{key:string,label:string,hint:string,done:bool,route:string,params:array<string,mixed>,tab:?string,anchor:?string}>
      */
     public static function for(callable $can): array
     {
@@ -30,7 +30,7 @@ final class Onboarding
 
         return array_map(static fn ($s) => [
             'key' => $s['key'], 'label' => $s['label'], 'hint' => $s['hint'] ?? '', 'done' => (bool) $s['done'],
-            'route' => $s['route'], 'params' => $s['params'] ?? [], 'tab' => $s['tab'] ?? null,
+            'route' => $s['route'], 'params' => $s['params'] ?? [], 'tab' => $s['tab'] ?? null, 'anchor' => $s['anchor'] ?? null,
         ], $steps);
     }
 }

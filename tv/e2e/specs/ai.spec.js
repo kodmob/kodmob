@@ -40,7 +40,7 @@ test('yapay zekâ: sağlayıcılar, anahtar, model, etkin sağlayıcı', async (
     // Arama: "gemini anahtar" → Google kartı vurgulanır.
     await page.locator('[data-testid=search-input]').fill('gemini anahtar');
     await page.locator('[data-search-list=desktop] [data-search-key="field:ai.google"]').click();
-    await expect(page.locator('[data-setting="ai.google"]')).toHaveClass(/pn-spotlight/, { timeout: 6000 });
+    await expect(page.locator('[data-setting="ai.google"]')).toHaveClass(/pn-spotlight/, { timeout: 12000 });
 
     // Eski hale: Claude etkin, OpenAI anahtarı yok.
     expect((await api.put('/system/ai', { provider: 'anthropic', providers: { openai: { clear_key: true, model: 'gpt-6.1-sol' } } })).status).toBe(200);

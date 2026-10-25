@@ -19,8 +19,19 @@
     <div class="flex flex-col gap-4"><span class="skeleton h-48"></span><span class="skeleton h-48"></span></div>
   </template>
 
+  {# Proje Ayarları: her grup bir sekme (Kimlik, İletişim, Yasal, Mağaza…); değişiklik olan sekmede nokta. #}
+  <div class="-mx-1 overflow-x-auto px-1" x-show="scope === 'project' && !loading && groupTabs.length > 1" x-cloak>
+    <div class="pn-tabs w-max" role="tablist" aria-label="Ayar grupları" data-testid="settings-groups">
+      <template x-for="t in groupTabs" :key="t.key">
+        <button type="button" role="tab" class="pn-tab" :aria-selected="group === t.key" @click="pickGroup(t.key)" :data-group="t.key">
+          <span x-text="t.label"></span><span class="text-primary" x-show="t.dirty" aria-label="kaydedilmemiş değişiklik">●</span>
+        </button>
+      </template>
+    </div>
+  </div>
+
   <div class="pn-settings" x-show="!loading">
-    <template x-for="g in groups" :key="g.name">
+    <template x-for="g in shownGroups" :key="g.name">
       <section class="card pn-group-card">
         <h3 class="pn-group-title" x-text="g.name"></h3>
         <div class="pn-grid">
