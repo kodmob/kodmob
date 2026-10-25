@@ -12,27 +12,27 @@ bilinen sınırlar `docs/dikkat.md`, araç paketleri `docs/arac-paketi.md`.
 
 | Klasör | İçerik |
 |---|---|
-| `tv/src/profiles/<ad>/` | sitenin profili: `site.config.js`, `routes.config.js`, `locales.js`, `i18n/`, `pages/`, `shell/`, `panel.js` |
-| `kodmob-api/app/Project/` | projenin içerik türleri ve modülleri (`App\Project`) |
-| `kodmob-api/config/project.php` | kayıtlar: `content_types`, `modules` |
-| `kodmob-api/routes/project.php` | projenin uçları (`/api/v1/…`) |
-| `kodmob-api/tests/Project/` | projenin testleri |
-| `kodmob-api/extensions/` | kurulu araç paketleri (`kodmob:add`) |
+| `kodmob-frontend/src/profiles/<ad>/` | sitenin profili: `site.config.js`, `routes.config.js`, `locales.js`, `i18n/`, `pages/`, `shell/`, `panel.js` |
+| `kodmob-core/app/Project/` | projenin içerik türleri ve modülleri (`App\Project`) |
+| `kodmob-core/config/project.php` | kayıtlar: `content_types`, `modules` |
+| `kodmob-core/routes/project.php` | projenin uçları (`/api/v1/…`) |
+| `kodmob-core/tests/Project/` | projenin testleri |
+| `kodmob-core/extensions/` | kurulu araç paketleri (`kodmob:add`) |
 
-Çatının dosyaları (`app/Core`, `app/Modules`, `tv/src`'nin geri kalanı) `kodmob:upgrade` ile yenilenir:
+Çatının dosyaları (`app/Core`, `app/Modules`, `kodmob-frontend/src`'nin geri kalanı) `kodmob:upgrade` ile yenilenir:
 değiştirmeyin; gerekirse kanca / kayıt kullanın ya da dosyayı `kodmob.json` `project` listesine alın.
 
 ## Komutlar
 
 ```
-cd kodmob-api && php artisan test          # backend
-cd kodmob-api && vendor/bin/pint           # PHP biçimi
-cd tv && npm test                          # ön yüz
-cd tv && npm run test:db                   # SQLite + MySQL + PostgreSQL
-cd tv && npm run e2e                       # uçtan uca
-cd tv && npm run deploy:local && npm run serve:local   # yerel site http://127.0.0.1:8090
-cd kodmob-api && php artisan kodmob:module <ad> --label=… --singular=…   # içerik türü
-cd kodmob-api && php artisan kodmob:upgrade --from=<zip> --dry-run      # çatı güncellemesi
+cd kodmob-core && php artisan test          # backend
+cd kodmob-core && vendor/bin/pint           # PHP biçimi
+cd kodmob-frontend && npm test                          # ön yüz
+cd kodmob-frontend && npm run test:db                   # SQLite + MySQL + PostgreSQL
+cd kodmob-frontend && npm run e2e                       # uçtan uca
+cd kodmob-frontend && npm run deploy:local && npm run serve:local   # yerel site http://127.0.0.1:8090
+cd kodmob-core && php artisan kodmob:module <ad> --label=… --singular=…   # içerik türü
+cd kodmob-core && php artisan kodmob:upgrade --from=<zip> --dry-run      # çatı güncellemesi
 node build.mjs --bump minor                # canlı paket
 ```
 

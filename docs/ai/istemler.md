@@ -53,7 +53,7 @@ Düzeltmeyi davranışı ve uç sözleşmesini değiştirmeden öner; testi olma
 ## 4. Site bölümü / blok tasarımı
 
 ```
-[bölüm, ör. "fiyat tablosu"] için site bölümü tasarla (tv/src). Kurallar:
+[bölüm, ör. "fiyat tablosu"] için site bölümü tasarla (kodmob-frontend/src). Kurallar:
 - Nunjucks şablonu; metinler tx() (panelden değişir) ya da t(); veri gerekiyorsa routes.config.js `needs`.
 - Stil yalnızca Tailwind sınıfları ve tasarım belirteçleri (CSP: satır içi stil yok), mobil öncelikli.
 - Etkileşim Alpine bileşeniyle, ayrı dosyada; erişilebilirlik (etiketler, odak, klavye).

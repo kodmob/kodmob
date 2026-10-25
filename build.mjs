@@ -15,8 +15,8 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
-const TV = path.join(ROOT, 'tv');
-const API = path.join(ROOT, 'kodmob-api');
+const TV = path.join(ROOT, 'kodmob-frontend');
+const API = path.join(ROOT, 'kodmob-core');
 const OUT = path.join(ROOT, 'release');
 const PKG = path.join(TV, 'package.json');
 const CONFIG = path.join(API, 'config', 'kodmob.php');
@@ -65,19 +65,19 @@ if (bump) {
     log(`sürüm ${versions.tv} → ${next}`);
     versions = readVersions();
 }
-if (!versions.api) fail("kodmob-api/config/kodmob.php içinde 'version' yok.");
-if (versions.tv !== versions.api) fail(`sürümler farklı: tv ${versions.tv}, kodmob-api ${versions.api}.`);
-if (versions.framework && versions.framework !== versions.tv) fail(`sürümler farklı: kodmob.json ${versions.framework}, tv ${versions.tv}.`);
+if (!versions.api) fail("kodmob-core/config/kodmob.php içinde 'version' yok.");
+if (versions.tv !== versions.api) fail(`sürümler farklı: kodmob-frontend ${versions.tv}, kodmob-core ${versions.api}.`);
+if (versions.framework && versions.framework !== versions.tv) fail(`sürümler farklı: kodmob.json ${versions.framework}, kodmob-frontend ${versions.tv}.`);
 const VERSION = versions.tv;
 log(`Kodmob v${VERSION}`);
 
 // ------------------------------------------------------------ bağımlılıklar
 if (!fs.existsSync(path.join(TV, 'node_modules'))) {
-    log('tv: npm ci …');
+    log('kodmob-frontend: npm ci …');
     run('npm ci', TV);
 }
 if (!fs.existsSync(path.join(API, 'vendor', 'autoload.php'))) {
-    log('kodmob-api: composer install …');
+    log('kodmob-core: composer install …');
     run(`${COMPOSER} install --no-interaction`, API);
 }
 
@@ -85,13 +85,13 @@ if (!fs.existsSync(path.join(API, 'vendor', 'autoload.php'))) {
 if (has('--skip-tests')) {
     log('testler atlandı (--skip-tests)');
 } else {
-    log('kodmob-api: php artisan test …');
+    log('kodmob-core: php artisan test …');
     try {
         run(`"${PHP}" artisan test`, API);
     } catch {
         fail('backend testleri geçmedi; paket üretilmedi.');
     }
-    log('tv: npm test (panel rotaları, bağlantı denetimi) …');
+    log('kodmob-frontend: npm test (panel rotaları, bağlantı denetimi) …');
     try {
         run('npm test', TV);
     } catch {

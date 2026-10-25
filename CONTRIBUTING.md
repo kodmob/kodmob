@@ -16,15 +16,15 @@ hepsi değerli.
 Node.js 20+, PHP 8.4 (pdo_sqlite), Composer. Ayrıntı: [docs/gelistirici/01-kurulum.md](docs/gelistirici/01-kurulum.md).
 
 ```bash
-cd kodmob-api && composer install && php artisan kodmob:install
-cd ../tv && npm ci && npm run deploy:local && npm run serve:local   # http://127.0.0.1:8090
+cd kodmob-core && composer install && php artisan kodmob:install
+cd ../kodmob-frontend && npm ci && npm run deploy:local && npm run serve:local   # http://127.0.0.1:8090
 ```
 
 ## Kurallar
 
 Mimarinin kuralları [CLAUDE.md](CLAUDE.md)'de (yapay zekâ araçları da onu okur); kısaca:
 
-- Çatı (`app/Core`, `app/Modules`, `tv/src`) projenin koduna bağlanmaz; yeni şey çoğunlukla bir **kayda** bir satırdır
+- Çatı (`app/Core`, `app/Modules`, `kodmob-frontend/src`) projenin koduna bağlanmaz; yeni şey çoğunlukla bir **kayda** bir satırdır
   (modül kancası, yetki, ayar tanımı, içerik türü). `ArchitectureTest` denetler.
 - Testler kodla birlikte; hata düzeltmesinde önce hatayı yakalayan test. SQLite, MySQL ve PostgreSQL'de geçmeli.
 - Arayüz metinleri, yorumlar ve belgeler **Türkçe**; arayüzde teknik jargon yerine kullanıcının dili. Commit
@@ -34,8 +34,8 @@ Mimarinin kuralları [CLAUDE.md](CLAUDE.md)'de (yapay zekâ araçları da onu ok
 ## Göndermeden önce
 
 ```bash
-cd kodmob-api && vendor/bin/pint && vendor/bin/phpstan analyse --memory-limit=1G && php artisan test
-cd tv && npm test && npm run e2e
+cd kodmob-core && vendor/bin/pint && vendor/bin/phpstan analyse --memory-limit=1G && php artisan test
+cd kodmob-frontend && npm test && npm run e2e
 ```
 
 Değişiklik kullanıcıya görünüyorsa `CHANGELOG.md`'nin **Yayımlanmadı** bölümüne bir satır, geliştiriciyi

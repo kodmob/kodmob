@@ -13,9 +13,9 @@ Kodmob: kurumsal site ve çok kullanıcılı yönetim paneli çatısı (framewor
 
 | Klasör | İçerik |
 |---|---|
-| `kodmob-api/` | Laravel 12, PHP 8.4: API, sayfa üretimi (render.php), panel uçları, komutlar |
-| `tv/` | Vite 7 + Alpine 3 + Tailwind 4 + Nunjucks: site sayfa kabukları ve yönetim paneli |
-| `tv/sites/<anahtar>/` | Çok site: alt sitenin kendi derleme katmanı (README orada) |
+| `kodmob-core/` | Laravel 12, PHP 8.4: API, sayfa üretimi (render.php), panel uçları, komutlar |
+| `kodmob-frontend/` | Vite 7 + Alpine 3 + Tailwind 4 + Nunjucks: site sayfa kabukları ve yönetim paneli |
+| `kodmob-frontend/sites/<anahtar>/` | Çok site: alt sitenin kendi derleme katmanı (README orada) |
 | `docs/` | Raporlar, `dikkat.md` ("yapıldı, ama…" listesi), `build.md` |
 | `build.mjs` | Kökten tek komutla paket (`node build.mjs`) |
 | `release/` | Paketler; **git dışı**, `release/ilk-kurulum/.env` canlının gizli anahtarlarını taşır: okunmaz, paylaşılmaz |
@@ -26,18 +26,18 @@ Barındırma varsayımı: paylaşımlı hosting (Hostinger), sunucuda derleme yo
 ## Komutlar
 
 ```
-cd kodmob-api && php artisan test          # backend (SQLite bellek içi)
-cd kodmob-api && vendor/bin/pint           # PHP biçimi (CI --test ile denetler)
-cd kodmob-api && vendor/bin/phpstan analyse --memory-limit=1G   # statik analiz (Larastan; phpstan-baseline.neon)
-cd tv && npm test                          # ön yüz birim testleri
-cd tv && npm run test:db                   # backend: SQLite + MySQL + PostgreSQL
-cd tv && npm run e2e                       # uçtan uca (Playwright, .e2e/ ayrı ortam, ~6 dk)
-cd tv && npm run e2e -- --starter          # başlangıç profiliyle (KM_PROFILE=starter) derleyip starter.spec
-cd tv && npm run deploy:local && npm run serve:local   # yerel site http://127.0.0.1:8090 (.local/)
-cd kodmob-api && php artisan kodmob:install --profile=<ad>   # yeni projenin yerel kurulumu (SQLite; MAMP gerekmez)
-cd kodmob-api && php artisan kodmob:pack | kodmob:lock | kodmob:upgrade --from=<zip> --dry-run   # çatı paketi ve güncelleme
-cd kodmob-api && php artisan kodmob:tool new <ad> | kodmob:tool check <ad> | kodmob:add <klasör|zip|anahtar>   # araç paketi
-cd kodmob-api && php artisan kodmob:contracts        # sözleşme + OpenAPI → docs/contracts (uç, yetki, ayar değişince; ContractsTest)
+cd kodmob-core && php artisan test          # backend (SQLite bellek içi)
+cd kodmob-core && vendor/bin/pint           # PHP biçimi (CI --test ile denetler)
+cd kodmob-core && vendor/bin/phpstan analyse --memory-limit=1G   # statik analiz (Larastan; phpstan-baseline.neon)
+cd kodmob-frontend && npm test                          # ön yüz birim testleri
+cd kodmob-frontend && npm run test:db                   # backend: SQLite + MySQL + PostgreSQL
+cd kodmob-frontend && npm run e2e                       # uçtan uca (Playwright, .e2e/ ayrı ortam, ~6 dk)
+cd kodmob-frontend && npm run e2e -- --starter          # başlangıç profiliyle (KM_PROFILE=starter) derleyip starter.spec
+cd kodmob-frontend && npm run deploy:local && npm run serve:local   # yerel site http://127.0.0.1:8090 (.local/)
+cd kodmob-core && php artisan kodmob:install --profile=<ad>   # yeni projenin yerel kurulumu (SQLite; MAMP gerekmez)
+cd kodmob-core && php artisan kodmob:pack | kodmob:lock | kodmob:upgrade --from=<zip> --dry-run   # çatı paketi ve güncelleme
+cd kodmob-core && php artisan kodmob:tool new <ad> | kodmob:tool check <ad> | kodmob:add <klasör|zip|anahtar>   # araç paketi
+cd kodmob-core && php artisan kodmob:contracts        # sözleşme + OpenAPI → docs/contracts (uç, yetki, ayar değişince; ContractsTest)
 ```
 
 PHP PATH'te değilse yerel betikler `KM_PHP` ortam değişkenine bakar (Windows'ta MAMP kuruluysa onun PHP'sine).
@@ -47,14 +47,14 @@ Yerel PHP yolu ve bu bilgisayarda dokunulmayacak yerler `CLAUDE.local.md`'de.
 
 **Katmanlar.** `app/Core` çatıdır (her projede aynı); `app/Modules` çatının modülleridir. Modül listesi
 `App\Core\Modules` (çekirdek her zaman açık; isteğe bağlılar ve içerik türleri projenin profilinde:
-`tv/src/profiles/<ad>/site.config.js` `profile`, `KODMOB_MODULES` üstündedir). Çekirdekten modüle yeni bağımlılık
+`kodmob-frontend/src/profiles/<ad>/site.config.js` `profile`, `KODMOB_MODULES` üstündedir). Çekirdekten modüle yeni bağımlılık
 eklemeyin; gerekirse kayıt / kanca (ör. `Router::useProfile`) kullanın. `ArchitectureTest` izin listesini denetler.
 Mimari: `docs/gelistirici/02-mimari.md`.
 
 **Proje kodu ayrı** (çatı güncellemesi dokunmaz): `app/Project/` (ad alanı `App\Project`; ör. portföy
 türleri), kayıtları `config/project.php` (`content_types`, `modules`), uçları
-`routes/project.php`, testleri `tests/Project/`; site ve panel uzantısı `tv/src/profiles/<ad>/` (`panel.js`: panel
-içerik türleri). Çatı (`app/Core`, `app/Modules`, `tv/src` geri kalanı) projenin sınıfına bağlanmaz (`ArchitectureTest`);
+`routes/project.php`, testleri `tests/Project/`; site ve panel uzantısı `kodmob-frontend/src/profiles/<ad>/` (`panel.js`: panel
+içerik türleri). Çatı (`app/Core`, `app/Modules`, `kodmob-frontend/src` geri kalanı) projenin sınıfına bağlanmaz (`ArchitectureTest`);
 türe özgü davranış türün kancasındadır: `ContentType::seoDefaults/seoText/structuredData/llmsText/searchItem`.
 Kendi sayfası olan tür: profilin rotasında `dynamic: '<kayıt adı>'` (`Types::paged()`; adres geçmişi, site haritası,
 SEO, llms.txt, IndexNow, 404 önerileri, arama bunu dolaşır).
@@ -76,7 +76,7 @@ SEO, llms.txt, IndexNow, 404 önerileri, arama bunu dolaşır).
 - Zamanlanmış görev: `Core\Jobs\Scheduler::define()` ya da modülün `schedule()`'ı (alt siteler aynı listeyi çalıştırır)
 - Rezervasyonlu tür: `Modules\Commerce\Booking\Bookable` (`bookingProfile()`: birim person | day | fixed | night, özellikler,
   sayfa bölümleri); alanlar `BookingFields`, sitedeki çıktı `BookingView`; `kodmob:module … --bookable=<birim>`
-- Yasal belge (gizlilik, KVKK, sözleşme…): `tv/src/legal/<ad>/` (`doc.json`: grup, `module`, adresler; `<dil>.html`
+- Yasal belge (gizlilik, KVKK, sözleşme…): `kodmob-frontend/src/legal/<ad>/` (`doc.json`: grup, `module`, adresler; `<dil>.html`
   şablon), başlığı sözlükte `legal.<ad>.title`; modülün metne verdiği değerler `Module::legal()`; sunucu
   `Modules/Site/Legal`, panel Yasal belgeler (docs/gelistirici/09-yasal-belgeler.md)
 - Mağaza ödeme yöntemi: `Modules\Commerce\Payments\PaymentMethod` + modülün `boot()`'unda `Payments::register()` (Stripe,
@@ -89,8 +89,8 @@ SEO, llms.txt, IndexNow, 404 önerileri, arama bunu dolaşır).
 - İsteğe bağlı modül: `Modules::OPTIONAL` (`kind`: `base` | `tool`; `requires`: takıldığı modüller, "modülün modülü") + yetkisi `Capability::MODULE_OF` + rotaları
   `module:<ad>` + site sayfası rotada `module: '<ad>'`. Araç projede çalışma anında kapanır (Araç Pazarı,
   `Core\ModuleState`); kurulu olanlar profilden ve Keşfet'ten eklenenler (`Modules::installed()`, `ModuleState::added()`).
-  Aracın site sayfası her derlemede (`tv/vite/framework-routes.js` `toolRoutes()`; araç kapalıyken 404)
-- Topluluk aracı (paket): `kodmob-api/extensions/<anahtar>/` (`kodmob-tool.json`, `php/`, `panel/index.js` `PAGES`,
+  Aracın site sayfası her derlemede (`kodmob-frontend/vite/framework-routes.js` `toolRoutes()`; araç kapalıyken 404)
+- Topluluk aracı (paket): `kodmob-core/extensions/<anahtar>/` (`kodmob-tool.json`, `php/`, `panel/index.js` `PAGES`,
   `tests/`); `php artisan kodmob:tool new <ad>` iskelet, `kodmob:add` kurar. Biçim ve kurallar `docs/arac-paketi.md`;
   çalışma anı `Core\Extensions`. Çatının testleri paketlerden bağımsız (`TestCase::$extensions`)
 
@@ -98,21 +98,21 @@ SEO, llms.txt, IndexNow, 404 önerileri, arama bunu dolaşır).
 gerekçeyle eklenir. Uç, yetki, ayar ya da olay değişince `php artisan kodmob:contracts` (docs/contracts; test kilitli).
 Yeni ya da dokunulan uçta gövde biçimi bildirimsel: `Core\Http\Schema` + `Field` (aynı Türkçe mesajlar; iş kuralları
 serviste), uç `Core\Contracts\RequestSchemas`'a ("YÖNTEM /yol") yazılır, OpenAPI oradan. Hata: `DomainException` / `ValidationException::fields()` (Türkçe mesaj + kod; ön yüz
-`tv/src/domain/errors.js`). Gizli değerler `Core\Support\Secret::seal()` ile saklanır, panele geri gönderilmez.
+`kodmob-frontend/src/domain/errors.js`). Gizli değerler `Core\Support\Secret::seal()` ile saklanır, panele geri gönderilmez.
 
 **Veritabanı.** SQLite, MySQL/MariaDB ve PostgreSQL desteklenir; testler üçünde de geçmeli (`npm run test:db`).
 Sürüme özgü SQL yalnızca `app/Core/Database` altında (`Sql::like()` büyük/küçük harften bağımsız arama).
 Migration'lar taşınabilir yazılır. Canlıda yayında olan tabloya değişiklik yeni migration'la yapılır.
 
-**Site sayfaları.** Projenin sitesi profil klasöründe: `tv/src/profiles/<ad>/` (etkin profil `tv/profile.js`, `KM_PROFILE`):
+**Site sayfaları.** Projenin sitesi profil klasöründe: `kodmob-frontend/src/profiles/<ad>/` (etkin profil `kodmob-frontend/profile.js`, `KM_PROFILE`):
 `site.config.js` (`profile.needs`: her sayfada gelen türler), `routes.config.js`, `locales.js`, `i18n/`, `pages/`,
 `shell/`, `panel.js`. Tarayıcıda `@profile/…`; Node testlerinde aynı ad `tests/profile-hook.mjs` ile. Çatı sözlüğü (ortak bileşen metinleri)
-`tv/src/i18n/`, profilinki üstüne yazar; çatının rotaları `tv/vite/framework-routes.js`. Adres yapısı derlemenindir
+`kodmob-frontend/src/i18n/`, profilinki üstüne yazar; çatının rotaları `kodmob-frontend/vite/framework-routes.js`. Adres yapısı derlemenindir
 (karar A): profilin `routes.config.js` ve `locales.js` →
 `km-manifest.json`. Sunucu kabuğu (`_pages/…`) içerikle tamamlar: `public/render.php` (önbellek yolunda Laravel'siz),
 `Modules/Site/Render` (Router, Renderer, SitePage). Panelden değişen metin: şablonda `tx('anahtar')`; değişmeyen
 `t()`. CSP satır içi stil ve betiğe kapalı: stil sınıf / belirteçle, betik dosyayla. Sayfa düzenleyici
-(docs/gelistirici/08-bloklar.md): blok `tv/src/blocks/<ad>/` (`block.json` + `block.html`; profilin ve paketin
+(docs/gelistirici/08-bloklar.md): blok `kodmob-frontend/src/blocks/<ad>/` (`block.json` + `block.html`; profilin ve paketin
 `blocks/`'u da), bölge şablonda `zone('x.y')`, ilk blokları profilin `site.config.js` `zones`'u; derleme
 `km-blocks.json` (vite/blocks.js), sunucu `Modules/Site/Blocks` (şablon dili JS ve PHP'de aynı; ortak örnekler
 `tests/fixtures/blocks/template.json`). Blok sayfası (panelden açılan sayfa): tür `pages` (`Modules/Site/Pages`),
@@ -127,12 +127,12 @@ Sıradaki adımlar modülün `steps()` kancasından (`Core\Setup\Onboarding`). A
 (rota `settings`); ayar tanımının kapsamı `SettingDefinition` `scope` (`project` | `system`). Sayfa anahtarları
 küçük harf ve tire (Hızlı İşlem anahtarı olur). **Projenin** panel sayfası çatıya dokunmadan profilin `panel.js`
 `PAGES`'ine yazılır (`key`, `path`, `label`, `section`, `can`, `guide`, `load`, `template`; biçim
-`tv/src/panel/extension.js`): menü, Tüm İşlemler ("Siteye özel"), tur, arama, adresler ve tembel yükleme
-kendiliğinden; yetkisi projenin modülünün `capabilities()`'inden. **Çatının** yeni sayfası: `tv/src/panel/routes.js` (rota), `meta.js` (`PAGES`, yetki), `views.js` (tembel yükleme),
+`kodmob-frontend/src/panel/extension.js`): menü, Tüm İşlemler ("Siteye özel"), tur, arama, adresler ve tembel yükleme
+kendiliğinden; yetkisi projenin modülünün `capabilities()`'inden. **Çatının** yeni sayfası: `kodmob-frontend/src/panel/routes.js` (rota), `meta.js` (`PAGES`, yetki), `views.js` (tembel yükleme),
 `src/pages/panel/index.njk` + `_<ad>.njk`, `api.js`, `operations.js` (Diğer İşlemler; test her sayfayı arar),
-`kodmob-api/tests/fixtures/panel-urls.json` ve `tests/fixtures/site/km-manifest.json` (`panel.routes`). Menüde
+`kodmob-core/tests/fixtures/panel-urls.json` ve `tests/fixtures/site/km-manifest.json` (`panel.routes`). Menüde
 görünen sayfanın Kullanım Kılavuzu turu metni `panel/guide.js` `NAV_TEXT`'te (test arar); ekranı değişen işin
-rehberi `panel/guides/*.html` (bağlantı adres yazmaz: `data-route` / `data-tab`). Tablolar dfGrid (`tv/src/ui/grid`),
+rehberi `panel/guides/*.html` (bağlantı adres yazmaz: `data-route` / `data-tab`). Tablolar dfGrid (`kodmob-frontend/src/ui/grid`),
 formlar alan şemasından.
 
 **Çok site** (docs/gelistirici/02-mimari.md). Tek kurulum, site isteğin alan adından seçilir (`Core\Sites\SiteContext`);

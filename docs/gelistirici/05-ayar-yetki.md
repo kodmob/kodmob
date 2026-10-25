@@ -47,7 +47,7 @@ Kurallar (`ArchitectureTest` denetler):
   modül için `events()`.
 - İsteğe bağlı modülün rotası `module:<ad>` ile (kapalıyken 404).
 - Hata: `throw ValidationException::fields(['alan' => 'Türkçe ileti'])` (422) ya da
-  `throw new DomainException('km_kod', 'Türkçe ileti', 409)`; ön yüz kodları `tv/src/domain/errors.js`'te okur.
+  `throw new DomainException('km_kod', 'Türkçe ileti', 409)`; ön yüz kodları `kodmob-frontend/src/domain/errors.js`'te okur.
 - Controller dizi döner (JSON); girdi `$this->input($request)`.
 
 ## İşlem geçmişi ve olaylar

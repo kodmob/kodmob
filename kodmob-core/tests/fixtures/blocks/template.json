@@ -1,0 +1,17 @@
+{
+  "note": "Blok şablonu örnekleri: kodmob-core Modules\\Site\\Blocks\\Template ve kodmob-frontend/src/blocks/template.js aynı sonucu vermeli (BlockTemplateTest, kodmob-frontend/tests/blocks.test.mjs).",
+  "cases": [
+    { "name": "kaçış", "template": "<h2 title=\"{{ title }}\">{{title}}</h2>", "data": { "title": "A & B <i>'x'</i> \"y\"" }, "html": "<h2 title=\"A &amp; B &lt;i&gt;&apos;x&apos;&lt;/i&gt; &quot;y&quot;\">A &amp; B &lt;i&gt;&apos;x&apos;&lt;/i&gt; &quot;y&quot;</h2>" },
+    { "name": "kaçışsız", "template": "<div>{{{ body }}}</div>", "data": { "body": "<p>Merhaba <strong>dünya</strong></p>" }, "html": "<div><p>Merhaba <strong>dünya</strong></p></div>" },
+    { "name": "yok ve sayı", "template": "[{{missing}}][{{n}}][{{f}}][{{yes}}]", "data": { "n": 42, "f": 1.5, "yes": true }, "html": "[][42][1.5][]" },
+    { "name": "liste", "template": "<ul>{{#items}}<li class=\"d-{{@number}}{{#@first}} first{{/@first}}{{#@last}} last{{/@last}}\">{{text}}</li>{{/items}}</ul>", "data": { "items": [{ "text": "Bir" }, { "text": "İki" }, { "text": "Üç" }] }, "html": "<ul><li class=\"d-1 first\">Bir</li><li class=\"d-2\">İki</li><li class=\"d-3 last\">Üç</li></ul>" },
+    { "name": "düz liste ve nokta", "template": "{{#tags}}<b>{{.}}</b>{{/tags}}", "data": { "tags": ["x", "y"] }, "html": "<b>x</b><b>y</b>" },
+    { "name": "dış bağlam", "template": "{{#items}}<a href=\"{{url}}\">{{text}} {{sep}}</a>{{/items}}", "data": { "sep": "·", "items": [{ "text": "A", "url": "/a/" }, { "text": "B", "url": "" }] }, "html": "<a href=\"/a/\">A ·</a><a href=\"\">B ·</a>" },
+    { "name": "nesne", "template": "{{#image}}<img src=\"{{src}}\" alt=\"{{alt}}\">{{/image}}{{^image}}<span>yok</span>{{/image}}", "data": { "image": { "src": "/media/a.webp", "alt": "Kapak" } }, "html": "<img src=\"/media/a.webp\" alt=\"Kapak\">" },
+    { "name": "boş nesne ve ters", "template": "{{#image}}<img>{{/image}}{{^image}}<span>yok</span>{{/image}}", "data": { "image": null }, "html": "<span>yok</span>" },
+    { "name": "doğruluk", "template": "{{#a}}a{{/a}}{{#b}}b{{/b}}{{#c}}c{{/c}}{{#d}}d{{/d}}{{^e}}e{{/e}}{{#f}}f{{/f}}", "data": { "a": true, "b": "0", "c": 0, "d": "", "e": [], "f": 3 }, "html": "abef" },
+    { "name": "iç içe", "template": "{{#rows}}<div>{{#items}}<i>{{name}}{{#badge}} <em>{{badge}}</em>{{/badge}}</i>{{/items}}</div>{{/rows}}", "data": { "rows": [{ "items": [{ "name": "X", "badge": "yeni" }, { "name": "Y", "badge": "" }] }, { "items": [] }] }, "html": "<div><i>X <em>yeni</em></i><i>Y</i></div><div></div>" },
+    { "name": "liste uzunluğu", "template": "{{#a.length}}<ul data-n=\"{{a.length}}\">{{#a}}<li>{{.}}</li>{{/a}}</ul>{{/a.length}}{{#b.length}}<ul></ul>{{/b.length}}{{^b.length}}boş{{/b.length}}", "data": { "a": ["x", "y"], "b": [] }, "html": "<ul data-n=\"2\"><li>x</li><li>y</li></ul>boş" },
+    { "name": "yol ve yorum", "template": "{{! açıklama }}{{cover.src}}|{{cover.missing}}", "data": { "cover": { "src": "/x.png" } }, "html": "/x.png|" }
+  ]
+}

@@ -21,19 +21,19 @@ adres geçmişi eskisini 301 ile yeniye yönlendirir.
 ## Belge yazmak
 
 ```
-tv/src/legal/<ad>/doc.json      { "group": "commerce", "order": 10, "module": "commerce", "updated": "2026-10-21",
+kodmob-frontend/src/legal/<ad>/doc.json      { "group": "commerce", "order": 10, "module": "commerce", "updated": "2026-10-21",
                                   "paths": { "tr": "mesafeli-satis-sozlesmesi", "en": "…", "de": "…" } }
-tv/src/legal/<ad>/tr.html       şablon (blokların şablon dili: {{yol}}, {{{yol}}}, {{#yol}}…{{/yol}}, {{^yol}}…{{/yol}})
-tv/src/legal/<ad>/en.html …
+kodmob-frontend/src/legal/<ad>/tr.html       şablon (blokların şablon dili: {{yol}}, {{{yol}}}, {{#yol}}…{{/yol}}, {{^yol}}…{{/yol}})
+kodmob-frontend/src/legal/<ad>/en.html …
 ```
 
-- Başlık, açıklama ve sayfa girişi sözlükte: `legal.<ad>.title`, `.description`, `.lead` (tv/src/i18n).
+- Başlık, açıklama ve sayfa girişi sözlükte: `legal.<ad>.title`, `.description`, `.lead` (kodmob-frontend/src/i18n).
 - Bölümler `<h2>`: sunucu kimlik verir, içindekileri ve numaraları üretir. Tablo `<div class="table-wrap">` içinde.
 - Grup: `general`, `contact`, `newsletter`, `commerce`, `booking` (`legal.groups.<grup>`).
 - Satır içi stil ve betik olamaz (CSP); derleme hatalı tanımda durur (`vite/legal.js`).
 
 **Profil** aynı adlı klasörle çatının belgesini değiştirir (doc.json alanları üstüne yazar, şablon dil başına) ya da
-yeni belge ekler (`tv/src/profiles/<ad>/legal/<belge>/`). Profil rotalarında aynı adla kendi sayfasını yazarsa çatının
+yeni belge ekler (`kodmob-frontend/src/profiles/<ad>/legal/<belge>/`). Profil rotalarında aynı adla kendi sayfasını yazarsa çatının
 rotası alınmaz.
 
 ## Şablonun verisi

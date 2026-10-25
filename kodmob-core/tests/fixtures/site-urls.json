@@ -1,0 +1,358 @@
+{
+    "_": "Site adresleri için ortak test vektörleri. 'urls': kodmob-frontend (vite/site-urls.js, gerçek routes.config.js + locales.js) ve kodmob-core (Site\\Render\\Router, tests/fixtures/site/km-manifest.json) aynı adresi üretmeli. 'matches' ve 'inactive' yalnızca sunucu eşleştiricisini sınar (tests/Feature/SiteUrlsTest.php).",
+    "urls": [
+        {
+            "name": "home",
+            "locale": "tr",
+            "url": "/"
+        },
+        {
+            "name": "home",
+            "locale": "en",
+            "url": "/en/"
+        },
+        {
+            "name": "projects",
+            "locale": "tr",
+            "url": "/projeler/"
+        },
+        {
+            "name": "projects",
+            "locale": "en",
+            "url": "/en/projects/"
+        },
+        {
+            "name": "blog",
+            "locale": "tr",
+            "url": "/blog/"
+        },
+        {
+            "name": "blog",
+            "locale": "en",
+            "url": "/en/blog/"
+        },
+        {
+            "name": "project",
+            "locale": "tr",
+            "slug": "harman",
+            "url": "/projeler/harman/"
+        },
+        {
+            "name": "project",
+            "locale": "en",
+            "slug": "harman",
+            "url": "/en/projects/harman/"
+        },
+        {
+            "name": "post",
+            "locale": "tr",
+            "slug": "laravel-ile",
+            "url": "/blog/laravel-ile/"
+        },
+        {
+            "name": "post",
+            "locale": "en",
+            "slug": "with-laravel",
+            "url": "/en/blog/with-laravel/"
+        },
+        {
+            "name": "page",
+            "locale": "tr",
+            "slug": "yaz-kampanyasi",
+            "url": "/yaz-kampanyasi/"
+        },
+        {
+            "name": "page",
+            "locale": "en",
+            "slug": "summer-sale",
+            "url": "/en/summer-sale/"
+        },
+        {
+            "name": "notFound",
+            "locale": "tr",
+            "url": "/404.html"
+        },
+        {
+            "name": "notFound",
+            "locale": "en",
+            "url": "/en/404.html"
+        }
+    ],
+    "matches": [
+        {
+            "path": "/",
+            "kind": "page",
+            "name": "home",
+            "locale": "tr"
+        },
+        {
+            "path": "/index.html",
+            "kind": "page",
+            "name": "home",
+            "locale": "tr"
+        },
+        {
+            "path": "/en/",
+            "kind": "page",
+            "name": "home",
+            "locale": "en"
+        },
+        {
+            "path": "/projeler/",
+            "kind": "page",
+            "name": "projects",
+            "locale": "tr"
+        },
+        {
+            "path": "/projeler/harman/",
+            "kind": "page",
+            "name": "project",
+            "locale": "tr",
+            "slug": "harman"
+        },
+        {
+            "path": "/en/projects/harman/",
+            "kind": "page",
+            "name": "project",
+            "locale": "en",
+            "slug": "harman"
+        },
+        {
+            "path": "/blog/feed.xml",
+            "kind": "rss",
+            "locale": "tr"
+        },
+        {
+            "path": "/en/blog/feed.xml",
+            "kind": "rss",
+            "locale": "en"
+        },
+        {
+            "path": "/projeler",
+            "redirect": "/projeler/",
+            "code": 301
+        },
+        {
+            "path": "/projeler/harman",
+            "redirect": "/projeler/harman/",
+            "code": 301
+        },
+        {
+            "path": "/tr/",
+            "redirect": "/",
+            "code": 301,
+            "why": "kalkan Türkçe öneki"
+        },
+        {
+            "path": "/tr/projeler/harman/",
+            "redirect": "/projeler/harman/",
+            "code": 301
+        },
+        {
+            "path": "/tr/projeler",
+            "redirect": "/projeler/",
+            "code": 301
+        },
+        {
+            "path": "/tr/blog/feed.xml",
+            "redirect": "/blog/feed.xml",
+            "code": 301
+        },
+        {
+            "path": "/tr/blog/laravel-ile/",
+            "redirect": "/blog/laravel-ile/",
+            "code": 301
+        },
+        {
+            "path": "/tr/index.html",
+            "redirect": "/",
+            "code": 301,
+            "why": "eski sürümün kabuk dosyası"
+        },
+        {
+            "path": "/eski-projeler/harman/",
+            "redirect": "/projeler/harman/",
+            "code": 301,
+            "why": "legacy.paths kalıbı"
+        },
+        {
+            "path": "/en/our-work/",
+            "redirect": "/en/projects/",
+            "code": 301,
+            "why": "legacy.paths sabit adres"
+        },
+        {
+            "path": "/olmayan/",
+            "kind": "page",
+            "name": "page",
+            "locale": "tr",
+            "slug": "olmayan",
+            "why": "kökte tek parça: blok sayfası adayı (en son denenir; kayıt yoksa sayfa üretimi 404 verir)"
+        },
+        {
+            "path": "/en/olmayan/",
+            "kind": "page",
+            "name": "page",
+            "locale": "en",
+            "slug": "olmayan"
+        },
+        {
+            "path": "/olmayan/yol/",
+            "kind": "page",
+            "name": "notFound",
+            "locale": "tr",
+            "status": 404
+        },
+        {
+            "path": "/en/olmayan/yol/",
+            "kind": "page",
+            "name": "notFound",
+            "locale": "en",
+            "status": 404
+        },
+        {
+            "path": "/favicon.ico",
+            "kind": "page",
+            "name": "notFound",
+            "locale": "tr",
+            "status": 404,
+            "why": "noktalı adres blok sayfası sayılmaz"
+        },
+        {
+            "path": "/tr/olmayan/",
+            "kind": "page",
+            "name": "notFound",
+            "locale": "tr",
+            "status": 404
+        },
+        {
+            "path": "/de/",
+            "kind": "page",
+            "name": "page",
+            "locale": "tr",
+            "slug": "de",
+            "why": "derlemede olmayan dil: blok sayfası adayı; dil kodu sayfa adresi olamadığından (PageType) sayfa üretimi 404 verir"
+        },
+        {
+            "path": "/de/projekte/",
+            "kind": "page",
+            "name": "notFound",
+            "locale": "tr",
+            "status": 404,
+            "why": "derlemede olmayan dil"
+        },
+        {
+            "path": "/PROJELER/Harman/",
+            "redirect": "/projeler/harman/",
+            "code": 301,
+            "why": "büyük harf"
+        },
+        {
+            "path": "/projeler//harman/",
+            "redirect": "/projeler/harman/",
+            "code": 301,
+            "why": "çift /"
+        },
+        {
+            "path": "/EN/Projects",
+            "redirect": "/en/projects/",
+            "code": 301,
+            "why": "büyük harf + eksik /: tek adımda"
+        },
+        {
+            "path": "/Olmayan/",
+            "redirect": "/olmayan/",
+            "code": 301,
+            "why": "küçük harflisi blok sayfası adayı (kayıt sayfalarındaki gibi; kayıt yoksa orada 404)"
+        },
+        {
+            "path": "/Olmayan/Yol/",
+            "kind": "page",
+            "name": "notFound",
+            "locale": "tr",
+            "status": 404,
+            "why": "küçük harflisi de yok"
+        },
+        {
+            "path": "/en/projeler/harman/",
+            "redirect": "/en/projects/harman/",
+            "code": 301,
+            "why": "yanlış dilde bölüm adı"
+        },
+        {
+            "path": "/en/projeler/",
+            "redirect": "/en/projects/",
+            "code": 301,
+            "why": "yanlış dilde bölüm adı"
+        },
+        {
+            "path": "/projects/harman/",
+            "redirect": "/projeler/harman/",
+            "code": 301,
+            "why": "öneksiz dilde İngilizce bölüm adı"
+        },
+        {
+            "path": "/en/projeler/harman",
+            "redirect": "/en/projects/harman/",
+            "code": 301,
+            "why": "yanlış bölüm + eksik /"
+        }
+    ],
+    "inactive": {
+        "_": "İngilizce dil kaydında pasif: sayfaları 302 ile varsayılan dile (kayıt sayfası rotanın yedeğine) gider.",
+        "languages": [
+            {
+                "code": "tr",
+                "prefix": "",
+                "active": true,
+                "default": true
+            },
+            {
+                "code": "en",
+                "prefix": "en",
+                "active": false,
+                "default": false
+            }
+        ],
+        "matches": [
+            {
+                "path": "/en/",
+                "redirect": "/",
+                "code": 302
+            },
+            {
+                "path": "/en/projects/",
+                "redirect": "/projeler/",
+                "code": 302
+            },
+            {
+                "path": "/en/projects/harman/",
+                "redirect": "/projeler/",
+                "code": 302
+            },
+            {
+                "path": "/en/blog/feed.xml",
+                "redirect": "/",
+                "code": 302
+            },
+            {
+                "path": "/en/olmayan/",
+                "redirect": "/",
+                "code": 302
+            },
+            {
+                "path": "/en/olmayan/yol/",
+                "kind": "page",
+                "name": "notFound",
+                "locale": "tr",
+                "status": 404
+            },
+            {
+                "path": "/projeler/",
+                "kind": "page",
+                "name": "projects",
+                "locale": "tr"
+            }
+        ]
+    }
+}

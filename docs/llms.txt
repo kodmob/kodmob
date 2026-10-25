@@ -17,7 +17,7 @@ kayıtlar ve kancalarla eklenir.
 - [06 Yayın](gelistirici/06-yayin.md): paket, paylaşımlı hostinge kurulum, cron, alt projeler
 - [07 Güncelleme](gelistirici/07-guncelleme.md): kodmob.json, kodmob:lock, kodmob:upgrade
 - [08 Bloklar](gelistirici/08-bloklar.md): sayfa düzenleyici, bölgeler (zone), blok yazmak, şablon dili
-- [09 Yasal belgeler](gelistirici/09-yasal-belgeler.md): tv/src/legal, modüle göre belgeler, Module::legal(), panelden özelleştirme
+- [09 Yasal belgeler](gelistirici/09-yasal-belgeler.md): kodmob-frontend/src/legal, modüle göre belgeler, Module::legal(), panelden özelleştirme
 - [Araç paketi](arac-paketi.md): kodmob:tool new, kodmob:add, katalog ve katkı kontrol listesi
 
 ## Ek

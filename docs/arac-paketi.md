@@ -8,13 +8,13 @@ onunla karışmaz. Tasarım ve kararlar:  §6, §9.
 ## 1. Hızlı başlangıç
 
 ```
-cd kodmob-api
+cd kodmob-core
 php artisan kodmob:tool new stok-takibi --label="Stok takibi" --author="Adınız"
 php artisan test --filter=StokTakibi        # paketin kendi testi
-cd ../tv && npm run build                   # panel sayfası derlemeye girer
+cd ../kodmob-frontend && npm run build                   # panel sayfası derlemeye girer
 ```
 
-İskelet `kodmob-api/extensions/stok-takibi/`'ye yazılır ve hemen kuruludur: Araç Pazarı'nda "Topluluk" rozetiyle
+İskelet `kodmob-core/extensions/stok-takibi/`'ye yazılır ve hemen kuruludur: Araç Pazarı'nda "Topluluk" rozetiyle
 görünür, menüde "Proje modülleri" altında sayfası, Proje Ayarları'nda ayarı, Kullanıcılar ve Roller'de yetkisi
 vardır.
 
@@ -62,7 +62,7 @@ Paketin dışarıdan kütüphane ihtiyacı varsa bugün desteklenmiyor (bkz. §7
   (`stok_takibi_urunler`). Sürüme özgü SQL yazmayın (`App\Core\Database\Sql`).
 - **Çok proje**: paket kurulumun tamamınındır, her proje kendi veritabanında tablolarını ve verisini tutar.
   Yol ve adres için `storage_path()`, `Paths::…`; istek içi statik önbellek tutmayın (site değişince kalır).
-- **Panel** (`panel/index.js`): biçim projeninkiyle aynı (`tv/src/panel/extension.js`):
+- **Panel** (`panel/index.js`): biçim projeninkiyle aynı (`kodmob-frontend/src/panel/extension.js`):
 
   ```js
   export const PAGES = [{
@@ -91,15 +91,15 @@ php artisan kodmob:tool check stok-takibi                     # tanım, uyum, te
 ```
 
 Sonra: tablolar için `php artisan migrate` (canlıda kurulum adresi `/api/v1/setup?token=…` bütün projelerin
-tablolarını kurar), panel sayfası için `tv`'de derleme, paketi yükleme. Kurulum panelden yapılmaz: sunucuya kod
+tablolarını kurar), panel sayfası için `kodmob-frontend`'de derleme, paketi yükleme. Kurulum panelden yapılmaz: sunucuya kod
 yazan iş geliştirme bilgisayarında, gözden geçirilerek yapılır.
 
-**Kaldırma:** önce Araç Pazarı'nda kapatın, sonra `kodmob-api/extensions/<anahtar>/` klasörünü silip derleyin.
+**Kaldırma:** önce Araç Pazarı'nda kapatın, sonra `kodmob-core/extensions/<anahtar>/` klasörünü silip derleyin.
 Tabloları ve verisi kalır (elle silinir).
 
 ## 5. Kataloğa ekleme (topluluk)
 
-Katalog açık depoda `kodmob-api/resources/marketplace/catalog.json`; araç **çekme isteğiyle** (PR) eklenir.
+Katalog açık depoda `kodmob-core/resources/marketplace/catalog.json`; araç **çekme isteğiyle** (PR) eklenir.
 Panel kataloğu dışarıya istek atmadan bu dosyadan okur (çatıyla güncellenir).
 
 ```json
@@ -129,12 +129,12 @@ dosyalar). Yalnızca güvendiğiniz paketi kurun.
 
 ## 6. Geliştirirken
 
-- Paketi kendi deposunda geliştirip denemek için: `kodmob-api/extensions/<anahtar>` klasörüne bağlantı
+- Paketi kendi deposunda geliştirip denemek için: `kodmob-core/extensions/<anahtar>` klasörüne bağlantı
   (Windows: `New-Item -ItemType Junction`, Linux/macOS: `ln -s`) ya da `KODMOB_EXTENSIONS` (sunucu) ve
   `KM_EXTENSIONS` (derleme) ortam değişkenleriyle başka klasör.
 - Çatının testleri kurulu paketlerden bağımsızdır (`Tests\TestCase::$extensions`); paketin testleri (`Tests\`
   dışındaki ad alanı) ve `ArchitectureTest` paketleri yükler.
-- Örnek paket: `kodmob-api/tests/fixtures/extensions/merhaba` (`kodmob:tool new` çıktısı; uçtan uca
+- Örnek paket: `kodmob-core/tests/fixtures/extensions/merhaba` (`kodmob:tool new` çıktısı; uçtan uca
   `extensions.spec` onu yükler).
 
 ## 7. Bugün olmayanlar

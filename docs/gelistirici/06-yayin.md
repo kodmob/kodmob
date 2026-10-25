@@ -6,7 +6,7 @@ Hedef: paylaşımlı hosting (Hostinger gibi), sunucuda derleme yok, SSH olmayab
 ## Paket
 
 ```bash
-node build.mjs --bump minor          # sürümü yükseltir (tv/package.json, config/kodmob.php, kodmob.json), test eder, paketler
+node build.mjs --bump minor          # sürümü yükseltir (kodmob-frontend/package.json, config/kodmob.php, kodmob.json), test eder, paketler
 node build.mjs --no-content          # içeriksiz güncelleme paketi
 ```
 

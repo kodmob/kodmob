@@ -4,9 +4,9 @@
 
 | Sahip | Nerede | Kim değiştirir |
 |---|---|---|
-| **Çatı** (framework) | `kodmob-api/app/Core`, `app/Modules`, `config/`, `routes/api.php`, `database/`; `tv/src` (profiller hariç), `tv/vite`, `tv/scripts` | `kodmob:upgrade` yeniler (`kodmob.json` `framework`) |
-| **Proje** | `kodmob-api/app/Project` (`App\Project`), `config/project.php`, `routes/project.php`, `tests/Project`; `tv/src/profiles/<ad>/` | siz; güncelleme dokunmaz (`kodmob.json` `project`) |
-| **Araç paketi** | `kodmob-api/extensions/<anahtar>/` | paketin yazarı; `kodmob:add` kurar ([arac-paketi.md](../arac-paketi.md)) |
+| **Çatı** (framework) | `kodmob-core/app/Core`, `app/Modules`, `config/`, `routes/api.php`, `database/`; `kodmob-frontend/src` (profiller hariç), `kodmob-frontend/vite`, `kodmob-frontend/scripts` | `kodmob:upgrade` yeniler (`kodmob.json` `framework`) |
+| **Proje** | `kodmob-core/app/Project` (`App\Project`), `config/project.php`, `routes/project.php`, `tests/Project`; `kodmob-frontend/src/profiles/<ad>/` | siz; güncelleme dokunmaz (`kodmob.json` `project`) |
+| **Araç paketi** | `kodmob-core/extensions/<anahtar>/` | paketin yazarı; `kodmob:add` kurar ([arac-paketi.md](../arac-paketi.md)) |
 
 Kural: çatı projenin ya da paketin sınıfını bilmez (`ArchitectureTest` denetler). Proje çatıya kayıtlarla ve
 kancalarla eklenir; çatı dosyasını değiştirmeniz gerekiyorsa önce bir kanca isteyin (ya da dosyayı `kodmob.json`
@@ -36,7 +36,7 @@ içerik, renk, logo panelden değişir.
 - **İsteğe bağlı** (`Modules::OPTIONAL`; profilin `site.config.js` `profile.modules`): `blog`, `briefs` (talepler),
   `estimate`, `jarvis`, `domains`, `sms`, `sites`, `newsletter`, Mağaza ve takılıları. `kind: base` temel yapı, `kind: tool` araç (Araç Pazarı'nda
   proje başına kapanır, `Core\ModuleState`; çatının aracı Keşfet'ten derlemesiz eklenir: `ModuleState::added()`,
-  `Modules::installed()` = profil + eklenenler). Araçların site rotaları her derlemede (`tv/vite/framework-routes.js`
+  `Modules::installed()` = profil + eklenenler). Araçların site rotaları her derlemede (`kodmob-frontend/vite/framework-routes.js`
   `toolRoutes()`; profil `toolPages: false` ile almaz). Kapalı modülün sınıfı yüklenmez: yetkisi, ayarı, menüsü, uçları (404,
   `module:` ara katmanı) ve site sayfası (rotanın `module`'ü) yoktur.
 - **Projenin modülleri** (`config/project.php` `modules`): her zaman açık.
@@ -48,7 +48,7 @@ Modül ne katar: [03 Modül](03-modul.md).
 
 Tek kurulum, proje isteğin alan adından seçilir (`Core\Sites\SiteContext`; kayıt `storage/sites.json`). Her
 projenin veritabanı, depolaması (`storage/sites/<anahtar>/`), medyası (`media/<anahtar>/`) ve oturum anahtarı
-ayrıdır; ana projenin derlemesini kullanır (kendi derlemesi `tv/sites/<anahtar>/`). E-posta, SMS ve yapay zekâ
+ayrıdır; ana projenin derlemesini kullanır (kendi derlemesi `kodmob-frontend/sites/<anahtar>/`). E-posta, SMS ve yapay zekâ
 ayarları ana projeden gelir (`Options::SHARED`). Kod yazarken:
 
 - Yol ve adres: `storage_path()`, `Paths::siteRoot()`, `Paths::mediaRoot()/mediaUrl()`; sabit yol yazmayın.
@@ -77,5 +77,5 @@ kendi tablosu gereken veri (talepler, oturumlar, işler) ayrı tablolarda.
 ## Ön yüz
 
 Vite 7 + Alpine 3 + Tailwind 4 + Nunjucks. Site sayfaları derlemede HTML kabuk olur (dil başına), içeriği sunucu
-doldurur; panel tek sayfa uygulamasıdır (`tv/src/panel`, görünümler tembel yüklenir, tablolar dfGrid
-`tv/src/ui/grid`, formlar alan şemasından). İkonlar tek SVG dosyasında (`shell/icons.html`).
+doldurur; panel tek sayfa uygulamasıdır (`kodmob-frontend/src/panel`, görünümler tembel yüklenir, tablolar dfGrid
+`kodmob-frontend/src/ui/grid`, formlar alan şemasından). İkonlar tek SVG dosyasında (`shell/icons.html`).

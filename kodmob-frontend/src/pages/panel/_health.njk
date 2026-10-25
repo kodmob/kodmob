@@ -1,0 +1,132 @@
+{# Sistem Sağlığı. Mantık: panel/health.js; kartlar kodmob-core Core\Health'ten (modüller health() ile ekler). #}
+<div class="pn-page" x-data="kmHealth">
+  <div class="pn-bar">
+    <div class="min-w-0 flex-1">
+      <p class="pn-bar-title">Sistem Sağlığı</p>
+      <p class="pn-bar-meta"><span>Sunucu, güvenlik, hız, veritabanı, depolama, arka plan ve yedek. Sorun büyümeden görmek için.</span></p>
+    </div>
+    <span class="badge" x-show="report" x-cloak :class="levelBadge(report?.level)" x-text="overallText" data-testid="health-level"></span>
+    <button type="button" class="btn btn-secondary" @click="send()" :disabled="sending || loading" title="Sağlık özetini rapor alıcısına e-postayla gönderir" data-testid="health-report">
+      <svg class="icon icon-sm" :class="sending && 'animate-spin'" aria-hidden="true"><use :href="sending ? '#i-loader' : '#i-send'"/></svg>
+      <span x-text="sending ? 'Gönderiliyor…' : 'Bildir'">Bildir</span>
+    </button>
+    <button type="button" class="btn btn-ghost" @click="load()" :disabled="loading">
+      <svg class="icon icon-sm" :class="loading && 'animate-spin'" aria-hidden="true"><use href="#i-refresh"/></svg> Yenile
+    </button>
+  </div>
+  <p class="pn-hint -mt-2" x-show="report && !report.report_to" x-cloak>
+    <svg class="icon icon-sm" aria-hidden="true"><use href="#i-info"/></svg>
+    <span>Rapor alıcısı yok: "Bildir" ve aylık rapor için <a :href="recipientSetting" class="font-medium text-primary hover:underline">Sistem Ayarları › Genel</a>'ndan e-posta adresini yazın.</span>
+  </p>
+
+  <template x-if="loading && !report">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2"><div class="skeleton h-48"></div><div class="skeleton h-48"></div><div class="skeleton h-48"></div><div class="skeleton h-48"></div></div>
+  </template>
+
+  <template x-if="error">
+    <div class="card border-danger/30"><div class="card-body flex items-start gap-3">
+      <span class="tone-icon tone-danger"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg></span>
+      <div><p class="font-semibold text-ink">Sağlık verisi alınamadı</p><p class="mt-0.5 text-sm text-ink-2" x-text="error"></p></div>
+    </div></div>
+  </template>
+
+  {# ============================================================ bulgular #}
+  <template x-if="report">
+    <section class="card" data-testid="health-findings">
+      <div class="card-header">
+        <h2 class="card-title flex items-center gap-2"><svg class="icon icon-sm" :class="findings.length ? 'text-warning' : 'text-success'" aria-hidden="true"><use :href="findings.length ? '#i-alert' : '#i-check-circle'"/></svg> Bulgular <span class="num text-sm font-normal text-muted" x-text="'(' + findings.length + ')'"></span></h2>
+      </div>
+      <p class="card-body text-sm text-success" x-show="!findings.length">Dikkat gerektiren bir bulgu yok.</p>
+      <ul class="divide-y divide-line" x-show="findings.length">
+        <template x-for="(f, i) in findings" :key="i">
+          <li class="flex flex-col gap-1 px-4 py-3 text-sm sm:flex-row sm:items-start sm:gap-3 md:px-5">
+            <span class="badge shrink-0 self-start" :class="levelBadge(f.level)" x-text="levelText(f.level)"></span>
+            <span class="min-w-0 flex-1">
+              <span class="text-ink"><span class="text-muted" x-text="f.area + ': '"></span><span x-text="f.text"></span></span>
+              <span class="mt-0.5 block text-ink-2" x-show="f.fix" x-text="'→ ' + f.fix"></span>
+            </span>
+            <a class="shrink-0 text-sm font-medium text-primary hover:underline" x-show="f.link" :href="link(f.link)" x-text="f.link?.label"></a>
+          </li>
+        </template>
+      </ul>
+    </section>
+  </template>
+
+  {# ============================================================ kartlar #}
+  <template x-if="report">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <template x-for="s in sections" :key="s.key">
+        <section class="card flex flex-col" :data-health="s.key">
+          <div class="card-header flex items-center justify-between gap-3">
+            <h2 class="card-title flex items-center gap-2"><svg class="icon icon-sm text-primary" aria-hidden="true"><use :href="'#i-' + s.icon"/></svg> <span x-text="s.title"></span></h2>
+            <span class="badge" :class="levelBadge(s.level)" x-text="levelText(s.level)"></span>
+          </div>
+          <dl class="flex flex-col px-4 pb-2 md:px-5">
+            <template x-for="r in s.rows" :key="r.label">
+              <div class="flex items-baseline justify-between gap-4 border-b border-line py-2 text-sm last:border-b-0">
+                <dt class="shrink-0 text-ink-2" x-text="r.label"></dt>
+                <dd class="min-w-0 text-right font-medium break-words text-ink" x-text="r.value"></dd>
+              </div>
+            </template>
+          </dl>
+          <template x-if="s.list && s.list.items.length">
+            <div class="border-t border-line px-4 py-3 md:px-5">
+              <p class="mb-1.5 text-xs font-semibold text-ink-2" x-text="s.list.title"></p>
+              <ul class="flex flex-col gap-1">
+                <template x-for="item in s.list.items" :key="item.label">
+                  <li class="flex items-baseline gap-2 text-sm">
+                    <span class="min-w-0 flex-1 truncate font-mono text-xs text-ink-2" x-text="item.label"></span>
+                    <span class="num shrink-0 text-ink" x-show="item.value" x-text="item.value"></span>
+                    <span class="shrink-0 text-xs text-muted" x-text="item.hint"></span>
+                  </li>
+                </template>
+              </ul>
+            </div>
+          </template>
+          <template x-if="s.flags.some((f) => f.level === 'info')">
+            <ul class="border-t border-line px-4 py-3 text-xs text-ink-2 md:px-5">
+              <template x-for="(f, i) in s.flags.filter((f) => f.level === 'info')" :key="i"><li x-text="f.text + (f.fix ? ' → ' + f.fix : '')"></li></template>
+            </ul>
+          </template>
+          <div class="mt-auto flex items-center gap-3 border-t border-line px-4 py-2.5 md:px-5" x-show="s.note || s.link">
+            <p class="min-w-0 flex-1 text-xs text-muted" x-text="s.note || ''"></p>
+            <a class="shrink-0 text-sm font-medium text-primary hover:underline" x-show="s.link" :href="link(s.link)"><span x-text="s.link?.label"></span> <svg class="icon icon-sm inline-block" aria-hidden="true"><use href="#i-chevron-right"/></svg></a>
+          </div>
+        </section>
+      </template>
+    </div>
+  </template>
+
+  {# ============================================================ hata kodları #}
+  <section class="card" data-testid="health-errors">
+    <div class="card-header flex-wrap gap-2">
+      <h2 class="card-title flex items-center gap-2"><svg class="icon icon-sm text-danger" aria-hidden="true"><use href="#i-alert-circle"/></svg> Hata kodları <span class="num text-sm font-normal text-muted" x-text="'(' + errors.length + ')'"></span></h2>
+      <div class="ml-auto flex flex-wrap items-center gap-2" x-show="errors.length" x-cloak>
+        <input type="search" class="input h-9 w-48" x-model="query" placeholder="Kod ara (DB-…)" aria-label="Hata kodu ara" data-testid="health-error-search">
+        <button type="button" class="btn btn-ghost btn-sm" @click="clearErrors()">Temizle</button>
+      </div>
+    </div>
+    <p class="card-body text-sm text-ink-2" x-show="!errors.length">Kayıtlı hata yok. Panelde ya da sitede beklenmeyen bir hata olursa mesajda bir kod yazar (ör. DB-3F9A1C); kullanıcı o kodu iletince ayrıntısı burada aranır.</p>
+    <ul class="divide-y divide-line" x-show="errors.length" x-cloak>
+      <template x-for="e in shownErrors" :key="e.ref">
+        <li class="px-4 py-3 text-sm md:px-5" :data-error="e.ref">
+          <p class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <span class="font-mono font-semibold text-ink" x-text="e.ref"></span>
+            <span class="num text-ink-2" x-text="fmt.dateTime(e.at)"></span>
+            <span class="text-ink-2" x-text="e.user_name || 'Ziyaretçi'"></span>
+            <span class="font-mono text-xs text-muted" x-text="e.request"></span>
+          </p>
+          <p class="mt-1 font-medium break-words text-danger" x-text="e.error"></p>
+          <details class="mt-1">
+            <summary class="cursor-pointer text-xs text-primary">Ayrıntı (kodda yeri ve SQL)</summary>
+            <p class="mt-1 font-mono text-xs text-ink-2" x-text="e.context"></p>
+            <pre class="mt-1 max-h-48 overflow-auto rounded-control bg-surface-subtle p-2 text-xs break-all whitespace-pre-wrap text-ink" x-show="e.query" x-text="e.query"></pre>
+          </details>
+        </li>
+      </template>
+      <li class="px-4 py-3 text-sm text-ink-2 md:px-5" x-show="errors.length && !shownErrors.length">Bu kodla kayıt yok.</li>
+    </ul>
+  </section>
+
+  <p class="text-xs text-muted" x-show="report" x-cloak x-text="'Son güncelleme: ' + fmt.dateTime(report?.generated_at)"></p>
+</div>

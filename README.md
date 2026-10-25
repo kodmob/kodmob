@@ -42,13 +42,13 @@ dosyasıdır: MySQL ya da Apache gerekmez. PHP PATH'te değilse `KM_PHP` ortam d
 
 ```bash
 git clone https://github.com/kodmob/kodmob.git benim-projem && cd benim-projem
-cd kodmob-api && composer install
+cd kodmob-core && composer install
 php artisan kodmob:install --profile=benim-sitem      # .env, anahtarlar, SQLite, tablolar, ilk yönetici, profil
-cd ../tv && npm ci && npm run deploy:local && npm run serve:local
+cd ../kodmob-frontend && npm ci && npm run deploy:local && npm run serve:local
 # site: http://127.0.0.1:8090/   panel: http://127.0.0.1:8090/panel/
 ```
 
-`kodmob:install` sitenizin profilini başlangıçtan kopyalar (`tv/src/profiles/benim-sitem/`) ve etkin yapar;
+`kodmob:install` sitenizin profilini başlangıçtan kopyalar (`kodmob-frontend/src/profiles/benim-sitem/`) ve etkin yapar;
 yönetici adı ve e-postası sorulur (`--admin`, `--email`, `--password`; şifre verilmezse rastgele üretilip bir kez
 gösterilir). Var olan `.env`'e ve anahtarlara dokunmaz. Sonrası: [01 Kurulum](docs/gelistirici/01-kurulum.md),
 [02 Mimari](docs/gelistirici/02-mimari.md).
@@ -57,34 +57,34 @@ gösterilir). Var olan `.env`'e ve anahtarlara dokunmaz. Sonrası: [01 Kurulum](
 
 ```bash
 # Testler
-cd kodmob-api && php artisan test        # backend (SQLite, bellek içi)
-cd tv && npm run test:db                 # backend: SQLite + MySQL + PostgreSQL (yerel PostgreSQL kendiliğinden)
-cd tv && npm test                        # ön yüz birim testleri
-cd tv && npm run e2e                     # uçtan uca (kurulu Chrome)
+cd kodmob-core && php artisan test        # backend (SQLite, bellek içi)
+cd kodmob-frontend && npm run test:db                 # backend: SQLite + MySQL + PostgreSQL (yerel PostgreSQL kendiliğinden)
+cd kodmob-frontend && npm test                        # ön yüz birim testleri
+cd kodmob-frontend && npm run e2e                     # uçtan uca (kurulu Chrome)
 
 # Yeni içerik türü (panelde liste, form, yetki, yedek, arama kendiliğinden)
-cd kodmob-api && php artisan kodmob:module courses --label=Kurslar --singular=Kurs
-cd kodmob-api && php artisan kodmob:module --intent=kurslar.intent.json        # niyet dosyasından
+cd kodmob-core && php artisan kodmob:module courses --label=Kurslar --singular=Kurs
+cd kodmob-core && php artisan kodmob:module --intent=kurslar.intent.json        # niyet dosyasından
 
 # Araç paketi (topluluk aracı)
-cd kodmob-api && php artisan kodmob:tool new stok-takibi --label="Stok takibi"
-cd kodmob-api && php artisan kodmob:add <klasör | zip | katalogdaki anahtar>
+cd kodmob-core && php artisan kodmob:tool new stok-takibi --label="Stok takibi"
+cd kodmob-core && php artisan kodmob:add <klasör | zip | katalogdaki anahtar>
 
 # Sistem sağlığı ve canlı paket (release/)
-cd kodmob-api && php artisan kodmob:health && php artisan kodmob:links
+cd kodmob-core && php artisan kodmob:health && php artisan kodmob:links
 node build.mjs --bump minor
 
 # Çatı güncellemesi: yalnızca projede değişmemiş çatı dosyaları yenilenir
-cd kodmob-api && php artisan kodmob:lock                     # projede bir kez
-cd kodmob-api && php artisan kodmob:upgrade --from=kodmob-3.0.1.zip --dry-run
+cd kodmob-core && php artisan kodmob:lock                     # projede bir kez
+cd kodmob-core && php artisan kodmob:upgrade --from=kodmob-3.0.1.zip --dry-run
 ```
 
 ## Klasörler
 
 | Klasör | İçerik |
 |---|---|
-| `kodmob-api/` | Laravel 12 API: çekirdek (`app/Core`), modüller (`app/Modules`), testler. Canlıda `kodmob-core/` |
-| `tv/` | Ön yüz: site sayfaları ve panel (Vite 7, Alpine 3, Tailwind 4, Nunjucks), uçtan uca testler |
+| `kodmob-core/` | Laravel 12 API: çekirdek (`app/Core`), modüller (`app/Modules`), testler. Canlıda `kodmob-core/` |
+| `kodmob-frontend/` | Ön yüz: site sayfaları ve panel (Vite 7, Alpine 3, Tailwind 4, Nunjucks), uçtan uca testler |
 | `docs/` | Geliştirici belgeleri (`gelistirici/`, sitesi VitePress), sözleşme ve OpenAPI (`contracts/`), şablonlar |
 | `build.mjs` | Tek komutla canlı paketi (`node build.mjs`) |
 
@@ -92,13 +92,13 @@ Projenin kendi dosyaları ayrıdır; çatı güncellemesi onlara dokunmaz:
 
 | Yer | İçerik |
 |---|---|
-| `tv/src/profiles/<ad>/` | site: `site.config.js`, `routes.config.js`, `locales.js`, `i18n/`, `pages/`, `shell/`, `blocks/`; panel uzantısı `panel.js`; profilin testleri `tests/` |
-| `kodmob-api/app/Project/` | projenin içerik türleri ve modülleri (ad alanı `App\Project`) |
-| `kodmob-api/config/project.php` | kayıtlar: `content_types`, `modules` |
-| `kodmob-api/routes/project.php` | projenin uçları (`/api/v1/…`) |
-| `kodmob-api/tests/Project/` | projenin testleri |
+| `kodmob-frontend/src/profiles/<ad>/` | site: `site.config.js`, `routes.config.js`, `locales.js`, `i18n/`, `pages/`, `shell/`, `blocks/`; panel uzantısı `panel.js`; profilin testleri `tests/` |
+| `kodmob-core/app/Project/` | projenin içerik türleri ve modülleri (ad alanı `App\Project`) |
+| `kodmob-core/config/project.php` | kayıtlar: `content_types`, `modules` |
+| `kodmob-core/routes/project.php` | projenin uçları (`/api/v1/…`) |
+| `kodmob-core/tests/Project/` | projenin testleri |
 
-Etkin profil `tv/profile.js` (ortamda `KM_PROFILE` üstündedir). Başlangıç profili `starter`: ana sayfa (bloklar),
+Etkin profil `kodmob-frontend/profile.js` (ortamda `KM_PROFILE` üstündedir). Başlangıç profili `starter`: ana sayfa (bloklar),
 blog, iletişim formu, yasal belgeler, 404; Türkçe ve İngilizce.
 
 ## Veritabanı ve barındırma
@@ -120,4 +120,4 @@ Kod [MIT](LICENSE) lisanslıdır. "Kodmob" adı ve logosu sahibinin markasıdır
 kodda geçen Stripe, PayTR, Claude, OpenAI, Gemini, NetGSM, Hostinger ve benzeri adlar sahiplerinin ticari
 markalarıdır; yalnızca uyumluluğu anlatmak için kullanılır. Kodmob bu şirketlerle bağlantılı değildir ve onlar
 tarafından onaylanmamıştır. Tümleştirmeler herkese açık API belgelerine göre yazılmıştır. Yazı tipi Google Sans
-Flex, SIL Open Font License 1.1 ile (`tv/public/assets/fonts/OFL.txt`).
+Flex, SIL Open Font License 1.1 ile (`kodmob-frontend/public/assets/fonts/OFL.txt`).

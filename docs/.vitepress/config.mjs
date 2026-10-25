@@ -4,7 +4,7 @@
  *   cd docs && npm ci && npm run dev      yerelde (http://localhost:5173/kodmob/)
  *   npm run build                         .vitepress/dist (.github/workflows/docs.yml yayımlar)
  *
- * Belgeler kodun dosyalarına göreli bağlantı verir (../../kodmob-api/app/…): sitede olmayan her hedef GitHub'daki
+ * Belgeler kodun dosyalarına göreli bağlantı verir (../../kodmob-core/app/…): sitede olmayan her hedef GitHub'daki
  * dosyaya gider. İç raporlar (*-raporu.md) siteye girmez.
  */
 import fs from 'node:fs';

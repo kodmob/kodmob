@@ -1,12 +1,15 @@
 # Değişiklikler
 
 Kodmob'un sürümleri. Biçim: her sürümde **Eklendi**, **Değişti**, **Düzeltildi**, **Kaldırıldı**; canlıya geçişte
-yapılacaklar **Yükseltme** başlığında. Sürüm numarası `tv/package.json`, `kodmob-api/config/kodmob.php` ve
+yapılacaklar **Yükseltme** başlığında. Sürüm numarası `kodmob-frontend/package.json`, `kodmob-core/config/kodmob.php` ve
 `kodmob.json`'da aynıdır (`node build.mjs --bump minor` üçünü birlikte yükseltir).
 
 ## Yayımlanmadı
 
 **Değişti**
+- Klasör adları: `kodmob-api/` → **`kodmob-core/`**, `tv/` → **`kodmob-frontend/`**. Komutlar aynı, yalnızca klasör
+  adı değişti (`cd kodmob-core && php artisan test`, `cd kodmob-frontend && npm test`). `kodmob:module`'ün ön yüz
+  klasörü seçeneği `--tv` yerine `--frontend`. Canlı sunucunun düzeni değişmedi (Laravel klasörü zaten `kodmob-core/`).
 - Panelin yan menüsü sadeleşti: yalnızca beş bölüm (Genel bakış, İçerik, Gelenler, Görünürlük, Ayarlar). Bölümün
   sayfaları içerik alanının üstünde sekme; adresler değişmedi. Rolün özel yan menüsü (Roller › Yan Menü) kalktı: herkes
   aynı bölümleri yetkisine göre görür. Kılavuz turu bölümleri anlatır.
@@ -23,7 +26,13 @@ yapılacaklar **Yükseltme** başlığında. Sürüm numarası `tv/package.json`
 - Siparişler › ayrıntı: siparişin yolu (ödeme bekliyor → ödendi → hazırlanıyor → kargoda → tamamlandı); şimdiki adım
   vurgulu, iptal / iade kapanış olarak yazar.
 
+**Yükseltme**
+- 3.0 ile başlamış projede güncellemeden önce klasörleri ve `kodmob.json` / `kodmob.lock.json`'daki yolları yeniden
+  adlandırın: [07 Güncelleme](docs/gelistirici/07-guncelleme.md) "3.0'dan sonraki sürüme".
+
 **Düzeltildi**
+- Proje / Sistem Ayarları: ayarlar geç gelirken başka sayfaya geçilince adres çubuğu ayarlar sayfasına geri
+  dönüyordu (yavaş sunucuda). Adres artık yalnızca o sayfadayken yazılır.
 - Talepler listesinde "Okundu say" 409 hatası veriyordu (panelin durum adresi yalnızca arşivi biliyordu).
 - Koyu temada beyaz düğme (`btn-white`; ör. Çağrı bandı, Öne çıkan projeler): beyaz zemin üstünde açık mavi yazı
   okunmuyordu; artık koyu zemin, açık yazı ve ince açık kenar, üzerine gelince zemin açılır.
@@ -38,7 +47,7 @@ Rezervasyon ve Oteller, Bülten, yasal belgeler, Jarvis Operatör, sözleşme ve
 - Açık kaynak: `LICENSE` (MIT; "Kodmob" adı ve logosu lisansa dahil değil), `SECURITY.md` (açık GitHub'da özel
   bildirimle), `CONTRIBUTING.md`, geliştirici belgeleri sitesi (`docs/`, VitePress; GitHub Pages iş akışı
   `.github/workflows/docs.yml`), README baştan (Türkçe + İngilizce özet).
-- Profilin kendi testleri: `tv/src/profiles/<ad>/tests/*.test.mjs` (`npm test` çalıştırır); başlangıç profilinde
+- Profilin kendi testleri: `kodmob-frontend/src/profiles/<ad>/tests/*.test.mjs` (`npm test` çalıştırır); başlangıç profilinde
   rota ve sözlük denetimi.
 - Uçtan uca senaryolarda `requires(request, { types, modules })`: istediği içerik türü ya da modül derlemede yoksa
   senaryo nedeniyle atlanır (başlangıç profilinde portföy türü, SMS, Jarvis yok).
@@ -46,7 +55,7 @@ Rezervasyon ve Oteller, Bülten, yasal belgeler, Jarvis Operatör, sözleşme ve
   çift tıklayıp yerinde yazma, cihaz genişlikleri, dil, gizle / çoğalt / taşı, sayfalar arası kopyala-yapıştır, geri al,
   taslak (kendiliğinden kaydedilir) ve Yayınla, bölge başına yayın geçmişi. Jarvis: bloğu isteğe göre yaz, diğer
   dillere çevir, sayfaya bölüm öner. Yetki `km_edit_layout` (Editör rolünde).
-- Bloklar ve bölgeler: `tv/src/blocks/<ad>/`, şablonda `zone()`, profilin `site.config.js` `zones`'u; derleme
+- Bloklar ve bölgeler: `kodmob-frontend/src/blocks/<ad>/`, şablonda `zone()`, profilin `site.config.js` `zones`'u; derleme
   `km-blocks.json`. Bloklar: Karşılama, Özellik kartları, Süreç adımları, Son yazılar, Çağrı bandı, Metin, Rakamlar,
   Logo şeridi, Müşteri yorumları, Sık sorulanlar, Güven rozetleri, Görsel ve metin; Mağaza: Öne çıkan ürünler / turlar;
   Animasyon: Kayan etiketler, Harf animasyonlu başlık. Belge: [docs/gelistirici/08-bloklar.md](docs/gelistirici/08-bloklar.md).
@@ -59,7 +68,7 @@ Rezervasyon ve Oteller, Bülten, yasal belgeler, Jarvis Operatör, sözleşme ve
   başına adet ve toplam oda sayısı, en az gece, giriş / çıkış saati, olanaklar; sitede otel listesi ve sayfası
   (`hotelRoutes()`), yapısal veri `Hotel`. `kodmob:module … --bookable=night`.
 - kodmob.com ana sayfası bloklardan: Görselli karşılama, Referans logoları, Öne çıkan projeler, Hizmet kartları,
-  Neden biz (profilin blokları; `tv/src/profiles/kodmob/blocks/`) ve çatının Süreç adımları, Son yazılar, Çağrı
+  Neden biz (profilin blokları; `kodmob-frontend/src/profiles/kodmob/blocks/`) ve çatının Süreç adımları, Son yazılar, Çağrı
   bandı. Metinler'de değiştirilmiş ana sayfa metinleri bloklara taşınır (bloğun ilk halinde sözlük anahtarı).
   Çağrı bandına isteğe bağlı ikinci düğme.
 - Blok sayfaları: Sayfa düzenleyicide **Yeni sayfa** ile yalnızca bloklardan oluşan sayfa (kampanya, etkinlik…);
@@ -107,7 +116,7 @@ Rezervasyon ve Oteller, Bülten, yasal belgeler, Jarvis Operatör, sözleşme ve
 
 **Değişti**
 - Çatının testleri projenin koduna bağlı değil: backend testleri kendi içerik türleriyle (`tests/Support/Portfolio`;
-  `TestCase::CONTENT_TYPES`), ön yüz birim testleri test profiliyle (`tv/tests/fixtures/profile`; `KM_PROFILE_DIR`)
+  `TestCase::CONTENT_TYPES`), ön yüz birim testleri test profiliyle (`kodmob-frontend/tests/fixtures/profile`; `KM_PROFILE_DIR`)
   çalışır. Projenin `app/Project`'i ve sitenin profili silinse de değişse de çatının testleri geçer.
 - Yerel bilgisayara ve projeye özgü yapay zekâ notları `CLAUDE.local.md`'de (git dışı); `CLAUDE.md` genel.
 - Başlangıç profilinin ana sayfası bloklardan (Sayfa düzenleyici'den değişir).
@@ -158,12 +167,12 @@ Açık kaynak başlangıç çatısına geçiş: proje ile çatı ayrıldı, pane
 - Panel: üstte proje seçici; projeler arası tek oturumla geçiş (aynı e-postalı yönetici, 60 sn'lik tek kullanımlık anahtar).
 - Panel: Proje Ayarları ve Sistem Ayarları (ayar tanımında `scope`); Tüm İşlemler üst barda.
 - Araç Pazarı (`/panel/araclar`): araçlar her projede ayrı açılıp kapanır; Keşfet'te eklenebilecek araçlar ve topluluk kataloğu.
-- Araç paketleri: `kodmob-api/extensions/<anahtar>/`, `kodmob:tool new | check | list`, `kodmob:add` (klasör, zip, katalog;
+- Araç paketleri: `kodmob-core/extensions/<anahtar>/`, `kodmob:tool new | check | list`, `kodmob:add` (klasör, zip, katalog;
   sha256 denetimi). Belge: [docs/arac-paketi.md](docs/arac-paketi.md).
 - Alt projeler e-posta, SMS ve yapay zekâ ayarını ana projeden kullanır.
 - Proje klasörleri: `app/Project`, `config/project.php`, `routes/project.php`, `tests/Project`, profilin `panel.js`'i
   (projenin panel sayfaları ve içerik türleri). Çatı projenin sınıfını bilmez.
-- Site profili klasörü (`tv/src/profiles/<ad>/`) ve sade başlangıç profili (`starter`: ana sayfa, blog, iletişim formu,
+- Site profili klasörü (`kodmob-frontend/src/profiles/<ad>/`) ve sade başlangıç profili (`starter`: ana sayfa, blog, iletişim formu,
   yasal metinler, 404; tr + en).
 - Kurulum ve güncelleme: `kodmob:install` (yeni projenin yerel kurulumu, SQLite), `kodmob.json`, `kodmob:pack`,
   `kodmob:lock`, `kodmob:upgrade` (yalnızca projede değişmemiş çatı dosyalarını yeniler).

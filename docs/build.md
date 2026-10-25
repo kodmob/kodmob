@@ -5,10 +5,10 @@ Sürüm: **3.0.0** (1.x WordPress; 2.0 Laravel API + çok kullanıcılı panel +
 
 | Araç | Not |
 |---|---|
-| Node.js 20+ | `tv/` ön yüz derlemesi |
+| Node.js 20+ | `kodmob-frontend/` ön yüz derlemesi |
 | PHP 8.4 | Varsayılan `C:/MAMP/bin/php/php8.4.1/php.exe`; başka yer için `KM_PHP` |
 | Composer | Varsayılan `C:/ProgramData/ComposerSetup/bin/composer.phar`; başka yer için `KM_COMPOSER` |
-| Yerel MySQL | Paketle içerik gidecekse `kodmob-api/.env` veritabanı açık olmalı (MAMP) |
+| Yerel MySQL | Paketle içerik gidecekse `kodmob-core/.env` veritabanı açık olmalı (MAMP) |
 
 ## Paket almak
 
@@ -24,9 +24,9 @@ node build.mjs --ignore-links   # bağlantı denetimindeki hatalarda durma (eski
 
 Windows'ta aynısı: `build`, `build --no-content` … (build.cmd)
 
-> Arama motorları: `tv/.env.production` içinde `SITE_INDEXABLE=false` iken bütün sayfalar `noindex` olur ve robots.txt her şeyi kapatır. Yayına çıkarken `true` yapıp yeniden build alın.
+> Arama motorları: `kodmob-frontend/.env.production` içinde `SITE_INDEXABLE=false` iken bütün sayfalar `noindex` olur ve robots.txt her şeyi kapatır. Yayına çıkarken `true` yapıp yeniden build alın.
 
-Betik sırasıyla şunları yapar: sürümleri karşılaştırır (`tv/package.json` ile `kodmob-api/config/kodmob.php` aynı olmalı), eksikse bağımlılıkları kurar, `php artisan test` ve `npm test` (tv) çalıştırır, içerikli pakette `php artisan kodmob:links` ile çoklu dil ve bağlantı sağlığını denetler (Çoklu Dil > Sağlık ile aynı liste; hata varsa durur), ardından `tv` içinde `npm run release` ile paketi üretir. Test geçmezse paket üretilmez.
+Betik sırasıyla şunları yapar: sürümleri karşılaştırır (`kodmob-frontend/package.json` ile `kodmob-core/config/kodmob.php` aynı olmalı), eksikse bağımlılıkları kurar, `php artisan test` ve `npm test` (tv) çalıştırır, içerikli pakette `php artisan kodmob:links` ile çoklu dil ve bağlantı sağlığını denetler (Çoklu Dil > Sağlık ile aynı liste; hata varsa durur), ardından `tv` içinde `npm run release` ile paketi üretir. Test geçmezse paket üretilmez.
 
 ## Çıktı (`release/`)
 
@@ -49,22 +49,22 @@ Betik sırasıyla şunları yapar: sürümleri karşılaştırır (`tv/package.j
 ## Yerel geliştirme
 
 ```bash
-cd tv
+cd kodmob-frontend
 npm run dev            # Vite (yalnızca ön yüz)
 npm run deploy:local   # derleyip .local/public_html'e dağıtır
-npm run serve:local    # http://127.0.0.1:8090 (php -S + kodmob-api/dev/router.php)
+npm run serve:local    # http://127.0.0.1:8090 (php -S + kodmob-core/dev/router.php)
 
-cd kodmob-api
+cd kodmob-core
 php artisan test       # backend testleri
 vendor/bin/pint        # kod biçimi
 
-cd tv
+cd kodmob-frontend
 npm test               # panel rota tablosu (PHP ile ortak vektörler) ve elle yazılmış bağlantı denetimi
 ```
 
-Panel adresleri `/panel/…` yollarıdır (ör. `/panel/projeler/12`); tek kaynak `tv/src/panel/routes.js`. Yeni panel sayfası: rota tablosuna bir satır, `kodmob-api/tests/fixtures/panel-urls.json`'a bir örnek.
+Panel adresleri `/panel/…` yollarıdır (ör. `/panel/projeler/12`); tek kaynak `kodmob-frontend/src/panel/routes.js`. Yeni panel sayfası: rota tablosuna bir satır, `kodmob-core/tests/fixtures/panel-urls.json`'a bir örnek.
 
-Site adresleri: varsayılan dil (Türkçe) öneksiz (`/projeler/x/`), diğerleri önekli (`/en/projects/x/`). Önekler profilin `locales.js`'i, bölüm adları `routes.config.js` (`tv/src/profiles/<ad>/`). Adres değişirse build eski adresi profilin `i18n/url-history.json`'u'a yazar ve site onu 301 ile yeniye yönlendirir (bu dosya git'e girmeli). Yerelde dil kaydı `npm run deploy:local` ile (ya da `php artisan kodmob:i18n`) build'e eşitlenir.
+Site adresleri: varsayılan dil (Türkçe) öneksiz (`/projeler/x/`), diğerleri önekli (`/en/projects/x/`). Önekler profilin `locales.js`'i, bölüm adları `routes.config.js` (`kodmob-frontend/src/profiles/<ad>/`). Adres değişirse build eski adresi profilin `i18n/url-history.json`'u'a yazar ve site onu 301 ile yeniye yönlendirir (bu dosya git'e girmeli). Yerelde dil kaydı `npm run deploy:local` ile (ya da `php artisan kodmob:i18n`) build'e eşitlenir.
 
 ## Dizin yapısı
 
@@ -74,7 +74,7 @@ Site adresleri: varsayılan dil (Türkçe) öneksiz (`/projeler/x/`), diğerleri
 ├── docs/                       build.md (bu dosya), dikkat.md (açık riskler), raporlar
 ├── .github/workflows/ci.yml    CI: backend + ön yüz + uçtan uca
 │
-├── kodmob-api/                 Laravel 12 API → canlıda kodmob-core/
+├── kodmob-core/                 Laravel 12 API → canlıda kodmob-core/
 │   ├── app/
 │   │   ├── Core/               çekirdek: Database (TableRepository, Row), Content (içerik türü altyapısı),
 │   │   │                       Security (yetkiler, roller), Activity (işlem kaydı), Settings, Setup, Http
@@ -102,7 +102,7 @@ Site adresleri: varsayılan dil (Türkçe) öneksiz (`/projeler/x/`), diğerleri
 │   ├── routes/api.php          /v1/... uç noktaları
 │   └── tests/                  Feature + Unit testleri
 │
-├── tv/                         ön yüz: Vite + Alpine 3 + Tailwind 4
+├── kodmob-frontend/                         ön yüz: Vite + Alpine 3 + Tailwind 4
 │   ├── src/
 │   │   ├── i18n/               sözlükler (tr/en/de.json), locales.js (önekler), url-history.json (eski adresler)
 │   │   ├── pages/              site sayfaları (home, projects, blog, …) + panel/ + _ui/ (bileşen vitrini)
@@ -120,7 +120,7 @@ Site adresleri: varsayılan dil (Türkçe) öneksiz (`/projeler/x/`), diğerleri
 │
 ├── .local/                     yerel test sitesi (canlı yerleşimin aynısı; git'e girmez)
 │   ├── public_html/            deploy:local çıktısı (_pages/ kabuklar, panel/, assets/) + media/
-│   └── kodmob-core → ../kodmob-api   (junction)
+│   └── kodmob-core → ../kodmob-core   (junction)
 │
 ├── release/                    build çıktısı (zip'ler, OKUBENI.txt, ilk-kurulum/.env; git'e girmez)
 ├── mockup/                     tasarım görselleri (git'e girmez)

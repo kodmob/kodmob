@@ -1,4 +1,4 @@
-# Kodmob tek depo. Alt klasörlerin kendi .gitignore'ları da geçerli (kodmob-api/, tv/).
+# Kodmob tek depo. Alt klasörlerin kendi .gitignore'ları da geçerli (kodmob-core/, kodmob-frontend/).
 
 # Paketler: release/ilk-kurulum/.env canlı anahtarlar içerir; asla git'e girmez.
 /release/

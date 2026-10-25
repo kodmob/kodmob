@@ -1,0 +1,26 @@
+/*
+ * Yönetim paneli (/panel/) stil paketi: panel tasarım dili.
+ * Sitenin stillerinden (styles/app.css) bağımsızdır: site görünümü değişmez,
+ * panel uygulama tipi açık/koyu tasarımı kullanır. Sınıf adları (btn, card,
+ * input, badge, field-*) site ile aynı: ortak bileşenler (toast, onay, sheet)
+ * her iki pakette de doğru görünür.
+ *
+ * Yalnızca panelin kullandığı klasörler taranır. (@import'lar her zaman önce.)
+ */
+@import "tailwindcss" source(none);
+@import "./tokens.css";
+@import "./base.css";
+@import "./components.css";
+@import "./screens.css";
+@import "./guide.css";
+@import "./builder.css";
+@import "../../ui/grid/grid.css";
+
+@source "../../pages/panel";
+@source "../../pages/_ui-panel";
+@source "../../panel";
+@source "../../ui";
+@source "../../domain";
+/* Araç paketlerinin panel şablonları ve bileşenleri (kodmob-core/extensions/<anahtar>/panel). */
+@source "../../../../kodmob-core/extensions";
+@source "../../shell/icons.html";

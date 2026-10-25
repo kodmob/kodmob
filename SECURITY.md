@@ -19,7 +19,7 @@ Güvenlik düzeltmeleri son ana sürüme (3.x) gelir. Projenize almak için `php
 
 ## Kapsam
 
-Kapsamda: bu depodaki kod (`kodmob-api/`, `tv/`), kurulum ve güncelleme komutları, varsayılan yapılandırma.
+Kapsamda: bu depodaki kod (`kodmob-core/`, `kodmob-frontend/`), kurulum ve güncelleme komutları, varsayılan yapılandırma.
 Kapsam dışı: barındırmanın kendi ayarları, projenin kendi kodu (`app/Project`, profiller), üçüncü taraf araç paketleri
 (kendi sahiplerine bildirin), sosyal mühendislik ve hizmet engelleme denemeleri.
 

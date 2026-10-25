@@ -5,7 +5,7 @@
 Panelden yönetilen bir liste (Kurslar, Ekip, Referanslar; ürün satışı için Mağaza modülü var):
 
 ```bash
-cd kodmob-api
+cd kodmob-core
 php artisan kodmob:module courses --label=Kurslar --singular=Kurs [--slug=kurslar] [--icon=book] [--no-order]
 ```
 
@@ -79,7 +79,7 @@ getirir: **Oteller** aracı (`hotels`, Rezervasyon'a takılı; `HotelType`, site
 kişi başı), `seasons`, `early`, `capacity`, `dates` (gün biriminde yok). Sayfa bölümleri: `highlights`,
 `itinerary`, `includes`, `excludes`, `faq`, `meeting`, `languages`. Sayfa şablonunda:
 `{% include "pages/shop/_booking-sections.njk" %}` ve `{% include "pages/shop/_booking-box.njk" %}` (örnek
-`tv/src/pages/shop/tour.njk`). Fiyatı her zaman sunucu hesaplar (`/shop/bookings/quote`).
+`kodmob-frontend/src/pages/shop/tour.njk`). Fiyatı her zaman sunucu hesaplar (`/shop/bookings/quote`).
 
 ## Modül
 

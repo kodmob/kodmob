@@ -1,0 +1,103 @@
+# Kodmob frontend — Apache yapılandırması
+# Site kökü frontend, /api/ Laravel API'sidir (aynı origin; kodmob-core),
+# /media/ panelden yüklenen görseller. Kök dizindeki bu dosya alt dizinlere de
+# miras kalır; aşağıdaki güvenlik ve önbellek kuralları /api/ altına UYGULANMAZ
+# (kurulum ekranı satır içi stil kullanır).
+
+Options -Indexes
+# index.php: /api/ klasörünün giriş dosyası.
+DirectoryIndex index.html index.php
+
+# 404 sayfaları render.php'dedir (dile göre; Site\Render\Router). Burada yalnızca dosyası
+# olmayan varlıklar (ör. silinmiş bir /assets/… dosyası) Apache'nin kendi 404'ünü alır.
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # API'ye dokunma (kendi .htaccess'i var).
+    RewriteRule ^api(/.*)?$ - [L]
+
+    # Görsel klasöründe betik çalışmaz; görseller uzun süre önbelleklenir
+    # (dosya adı değişmez, aynı ada yeni görsel yazılmaz). Canlı nabız dosyası hariç.
+    RewriteRule ^media/.*\.(php\d?|phtml|phar|pl|py|cgi|sh)$ - [F,L,NC]
+    RewriteCond %{REQUEST_URI} !^/media/live-
+    RewriteRule ^media/ - [E=KM_MEDIA_CACHE:1]
+
+    # Hash'li varlıklar uzun süre önbelleklenebilir.
+    RewriteRule ^assets/ - [E=KM_LONG_CACHE:1]
+
+    # Panel ve bileşen vitrini arama motorlarına her zaman kapalı (aşağıda X-Robots-Tag).
+    RewriteRule ^(panel|_ui)(/|$) - [E=KM_NOINDEX:1]
+
+    # Panel tek sayfadır: /panel/ altında dosyası olmayan, uzantısız her adres panel/index.html'i açar
+    # (/panel/projeler/12, /panel/ayarlar/yedekleme…); yönlendirme ön yüzdedir (src/panel/routes.js).
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^panel/[^.]+$ /panel/index.html [L]
+
+    # Yalnızca render.php içindir: rota tablosu, blok kitaplığı ve sayfa kabukları (_pages/<dil>/…); alt
+    # sitelerinki _sites/<anahtar>/ altında (çok site).
+    RewriteRule ^km-(manifest|blocks)\.json$ - [F,L]
+    RewriteRule ^_(pages|sites)(/|$) - [F,L]
+
+    # Site sayfaları render.php'den geçer: kabuk içerikle tamamlanır, SEO etiketleri eklenir,
+    # sonuç önbelleklenir (api/render.php; kodmob-core/public/render.php). Adresler dile göre:
+    # varsayılan dil öneksiz (/, /projeler/x/), diğerleri önekli (/en/projects/x/). Kök adres
+    # yönlendirilmez; varsayılan dilin ana sayfasıdır.
+    RewriteRule ^$ /api/render.php [L]
+    # Site haritası, robots.txt ve llms.txt panelden yönetilir (SEO); eski bir
+    # robots.txt dosyası kalsa da render.php'nin yanıtı geçerlidir.
+    RewriteRule ^(sitemap\.xml|robots\.txt|llms\.txt|llms-full\.txt)$ /api/render.php [L]
+    # Eski sürümlerden kalan kabuk klasörleri (tr/, en/, de/…) ve index.html'leri doğrudan
+    # sunulmaz: dosyası olmayan her adres, klasör olsa da render.php'ye gider (eski adresler
+    # orada 301 ile yenisine yönlenir). assets, media, panel ve _ui gerçek klasörlerdir.
+    RewriteCond %{REQUEST_URI} !^/(panel|_ui)/
+    RewriteRule (^|/)index\.html$ /api/render.php [L]
+    RewriteCond %{REQUEST_URI} !^/(assets|media|panel|_ui)(/|$)
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ /api/render.php [L]
+</IfModule>
+
+<IfModule mod_headers.c>
+    # Sayfa düzenleyicinin önizlemesi (?km-preview=…) başlıklarını render.php verir: aynı kökenden çerçeveye izin.
+    <If "%{REQUEST_URI} !~ m#^/api(/|$)# && %{QUERY_STRING} !~ m#(^|&)km-preview=#">
+        # Alpine.js ifadeleri için 'unsafe-eval' gerekir (Function()); sayfa ön
+        # yüklemesi (speculationrules) için 'inline-speculation-rules'. Satır içi
+        # betik, dış kaynak ve çerçeveleme kapalıdır; sunucu verisi hiçbir yerde
+        # HTML olarak basılmaz (x-text). Sıkılaştırma: @alpinejs/csp derlemesi.
+        Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-eval' 'inline-speculation-rules'; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; media-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+        Header always set X-Content-Type-Options "nosniff"
+        Header always set Referrer-Policy "same-origin"
+        Header always set X-Frame-Options "DENY"
+        Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()"
+        Header always set Cross-Origin-Opener-Policy "same-origin"
+        # Arama motorları tek anahtarla: .env.production SITE_INDEXABLE (manifest `indexable`).
+        # Sayfaların X-Robots-Tag başlığını ve robots.txt'yi render.php buna göre verir; burada
+        # sabit "noindex" yok (canlıda unutulup siteyi kapatmasın). Panel her zaman kapalı
+        # (env=: LiteSpeed "expr=" koşulunu desteklemeyebilir, o zaman bütün siteyi kapatırdı).
+        Header always set X-Robots-Tag "noindex, nofollow" env=KM_NOINDEX
+
+        Header set Cache-Control "public, max-age=31536000, immutable" env=KM_LONG_CACHE
+        Header set Cache-Control "public, max-age=2592000" env=KM_MEDIA_CACHE
+        # HTML ve manifest her istekte sunucuya sorulur (eski sayfa yeni derlemenin silinmiş dosyalarına işaret
+        # etmesin); `no-store` değil: geri / ileri önbelleği (bfcache) çalışsın, değişmeyen sayfa 304 dönsün
+        # (render.php Last-Modified / ETag). Panel saklanmaz: çıkıştan sonra geri tuşu paneli göstermesin.
+        Header set Cache-Control "no-cache" "expr=%{CONTENT_TYPE} =~ m#^text/html# || %{REQUEST_URI} =~ m#\.webmanifest$#"
+        Header set Cache-Control "no-cache, no-store, must-revalidate" env=KM_NOINDEX
+    </If>
+</IfModule>
+
+# Metin sıkıştırma (sunucu kendisi yapmıyorsa): HTML, CSS, JS, JSON, SVG, XML, metin.
+# Önce Brotli, yoksa gzip. Görseller ve woff2 zaten sıkıştırılmış.
+<IfModule mod_brotli.c>
+    AddOutputFilterByType BROTLI_COMPRESS text/html text/css text/plain text/xml application/javascript text/javascript application/json application/xml application/rss+xml application/manifest+json image/svg+xml
+</IfModule>
+<IfModule !mod_brotli.c>
+    <IfModule mod_deflate.c>
+        AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml application/javascript text/javascript application/json application/xml application/rss+xml application/manifest+json image/svg+xml
+    </IfModule>
+</IfModule>
+
+<IfModule mod_mime.c>
+    AddType application/manifest+json .webmanifest
+</IfModule>

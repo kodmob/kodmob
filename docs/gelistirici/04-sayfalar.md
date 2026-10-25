@@ -2,7 +2,7 @@
 
 ## Site sayfası
 
-Projenin sitesi profil klasöründedir (`tv/src/profiles/<ad>/`; etkin profil `tv/profile.js`, ortamda `KM_PROFILE`):
+Projenin sitesi profil klasöründedir (`kodmob-frontend/src/profiles/<ad>/`; etkin profil `kodmob-frontend/profile.js`, ortamda `KM_PROFILE`):
 
 ```
 site.config.js      adres, açık modüller ve içerik türleri (profile), kurum bilgisi, sözlükler
@@ -28,18 +28,18 @@ panel.js            projenin panel türleri ve sayfaları
 3. Metinler `i18n/tr.json`, `i18n/en.json`.
 
 **Şablonda:** `url('blog')` adres; `t('anahtar')` derlemede sabit metin; `tx('anahtar')` panelden değişebilen metin
-(Sayfalar ve Diller > Metinler). Çatının bileşenleri `tv/src/ui/` (ör. iletişim formu `ui/contact/contact-form.njk`).
+(Sayfalar ve Diller > Metinler). Çatının bileşenleri `kodmob-frontend/src/ui/` (ör. iletişim formu `ui/contact/contact-form.njk`).
 CSP satır içi stil ve betiğe kapalıdır: stil Tailwind sınıfı ya da belirteç (`theme.css` renkleri), betik `main.js`.
 
 **İçerik:** kabuk derlemede üretilir, içeriği (kayıtlar, listeler, SEO, yapısal veri) sunucu doldurur; JavaScript
 olmadan da okunur. Önbellek yolu `render.php`'de Laravel'siz çalışır; içerik değişince önbellek temizlenir.
 
-Çatının rotaları (panel, bileşen vitrini) `tv/vite/framework-routes.js`; çatı sözlüğü `tv/src/i18n/` (profilinki
-üstüne yazar). Alt projenin kendi şablon katmanı `tv/sites/<anahtar>/`.
+Çatının rotaları (panel, bileşen vitrini) `kodmob-frontend/vite/framework-routes.js`; çatı sözlüğü `kodmob-frontend/src/i18n/` (profilinki
+üstüne yazar). Alt projenin kendi şablon katmanı `kodmob-frontend/sites/<anahtar>/`.
 
 ## Panel sayfası (projenin)
 
-Çatıya dokunmadan profilin `panel.js` `PAGES`'ine yazılır (biçim `tv/src/panel/extension.js`):
+Çatıya dokunmadan profilin `panel.js` `PAGES`'ine yazılır (biçim `kodmob-frontend/src/panel/extension.js`):
 
 ```js
 export const PAGES = [{
@@ -54,7 +54,7 @@ export const PAGES = [{
 Menü (yan menünün bölümünde sekme: `section`, varsayılan `content` İçerik; `inbox`, `growth`, `settings`), Tüm İşlemler ("Siteye özel" kartı), panel araması, Kullanım Kılavuzu turu, adres tablosu
 (sunucu `PanelUrl` dahil) ve tembel yükleme kendiliğinden. Anahtar küçük harf ve tire; çatının sayfalarıyla
 çakışamaz. Uçları çağırmak: `import { http } from '@/services/http.js'` (`http.get('/raporlar')` → `/api/v1/raporlar`).
-Tablolar için dfGrid (`tv/src/ui/grid`), bildirim için `toast` (`tv/src/ui/toast.js`).
+Tablolar için dfGrid (`kodmob-frontend/src/ui/grid`), bildirim için `toast` (`kodmob-frontend/src/ui/toast.js`).
 
 İçerik türünün panel tanımı (`TYPES`) `kodmob:module` ile yazılır; alanları (`label`, `singular`, `icon`, `slug`,
 `record`, `can`, `orderable`, `featured`, `site`, `guide`) dosyanın başında açıklanır.

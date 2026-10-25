@@ -1,0 +1,69 @@
+{#
+  Rezerve edilebilen kaydın sayfa bölümleri (profilin `sections`'ı; kodmob-core Booking\BookingView). Kapsamda `p`.
+  Boş bölüm görünmez. Tur sayfası ve projenin rezervasyonlu türlerinin sayfaları kullanır:
+
+    {% include "pages/shop/_booking-sections.njk" %}
+#}
+{% import "macros/ui.njk" as ui %}
+<div class="book-sections">
+  {# Bilgiler: süre, rehberlik dilleri, buluşma noktası #}
+  <ul class="book-facts" x-show="p.duration || p.guideLanguages?.length || p.meeting || p.booking?.checkIn || p.location">
+    <li x-show="p.location">{{ ui.icon('map-pin', 'icon icon-sm') }}<span><small>{{ t('shop.booking.location') }}</small><span x-text="p.location"></span></span></li>
+    <li x-show="p.booking?.checkIn">{{ ui.icon('clock', 'icon icon-sm') }}<span><small>{{ t('shop.booking.checkInTime') }}</small><span x-text="p.booking?.checkIn"></span></span></li>
+    <li x-show="p.booking?.checkOut">{{ ui.icon('clock', 'icon icon-sm') }}<span><small>{{ t('shop.booking.checkOutTime') }}</small><span x-text="p.booking?.checkOut"></span></span></li>
+    <li x-show="p.duration">{{ ui.icon('clock', 'icon icon-sm') }}<span><small>{{ t('shop.booking.duration') }}</small><span x-text="p.duration"></span></span></li>
+    <li x-show="p.guideLanguages?.length">{{ ui.icon('globe', 'icon icon-sm') }}<span><small>{{ t('shop.booking.guideLanguages') }}</small><span x-text="(p.guideLanguages || []).join(', ')"></span></span></li>
+    <li x-show="p.meeting">{{ ui.icon('map-pin', 'icon icon-sm') }}<span><small>{{ t('shop.booking.meeting') }}</small><span x-text="p.meeting"></span></span></li>
+  </ul>
+
+  <template x-if="p.highlights?.length">
+    <section>
+      <h2 class="h4 mb-3">{{ t('shop.booking.highlights') }}</h2>
+      <ul class="book-highlights"><template x-for="(line, i) in p.highlights" :key="i"><li>{{ ui.icon('sparkles', 'icon icon-sm') }}<span x-text="line"></span></li></template></ul>
+    </section>
+  </template>
+
+  <template x-if="p.amenities?.length">
+    <section>
+      <h2 class="h4 mb-3">{{ t('shop.booking.amenities') }}</h2>
+      <ul class="book-amenities"><template x-for="(line, i) in p.amenities" :key="i"><li>{{ ui.icon('check-circle', 'icon icon-sm') }}<span x-text="line"></span></li></template></ul>
+    </section>
+  </template>
+
+  <template x-if="p.itinerary?.length">
+    <section>
+      <h2 class="h4 mb-3">{{ t('shop.booking.itinerary') }}</h2>
+      <ol class="book-itinerary">
+        <template x-for="(step, i) in p.itinerary" :key="i">
+          <li>
+            <span class="book-itinerary-no" x-text="i + 1"></span>
+            <details :open="i === 0">
+              <summary x-text="step.title"></summary>
+              <p x-text="step.text"></p>
+            </details>
+          </li>
+        </template>
+      </ol>
+    </section>
+  </template>
+
+  <template x-if="p.includes?.length || p.excludes?.length">
+    <section class="grid gap-6 sm:grid-cols-2">
+      <div x-show="p.includes?.length">
+        <h2 class="h4 mb-3">{{ t('shop.booking.includes') }}</h2>
+        <ul class="flex flex-col gap-2"><template x-for="(line, i) in p.includes || []" :key="i"><li class="flex gap-2">{{ ui.icon('check', 'icon icon-sm shrink-0 text-success') }} <span x-text="line"></span></li></template></ul>
+      </div>
+      <div x-show="p.excludes?.length">
+        <h2 class="h4 mb-3">{{ t('shop.booking.excludes') }}</h2>
+        <ul class="flex flex-col gap-2"><template x-for="(line, i) in p.excludes || []" :key="i"><li class="flex gap-2">{{ ui.icon('x', 'icon icon-sm shrink-0 text-danger') }} <span x-text="line"></span></li></template></ul>
+      </div>
+    </section>
+  </template>
+
+  <template x-if="p.faq?.length">
+    <section>
+      <h2 class="h4 mb-3">{{ t('shop.booking.faq') }}</h2>
+      <div class="book-faq"><template x-for="(item, i) in p.faq" :key="i"><details><summary x-text="item.q"></summary><p x-text="item.a"></p></details></template></div>
+    </section>
+  </template>
+</div>

@@ -6,7 +6,7 @@ bölümleri (blokları) sürükleyip sıralar, yazıya çift tıklayıp yazar, J
 
 ## Bölge
 
-Şablonda `{{ zone('anahtar', 'Etiket') }}`. Her sayfada dört bölge hazırdır (`tv/src/layouts/base.njk`):
+Şablonda `{{ zone('anahtar', 'Etiket') }}`. Her sayfada dört bölge hazırdır (`kodmob-frontend/src/layouts/base.njk`):
 `site.top` / `site.bottom` (bütün sayfalar) ve `<sayfa>.top` / `<sayfa>.bottom` (yalnızca o sayfa; kayıt sayfasında
 bütün kayıtlarda ortak). Kendi bölgeniz:
 
@@ -33,7 +33,7 @@ bunların yerine geçer; boş liste bölgeyi boşaltır.
 
 ## Blok
 
-Klasör: `tv/src/blocks/<ad>/` (çatı), `tv/src/profiles/<ad>/blocks/<ad>/` (proje; aynı adla çatınınkinin yerine
+Klasör: `kodmob-frontend/src/blocks/<ad>/` (çatı), `kodmob-frontend/src/profiles/<ad>/blocks/<ad>/` (proje; aynı adla çatınınkinin yerine
 geçer) ya da araç paketinde `blocks/<ad>/`.
 
 ```
@@ -74,11 +74,11 @@ preview.svg   (isteğe bağlı) Keşfet ve kitaplıktaki küçük resim
 - Alan türleri: `text`, `textarea`, `html` (HtmlSanitizer'dan geçer), `link` (`route:<rota>` sitenin sayfası, `/yol`,
   `#çapa`, `https://`, `mailto:`, `tel:`), `bool`, `int`, `select`, `icon` (sprite), `image` (medya), `rows` (sütunları
   bunlardan). `localized: true` alan dil başınadır; diğerleri her dilde aynı.
-- `default`: düz değer ya da `@sözlük.anahtarı` (çatı sözlüğü `tv/src/i18n/<dil>.json` → `blocks.*`; profilin
+- `default`: düz değer ya da `@sözlük.anahtarı` (çatı sözlüğü `kodmob-frontend/src/i18n/<dil>.json` → `blocks.*`; profilin
   sözlüğü de olur). Eksik çeviri derlemeyi durdurur.
 
 `block.html` küçük bir Mustache alt kümesidir (sunucuda `Modules\Site\Blocks\Template`, derlemede
-`tv/src/blocks/template.js`; ikisi aynı örneklerle sınanır):
+`kodmob-frontend/src/blocks/template.js`; ikisi aynı örneklerle sınanır):
 
 ```html
 <section class="container-site section-sm">
@@ -102,15 +102,15 @@ preview.svg   (isteğe bağlı) Keşfet ve kitaplıktaki küçük resim
 - Tailwind sınıfları `block.html`'den kendiliğinden toplanır; ikon `<use href="#i-ad"/>`.
 
 Blok sunucuda çizilir (`<div class="km-block" data-km-block data-km-id>` sarmalayıcısıyla) ve sayfa önbelleğine girer;
-sitede yalnızca sayfadaki blokların `block.js`'i iner (`tv/src/blocks/index.js`). Düzenleyici bloğu değiştirince
+sitede yalnızca sayfadaki blokların `block.js`'i iner (`kodmob-frontend/src/blocks/index.js`). Düzenleyici bloğu değiştirince
 `km:blocks` olayıyla `init` yeniden çağrılır; `init`'in döndürdüğü işlev eski öğeyi bırakır.
 
 ## Sunucu
 
-`kodmob-api/app/Modules/Site/Blocks`: `BlockLibrary` (km-blocks.json), `BlockData` (temizleme), `BlockRenderer`,
+`kodmob-core/app/Modules/Site/Blocks`: `BlockLibrary` (km-blocks.json), `BlockData` (temizleme), `BlockRenderer`,
 `Layouts` (taslak / yayın / geçmiş; tablo `page_layouts`), `ZoneSsr` (bölgeye yazma), `PreviewToken`, `BlockAssist`
 (Jarvis). Uçlar `/admin/layouts*` ve `/admin/blocks*` (yetki `km_edit_layout`; Keşfet'te `km_manage_settings` da).
-Yedek bölgeleri taşır. Testler: `tests/Feature/BlocksTest.php`, `BlockPagesTest.php`, `tv/tests/blocks.test.mjs`,
+Yedek bölgeleri taşır. Testler: `tests/Feature/BlocksTest.php`, `BlockPagesTest.php`, `kodmob-frontend/tests/blocks.test.mjs`,
 `panel-builder.test.mjs`, `e2e/specs/builder.spec.js`.
 
 ## Kayıt sayfası blokları
@@ -138,7 +138,7 @@ satırlara dönüşür). Sunucu panelde değiştirilmiş metinleri (`Content\Pag
 ## Blok sayfası
 
 Panelden açılan, içeriği yalnızca bloklardan oluşan sayfa (kampanya, etkinlik…): içerik türü `pages`
-(`Modules/Site/Pages/PageType`; her projede). Şablonu çatının `tv/src/pages/page/index.njk`'si; tek bölgesi
+(`Modules/Site/Pages/PageType`; her projede). Şablonu çatının `kodmob-frontend/src/pages/page/index.njk`'si; tek bölgesi
 `page.main` ve her kayıt kendi bölgesini kullanır: `page.main@<kimlik>`. Düzenleyicinin uçları bu adı alır
 (`PUT /admin/layouts/page.main@12`); bölge yalnızca o kayıt varken yazılır.
 

@@ -37,9 +37,9 @@ Node.js 20+, PHP 8.4 (pdo_sqlite) ve Composer yeterli; yerelde veritabanı SQLit
 
 ```bash
 git clone https://github.com/kodmob/kodmob.git benim-projem && cd benim-projem
-cd kodmob-api && composer install
+cd kodmob-core && composer install
 php artisan kodmob:install --profile=benim-sitem      # .env, anahtarlar, tablolar, ilk yönetici, site profili
-cd ../tv && npm ci && npm run deploy:local && npm run serve:local
+cd ../kodmob-frontend && npm ci && npm run deploy:local && npm run serve:local
 # site: http://127.0.0.1:8090/   panel: http://127.0.0.1:8090/panel/
 ```
 

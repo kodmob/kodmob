@@ -32,7 +32,7 @@ jobs:
         options: --health-cmd="pg_isready -U postgres" --health-interval=5s --health-timeout=5s --health-retries=30
     defaults:
       run:
-        working-directory: kodmob-api
+        working-directory: kodmob-core
     steps:
       - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2
@@ -66,8 +66,8 @@ jobs:
           php-version: '8.4'
           extensions: gd, intl, mbstring, pdo_sqlite, sqlite3, zip
           tools: composer
-      - name: kodmob-api kurulumu
-        working-directory: kodmob-api
+      - name: kodmob-core kurulumu
+        working-directory: kodmob-core
         run: |
           composer install --no-interaction --prefer-dist --no-progress
           cp .env.example .env
@@ -77,20 +77,20 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: tv/package-lock.json
+          cache-dependency-path: kodmob-frontend/package-lock.json
       - run: npm ci
-        working-directory: tv
+        working-directory: kodmob-frontend
       - run: npm test
-        working-directory: tv
+        working-directory: kodmob-frontend
       - name: Uçtan uca testler (Chrome runner'da kurulu)
-        working-directory: tv
+        working-directory: kodmob-frontend
         run: npm run e2e
         env:
           CI: 'true'
           KM_PHP: php
       # Mağaza, Rezervasyon, Oteller: başlangıç profili + modüller ortamdan (shop.spec).
       - name: Uçtan uca testler (mağaza)
-        working-directory: tv
+        working-directory: kodmob-frontend
         run: npm run e2e -- --shop
         env:
           CI: 'true'
