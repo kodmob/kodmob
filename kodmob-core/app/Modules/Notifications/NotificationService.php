@@ -108,7 +108,8 @@ final class NotificationService
         foreach ($counts as $key => $count) {
             $kinds[] = ['key' => $key, 'label' => self::KINDS[$key] ?? ucfirst($key), 'count' => $count];
         }
-        usort($kinds, static fn ($a, $b) => $b['count'] <=> $a['count']);
+        // Çok olan önce; eşitse adına göre (veritabanından bağımsız, sabit sıra).
+        usort($kinds, static fn ($a, $b) => [$b['count'], $a['key']] <=> [$a['count'], $b['key']]);
 
         return [
             'items' => $rows->map(fn ($row) => $this->present((array) $row))->all(),
