@@ -1,0 +1,43 @@
+{# Üyeler (site üyeliği). Mantık: panel/members.js. #}
+<div class="pn-page" x-data="kmMembers" data-testid="members">
+  <div class="pn-toolbar">
+    <label class="sr-only" for="members-search">Ara</label>
+    <input id="members-search" class="input md:max-w-xs" type="search" placeholder="Ad ya da e-posta ara" x-model="search" @input="find()" data-testid="members-search">
+    <select class="input w-auto" x-model="status" @change="page = 1; load()" aria-label="Durum">
+      <option value="">Bütün üyeler</option>
+      <option value="active">Açık</option>
+      <option value="disabled">Kapalı</option>
+    </select>
+    <span class="text-sm text-muted md:ms-auto" x-text="total + ' üye'"></span>
+  </div>
+
+  <div class="card overflow-hidden">
+    <template x-if="loading && !items.length"><div class="space-y-3 p-4"><div class="skeleton h-12"></div><div class="skeleton h-12"></div></div></template>
+    <p class="p-8 text-center text-sm text-ink-2" x-show="!loading && !items.length" x-cloak>Henüz üye yok. Ziyaretçiler sitenin Hesabım sayfasından üye olur.</p>
+    <ul class="divide-y divide-line" x-show="items.length">
+      <template x-for="m in items" :key="m.id">
+        <li class="flex flex-wrap items-center gap-3 px-4 py-3" :data-member="m.id">
+          <span class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary-soft text-sm font-bold text-primary" aria-hidden="true" x-text="(m.name || '?').slice(0, 1).toUpperCase()"></span>
+          <span class="min-w-0 flex-1">
+            <span class="block truncate font-semibold text-ink" x-text="m.name"></span>
+            <span class="block truncate text-xs text-muted"><span x-text="m.email"></span> · <span x-text="'Üyelik: ' + (m.created_at || '').slice(0, 10)"></span><span x-show="m.last_login_at" x-text="' · Son giriş: ' + (m.last_login_at || '').slice(0, 10)"></span></span>
+          </span>
+          <span class="badge badge-neutral" x-show="m.google">Google</span>
+          <span class="badge" :class="m.verified ? 'badge-success' : 'badge-warning'" x-text="m.verified ? 'Doğrulandı' : 'Doğrulanmadı'"></span>
+          <span class="badge badge-danger" x-show="m.status === 'disabled'">Kapalı</span>
+          <template x-if="canManage">
+            <span class="flex gap-1">
+              <button type="button" class="btn btn-ghost btn-sm" @click="toggle(m)" x-text="m.status === 'active' ? 'Kapat' : 'Aç'"></button>
+              <button type="button" class="btn-icon text-danger" @click="remove(m)" aria-label="Sil" title="Sil"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-trash"/></svg></button>
+            </span>
+          </template>
+        </li>
+      </template>
+    </ul>
+    <div class="flex items-center justify-between border-t border-line px-4 py-3 text-sm text-ink-2" x-show="pages > 1">
+      <button type="button" class="btn btn-ghost btn-sm" @click="page--; load()" :disabled="page <= 1">Önceki</button>
+      <span x-text="`Sayfa ${page} / ${pages}`"></span>
+      <button type="button" class="btn btn-ghost btn-sm" @click="page++; load()" :disabled="page >= pages">Sonraki</button>
+    </div>
+  </div>
+</div>

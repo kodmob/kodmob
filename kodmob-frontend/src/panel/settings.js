@@ -33,6 +33,7 @@ const TABS = [
     { key: 'ai', label: 'Yapay zekâ', icon: 'sparkles', can: 'km_manage_ai', shared: true },
     { key: 'jobs', label: 'Arka plan', icon: 'activity', can: 'km_manage_settings' },
     { key: 'backup', label: 'Yedekleme', icon: 'download', can: 'km_manage_backups' },
+    { key: 'panel', label: 'Panel dili', icon: 'globe', can: 'km_manage_settings', shared: true },
 ];
 
 const PROJECT_TABS = [{ key: 'general', label: 'Proje', icon: 'sliders', can: 'km_manage_settings|km_manage_ai' }];

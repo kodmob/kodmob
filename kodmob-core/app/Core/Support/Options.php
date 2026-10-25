@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\DB;
 final class Options
 {
     /** Alt projelerin ana projeden aldığı ayarlar (MailSettings, SmsSettings, AiSettings). */
-    public const SHARED = ['mail_settings', 'sms_settings', 'ai_settings'];
+    public const SHARED = ['mail_settings', 'sms_settings', 'ai_settings', 'panel_languages'];
 
     /** @var array<string,mixed> */
     private static array $cache = [];

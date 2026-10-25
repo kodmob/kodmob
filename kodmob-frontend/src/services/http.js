@@ -57,13 +57,27 @@ function toQuery(params = {}) {
     return qs ? `?${qs}` : '';
 }
 
+/**
+ * Sunucu mesajının çevirisi (panelin dili; panel/i18n.js kurar): `(kod, metin) => metin`. Alan hataları da geçer
+ * (`details.fields`, kodları `details.codes`).
+ */
+let translateMessage = null;
+export function useMessageTranslator(fn) {
+    translateMessage = fn;
+}
+
 async function parseError(response) {
     const body = await response.json().catch(() => ({}));
+    const tr = (code, text) => (translateMessage ? translateMessage(code, text) : text);
+    const details = body.details || body.data?.details || {};
+    if (translateMessage && details.fields && typeof details.fields === 'object') {
+        details.fields = Object.fromEntries(Object.entries(details.fields).map(([field, text]) => [field, tr(details.codes?.[field] || '', String(text))]));
+    }
     return new ApiError({
         status: response.status,
         code: body.code || `http_${response.status}`,
-        message: body.message ? String(body.message) : messageFor(body.code, httpFailed(response.status)),
-        details: body.details || body.data?.details || {},
+        message: body.message ? tr(body.code || '', String(body.message)) : messageFor(body.code, httpFailed(response.status)),
+        details,
         data: body.data || null,
     });
 }

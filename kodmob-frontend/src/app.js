@@ -21,6 +21,7 @@ import { initEffects } from './ui/effects/index.js';
 import { initBlocks, watchBlocks } from './blocks/index.js';
 import { fmt } from './domain/format.js';
 import { initAnalytics } from './services/analytics.js';
+import { registerServiceWorker } from './services/sw.js';
 
 // Seçilmiş tema ilk çizime en yakın anda (CSP, head'de satır içi betiğe izin vermiyor).
 applyStoredTheme();
@@ -56,4 +57,6 @@ export async function startPage({ components = {} } = {}) {
         requestAnimationFrame(() => document.getElementById(decodeURIComponent(window.location.hash.slice(1)))?.scrollIntoView());
     }
     initAnalytics();
+    // Web uygulaması: çevrim dışı sayfası ve dosya önbelleği (public/sw.js).
+    registerServiceWorker();
 }

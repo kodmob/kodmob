@@ -35,7 +35,7 @@ const VIEWS = {
     bookings: all(grid, mod(() => import('./bookings.js'), 'kmBookings')),
     newsletter: all(grid, mod(() => import('./newsletter.js'), 'kmNewsletter'), mod(() => import('./richtext.js'), 'kmRichText')),
     projectSettings: mod(() => import('./settings.js'), 'kmSettings'),
-    settings: all(mod(() => import('./settings.js'), 'kmSettings'), mod(() => import('./backup.js'), 'kmBackup'), mod(() => import('./system.js'), 'kmMail', 'kmSms', 'kmAi', 'kmJobs'), mod(() => import('./auto-backup.js'), 'kmAutoBackup')),
+    settings: all(mod(() => import('./settings.js'), 'kmSettings'), mod(() => import('./backup.js'), 'kmBackup'), mod(() => import('./system.js'), 'kmMail', 'kmSms', 'kmAi', 'kmJobs'), mod(() => import('./auto-backup.js'), 'kmAutoBackup'), mod(() => import('./panel-languages.js'), 'kmPanelLanguages')),
     seo: all(grid, mod(() => import('./seo.js'), 'kmSeo')),
     history: all(grid, mod(() => import('./history.js'), 'kmHistory')),
     users: all(grid, mod(() => import('./users.js'), 'kmUsers')),
@@ -44,9 +44,10 @@ const VIEWS = {
     sites: mod(() => import('./sites.js'), 'kmSites'),
     health: mod(() => import('./health.js'), 'kmHealth'),
     tools: mod(() => import('./tools.js'), 'kmTools'),
-    profile: all(mod(() => import('./profile.js'), 'kmProfile'), mod(() => import('./two-factor.js'), 'kmTwoFactor')),
+    profile: all(mod(() => import('./profile.js'), 'kmProfile'), mod(() => import('./two-factor.js'), 'kmTwoFactor'), mod(() => import('./panel-languages.js'), 'kmPanelLanguagePicker')),
     guide: mod(() => import('./guide.js'), 'kmGuide', 'kmGuideTour'),
-    notifications: mod(() => import('./notifications-page.js'), 'kmNotificationsPage'),
+    notifications: mod(() => import('./notifications-page.js'), 'kmNotificationsPage', 'kmPush'),
+    members: mod(() => import('./members.js'), 'kmMembers'),
 };
 
 // Projenin özel sayfaları (profilin panel.js PAGES `load`): modülün dışa açtığı işlevler bileşen olarak kaydedilir.

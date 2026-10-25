@@ -43,13 +43,29 @@ export function newsletterRoutes(paths = {}, locales = null) {
 }
 
 /**
- * Çatının araçlarının site sayfaları (Mağaza, Rezervasyon, Oteller, Bülten): profil kendi rotalarında yazmadıysa
+ * Site üyeliği (araç `members`; kodmob-core Modules\Members): giriş, kayıt, şifre yenileme, e-posta doğrulama ve hesabım
+ * tek sayfada (pages/account). E-postalardaki bağlantılar buraya gelir. Arama motoru dışı.
+ */
+export const MEMBER_PATHS = { account: { tr: '/hesap/', en: '/account/', de: '/konto/' } };
+
+export function memberRoutes(paths = {}, locales = null) {
+    const p = { ...MEMBER_PATHS, ...paths };
+    const only = (byLocale) => (locales ? Object.fromEntries(Object.entries(byLocale).filter(([code]) => locales.includes(code))) : byLocale);
+
+    return [{
+        name: 'account', paths: only(p.account), ...page('account'), module: 'members',
+        titleKey: 'account.meta.title', descriptionKey: 'account.meta.description', sitemap: false, noindex: true,
+    }];
+}
+
+/**
+ * Çatının araçlarının site sayfaları (Mağaza, Rezervasyon, Oteller, Bülten, Üyelik): profil kendi rotalarında yazmadıysa
  * (adını kullanmadıysa) varsayılan adresleriyle her derlemeye girer. Araç kapalıyken sayfalar 404 ve site haritası
  * dışı (rotanın `module`'ü); araç Araç Pazarı › Keşfet'ten derlemesiz eklenince açılır. Profil `toolPages: false` ile almaz.
  */
 export const toolRoutes = (codes, existing = []) => {
     const names = new Set(existing.map((r) => r.name));
-    return [...commerceRoutes({}, codes), ...bookingRoutes({}, codes), ...hotelRoutes({}, codes), ...newsletterRoutes({}, codes)]
+    return [...commerceRoutes({}, codes), ...bookingRoutes({}, codes), ...hotelRoutes({}, codes), ...newsletterRoutes({}, codes), ...memberRoutes({}, codes)]
         .filter((r) => !names.has(r.name) && Object.keys(r.paths).length);
 };
 

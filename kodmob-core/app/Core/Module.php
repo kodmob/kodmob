@@ -110,6 +110,21 @@ abstract class Module
         return [];
     }
 
+    /**
+     * Genel bakış kartları (Core\Dashboard\Widgets): kişi sıralar, boyutlandırır, gizler. `type`: `stats` (sayılar:
+     * `data()` → `['items' => [['label', 'value', 'sub'?, 'route'?, 'params'?]]]`), `list` (satırlar: `['items' =>
+     * [['title', 'meta'?, 'badge'?, 'route'?, 'params'?]], 'empty' => 'metin', 'note' => 'metin']`) ya da `custom` (panelde
+     * anahtarına özel şablon). `size`: sm | md | lg (varsayılan); `can`: kartı görecek yetki ('a|b'); `link`: başlıktaki
+     * "Tümü" (`['route' => …, 'label' => …]`); `order`: katalog sırası. `data(array $ctx)`: `$ctx['user']` kişinin
+     * kimliği, `$ctx['can']` yetki → bool. Panel kodu gerekmez (custom hariç).
+     *
+     * @return list<array{key:string,label:string,icon?:string,type:string,size?:string,can?:?string,order?:int,link?:array,description?:string,data?:callable}>
+     */
+    public function widgets(): array
+    {
+        return [];
+    }
+
     public function boot(): void {}
 
     public function schedule(Schedule $schedule): void {}

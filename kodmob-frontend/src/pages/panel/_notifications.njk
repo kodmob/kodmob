@@ -1,5 +1,22 @@
 {# Bildirimler. Mantık: panel/notifications-page.js. #}
 <div class="pn-page" x-data="kmNotificationsPage(r)" data-testid="notifications-page">
+  {# Anlık bildirimler: bu cihazda (panel/notifications-page.js kmPush). #}
+  <div class="card card-body flex flex-wrap items-center gap-4" x-data="kmPush" data-testid="push-card" :data-state="state">
+    <span class="tone-icon tone-primary h-10 w-10"><svg class="icon" aria-hidden="true"><use href="#i-smartphone"/></svg></span>
+    <div class="min-w-0 flex-1">
+      <p class="font-semibold text-ink">Anlık bildirimler</p>
+      <p class="text-sm text-ink-2" x-show="state === 'on'">Bu cihazda açık: panel kapalıyken de bildirim gelir<span x-show="devices > 1" x-text="` (toplam ${devices} cihaz)`"></span>.</p>
+      <p class="text-sm text-ink-2" x-show="state === 'off' || state === 'loading'">Yeni talep, sipariş ya da biten iş olunca bu cihaza da bildirim gelsin.</p>
+      <p class="text-sm text-ink-2" x-show="state === 'denied'">Bu tarayıcıda bildirim izni kapalı. Adres çubuğundaki site ayarlarından "Bildirimler"i açıp sayfayı yenileyin.</p>
+      <p class="text-sm text-ink-2" x-show="state === 'unsupported'">Bu tarayıcı anlık bildirimi desteklemiyor (iPhone'da önce "Ana Ekrana Ekle" ile uygulamayı ekleyin).</p>
+    </div>
+    <div class="flex flex-wrap gap-2" x-show="available">
+      <button type="button" class="btn btn-primary btn-sm" x-show="state === 'off'" @click="enable()" :disabled="busy" data-testid="push-enable">Bu cihazda aç</button>
+      <button type="button" class="btn btn-secondary btn-sm" x-show="state === 'on'" @click="test()" :disabled="busy" data-testid="push-test">Deneme gönder</button>
+      <button type="button" class="btn btn-ghost btn-sm" x-show="state === 'on'" @click="disable()" :disabled="busy" data-testid="push-disable">Kapat</button>
+    </div>
+  </div>
+
   <div class="pn-toolbar flex-wrap">
     <div class="pn-tabs" role="tablist" aria-label="Durum" data-testid="notifications-status">
       <template x-for="t in statusTabs" :key="t.key">

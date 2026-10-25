@@ -39,6 +39,7 @@
         { "name": "settings", "params": { "tab": "backup" }, "url": "/panel/sistem-ayarlari/yedekleme" },
         { "name": "settings", "params": { "tab": "mail" }, "url": "/panel/sistem-ayarlari/e-posta" },
         { "name": "settings", "params": { "tab": "sms" }, "url": "/panel/sistem-ayarlari/sms" },
+        { "name": "settings", "params": { "tab": "panel" }, "url": "/panel/sistem-ayarlari/panel-dili" },
         { "name": "settings", "params": { "tab": "ai" }, "url": "/panel/sistem-ayarlari/yapay-zeka" },
         { "name": "other", "params": {}, "url": "/panel/diger-islemler" },
         { "name": "settings", "params": { "tab": "jobs" }, "url": "/panel/sistem-ayarlari/arka-plan" },
@@ -58,7 +59,8 @@
         { "name": "security", "params": { "tab": "blocks" }, "url": "/panel/guvenlik/ip-engelleri" },
         { "name": "profile", "params": {}, "url": "/panel/profilim" },
         { "name": "guide", "params": {}, "url": "/panel/kilavuz" },
-        { "name": "notifications", "params": {}, "url": "/panel/bildirimler" }
+        { "name": "notifications", "params": {}, "url": "/panel/bildirimler" },
+        { "name": "members", "params": {}, "url": "/panel/uyeler" }
     ],
     "fallbacks": [
         { "name": "seo", "params": { "tab": "overview" }, "url": "/panel/seo", "why": "varsayılan sekme adrese yazılmaz" },

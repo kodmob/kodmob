@@ -285,7 +285,8 @@
                 "sms": "sms",
                 "ai": "yapay-zeka",
                 "jobs": "arka-plan",
-                "backup": "yedekleme"
+                "backup": "yedekleme",
+                "panel": "panel-dili"
             },
             "languages": {
                 "list": "liste",
@@ -331,6 +332,7 @@
             "profile": "profilim",
             "guide": "kilavuz",
             "notifications": "bildirimler",
+            "members": "uyeler",
             "editor": ":type/:idOrNew",
             "list": ":type"
         }

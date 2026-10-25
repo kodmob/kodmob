@@ -47,83 +47,101 @@
     <span x-text="'(' + stepsDone + ' / ' + steps.length + ' tamam)'"></span>
   </p>
 
-  <div class="pn-stats">
-    <template x-for="(t, key) in types" :key="key">
-      <a :href="$store.session.can(t.can) ? $href('list', { type: key }) : null" class="card pn-stat" :class="$store.session.can(t.can) && 'card-hover'">
-        <span class="icon-tile"><svg class="icon icon-lg" aria-hidden="true"><use :href="'#i-' + t.icon"/></svg></span>
-        <span class="pn-stat-label" x-text="t.label"></span>
-        <template x-if="loading"><span class="skeleton h-9 w-16 rounded-md"></span></template>
-        <template x-if="!loading && data">
-          <span>
-            <span class="pn-stat-value" x-text="data.counts[key].total"></span>
-            <span class="pn-stat-sub"><span x-text="data.counts[key].published"></span> yayında<template x-if="data.counts[key].draft"><span> · <span x-text="data.counts[key].draft"></span> taslak</span></template></span>
-          </span>
+  {# Kartlar (widget): modüllerden; kişi sıralar, boyutlandırır, gizler (panel/overview.js). #}
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <h2 class="text-base font-semibold text-ink">Özet</h2>
+    <div class="flex flex-wrap gap-2">
+      <button type="button" class="btn btn-ghost btn-sm" x-show="editing && custom" @click="reset()" data-testid="widgets-reset">Varsayılana dön</button>
+      <button type="button" class="btn btn-sm" :class="editing ? 'btn-primary' : 'btn-ghost'" @click="editing = !editing" :aria-pressed="editing" data-testid="widgets-edit">
+        <svg class="icon icon-sm" aria-hidden="true"><use :href="editing ? '#i-check' : '#i-sliders'"/></svg> <span x-text="editing ? 'Bitti' : 'Kartları düzenle'"></span>
+      </button>
+    </div>
+  </div>
+
+  <template x-if="widgetsLoading">
+    <div class="pn-widgets"><span class="skeleton h-40 md:col-span-2 xl:col-span-4"></span><span class="skeleton h-56 xl:col-span-2"></span><span class="skeleton h-56 xl:col-span-2"></span></div>
+  </template>
+
+  <div class="pn-widgets" :class="editing && 'is-editing'" x-show="!widgetsLoading" data-testid="widgets">
+    <template x-for="(w, i) in shown" :key="w.key">
+      <section class="card pn-widget overflow-hidden" :data-size="w.size" :data-widget="w.key" :class="{ 'is-dragging': dragging === w.key, 'is-over': over === w.key && dragging !== w.key }"
+        :draggable="editing" @dragstart="editing && dragStart(w.key, $event)" @dragend="dragging = null; over = null"
+        @dragover.prevent="editing && (over = w.key)" @drop.prevent="editing && drop(w.key)">
+        {# Düzenleme araçları #}
+        <div class="pn-widget-tools" x-show="editing" x-cloak>
+          <svg class="icon icon-sm cursor-grab text-muted" aria-hidden="true"><use href="#i-grip"/></svg>
+          <button type="button" class="btn-icon h-8 w-8" @click="move(w.key, -1)" :disabled="i === 0" aria-label="Öne al" title="Öne al"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chevron-left"/></svg></button>
+          <button type="button" class="btn-icon h-8 w-8" @click="move(w.key, 1)" :disabled="i === shown.length - 1" aria-label="Arkaya al" title="Arkaya al"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>
+          <label class="sr-only" :for="'size-' + w.key">Boyut</label>
+          <select class="input h-8 w-auto py-0 text-sm" :id="'size-' + w.key" @change="setSize(w.key, $event.target.value)" data-testid="widget-size">
+            <template x-for="s in sizes" :key="s.key"><option :value="s.key" x-text="s.label" :selected="s.key === w.size"></option></template>
+          </select>
+          <button type="button" class="btn-icon ms-auto h-8 w-8" @click="hide(w.key)" aria-label="Gizle" title="Gizle" data-testid="widget-hide"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-eye-off"/></svg></button>
+        </div>
+
+        <div class="pn-card-head">
+          <h3 class="h3 flex min-w-0 items-center gap-2"><svg class="icon text-primary" aria-hidden="true"><use :href="'#i-' + w.icon"/></svg> <span class="truncate" x-text="w.label"></span></h3>
+          <template x-if="w.link"><a :href="$href(w.link.route, w.link.params || {})" class="link-arrow shrink-0 text-sm"><span x-text="w.link.label"></span> <svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-right"/></svg></a></template>
+        </div>
+
+        <template x-if="w.data && w.data.error"><p class="px-5 pb-5 text-sm text-danger" x-text="w.data.error"></p></template>
+
+        {# Sayılar #}
+        <template x-if="w.type === 'stats' && w.data && !w.data.error">
+          <div class="pn-widget-stats">
+            <template x-for="(s, j) in w.data.items" :key="j">
+              <a :href="link(s)" class="pn-widget-stat" :class="!link(s) && 'pointer-events-none'">
+                <span class="pn-stat-label" x-text="s.label"></span>
+                <span class="pn-stat-value mt-1" x-text="s.value"></span>
+                <span class="pn-stat-sub" x-show="s.sub" x-text="s.sub"></span>
+              </a>
+            </template>
+          </div>
         </template>
-      </a>
+
+        {# Satırlar #}
+        <template x-if="w.type === 'list' && w.data && !w.data.error">
+          <div>
+            <p class="px-5 pb-1 text-sm font-medium text-primary" x-show="w.data.note" x-text="w.data.note"></p>
+            <ul class="pn-feed">
+              <template x-for="(item, j) in w.data.items" :key="j">
+                <li><a :href="link(item)" class="pn-feed-item">
+                  <span class="min-w-0 flex-1">
+                    <span class="block truncate font-semibold text-ink" x-text="item.title"></span>
+                    <span class="block truncate text-xs text-muted"><span x-text="item.meta"></span><span x-show="item.meta && item.time"> · </span><span x-text="when(item.time)"></span></span>
+                  </span>
+                  <template x-if="item.badge"><span class="badge shrink-0" :class="badgeClass(item.badge)" x-text="item.badge[0]"></span></template>
+                </a></li>
+              </template>
+              <li x-show="!w.data.items.length" class="px-5 py-6 text-sm text-muted" x-text="w.data.empty || 'Kayıt yok.'"></li>
+            </ul>
+          </div>
+        </template>
+
+        {# Domain taramaları (özel kart; veriyi kendisi ister) #}
+        <template x-if="w.key === 'domains'">
+          <div class="px-5 pb-5" x-data="{ jobs: [] }" x-init="api.jarvis().then((r) => { jobs = r.jobs || []; }).catch(() => {})">
+            <p class="text-sm text-ink-2" x-show="!jobs.length">Süren tarama yok. Domain aramada kısa adları tarayabilirsiniz.</p>
+            <ul class="flex flex-col gap-3" x-show="jobs.length">
+              <template x-for="job in jobs" :key="job.id">
+                <li><a :href="$href('domains', { job: job.id })" class="block rounded-control border border-line p-3 hover:bg-surface-subtle">
+                  <span class="flex items-center justify-between gap-3 text-sm"><span class="truncate font-medium text-ink" x-text="job.title"></span><span class="num shrink-0 text-xs text-ink-2" x-text="job.found + ' boş · %' + job.progress"></span></span>
+                  <span class="progress mt-2 block"><span :style="{ width: job.progress + '%' }"></span></span>
+                </a></li>
+              </template>
+            </ul>
+          </div>
+        </template>
+      </section>
     </template>
   </div>
 
-  <div class="grid gap-5 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
-    <section class="card">
-      <div class="pn-card-head"><h3 class="h3">Son değişenler</h3></div>
-      <template x-if="loading"><div class="flex flex-col gap-3 p-5"><span class="skeleton h-12"></span><span class="skeleton h-12"></span><span class="skeleton h-12"></span></div></template>
-      <ul class="pn-feed" x-show="!loading" x-cloak>
-        <template x-for="row in (data ? data.recent : [])" :key="row.type + row.id">
-          <li>
-            <a :href="$href('editor', { type: row.type, id: row.id })" class="pn-feed-item">
-              <span class="pn-thumb">
-                <template x-if="row.image"><img :src="row.image.src" alt=""></template>
-                <template x-if="!row.image"><svg class="icon" aria-hidden="true"><use :href="'#i-' + types[row.type].icon"/></svg></template>
-              </span>
-              <span class="min-w-0 flex-1"><span class="block truncate font-semibold text-ink" x-text="row.title"></span><span class="block text-xs text-muted"><span x-text="types[row.type].singular"></span> · <span x-text="relative(row.modified)"></span></span></span>
-              <span class="badge" :class="status[row.status]?.badge" x-text="status[row.status]?.label"></span>
-            </a>
-          </li>
-        </template>
-      </ul>
-    </section>
-
-    <section class="card" x-show="$store.session.can('km_view_briefs')">
-      <div class="pn-card-head">
-        <h3 class="h3">Talepler</h3>
-        <a :href="$href('briefs')" class="link-arrow text-sm">Tümü <svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
-      </div>
-      <template x-if="!loading && data && data.briefs">
-        <div>
-          <p class="px-5 text-sm text-ink-2" x-show="data.briefs.new"><span class="font-bold text-primary" x-text="data.briefs.new"></span> yeni talep okunmayı bekliyor.</p>
-          <ul class="pn-feed">
-            <template x-for="b in data.briefs.latest" :key="b.id">
-              <li><a :href="$href('briefs')" class="pn-feed-item">
-                <span class="avatar grid place-items-center bg-primary-soft text-sm font-bold text-primary" aria-hidden="true" x-text="b.name.slice(0, 1).toUpperCase()"></span>
-                <span class="min-w-0 flex-1"><span class="block truncate font-semibold text-ink" x-text="b.name"></span><span class="block truncate text-xs text-muted" x-text="b.message"></span></span>
-                <span class="text-xs text-muted" x-text="relative(b.created_at.replace(' ', 'T'))"></span>
-              </a></li>
-            </template>
-            <li x-show="!data.briefs.latest.length" class="px-5 py-6 text-sm text-muted">Henüz talep yok.</li>
-          </ul>
-        </div>
-      </template>
-    </section>
-
-    <section class="card lg:col-span-2" x-show="$store.session.can('km_use_jarvis|km_use_domains')" x-data="{ jobs: [], ai: null }" x-init="$store.session.can('km_use_jarvis|km_use_domains') && api.jarvis().then((r) => { jobs = r.jobs; ai = r.ai; }).catch(() => {})">
-      <div class="pn-card-head">
-        <h3 class="h3 flex items-center gap-2"><svg class="icon text-primary" aria-hidden="true"><use href="#i-sparkles"/></svg> Jarvis</h3>
-        <div class="flex gap-2">
-          <a :href="$href('domains')" class="btn btn-secondary btn-sm" x-show="$store.session.can('km_use_domains')"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-globe"/></svg> Domain arama</a>
-          <a :href="$href('jarvis')" class="btn btn-primary btn-sm" x-show="$store.session.can('km_use_jarvis')"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-sparkles"/></svg> Asistan</a>
-        </div>
-      </div>
-      <div class="px-5 pb-5">
-        <p class="text-sm text-ink-2" x-show="!jobs.length">Süren tarama yok. Domain aramada kısa adları tarayabilir ya da Jarvis'e sorabilirsiniz<span x-show="ai && !ai.configured"> (sohbet için Claude API anahtarı gerekli)</span>.</p>
-        <ul class="flex flex-col gap-3" x-show="jobs.length">
-          <template x-for="job in jobs" :key="job.id">
-            <li><a :href="$href('domains', { job: job.id })" class="block rounded-control border border-line p-3 hover:bg-surface-subtle">
-              <span class="flex items-center justify-between gap-3 text-sm"><span class="truncate font-medium text-ink" x-text="job.title"></span><span class="num shrink-0 text-xs text-ink-2" x-text="job.found + ' boş · %' + job.progress"></span></span>
-              <span class="progress mt-2 block"><span :style="{ width: job.progress + '%' }"></span></span>
-            </a></li>
-          </template>
-        </ul>
-      </div>
-    </section>
+  {# Gizli kartlar: düzenlerken geri eklenir. #}
+  <div class="card card-body flex flex-wrap items-center gap-2" x-show="editing && hiddenWidgets.length" x-cloak data-testid="widgets-hidden">
+    <span class="text-sm font-medium text-ink-2">Gizli kartlar:</span>
+    <template x-for="w in hiddenWidgets" :key="w.key">
+      <button type="button" class="btn btn-secondary btn-sm" @click="show(w.key)" :data-show="w.key"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-plus"/></svg> <span x-text="w.label"></span></button>
+    </template>
   </div>
+  <p class="text-sm text-muted" x-show="!editing && !widgetsLoading && !shown.length" x-cloak>Bütün kartlar gizli. "Kartları düzenle" ile geri ekleyin.</p>
 </div>

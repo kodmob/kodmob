@@ -119,6 +119,18 @@
       "consentRequired": "Devam etmek için onay kutusunu işaretleyin.",
       "rateLimited": "Çok sayıda deneme yapıldı; biraz sonra tekrar deneyin.",
       "error": "Gönderilemedi; lütfen tekrar deneyin."
+    },
+    "account": {
+      "registered": "Hoş geldiniz! E-posta adresinizi doğrulamak için gelen kutunuza bakın.",
+      "forgotSent": "Bu adres kayıtlıysa şifre yenileme bağlantısı gönderildi.",
+      "passwordChanged": "Şifreniz değiştirildi.",
+      "verified": "E-posta adresiniz doğrulandı.",
+      "verifyFailed": "Doğrulama bağlantısı geçersiz ya da süresi dolmuş.",
+      "verifySent": "Doğrulama e-postası gönderildi.",
+      "saved": "Bilgileriniz kaydedildi.",
+      "deleted": "Hesabınız silindi.",
+      "googleFailed": "Google ile giriş yapılamadı. Tekrar deneyin.",
+      "pushOn": "Bu cihazda sipariş bildirimleri açıldı."
     }
   },
   "contactForm": {
@@ -695,5 +707,46 @@
   "builtWith": {
     "before": "Bu proje",
     "after": "ile geliştirildi"
+  },
+  "account": {
+    "meta": {
+      "title": "Hesabım",
+      "description": "Üye girişi, kayıt ve hesap bilgileri."
+    },
+    "titleLogin": "Giriş yap",
+    "titleRegister": "Üye ol",
+    "titleForgot": "Şifremi unuttum",
+    "titleAccount": "Hesabım",
+    "email": "E-posta",
+    "password": "Şifre",
+    "name": "Ad soyad",
+    "newPassword": "Yeni şifre",
+    "currentPassword": "Şu anki şifre",
+    "passwordHelp": "En az 10 karakter; harf ve rakam.",
+    "login": "Giriş yap",
+    "register": "Üye ol",
+    "google": "Google ile devam et",
+    "forgotLink": "Şifremi unuttum",
+    "registerLink": "Hesabınız yok mu? Üye olun",
+    "loginLink": "Zaten üye misiniz? Giriş yapın",
+    "consent": "Kişisel verilerimin üyelik için işlenmesini kabul ediyorum.",
+    "privacy": "Gizlilik politikası",
+    "forgotText": "E-posta adresinizi yazın; şifre yenileme bağlantısı gönderelim.",
+    "forgotButton": "Bağlantı gönder",
+    "resetButton": "Şifreyi değiştir",
+    "unverified": "E-posta adresiniz henüz doğrulanmadı. Gelen kutunuzdaki bağlantıya tıklayın.",
+    "resend": "Yeniden gönder",
+    "profile": "Bilgilerim",
+    "save": "Kaydet",
+    "logout": "Çıkış yap",
+    "orders": "Siparişlerim",
+    "noOrders": "Henüz siparişiniz yok.",
+    "orderDetail": "Ayrıntı",
+    "changePassword": "Şifreyi değiştir",
+    "deleteTitle": "Hesabı sil",
+    "deleteText": "Hesabınız ve bilgileriniz kalıcı olarak silinir. Siparişleriniz yasal saklama süresince isimsiz olarak tutulur.",
+    "deleteConfirm": "Onaylamak için SİL yazın",
+    "deleteButton": "Hesabımı sil",
+    "pushButton": "Sipariş bildirimlerini aç"
   }
 }

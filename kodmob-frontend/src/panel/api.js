@@ -7,6 +7,20 @@ import { http } from '../services/http.js';
 
 export const api = {
     overview: () => http.get('/admin/overview'),
+    /** Genel bakış kartları ve kişinin düzeni (Core\Dashboard\Widgets). */
+    dashboard: () => http.get('/admin/dashboard'),
+    dashboardSave: (body) => http.put('/me/dashboard', body),
+    dashboardReset: () => http.delete('/me/dashboard'),
+    /** Çok dilli panel (Sistem Ayarları › Panel dili; Profilim). */
+    panelLanguages: () => http.get('/system/panel-languages'),
+    panelLanguageExport: (code, name) => http.download('/system/panel-languages/export', { code, name }),
+    panelLanguageImport: (body) => http.post('/system/panel-languages/import', body, { timeout: 60000 }),
+    panelLanguageDelete: (code) => http.delete(`/system/panel-languages/${code}`),
+    panelLanguageChoose: (code) => http.put('/me/panel-language', { code }),
+    /** Site üyeleri (Gelenler › Üyeler). */
+    members: (params) => http.get('/admin/members', params),
+    memberUpdate: (id, body) => http.put(`/admin/members/${id}`, body),
+    memberDelete: (id) => http.delete(`/admin/members/${id}`),
 
     schema: (type) => http.get(`/admin/schema/${type}`),
     list: (type) => http.get(`/admin/content/${type}`),
@@ -126,6 +140,11 @@ export const api = {
     notificationsPage: (params) => http.get('/notifications', params),
     notificationsUnread: (body) => http.post('/notifications/unread', body),
     notificationsDelete: (body) => http.post('/notifications/delete', body),
+    /** Anlık bildirim: bu cihazın durumu, aç / kapat, deneme. */
+    push: (endpoint) => http.get('/push', endpoint ? { endpoint } : {}),
+    pushSubscribe: (body) => http.post('/push/subscribe', body),
+    pushUnsubscribe: (body) => http.post('/push/unsubscribe', body),
+    pushTest: () => http.post('/push/test', {}),
 
     // Jarvis (Modules/Jarvis)
     jarvis: () => http.get('/jarvis'),

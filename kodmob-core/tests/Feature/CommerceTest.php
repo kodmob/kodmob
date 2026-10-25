@@ -138,6 +138,11 @@ class CommerceTest extends TestCase
         $this->assertSame('TR00 0000 0000 0000 0000 0000 00', $placed['payment']['instructions']['IBAN']);
         $this->assertArrayNotHasKey('customer_email', $placed['order'], 'müşteri görünümünde iç alan yok');
         $this->assertSame(1, (int) DB::table('commerce_coupons')->value('used'), 'kupon sipariş verilince sayılır');
+        // Genel bakış kartları: bu ayın siparişi ve ödeme bekleyen; son siparişlerde numarası.
+        $widgets = array_column($this->getJson('/v1/admin/dashboard', $h)->assertOk()->json('widgets'), null, 'key');
+        $this->assertSame([1, 1], [$widgets['sales']['data']['items'][0]['value'], $widgets['sales']['data']['items'][2]['value']]);
+        $this->assertStringStartsWith($number.' · Ayşe Yılmaz', $widgets['orders']['data']['items'][0]['title']);
+        $this->assertSame(['Ödeme bekliyor', 'warning'], $widgets['orders']['data']['items'][0]['badge']);
         $this->assertSame(1, $this->stock($kupa), 'stok düştü');
         $this->assertSame(0, DB::table('commerce_carts')->count(), 'sepet silindi');
         $this->assertSame('ayse@ornek.test', DB::table('commerce_orders')->value('customer_email'));

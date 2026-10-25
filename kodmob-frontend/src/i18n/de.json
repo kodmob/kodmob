@@ -119,6 +119,18 @@
       "consentRequired": "Bitte setzen Sie das Häkchen, um fortzufahren.",
       "rateLimited": "Zu viele Versuche; bitte versuchen Sie es etwas später erneut.",
       "error": "Konnte nicht gesendet werden; bitte erneut versuchen."
+    },
+    "account": {
+      "registered": "Willkommen! Bitte bestätigen Sie Ihre E-Mail-Adresse über den Link in Ihrem Postfach.",
+      "forgotSent": "Falls die Adresse registriert ist, wurde ein Link gesendet.",
+      "passwordChanged": "Ihr Passwort wurde geändert.",
+      "verified": "Ihre E-Mail-Adresse ist bestätigt.",
+      "verifyFailed": "Der Bestätigungslink ist ungültig oder abgelaufen.",
+      "verifySent": "Bestätigungs-E-Mail gesendet.",
+      "saved": "Ihre Daten wurden gespeichert.",
+      "deleted": "Ihr Konto wurde gelöscht.",
+      "googleFailed": "Anmeldung mit Google fehlgeschlagen.",
+      "pushOn": "Bestellbenachrichtigungen sind auf diesem Gerät aktiv."
     }
   },
   "contactForm": {
@@ -695,5 +707,46 @@
   "builtWith": {
     "before": "Entwickelt mit",
     "after": ""
+  },
+  "account": {
+    "meta": {
+      "title": "Mein Konto",
+      "description": "Anmeldung, Registrierung und Kontodaten."
+    },
+    "titleLogin": "Anmelden",
+    "titleRegister": "Registrieren",
+    "titleForgot": "Passwort vergessen",
+    "titleAccount": "Mein Konto",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "name": "Vor- und Nachname",
+    "newPassword": "Neues Passwort",
+    "currentPassword": "Aktuelles Passwort",
+    "passwordHelp": "Mindestens 10 Zeichen; Buchstaben und Ziffern.",
+    "login": "Anmelden",
+    "register": "Registrieren",
+    "google": "Weiter mit Google",
+    "forgotLink": "Passwort vergessen",
+    "registerLink": "Noch kein Konto? Registrieren",
+    "loginLink": "Schon Mitglied? Anmelden",
+    "consent": "Ich stimme der Verarbeitung meiner Daten für die Mitgliedschaft zu.",
+    "privacy": "Datenschutzerklärung",
+    "forgotText": "Geben Sie Ihre E-Mail ein; wir senden Ihnen einen Link zum Zurücksetzen.",
+    "forgotButton": "Link senden",
+    "resetButton": "Passwort ändern",
+    "unverified": "Ihre E-Mail-Adresse ist noch nicht bestätigt. Klicken Sie auf den Link in Ihrem Postfach.",
+    "resend": "Erneut senden",
+    "profile": "Meine Daten",
+    "save": "Speichern",
+    "logout": "Abmelden",
+    "orders": "Meine Bestellungen",
+    "noOrders": "Noch keine Bestellungen.",
+    "orderDetail": "Details",
+    "changePassword": "Passwort ändern",
+    "deleteTitle": "Konto löschen",
+    "deleteText": "Ihr Konto und Ihre Daten werden dauerhaft gelöscht. Bestellungen bleiben für die gesetzliche Aufbewahrungsfrist anonym erhalten.",
+    "deleteConfirm": "Zur Bestätigung LÖSCHEN eingeben",
+    "deleteButton": "Konto löschen",
+    "pushButton": "Bestellbenachrichtigungen aktivieren"
   }
 }

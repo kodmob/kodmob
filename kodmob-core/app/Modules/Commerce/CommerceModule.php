@@ -8,6 +8,7 @@ use App\Core\Health\Health;
 use App\Core\Module;
 use App\Core\Settings\SettingDefinition;
 use App\Core\Settings\SettingsService;
+use App\Core\Support\Clock;
 use App\Core\Support\PanelUrl;
 use App\Core\Support\Paths;
 use App\Core\Support\Text;
@@ -84,6 +85,37 @@ final class CommerceModule extends Module
     }
 
     /** Sıradaki adımlar: ödeme yöntemi olmadan sipariş verilemez. */
+    /** Genel bakış: bu ayın satışı ve son siparişler. */
+    public function widgets(): array
+    {
+        $labels = ['pending' => ['Ödeme bekliyor', 'warning'], 'paid' => ['Ödendi', 'success'], 'processing' => ['Hazırlanıyor', 'info'], 'shipped' => ['Kargoda', 'info'],
+            'completed' => ['Tamamlandı', 'success'], 'cancelled' => ['İptal', 'neutral'], 'refunded' => ['İade', 'neutral']];
+
+        return [
+            ['key' => 'sales', 'label' => 'Satış', 'icon' => 'cart', 'type' => 'stats', 'size' => 'md', 'order' => 25, 'can' => self::VIEW_ORDERS,
+                'link' => ['route' => 'orders', 'label' => 'Siparişler'], 'description' => 'Bu ayın siparişleri ve ödenen tutar; bekleyenler.',
+                'data' => static function () {
+                    $month = Clock::carbon(Clock::now())->startOfMonth()->format('Y-m-d H:i:s');
+                    $orders = DB::table('commerce_orders');
+                    $paid = (clone $orders)->where('payment_status', 'paid')->where('paid_at', '>=', $month);
+
+                    return ['items' => [
+                        ['label' => 'Bu ay sipariş', 'value' => (clone $orders)->where('created_at', '>=', $month)->count(), 'route' => 'orders'],
+                        ['label' => 'Bu ay ödenen', 'value' => Money::format((int) (clone $paid)->sum('total'))],
+                        ['label' => 'Ödeme bekleyen', 'value' => (clone $orders)->where('status', 'pending')->count(), 'route' => 'orders'],
+                        ['label' => 'Hazırlanacak', 'value' => (clone $orders)->whereIn('status', ['paid', 'processing'])->count(), 'route' => 'orders'],
+                    ]];
+                }],
+            ['key' => 'orders', 'label' => 'Son siparişler', 'icon' => 'cart', 'type' => 'list', 'size' => 'md', 'order' => 26, 'can' => self::VIEW_ORDERS,
+                'link' => ['route' => 'orders', 'label' => 'Tümü'],
+                'data' => static fn () => ['empty' => 'Henüz sipariş yok.', 'items' => DB::table('commerce_orders')->orderByDesc('id')->limit(5)->get()
+                    ->map(static fn ($o) => [
+                        'title' => $o->number.' · '.$o->customer_name, 'meta' => Money::format((int) $o->total, (string) $o->currency), 'time' => Clock::local((string) $o->created_at),
+                        'badge' => $labels[$o->status] ?? null, 'route' => 'orders', 'params' => ['id' => (int) $o->id],
+                    ])->all()]],
+        ];
+    }
+
     public function steps(): array
     {
         $methods = array_filter(Payments::all(), static fn ($m) => $m->available(true) || $m->available(false));

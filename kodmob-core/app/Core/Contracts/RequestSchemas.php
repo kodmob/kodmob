@@ -16,6 +16,7 @@ final class RequestSchemas
         'PUT /v1/users/{id}' => 'App\Modules\Users\UserService::schema',
         'POST /v1/seo/redirects' => 'App\Modules\Seo\Services\Redirects::schema',
         'PUT /v1/seo/redirects/{id}' => 'App\Modules\Seo\Services\Redirects::schema',
+        'POST /v1/push/subscribe' => 'App\Core\Push\PushSubscriptions::schema',
     ];
 
     /** @return array<string,array> "YÖNTEM /yol" → JSON Schema */

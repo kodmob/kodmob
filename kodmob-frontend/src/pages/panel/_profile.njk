@@ -35,6 +35,17 @@
       </div>
     </form>
 
+    <section class="card pn-group-card" x-data="kmPanelLanguagePicker" x-show="choices.length > 1" data-testid="panel-language-picker">
+      <h3 class="pn-group-title">Panel dili</h3>
+      <label class="field">
+        <span class="field-label">Panelin dili</span>
+        <select class="input" :value="current" @change="choose($event.target.value)">
+          <template x-for="c in choices" :key="c.code"><option :value="c.code" x-text="c.name" :selected="c.code === current"></option></template>
+        </select>
+        <span class="field-help">Seçince sayfa yenilenir. Çevrilmemiş metinler Türkçe görünür.</span>
+      </label>
+    </section>
+
     {# Şifre #}
     <form class="card pn-group-card" @submit.prevent="changePassword()" data-testid="password-form" data-setting="profile.password">
       <h3 class="pn-group-title">Şifre</h3>

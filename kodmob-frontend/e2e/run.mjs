@@ -6,7 +6,7 @@
  *   npm run e2e -- --headed            tarayıcıyı görerek
  *   npm run e2e -- --starter           başlangıç profiliyle (KM_PROFILE=starter) derleyip yalnızca starter senaryosu
  *   npm run e2e -- --shop              başlangıç profili + Mağaza, Rezervasyon, Oteller açık (KODMOB_MODULES) → yalnızca shop senaryosu
- *   npm run e2e -- --tools             başlangıç profili + Jarvis, Domain, SMS, Siteler açık → bu araçların senaryoları
+ *   npm run e2e -- --tools             başlangıç profili + Jarvis, Domain, SMS, Siteler, Üyelik açık → bu araçların senaryoları
  *                                      (açık depoda başlangıç profilinin atladıkları; CI ayrı adımda koşar)
  *
  * Araç paketleri: kodmob-core/extensions yerine örnek paket (kodmob-core/tests/fixtures/extensions; extensions.spec).
@@ -28,7 +28,7 @@ const starter = args.includes('--starter');
 const shop = args.includes('--shop');
 // Araçlar: başlangıç profilinde kapalı isteğe bağlı araçlar ortamdan açık; yalnızca onların senaryoları.
 const tools = args.includes('--tools');
-const TOOL_SPECS = ['ai.spec', 'jarvis-operator.spec', 'messages.spec', 'other.spec', 'site-wizard.spec', 'sites.spec', 'tools.spec'];
+const TOOL_SPECS = ['ai.spec', 'jarvis-operator.spec', 'messages.spec', 'other.spec', 'site-wizard.spec', 'sites.spec', 'tools.spec', 'members.spec'];
 if (starter || shop || tools) env.KM_PROFILE = 'starter';
 // Araç paketi: örnek paket (kodmob:tool new çıktısı) derlemeye ve sunucuya girer (extensions.spec); başlangıç paketsiz.
 else env.KM_EXTENSIONS = env.KODMOB_EXTENSIONS = path.join(TV, '..', 'kodmob-core', 'tests', 'fixtures', 'extensions');
@@ -36,7 +36,7 @@ if (shop) {
     env.KODMOB_MODULES = 'blog,briefs,commerce,booking,hotels';
     env.E2E_SHOP = '1';
 }
-if (tools) env.KODMOB_MODULES = 'blog,briefs,jarvis,domains,sms,sites';
+if (tools) env.KODMOB_MODULES = 'blog,briefs,jarvis,domains,sms,sites,members';
 const rest = args.filter((a) => !['--no-build', '--starter', '--shop', '--tools'].includes(a));
 if (!rest.some((a) => !a.startsWith('-'))) {
     if (tools) rest.push(...TOOL_SPECS);

@@ -10,6 +10,7 @@ use App\Core\Extensions\ToolInstaller;
 use App\Core\Extensions\ToolManifest;
 use App\Core\Extensions\ToolScaffold;
 use App\Core\Health\Health;
+use App\Core\Http\MessageCatalog;
 use App\Core\ModuleState;
 use App\Core\Setup\FrameworkFiles;
 use App\Core\Setup\FrameworkPackage;
@@ -678,3 +679,27 @@ Artisan::command('kodmob:contracts {--check : Depodakiyle aynı değilse hata} {
 
     return 0;
 })->purpose('Çatının sözleşmesi ve OpenAPI belgesi (docs/contracts)');
+
+/*
+ * Sunucu mesajlarının kataloğu (App\Core\Http\MessageCatalog): her sabit mesaj ve kodu → resources/messages.json. Çok
+ * dilli panelin çeviri dosyası (frontend-lang.json) bunu kullanır. Yeni mesaj eklenince yeniden üretilir; MessagesTest
+ * depodakiyle karşılaştırır.
+ */
+Artisan::command('kodmob:messages {--check : Depodakiyle aynı değilse hata}', function () {
+    $file = resource_path('messages.json');
+    $content = json_encode(MessageCatalog::scan(app_path()), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)."\n";
+    $same = is_file($file) && str_replace("\r\n", "\n", (string) file_get_contents($file)) === $content;
+    if ($this->option('check')) {
+        if (! $same) {
+            $this->error('Mesaj kataloğu güncel değil: `php artisan kodmob:messages` ile üretip commit edin.');
+
+            return 1;
+        }
+
+        return 0;
+    }
+    file_put_contents($file, $content);
+    $this->line(($same ? 'Aynı' : 'Yazıldı').': resources/messages.json ('.count(json_decode($content, true)).' mesaj)');
+
+    return 0;
+})->purpose('Sunucu mesajlarının kodlu kataloğu (resources/messages.json; çok dilli panel)');

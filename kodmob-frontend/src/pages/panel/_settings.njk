@@ -361,6 +361,40 @@
     </div>
   </template>
 
+  {# ============================================================ panel dili (panel/panel-languages.js) #}
+  <template x-if="tab === 'panel'">
+    <div class="flex flex-col gap-5" x-data="kmPanelLanguages" data-testid="panel-languages">
+      <section class="card pn-group-card">
+        <h3 class="pn-group-title">Panelin dilleri</h3>
+        <p class="text-sm text-ink-2">Panelin bütün metinleri ve sunucunun mesajları tek dosyayla başka dile geçer: dosyayı indirin, her metnin karşısına çevirisini yazın, geri yükleyin. Kişi dilini Profilim'den seçer; çevrilmeyen metin Türkçe kalır. Diller bütün projelerde ortaktır.</p>
+        <p class="text-sm text-muted"><span x-text="summary.strings"></span> panel metni · <span x-text="summary.messages"></span> sunucu mesajı</p>
+        <ul class="flex flex-col divide-y divide-line rounded-control border border-line">
+          <li class="flex flex-wrap items-center gap-3 px-4 py-3"><span class="font-medium text-ink">Türkçe</span><span class="badge badge-neutral">kaynak dil</span></li>
+          <template x-for="lang in summary.languages" :key="lang.code">
+            <li class="flex flex-wrap items-center gap-3 px-4 py-3" :data-language="lang.code">
+              <span class="min-w-0 flex-1"><span class="font-medium text-ink" x-text="lang.name"></span> <span class="code text-xs" x-text="lang.code"></span>
+                <span class="block text-xs text-muted"><span x-text="lang.translated + ' / ' + lang.total"></span> çevrildi (%<span x-text="percent(lang)"></span>)</span></span>
+              <button type="button" class="btn btn-secondary btn-sm" @click="download(lang.code, lang.name)" :disabled="busy">Eksikleri indir</button>
+              <button type="button" class="btn btn-ghost btn-sm text-danger" @click="remove(lang)">Kaldır</button>
+            </li>
+          </template>
+        </ul>
+      </section>
+      <section class="card pn-group-card">
+        <h3 class="pn-group-title">Yeni dil ya da güncelleme</h3>
+        <div class="grid gap-4 sm:grid-cols-[8rem_1fr_auto] sm:items-end">
+          <label class="field"><span class="field-label">Dil kodu</span><input class="input" x-model="form.code" placeholder="en" maxlength="5" data-testid="panel-lang-code"></label>
+          <label class="field"><span class="field-label">Dilin adı</span><input class="input" x-model="form.name" placeholder="English" maxlength="40" data-testid="panel-lang-name"></label>
+          <button type="button" class="btn btn-secondary" @click="download()" :disabled="busy || !/^[a-z]{2}(-[a-z]{2})?$/.test(form.code.trim().toLowerCase())" data-testid="panel-lang-export"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-download"/></svg> frontend-lang.json indir</button>
+        </div>
+        <label class="btn btn-primary w-max cursor-pointer">
+          <svg class="icon icon-sm" aria-hidden="true"><use href="#i-upload"/></svg> Doldurulmuş dosyayı içe aktar
+          <input type="file" accept="application/json,.json" class="sr-only" @change="upload($event)" :disabled="busy" data-testid="panel-lang-import">
+        </label>
+      </section>
+    </div>
+  </template>
+
   {# ============================================================ yedekleme #}
   <template x-if="tab === 'backup'">
     <div class="flex flex-col gap-5" x-data="kmBackup" data-testid="backup">

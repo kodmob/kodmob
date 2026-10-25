@@ -69,3 +69,23 @@ test('eski Ayarlar adresleri yeni sayfalara açılır (kanonik adres yenisi)', (
     const mail = match('/panel/ayarlar/e-posta');
     assert.deepEqual([mail.view, mail.tab, mail.canonical], ['settings', 'mail', '/panel/sistem-ayarlari/e-posta']);
 });
+
+test('replaceUrl yalnızca aynı sayfanın adresini yazar (geç kalan sayfa, kişi başka sayfadayken adresi geri almaz)', async () => {
+    const { replaceUrl } = await import('../src/panel/routes.js');
+    const written = [];
+    const saved = { window: globalThis.window, history: globalThis.history, CustomEvent: globalThis.CustomEvent };
+    globalThis.window = { location: { pathname: '/panel/sistem-ayarlari', search: '' }, dispatchEvent() {} };
+    globalThis.history = { state: null, replaceState: (state, title, url) => written.push(url) };
+    globalThis.CustomEvent ??= class { constructor(type, init) { this.type = type; this.detail = init?.detail; } };
+    try {
+        replaceUrl('/panel/seo/ayarlar');
+        assert.deepEqual(written, [], 'başka sayfanın adresi yazılmaz');
+        replaceUrl('/panel/sistem-ayarlari/e-posta');
+        assert.deepEqual(written, ['/panel/sistem-ayarlari/e-posta'], 'aynı sayfanın sekmesi yazılır');
+        window.location.pathname = '/panel/projeler/yeni';
+        replaceUrl('/panel/blog/12');
+        assert.equal(written.length, 1, 'başka içerik türünün düzenleyicisi de başka sayfadır');
+    } finally {
+        Object.assign(globalThis, saved);
+    }
+});

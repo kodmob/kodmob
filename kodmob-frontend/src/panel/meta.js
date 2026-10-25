@@ -52,6 +52,7 @@ export const PAGES = [
     page('coupons', 'coupons', 'Kuponlar', 'tag', 'project', 'km_manage_coupons', { menu: false }),
     page('bookings', 'bookings', 'Rezervasyonlar', 'calendar', 'project', 'km_view_bookings'),
     page('newsletter', 'newsletter', 'Bülten', 'send', 'project', 'km_manage_newsletter'),
+    page('members', 'members', 'Üyeler', 'users', 'project', 'km_view_members'),
     page('jarvis', 'jarvis', 'Asistan', 'sparkles', 'project', 'km_use_jarvis', { menu: false }),
     // Proje modüllerinin sonunda: Araç Pazarı'nın Keşfet sekmesi.
     page('tools-add', 'tools', 'Araç ekle', 'plus', 'project', 'km_manage_settings', { href: href('tools', { tab: 'discover' }), alias: true }),
@@ -105,7 +106,7 @@ export const SECTIONS = [
 const SECTION_OF = {
     overview: 'overview',
     builder: 'content', estimate: 'content',
-    briefs: 'inbox', orders: 'inbox', coupons: 'inbox', bookings: 'inbox', domains: 'inbox',
+    briefs: 'inbox', orders: 'inbox', coupons: 'inbox', bookings: 'inbox', domains: 'inbox', members: 'inbox',
     seo: 'growth', newsletter: 'growth', languages: 'growth', texts: 'growth',
     legal: 'settings', 'project-settings': 'settings', 'system-settings': 'settings', users: 'settings', health: 'settings',
     tools: 'settings', history: 'settings', roles: 'settings', security: 'settings', sites: 'settings',

@@ -64,6 +64,10 @@
             "description": "Medya"
         },
         {
+            "name": "members",
+            "description": "Site üyeliği"
+        },
+        {
             "name": "newsletter",
             "description": "Bülten"
         },
@@ -1485,6 +1489,33 @@
                 }
             }
         },
+        "/v1/admin/dashboard": {
+            "get": {
+                "operationId": "get_v1_admin_dashboard",
+                "tags": [
+                    "content"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "x-kodmob-capabilities": [
+                    "km_view_overview"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Başarılı"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Error"
+                    }
+                }
+            }
+        },
         "/v1/admin/estimate": {
             "get": {
                 "operationId": "get_v1_admin_estimate",
@@ -2323,6 +2354,122 @@
                 ],
                 "x-kodmob-capabilities": [
                     "km_manage_media"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Başarılı"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/Error"
+                    }
+                }
+            }
+        },
+        "/v1/admin/members": {
+            "get": {
+                "operationId": "get_v1_admin_members",
+                "tags": [
+                    "members"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "x-kodmob-capabilities": [
+                    "km_view_members"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Başarılı"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Error"
+                    }
+                }
+            }
+        },
+        "/v1/admin/members/{id}": {
+            "delete": {
+                "operationId": "members.deleted",
+                "tags": [
+                    "members"
+                ],
+                "summary": "Üye silindi",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "x-kodmob-capabilities": [
+                    "km_manage_members"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Başarılı"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/Error"
+                    }
+                }
+            },
+            "put": {
+                "operationId": "members.updated",
+                "tags": [
+                    "members"
+                ],
+                "summary": "Üyenin durumu değişti",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "x-kodmob-capabilities": [
+                    "km_manage_members"
                 ],
                 "responses": {
                     "200": {
@@ -3470,6 +3617,34 @@
                         "$ref": "#/components/responses/Error"
                     },
                     "403": {
+                        "$ref": "#/components/responses/Error"
+                    }
+                }
+            }
+        },
+        "/v1/icon/{size}.png": {
+            "get": {
+                "operationId": "get_v1_icon_size.png",
+                "tags": [
+                    "site"
+                ],
+                "parameters": [
+                    {
+                        "name": "size",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "security": [],
+                "x-kodmob-throttle": "240/1",
+                "responses": {
+                    "200": {
+                        "description": "Başarılı"
+                    },
+                    "429": {
                         "$ref": "#/components/responses/Error"
                     }
                 }
@@ -4711,6 +4886,24 @@
                 }
             }
         },
+        "/v1/manifest.webmanifest": {
+            "get": {
+                "operationId": "get_v1_manifest.webmanifest",
+                "tags": [
+                    "site"
+                ],
+                "security": [],
+                "x-kodmob-throttle": "120/1",
+                "responses": {
+                    "200": {
+                        "description": "Başarılı"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/Error"
+                    }
+                }
+            }
+        },
         "/v1/me": {
             "get": {
                 "operationId": "get_v1_me",
@@ -4740,6 +4933,107 @@
                     "auth"
                 ],
                 "summary": "Profilini güncelledi",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Başarılı"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/Error"
+                    }
+                }
+            }
+        },
+        "/v1/me/dashboard": {
+            "delete": {
+                "operationId": "delete_v1_me_dashboard",
+                "tags": [
+                    "content"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Başarılı"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/Error"
+                    }
+                }
+            },
+            "put": {
+                "operationId": "put_v1_me_dashboard",
+                "tags": [
+                    "content"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "x-kodmob-throttle": "60/1",
+                "responses": {
+                    "200": {
+                        "description": "Başarılı"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/Error"
+                    }
+                }
+            }
+        },
+        "/v1/me/panel-language": {
+            "put": {
+                "operationId": "put_v1_me_panel_language",
+                "tags": [
+                    "system"
+                ],
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -5153,6 +5447,432 @@
                 }
             }
         },
+        "/v1/members/delete": {
+            "post": {
+                "operationId": "post_v1_members_delete",
+                "tags": [
+                    "members"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "security": [],
+                "x-kodmob-throttle": "5/1",
+                "responses": {
+                    "200": {
+                        "description": "Başarılı"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/Error"
+                    }
+                }
+            }
+        },
+        "/v1/members/forgot": {
+            "post": {
+                "operationId": "post_v1_members_forgot",
+                "tags": [
+                    "members"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "security": [],
+                "x-kodmob-throttle": "5/1",
+                "responses": {
+                    "200": {
+                        "description": "Başarılı"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/Error"
+                    }
+                }
+            }
+        },
+        "/v1/members/google": {
+            "get": {
+                "operationId": "get_v1_members_google",
+                "tags": [
+                    "members"
+                ],
+                "security": [],
+                "x-kodmob-throttle": "20/1",
+                "responses": {
+                    "200": {
+                        "description": "Başarılı"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/Error"
+                    }
+                }
+            }
+        },
+        "/v1/members/google/callback": {
+            "get": {
+                "operationId": "get_v1_members_google_callback",
+                "tags": [
+                    "members"
+                ],
+                "security": [],
+                "x-kodmob-throttle": "20/1",
+                "responses": {
+                    "200": {
+                        "description": "Başarılı"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/Error"
+                    }
+                }
+            }
+        },
+        "/v1/members/login": {
+            "post": {
+                "operationId": "post_v1_members_login",
+                "tags": [
+                    "members"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "security": [],
+                "x-kodmob-throttle": "10/1",
+                "responses": {
+                    "200": {
+                        "description": "Başarılı"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/Error"
+                    }
+                }
+            }
+        },
+        "/v1/members/logout": {
+            "post": {
+                "operationId": "post_v1_members_logout",
+                "tags": [
+                    "members"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "security": [],
+                "responses": {
+                    "200": {
+                        "description": "Başarılı"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/Error"
+                    }
+                }
+            }
+        },
+        "/v1/members/me": {
+            "get": {
+                "operationId": "get_v1_members_me",
+                "tags": [
+                    "members"
+                ],
+                "security": [],
+                "x-kodmob-throttle": "120/1",
+                "responses": {
+                    "200": {
+                        "description": "Başarılı"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/Error"
+                    }
+                }
+            },
+            "put": {
+                "operationId": "put_v1_members_me",
+                "tags": [
+                    "members"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "security": [],
+                "x-kodmob-throttle": "30/1",
+                "responses": {
+                    "200": {
+                        "description": "Başarılı"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/Error"
+                    }
+                }
+            }
+        },
+        "/v1/members/orders": {
+            "get": {
+                "operationId": "get_v1_members_orders",
+                "tags": [
+                    "members"
+                ],
+                "security": [],
+                "x-kodmob-throttle": "60/1",
+                "responses": {
+                    "200": {
+                        "description": "Başarılı"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/Error"
+                    }
+                }
+            }
+        },
+        "/v1/members/password": {
+            "post": {
+                "operationId": "post_v1_members_password",
+                "tags": [
+                    "members"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "security": [],
+                "x-kodmob-throttle": "10/1",
+                "responses": {
+                    "200": {
+                        "description": "Başarılı"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/Error"
+                    }
+                }
+            }
+        },
+        "/v1/members/push/subscribe": {
+            "post": {
+                "operationId": "post_v1_members_push_subscribe",
+                "tags": [
+                    "members"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "security": [],
+                "x-kodmob-throttle": "20/1",
+                "responses": {
+                    "200": {
+                        "description": "Başarılı"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/Error"
+                    }
+                }
+            }
+        },
+        "/v1/members/push/unsubscribe": {
+            "post": {
+                "operationId": "post_v1_members_push_unsubscribe",
+                "tags": [
+                    "members"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "security": [],
+                "x-kodmob-throttle": "20/1",
+                "responses": {
+                    "200": {
+                        "description": "Başarılı"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/Error"
+                    }
+                }
+            }
+        },
+        "/v1/members/register": {
+            "post": {
+                "operationId": "post_v1_members_register",
+                "tags": [
+                    "members"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "security": [],
+                "x-kodmob-throttle": "10/1",
+                "responses": {
+                    "200": {
+                        "description": "Başarılı"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/Error"
+                    }
+                }
+            }
+        },
+        "/v1/members/reset": {
+            "post": {
+                "operationId": "post_v1_members_reset",
+                "tags": [
+                    "members"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "security": [],
+                "x-kodmob-throttle": "10/1",
+                "responses": {
+                    "200": {
+                        "description": "Başarılı"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/Error"
+                    }
+                }
+            }
+        },
+        "/v1/members/verify": {
+            "post": {
+                "operationId": "post_v1_members_verify",
+                "tags": [
+                    "members"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "security": [],
+                "x-kodmob-throttle": "20/1",
+                "responses": {
+                    "200": {
+                        "description": "Başarılı"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/Error"
+                    }
+                }
+            }
+        },
+        "/v1/members/verify/resend": {
+            "post": {
+                "operationId": "post_v1_members_verify_resend",
+                "tags": [
+                    "members"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "security": [],
+                "x-kodmob-throttle": "3/1",
+                "responses": {
+                    "200": {
+                        "description": "Başarılı"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/Error"
+                    }
+                }
+            }
+        },
         "/v1/newsletter": {
             "post": {
                 "operationId": "post_v1_newsletter",
@@ -5388,6 +6108,204 @@
                         "description": "Başarılı"
                     },
                     "429": {
+                        "$ref": "#/components/responses/Error"
+                    }
+                }
+            }
+        },
+        "/v1/panel-lang/{code}": {
+            "get": {
+                "operationId": "get_v1_panel_lang_code",
+                "tags": [
+                    "system"
+                ],
+                "parameters": [
+                    {
+                        "name": "code",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Başarılı"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Error"
+                    }
+                }
+            }
+        },
+        "/v1/push": {
+            "get": {
+                "operationId": "get_v1_push",
+                "tags": [
+                    "notifications"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Başarılı"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Error"
+                    }
+                }
+            }
+        },
+        "/v1/push/subscribe": {
+            "post": {
+                "operationId": "post_v1_push_subscribe",
+                "tags": [
+                    "notifications"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "endpoint",
+                                    "p256dh",
+                                    "auth"
+                                ],
+                                "properties": {
+                                    "endpoint": {
+                                        "type": "string",
+                                        "maxLength": 1000,
+                                        "description": "Tarayıcının itme servisi adresi (PushSubscription.endpoint). Abonelik adresi gerekli."
+                                    },
+                                    "p256dh": {
+                                        "type": "string",
+                                        "maxLength": 120,
+                                        "pattern": "^[A-Za-z0-9_-]+=*$",
+                                        "description": "Tarayıcının açık anahtarı (base64url). Abonelik anahtarı gerekli."
+                                    },
+                                    "auth": {
+                                        "type": "string",
+                                        "maxLength": 40,
+                                        "pattern": "^[A-Za-z0-9_-]+=*$",
+                                        "description": "Kimlik doğrulama sırrı (base64url). Abonelik anahtarı gerekli."
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "x-kodmob-throttle": "20/1",
+                "responses": {
+                    "200": {
+                        "description": "Başarılı"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/Error"
+                    }
+                }
+            }
+        },
+        "/v1/push/test": {
+            "post": {
+                "operationId": "post_v1_push_test",
+                "tags": [
+                    "notifications"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "x-kodmob-throttle": "6/1",
+                "responses": {
+                    "200": {
+                        "description": "Başarılı"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/Error"
+                    }
+                }
+            }
+        },
+        "/v1/push/unsubscribe": {
+            "post": {
+                "operationId": "post_v1_push_unsubscribe",
+                "tags": [
+                    "notifications"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Başarılı"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "422": {
                         "$ref": "#/components/responses/Error"
                     }
                 }
@@ -8236,6 +9154,145 @@
                         "$ref": "#/components/responses/Error"
                     },
                     "403": {
+                        "$ref": "#/components/responses/Error"
+                    }
+                }
+            }
+        },
+        "/v1/system/panel-languages": {
+            "get": {
+                "operationId": "get_v1_system_panel_languages",
+                "tags": [
+                    "system"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "x-kodmob-capabilities": [
+                    "km_manage_settings"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Başarılı"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Error"
+                    }
+                }
+            }
+        },
+        "/v1/system/panel-languages/export": {
+            "get": {
+                "operationId": "get_v1_system_panel_languages_export",
+                "tags": [
+                    "system"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "x-kodmob-capabilities": [
+                    "km_manage_settings"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Başarılı"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Error"
+                    }
+                }
+            }
+        },
+        "/v1/system/panel-languages/import": {
+            "post": {
+                "operationId": "panel_language.imported",
+                "tags": [
+                    "system"
+                ],
+                "summary": "Panel dili içe aktarıldı",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "x-kodmob-capabilities": [
+                    "km_manage_settings"
+                ],
+                "x-kodmob-throttle": "20/1",
+                "responses": {
+                    "200": {
+                        "description": "Başarılı"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/Error"
+                    }
+                }
+            }
+        },
+        "/v1/system/panel-languages/{code}": {
+            "delete": {
+                "operationId": "panel_language.deleted",
+                "tags": [
+                    "system"
+                ],
+                "summary": "Panel dili kaldırıldı",
+                "parameters": [
+                    {
+                        "name": "code",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "x-kodmob-capabilities": [
+                    "km_manage_settings"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Başarılı"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "422": {
                         "$ref": "#/components/responses/Error"
                     }
                 }

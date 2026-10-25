@@ -19,8 +19,12 @@ use App\Modules\Auth\Models\User;
 use App\Modules\Auth\Services\PasswordPolicy;
 use App\Modules\Auth\Services\Sessions;
 use App\Modules\Auth\Services\TwoFactor;
+use App\Modules\Auth\Services\UserPreferences;
 use App\Modules\I18n\ContentTranslator;
+use App\Modules\Security\RequireTwoFactor;
 use App\Modules\Seo\Seo;
+use App\Modules\Site\ProjectIcon;
+use App\Modules\System\PanelLanguage;
 use App\Modules\Users\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -66,12 +70,15 @@ final class ProfileController extends Controller
             // Dil kaydı (panelde içerik dilleri ve adları).
             // `live`: sitede şu an yayında (tek dilli modda yalnızca varsayılan dil).
             'languages' => array_map(static fn (array $l) => array_intersect_key($l, array_flip(['code', 'name', 'native', 'short', 'active', 'default', 'dir', 'flag'])) + ['live' => in_array($l['code'], Locales::active(), true)], Languages::all()),
+            // Çok dilli panel: kişinin dili (yoksa Türkçe) ve kurulu diller (Profilim'deki seçim).
+            'panel_language' => PanelLanguage::exists($pl = (string) UserPreferences::get($user, 'panel_language')) ? ($pl ?: 'tr') : 'tr',
+            'panel_languages' => PanelLanguage::choices(),
             'version' => (string) config('kodmob.version'),
             // Proje seçici (menünün üstü): bu proje; ana projede, projeleri yöneten kişiye diğerleri.
-            'project' => ['key' => Sites::key(), 'name' => SiteManifest::siteName(), 'main' => Sites::isMain()],
+            'project' => ['key' => Sites::key(), 'name' => SiteManifest::siteName(), 'main' => Sites::isMain(), 'icon' => ($v = ProjectIcon::version()) !== null ? '/api/v1/icon/32.png?v='.$v : null],
             'projects' => self::projects($request, $user),
             // İki adımlı doğrulama (Profilim): açık mı, kalan yedek kod.
-            'two_factor' => ['enabled' => TwoFactor::enabled($user), 'recovery_left' => TwoFactor::enabled($user) ? TwoFactor::remainingRecoveryCodes($user) : 0],
+            'two_factor' => ['enabled' => TwoFactor::enabled($user), 'recovery_left' => TwoFactor::enabled($user) ? TwoFactor::remainingRecoveryCodes($user) : 0, 'required' => RequireTwoFactor::pending($user)],
         ];
     }
 

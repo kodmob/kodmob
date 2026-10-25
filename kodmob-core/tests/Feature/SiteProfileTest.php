@@ -120,4 +120,46 @@ class SiteProfileTest extends TestCase
         $this->assertStringNotContainsString('theme.css', Router::load(Paths::siteRoot())->shell(Paths::siteRoot().'/tr/index.html', 'tr'));
         $this->get('/v1/theme.css')->assertNotFound();
     }
+
+    public function test_project_icon_drives_manifest_icons_and_favicon(): void
+    {
+        $h = $this->admin();
+        // İkon yokken: manifest yalnızca derlemedeki SVG'yi verir, ikon adresi favicon'a yönlenir.
+        $manifest = $this->get('/v1/manifest.webmanifest')->assertOk()->assertHeader('Content-Type', 'application/manifest+json; charset=UTF-8')->json();
+        $this->assertSame(['/', '/', 'standalone'], [$manifest['start_url'], $manifest['scope'], $manifest['display']]);
+        $this->assertSame(['/assets/favicon/favicon.svg'], array_column($manifest['icons'], 'src'));
+        $this->get('/v1/icon/192.png')->assertRedirect('/assets/favicon/favicon.svg');
+        $this->get('/v1/icon/64.png')->assertNotFound();
+        $this->assertNull($this->getJson('/v1/me', $h)->json('project.icon'));
+
+        // Dikdörtgen görsel: ortadan kare kırpılır, her boy PNG.
+        $png = tempnam(sys_get_temp_dir(), 'km').'.png';
+        $image = imagecreatetruecolor(800, 600);
+        imagefill($image, 0, 0, (int) imagecolorallocate($image, 200, 30, 60));
+        imagepng($image, $png);
+        $media = $this->post('/v1/admin/media', ['file' => new UploadedFile($png, 'ikon.png', 'image/png', null, true)], $h)->assertCreated()->json('id');
+        $this->putJson('/v1/settings', ['values' => ['site.icon' => $media, 'site.name' => 'Örnek Şirket', 'site.color' => '#1E40AF']], $h)->assertOk()->assertJsonPath('errors', []);
+        Sites::forgetMemory();
+
+        $panel = $this->get('/v1/manifest.webmanifest?app=panel')->json();
+        $this->assertSame(['Örnek Şirket · Panel', '/panel/', '/panel/'], [$panel['name'], $panel['start_url'], $panel['scope']]);
+        $this->assertSame(['any', 'any', 'maskable', null], array_map(static fn ($i) => $i['purpose'] ?? null, $panel['icons']));
+        $this->assertMatchesRegularExpression('#^/api/v1/icon/192\.png\?v=[0-9a-f]{10}$#', $panel['icons'][0]['src']);
+        foreach ([32, 180, 192, 512] as $size) {
+            $response = $this->get("/v1/icon/{$size}.png")->assertOk()->assertHeader('Content-Type', 'image/png');
+            $this->assertSame([$size, $size], array_slice(getimagesizefromstring((string) file_get_contents($response->baseResponse->getFile()->getPathname())), 0, 2));
+        }
+        // Maskable: zemin ana renk (köşe), görsel ortada.
+        $file = $this->get('/v1/icon/512-maskable.png')->assertOk()->baseResponse->getFile()->getPathname();
+        $mask = imagecreatefrompng($file);
+        $this->assertSame([0x1E, 0x40, 0xAF], array_values(array_slice(imagecolorsforindex($mask, imagecolorat($mask, 2, 2)), 0, 3)));
+        $this->assertSame([200, 30, 60], array_values(array_slice(imagecolorsforindex($mask, imagecolorat($mask, 256, 256)), 0, 3)));
+
+        // Kabukta sekme simgesi PNG, telefona ekleme simgesi; panel oturumunda ikon adresi.
+        $file = $this->storage.'/kabuk-ikon.html';
+        file_put_contents($file, '<head><link rel="icon" href="/assets/favicon/favicon.svg" type="image/svg+xml"></head>');
+        $html = Router::load(Paths::siteRoot())->shell($file, 'tr');
+        $this->assertMatchesRegularExpression('#<link rel="icon" href="/api/v1/icon/32\.png\?v=[0-9a-f]{10}" type="image/png" sizes="32x32"><link rel="apple-touch-icon" href="/api/v1/icon/180\.png\?v=[0-9a-f]{10}">#', $html);
+        $this->assertMatchesRegularExpression('#^/api/v1/icon/32\.png\?v=#', (string) $this->getJson('/v1/me', $h)->json('project.icon'));
+    }
 }

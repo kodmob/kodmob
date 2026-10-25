@@ -12,6 +12,7 @@ use App\Core\Sites\SiteRegistry;
 use App\Core\Sites\Sites;
 use App\Core\Support\Clock;
 use App\Modules\Content\AutoBackup;
+use App\Modules\History\HistoryRepository;
 use App\Modules\Users\UserSearch;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\DB;
@@ -35,6 +36,22 @@ final class SystemModule extends Module
     }
 
     /** Sıradaki adımlar: e-posta denemesi (ayar ana projede) ve otomatik yedek. */
+    /** Genel bakış: kişinin son işlemleri (İşlem Geçmişi, kendisi; herkes görür). */
+    public function widgets(): array
+    {
+        return [
+            ['key' => 'activity', 'label' => 'Son işlemlerim', 'icon' => 'history', 'type' => 'list', 'size' => 'md', 'order' => 70,
+                'link' => ['route' => 'history', 'label' => 'Tümü'],
+                'data' => static function (array $ctx) {
+                    $rows = DB::table('events')->where('user_id', $ctx['user'])->orderByDesc('id')->limit(6)->get()->map(static fn ($r) => (array) $r)->all();
+
+                    return ['empty' => 'Henüz işleminiz yok.', 'items' => array_map(static fn ($e) => [
+                        'title' => (string) $e['title'], 'meta' => (string) ($e['subject']['label'] ?? ''), 'time' => $e['at'], 'url' => $e['subject']['url'] ?? null,
+                    ], HistoryRepository::present($rows))];
+                }],
+        ];
+    }
+
     public function steps(): array
     {
         $steps = [];

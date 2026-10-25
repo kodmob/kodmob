@@ -7,6 +7,7 @@ import { frameworkRoutes } from './vite/framework-routes.js';
 import { readLegal } from './vite/legal.js';
 import { i18nPages } from './vite/i18n-pages.js';
 import { htmlMinifier, iconSprite } from './vite/plugins.js';
+import { panelStrings } from './vite/panel-strings.js';
 import { EXTENSIONS_DIR, extensionBlockDirs, extensionPanels, kmExtensions, loadExtensionPanels } from './vite/extensions.js';
 import { panelTypes, projectPages, toolPages } from './src/panel/extension.js';
 import { usePages, useTypes } from './src/panel/routes.js';
@@ -102,6 +103,8 @@ export default defineConfig(async ({ command, mode }) => {
             }),
             kmExtensions(TOOLS),
             iconSprite({ file: resolve(SRC, 'shell/icons.html') }),
+            // Çok dilli panel: panelin metin kataloğu (km-panel-strings.json; frontend-lang.json bundan).
+            panelStrings({ dirs: ['pages/panel', 'panel', 'ui/grid', 'ui/confirm', 'ui/toast', 'ui/records'].map((d) => resolve(SRC, d)) }),
             htmlMinifier(),
         ],
 

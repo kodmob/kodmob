@@ -37,6 +37,24 @@ final class NewsletterModule extends Module
         return [new BackupPart('newsletter', 'Bülten aboneleri ve bültenler', ['newsletter_subscribers', 'newsletter_campaigns'], personal: true)];
     }
 
+    /** Genel bakış: aboneler ve son bülten. */
+    public function widgets(): array
+    {
+        return [
+            ['key' => 'newsletter', 'label' => 'Bülten', 'icon' => 'send', 'type' => 'stats', 'size' => 'sm', 'order' => 40, 'can' => self::MANAGE,
+                'link' => ['route' => 'newsletter', 'label' => 'Bülten'],
+                'data' => static function () {
+                    $count = static fn (string $status) => DB::table('newsletter_subscribers')->where('status', $status)->count();
+                    $week = now()->subDays(7)->format('Y-m-d H:i:s');
+
+                    return ['items' => [
+                        ['label' => 'Onaylı abone', 'value' => $count(Subscribers::ACTIVE), 'route' => 'newsletter'],
+                        ['label' => 'Son 7 günde', 'value' => DB::table('newsletter_subscribers')->where('status', Subscribers::ACTIVE)->where('created_at', '>=', $week)->count(), 'sub' => 'yeni abone'],
+                    ]];
+                }],
+        ];
+    }
+
     public function settings(): array
     {
         return [

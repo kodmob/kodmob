@@ -9,6 +9,7 @@ use App\Core\Sites\SiteContext;
 use App\Modules\Auth\Http\Middleware\AuthenticateJwt;
 use App\Modules\Auth\Http\Middleware\RequireCapability;
 use App\Modules\Security\Http\GuardRequest;
+use App\Modules\Security\RequireTwoFactor;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -41,6 +42,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'auth.jwt' => AuthenticateJwt::class,
             'cap' => RequireCapability::class,
             'module' => RequireModule::class,
+            // Zorunlu iki adımlı doğrulama (Güvenlik › Ayarlar): açılana kadar yalnızca Profilim.
+            'two_factor' => RequireTwoFactor::class,
             'activity' => LogActivity::class,
             // İstek sınırı yol başına (Laravel'inki kullanıcı başına tek sayaç).
             'throttle' => ThrottleRequests::class,

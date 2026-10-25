@@ -13,6 +13,7 @@ use App\Modules\Auth\Services\Handoff;
 use App\Modules\Auth\Services\LoginThrottle;
 use App\Modules\Auth\Services\TokenService;
 use App\Modules\Auth\Services\TwoFactor;
+use App\Modules\Security\NewDeviceAlert;
 use App\Modules\Security\SecurityLog;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -88,6 +89,8 @@ final class AuthController extends Controller
         $user->save();
 
         $response = $this->tokens->response($user, $request);
+        // Daha önce görülmemiş cihazdan girişse kişiye e-posta (Güvenlik › Ayarlar).
+        NewDeviceAlert::check($user, $request);
         (new EventBus)->publish(new Event('auth.login', 'user', (int) $user->id, ['device' => UserAgent::describe((string) $request->userAgent())], [], (int) $user->id, null, null, (string) $user->display_name));
 
         return $this->withSession($response, $request);

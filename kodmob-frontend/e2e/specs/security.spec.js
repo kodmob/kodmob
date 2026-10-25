@@ -109,3 +109,21 @@ test('iki adımlı doğrulama: aç, kodla gir, yedek kod, kapat', async ({ page,
     expect(errors()).toEqual([]);
     await apiClient(request); // şifreyle API oturumu yine açılıyor
 });
+
+test('güvenlik puanı; zorunlu iki adımlı doğrulamada panel Profilim’e yönlendirir', async ({ page }) => {
+    const errors = consoleErrors(page);
+    await login(page);
+    await page.goto('/panel/guvenlik');
+    await expect(page.locator('[data-testid=security-score]')).toContainText('/ 100');
+
+    // Sunucunun zorlaması backend testinde (SecurityFeaturesTest); burada panelin tepkisi: oturum "zorunlu" derse Profilim.
+    await page.route('**/api/v1/me', async (route) => {
+        const response = await route.fetch();
+        const body = await response.json();
+        body.two_factor = { ...body.two_factor, required: true };
+        await route.fulfill({ response, json: body });
+    });
+    await page.goto('/panel/');
+    await expect(page).toHaveURL(/\/panel\/profilim$/);
+    expect(errors()).toEqual([]);
+});

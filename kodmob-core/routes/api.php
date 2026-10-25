@@ -14,6 +14,7 @@ use App\Modules\Commerce\Paytr\PaytrCallback;
 use App\Modules\Commerce\Stripe\StripeWebhook;
 use App\Modules\Content\Http\AdminContentController;
 use App\Modules\Content\Http\BackupController;
+use App\Modules\Content\Http\DashboardController;
 use App\Modules\Content\Http\PagesController;
 use App\Modules\Domains\Http\DomainsController;
 use App\Modules\History\HistoryController;
@@ -22,19 +23,24 @@ use App\Modules\Jarvis\Http\AssistantController;
 use App\Modules\Jarvis\Http\JarvisController;
 use App\Modules\Live\Http\ChangesController;
 use App\Modules\Media\MediaController;
+use App\Modules\Members\AdminMembersController;
+use App\Modules\Members\MembersController;
 use App\Modules\Newsletter\Http\NewsletterAdminController;
 use App\Modules\Newsletter\Http\NewsletterController;
 use App\Modules\Notifications\NotificationController;
+use App\Modules\Notifications\PushController;
 use App\Modules\Records\RecordsController;
 use App\Modules\Security\SecurityController;
 use App\Modules\Seo\Http\SeoController;
 use App\Modules\Seo\Services\SeoMeta;
+use App\Modules\Site\Http\AppController;
 use App\Modules\Site\Http\LayoutsController;
 use App\Modules\Site\Http\LegalController;
 use App\Modules\System\AiController;
 use App\Modules\System\BackgroundController;
 use App\Modules\System\ContractsController;
 use App\Modules\System\HealthController;
+use App\Modules\System\PanelLanguageController;
 use App\Modules\System\SearchController;
 use App\Modules\System\SitesController;
 use App\Modules\System\SmsController;
@@ -82,10 +88,32 @@ Route::prefix('v1')->group(function () use ($content) {
     // ---------------------------------------------------------------- ziyaretçi
     Route::get('site', [SystemController::class, 'site']);
     Route::get('theme.css', [SystemController::class, 'theme'])->middleware('throttle:120,1');
+    // Web uygulaması (PWA): bildirimi ve proje ikonu (Site\ProjectIcon).
+    Route::get('manifest.webmanifest', [AppController::class, 'manifest'])->middleware('throttle:120,1');
+    Route::get('icon/{size}.png', [AppController::class, 'icon'])->where('size', '32|180|192|512|512-maskable')->middleware('throttle:240,1');
     Route::get('page-data', [PagesController::class, 'pageData'])->middleware('throttle:120,1');
     Route::get('search-index', [PagesController::class, 'searchIndex'])->middleware('throttle:60,1');
     Route::get('suggest', [PagesController::class, 'suggest'])->middleware('throttle:30,1');
     Route::post('briefs', [BriefsController::class, 'store'])->middleware(['module:briefs', 'throttle:20,1']);
+    // Site üyeliği (araç `members`; Modules\Members): oturum HttpOnly çerezde (km_member), panelden ayrı.
+    Route::middleware('module:members')->prefix('members')->group(function () {
+        Route::get('me', [MembersController::class, 'me'])->middleware('throttle:120,1');
+        Route::post('register', [MembersController::class, 'register'])->middleware('throttle:10,1');
+        Route::post('login', [MembersController::class, 'login'])->middleware('throttle:10,1');
+        Route::post('logout', [MembersController::class, 'logout']);
+        Route::post('verify', [MembersController::class, 'verify'])->middleware('throttle:20,1');
+        Route::post('verify/resend', [MembersController::class, 'resend'])->middleware('throttle:3,1');
+        Route::post('forgot', [MembersController::class, 'forgot'])->middleware('throttle:5,1');
+        Route::post('reset', [MembersController::class, 'reset'])->middleware('throttle:10,1');
+        Route::put('me', [MembersController::class, 'update'])->middleware('throttle:30,1');
+        Route::post('password', [MembersController::class, 'password'])->middleware('throttle:10,1');
+        Route::post('delete', [MembersController::class, 'delete'])->middleware('throttle:5,1');
+        Route::get('orders', [MembersController::class, 'orders'])->middleware('throttle:60,1');
+        Route::get('google', [MembersController::class, 'google'])->middleware('throttle:20,1');
+        Route::get('google/callback', [MembersController::class, 'googleCallback'])->middleware('throttle:20,1');
+        Route::post('push/subscribe', [MembersController::class, 'pushSubscribe'])->middleware('throttle:20,1');
+        Route::post('push/unsubscribe', [MembersController::class, 'pushUnsubscribe'])->middleware('throttle:20,1');
+    });
     // Bülten (isteğe bağlı araç; Modules\Newsletter): çift onaylı abonelik, onay ve abonelikten çıkma bağlantısı.
     Route::prefix('newsletter')->middleware('module:newsletter')->group(function () {
         Route::post('/', [NewsletterController::class, 'subscribe'])->middleware('throttle:10,1');
@@ -114,7 +142,7 @@ Route::prefix('v1')->group(function () use ($content) {
     });
 
     // ---------------------------------------------------------------- panel
-    Route::middleware(['auth.jwt', 'activity', 'cap:km_access_panel'])->group(function () use ($content) {
+    Route::middleware(['auth.jwt', 'two_factor', 'activity', 'cap:km_access_panel'])->group(function () use ($content) {
         // Herkes: profil, oturumlarım, bildirimler, kendi işlemleri
         Route::get('me', [ProfileController::class, 'me']);
         Route::put('me', [ProfileController::class, 'update'])->name('profile.updated');
@@ -126,6 +154,11 @@ Route::prefix('v1')->group(function () use ($content) {
         Route::get('me/quick-actions', [PreferencesController::class, 'quickActions']);
         Route::put('me/quick-actions', [PreferencesController::class, 'saveQuickActions'])->middleware('throttle:60,1')->defaults('activity', false);
         Route::delete('me/quick-actions', [PreferencesController::class, 'resetQuickActions'])->defaults('activity', false);
+        Route::put('me/dashboard', [DashboardController::class, 'save'])->middleware('throttle:60,1')->defaults('activity', false);
+        Route::delete('me/dashboard', [DashboardController::class, 'reset'])->defaults('activity', false);
+        // Çok dilli panel: kişinin dili ve çalışma anı sözlüğü (Modules\System\PanelLanguage).
+        Route::put('me/panel-language', [PanelLanguageController::class, 'choose'])->defaults('activity', false);
+        Route::get('panel-lang/{code}', [PanelLanguageController::class, 'dictionary'])->where('code', '[a-z]{2}(-[a-z]{2})?');
         // İki adımlı doğrulama (şifre onaylı; denemeler sınırlı)
         Route::middleware('throttle:10,1')->group(function () {
             Route::post('me/two-factor/setup', [ProfileController::class, 'twoFactorSetup']);
@@ -142,6 +175,11 @@ Route::prefix('v1')->group(function () use ($content) {
         Route::post('notifications/read', [NotificationController::class, 'read'])->defaults('activity', false);
         Route::post('notifications/unread', [NotificationController::class, 'unread'])->defaults('activity', false);
         Route::post('notifications/delete', [NotificationController::class, 'delete'])->defaults('activity', false);
+        // Anlık bildirim (Web Push): kişinin kendi cihazları.
+        Route::get('push', [PushController::class, 'show']);
+        Route::post('push/subscribe', [PushController::class, 'subscribe'])->middleware('throttle:20,1')->defaults('activity', false);
+        Route::post('push/unsubscribe', [PushController::class, 'unsubscribe'])->defaults('activity', false);
+        Route::post('push/test', [PushController::class, 'test'])->middleware('throttle:6,1')->defaults('activity', false);
 
         // Panel araması (üst çubuk): kayıtlar; sayfalar ve ayarlar panelde aranır.
         Route::get('search', [SearchController::class, 'index'])->middleware('throttle:120,1');
@@ -170,6 +208,11 @@ Route::prefix('v1')->group(function () use ($content) {
         Route::middleware('cap:km_manage_settings')->prefix('system')->group(function () {
             // API'nin makine okunur belgesi (OpenAPI; App\Core\Contracts): yalnızca yetkiliye.
             Route::get('openapi', [ContractsController::class, 'openapi']);
+            // Panel dili: frontend-lang.json dışa / içe aktarma.
+            Route::get('panel-languages', [PanelLanguageController::class, 'index']);
+            Route::get('panel-languages/export', [PanelLanguageController::class, 'export']);
+            Route::post('panel-languages/import', [PanelLanguageController::class, 'import'])->middleware('throttle:20,1')->name('panel_language.imported');
+            Route::delete('panel-languages/{code}', [PanelLanguageController::class, 'destroy'])->where('code', '[a-z]{2}(-[a-z]{2})?')->name('panel_language.deleted');
             Route::get('mail', [BackgroundController::class, 'mail']);
             Route::put('mail', [BackgroundController::class, 'saveMail'])->name('mail.updated');
             Route::post('mail/test', [BackgroundController::class, 'testMail'])->middleware('throttle:10,1')->name('mail.tested');
@@ -341,6 +384,13 @@ Route::prefix('v1')->group(function () use ($content) {
             // İçerik türleri kayıttan (Types; config/kodmob.php content_types + blog).
             $types = Types::pattern();
             Route::get('overview', [AdminContentController::class, 'overview'])->middleware('cap:km_view_overview');
+            Route::get('dashboard', [DashboardController::class, 'show'])->middleware('cap:km_view_overview');
+            // Site üyeleri (kişisel veri).
+            Route::middleware('module:members')->group(function () {
+                Route::get('members', [AdminMembersController::class, 'index'])->middleware('cap:km_view_members');
+                Route::put('members/{id}', [AdminMembersController::class, 'update'])->whereNumber('id')->middleware('cap:km_manage_members')->name('members.updated');
+                Route::delete('members/{id}', [AdminMembersController::class, 'destroy'])->whereNumber('id')->middleware('cap:km_manage_members')->name('members.deleted');
+            });
             Route::get('settings', [SystemController::class, 'settings'])->middleware('cap:km_manage_settings|km_manage_security|km_manage_ai');
 
             Route::middleware($content)->group(function () use ($types) {

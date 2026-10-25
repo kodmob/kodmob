@@ -37,6 +37,8 @@ final class SecurityLog
 
     public const KEY_ROTATED = 'key_rotated';
 
+    public const NEW_DEVICE = 'new_device';
+
     /** Otomatik IP engeli için sayılan olaylar. */
     public const HOSTILE = [self::LOGIN_FAILED, self::WAF_BLOCKED];
 
@@ -54,6 +56,7 @@ final class SecurityLog
             self::IP_AUTO_BLOCKED => ['label' => 'IP otomatik engellendi', 'tone' => 'danger'],
             self::TOKEN_REUSED => ['label' => 'Kullanılmış oturum jetonu', 'tone' => 'warning'],
             self::KEY_ROTATED => ['label' => 'İmza anahtarı yenilendi', 'tone' => 'warning'],
+            self::NEW_DEVICE => ['label' => 'Yeni cihazdan giriş (uyarı gönderildi)', 'tone' => 'neutral'],
         ];
     }
 

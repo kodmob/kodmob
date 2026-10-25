@@ -2,6 +2,8 @@
 
 namespace App\Core\Exceptions;
 
+use App\Core\Http\MessageCatalog;
+
 /**
  * Bir iş kuralının ihlal edildiğini bildiren istisnaların tabanı.
  *
@@ -42,6 +44,8 @@ class DomainException extends \RuntimeException
         return [
             'code' => $this->errorCode,
             'message' => $this->getMessage(),
+            // Mesajın kodu (çok dilli panel çeviriyi bununla bulur; MessageCatalog).
+            'message_code' => MessageCatalog::code($this->getMessage()),
             'details' => (object) $this->details,
         ];
     }

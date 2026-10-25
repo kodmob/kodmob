@@ -40,6 +40,12 @@ final class SecurityModule extends Module
 
     public const RETENTION_DAYS = 'security.log_retention_days';
 
+    public const BREACHED_PASSWORDS = 'security.breached_passwords';
+
+    public const NEW_DEVICE_ALERT = 'security.new_device_alert';
+
+    public const REQUIRE_2FA = 'security.require_2fa';
+
     /** Sistem Sağlığı: denetimin uyarıları bulgu olur, son 24 saatin sayıları satır. */
     public function health(): array
     {
@@ -54,6 +60,7 @@ final class SecurityModule extends Module
         }
 
         return [Health::section('security', 'Güvenlik', 'shield-check', [
+            ['Güvenlik puanı', SecurityAudit::score().' / 100'],
             ['Denetim', ($by['ok'] ?? 0).' tamam · '.($by['warning'] ?? 0).' uyarı · '.($by['danger'] ?? 0).' kritik'],
             ['Açık oturum', $stats['sessions'].' cihaz · '.$stats['users'].' aktif kullanıcı'],
             ['Hatalı giriş (24 sa)', (string) $stats['failed_logins']],
@@ -89,6 +96,12 @@ final class SecurityModule extends Module
                 'Tarayıcıya siteyi bir yıl boyunca yalnızca HTTPS ile açmasını söyler. SSL kalıcı olarak çalışmıyorsa açmayın.'),
             new SettingDefinition(self::RETENTION_DAYS, 'int', 90, 'Güvenlik kaydı saklama süresi', $g,
                 'Güvenlik olayları (hatalı giriş, engellenen istek) bu süreden sonra her gün silinir. İşlem Geçmişi etkilenmez.', 7, 730, 'gün'),
+            new SettingDefinition(self::BREACHED_PASSWORDS, 'bool', true, 'Sızmış şifreleri reddet', $g,
+                'Yeni şifre bilinen veri sızıntılarında görülmüşse kabul edilmez (Have I Been Pwned; yalnızca özetin ilk 5 hanesi gönderilir, şifre sunucudan çıkmaz). Servis yanıt vermezse denetim atlanır.'),
+            new SettingDefinition(self::NEW_DEVICE_ALERT, 'bool', true, 'Yeni cihaz uyarısı', $g,
+                'Kişi daha önce görülmemiş bir cihazdan girince kendisine e-posta gider (zaman, cihaz, IP\'nin ağ kısmı); tanımadığı girişi Profilim\'den kapatır.'),
+            new SettingDefinition(self::REQUIRE_2FA, 'string', 'off', 'Zorunlu iki adımlı doğrulama', $g,
+                'Kapsamdaki kişi doğrulamayı açana kadar panelde yalnızca Profilim\'i kullanabilir.', null, null, '', ['off' => 'Kapalı', 'admins' => 'Yöneticiler için', 'all' => 'Herkes için']),
         ];
     }
 

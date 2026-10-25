@@ -48,6 +48,8 @@ final class ErrorRenderer
             default => [500, 'km_internal_error', 'Beklenmeyen bir hata oluştu. İşlem kaydedilmedi, tekrar deneyin.', []],
         };
 
+        // Mesajın kodu (çok dilli panel çeviriyi bununla bulur; MessageCatalog), hata kaydı numarası eklenmeden önce.
+        $messageCode = MessageCatalog::code($message);
         // Beklenmeyen hata: kod alır, mesajda yazar; ayrıntısı Sistem Sağlığı › Hata kodları'nda (ErrorJournal).
         if (in_array($code, ['km_database_error', 'km_internal_error'], true)) {
             $request = request();
@@ -61,6 +63,6 @@ final class ErrorRenderer
 
         $headers = $e instanceof HttpExceptionInterface ? $e->getHeaders() : [];
 
-        return new JsonResponse(['code' => $code, 'message' => $message, 'details' => (object) $details], $status, $headers, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        return new JsonResponse(['code' => $code, 'message' => $message, 'message_code' => $messageCode, 'details' => (object) $details], $status, $headers, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     }
 }

@@ -119,6 +119,18 @@
       "consentRequired": "Please tick the consent box to continue.",
       "rateLimited": "Too many attempts; please try again a little later.",
       "error": "Could not be sent; please try again."
+    },
+    "account": {
+      "registered": "Welcome! Check your inbox to verify your email address.",
+      "forgotSent": "If this address is registered, a reset link has been sent.",
+      "passwordChanged": "Your password has been changed.",
+      "verified": "Your email address is verified.",
+      "verifyFailed": "The verification link is invalid or has expired.",
+      "verifySent": "Verification email sent.",
+      "saved": "Your details have been saved.",
+      "deleted": "Your account has been deleted.",
+      "googleFailed": "Google sign-in failed. Please try again.",
+      "pushOn": "Order notifications are on for this device."
     }
   },
   "contactForm": {
@@ -695,5 +707,46 @@
   "builtWith": {
     "before": "Built with",
     "after": ""
+  },
+  "account": {
+    "meta": {
+      "title": "My account",
+      "description": "Member sign-in, registration and account details."
+    },
+    "titleLogin": "Sign in",
+    "titleRegister": "Create account",
+    "titleForgot": "Forgot password",
+    "titleAccount": "My account",
+    "email": "Email",
+    "password": "Password",
+    "name": "Full name",
+    "newPassword": "New password",
+    "currentPassword": "Current password",
+    "passwordHelp": "At least 10 characters; letters and numbers.",
+    "login": "Sign in",
+    "register": "Create account",
+    "google": "Continue with Google",
+    "forgotLink": "Forgot password",
+    "registerLink": "No account? Sign up",
+    "loginLink": "Already a member? Sign in",
+    "consent": "I agree to the processing of my personal data for membership.",
+    "privacy": "Privacy policy",
+    "forgotText": "Enter your email and we will send you a link to reset your password.",
+    "forgotButton": "Send link",
+    "resetButton": "Change password",
+    "unverified": "Your email address is not verified yet. Click the link in your inbox.",
+    "resend": "Send again",
+    "profile": "My details",
+    "save": "Save",
+    "logout": "Sign out",
+    "orders": "My orders",
+    "noOrders": "You have no orders yet.",
+    "orderDetail": "Details",
+    "changePassword": "Change password",
+    "deleteTitle": "Delete account",
+    "deleteText": "Your account and details are permanently deleted. Orders are kept anonymously for the legal retention period.",
+    "deleteConfirm": "Type DELETE to confirm",
+    "deleteButton": "Delete my account",
+    "pushButton": "Turn on order notifications"
   }
 }

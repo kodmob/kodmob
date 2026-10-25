@@ -3,6 +3,7 @@
 namespace App\Modules\Security;
 
 use App\Core\Security\Roles;
+use App\Core\Settings\SettingsService;
 use App\Core\Support\Clock;
 use App\Core\Support\Paths;
 use App\Modules\Auth\Models\User;
@@ -33,6 +34,18 @@ final class SecurityAudit
         ];
     }
 
+    /** Güvenlik puanı (0–100): denetimin maddeleri; tamam tam puan, uyarı yarım, kritik sıfır. */
+    public static function score(): int
+    {
+        $checks = self::run();
+        if (! $checks) {
+            return 100;
+        }
+        $points = array_sum(array_map(static fn ($c) => ['ok' => 2, 'warning' => 1][$c['status']] ?? 0, $checks));
+
+        return (int) round($points / (count($checks) * 2) * 100);
+    }
+
     /** @return list<array{key:string,label:string,status:string,detail:string,fix:string}> */
     public static function run(): array
     {
@@ -52,6 +65,14 @@ final class SecurityAudit
         $https = str_starts_with((string) config('app.url'), 'https://');
         $add('https', 'HTTPS', $https ? 'ok' : ($production ? 'danger' : 'warning'),
             'APP_URL '.((string) config('app.url') ?: 'boş').'.', $https ? '' : 'SSL sertifikasını açın ve APP_URL\'yi https:// ile yazın.');
+
+        $breached = SecurityModule::bool(SecurityModule::BREACHED_PASSWORDS, true);
+        $add('breached', 'Sızmış şifre denetimi', $breached ? 'ok' : 'warning',
+            $breached ? 'Veri sızıntılarında görülen şifreler kabul edilmez.' : 'Kapalı: sızmış bir şifre seçilebilir.', $breached ? '' : 'Güvenlik › Ayarlar\'dan "Sızmış şifreleri reddet"i açın.');
+        $required = (string) (SettingsService::instance()->get(SecurityModule::REQUIRE_2FA) ?: 'off');
+        $add('require_2fa', 'Zorunlu iki adımlı doğrulama', $required === 'off' ? 'warning' : 'ok',
+            ['off' => 'Kapalı: kimse zorunlu değil.', 'admins' => 'Yöneticiler için zorunlu.', 'all' => 'Herkes için zorunlu.'][$required] ?? 'Kapalı.',
+            $required === 'off' ? 'Güvenlik › Ayarlar\'dan en azından yöneticiler için açın.' : '');
 
         $hsts = SecurityModule::bool(SecurityModule::HSTS, false);
         $add('hsts', 'HSTS', $hsts ? 'ok' : 'warning',

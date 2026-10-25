@@ -21,6 +21,8 @@
  * http.js yenilemeyi dener, olmazsa aynı adreste giriş ekranı açılır.
  */
 import { auth } from '../services/auth.js';
+import { registerServiceWorker } from '../services/sw.js';
+import { usePanelLanguage } from './i18n.js';
 import { storage } from '../services/storage.js';
 import { STORAGE_KEYS } from '../services/config.js';
 import { confirmAction } from '../ui/confirm/confirm.js';
@@ -183,14 +185,27 @@ export function kmPanel() {
             try {
                 await this.$store.session.load();
                 panel.user = { name: this.$store.session.me.display_name, email: this.$store.session.me.email };
-                // Genel bakış yetkisi yoksa açılış sayfası menüdeki ilk sayfa.
-                if (this.route.view === 'overview' && !this.allowed) this.go(this.homeUrl, { replace: true });
+                // Kişinin panel dili (Profilim; Türkçe dışındaysa sözlük iner, ekran çevrilir).
+                usePanelLanguage(this.$store.session.me.panel_language);
+                // Proje ikonu (Proje Ayarları › Kimlik) sekme simgesi olur.
+                const icon = this.$store.session.me.project?.icon;
+                if (icon) document.querySelector('link[rel="icon"]')?.setAttribute('href', icon);
+                // Zorunlu iki adımlı doğrulama (Güvenlik › Ayarlar): açılana kadar yalnızca Profilim.
+                if (this.$store.session.me.two_factor?.required) {
+                    toast.warning('Bu hesap için iki adımlı doğrulama zorunlu. Profilim › İki adımlı doğrulama\'dan açın.', { duration: 10000 });
+                    if (this.route.view !== 'profile') this.go(href('profile'), { replace: true });
+                } else if (this.route.view === 'overview' && !this.allowed) {
+                    // Genel bakış yetkisi yoksa açılış sayfası menüdeki ilk sayfa.
+                    this.go(this.homeUrl, { replace: true });
+                }
             } catch {
                 /* 401 ise http.js giriş ekranına döner */
             }
             panel.refreshBadges();
             panel.refreshJobs();
             this.$store.pulse.start();
+            // Web uygulaması ve anlık bildirimler (public/sw.js).
+            registerServiceWorker();
             this.$watch(() => this.$store.pulse.version('brief'), () => panel.refreshBadges());
             this.$watch(() => this.$store.pulse.version('jarvis_job'), () => panel.refreshJobs());
             // Rol değişince (Roller ve İzinler) menü ve yetkiler tazelenir.

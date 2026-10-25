@@ -17,6 +17,7 @@ use App\Modules\I18n\I18nModule;
 use App\Modules\Jarvis\JarvisModule;
 use App\Modules\Live\LiveModule;
 use App\Modules\Media\MediaModule;
+use App\Modules\Members\MembersModule;
 use App\Modules\Newsletter\NewsletterModule;
 use App\Modules\Notifications\NotificationsModule;
 use App\Modules\Security\SecurityModule;
@@ -75,6 +76,7 @@ final class Modules
         'stripe' => ['class' => StripeModule::class, 'label' => 'Stripe', 'description' => 'Kartla online ödeme: Stripe\'ın ödeme sayfası ve imzalı bildirim. Stripe sahibinin ticari markasıdır; Kodmob onunla bağlantılı değildir.', 'kind' => 'tool', 'requires' => ['commerce']],
         'paytr' => ['class' => PaytrModule::class, 'label' => 'PayTR', 'description' => 'Kartla online ödeme (taksit isteğe bağlı): PayTR\'nin güvenli ödeme sayfası ve hash denetimli bildirim. PayTR sahibinin ticari markasıdır; Kodmob onunla bağlantılı değildir.', 'kind' => 'tool', 'requires' => ['commerce']],
         'booking' => ['class' => BookingModule::class, 'label' => 'Rezervasyon', 'description' => 'Tur ve etkinlik rezervasyonu: tarih, yetişkin / çocuk / bebek, günlük kapasite, grup / sezon / erken rezervasyon fiyatı; Mağaza\'nın sepeti ve ödemesiyle.', 'kind' => 'tool', 'requires' => ['commerce']],
+        'members' => ['class' => MembersModule::class, 'label' => 'Site üyeliği', 'description' => 'Ziyaretçi üye olur, e-postasını doğrular, girer; siparişlerini görür, şifresini yeniler, hesabını siler (KVKK). Google ile giriş isteğe bağlı. Panelde Gelenler › Üyeler.', 'kind' => 'tool'],
         'newsletter' => ['class' => NewsletterModule::class, 'label' => 'Bülten', 'description' => 'E-posta bülteni: sitede abonelik bloğu (çift onaylı), aboneler, bülten yazma ve saatlik sınırla gönderim; her e-postada abonelikten çıkma bağlantısı.', 'kind' => 'tool'],
         'hotels' => ['class' => HotelsModule::class, 'label' => 'Oteller', 'description' => 'Otel, pansiyon ve villa rezervasyonu: giriş – çıkış, oda sayısı, oda tipi × pansiyon fiyatları, oda tipi başına adet; Rezervasyon\'un sepeti ve ödemesiyle.', 'kind' => 'tool', 'requires' => ['booking']],
     ];

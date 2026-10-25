@@ -26,6 +26,9 @@ final class SiteProfile
 
     public const LOGO_IMAGE = 'site.logo_image';
 
+    /** Proje ikonu (ProjectIcon): sekme, telefona eklenen uygulama, anlık bildirim. */
+    public const ICON = 'site.icon';
+
     public const COLOR = 'site.color';
 
     public const COLOR_DARK = 'site.color_dark';
@@ -52,11 +55,14 @@ final class SiteProfile
     /** Manifest'in dil metinlerine ayarları uygular; eski halleri `builtStrings`'e, renk sürümü `themeVersion`'a. */
     public static function apply(array $manifest): array
     {
-        if (isset($manifest['builtStrings']) || isset($manifest['themeVersion'])) {
+        if (isset($manifest['builtStrings']) || isset($manifest['themeVersion']) || isset($manifest['iconVersion'])) {
             return $manifest;
         }
         if (($css = self::css()) !== '') {
             $manifest['themeVersion'] = substr(md5($css), 0, 10);
+        }
+        if (($icon = ProjectIcon::version()) !== null) {
+            $manifest['iconVersion'] = $icon;
         }
         $overrides = self::overrides();
         if (! $overrides || ! is_array($manifest['strings'] ?? null)) {

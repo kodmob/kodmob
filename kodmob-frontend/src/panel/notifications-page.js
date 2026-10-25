@@ -9,6 +9,7 @@ import { api } from './api.js';
 import { fmt } from '../domain/format.js';
 import { toast } from '../ui/toast.js';
 import { confirmAction } from '../ui/confirm/confirm.js';
+import { currentSubscription, pushPermission, subscribePush, unsubscribePush } from '../services/sw.js';
 
 /** Adresteki durum adı ↔ sunucunun süzgeci. */
 const STATUS = { okunmamis: 'unread', okunmus: 'read' };
@@ -145,6 +146,78 @@ export function kmNotificationsPage(route = {}) {
                 toast.success(res.deleted ? `${res.deleted} bildirim silindi.` : 'Silinecek bildirim yok.');
                 this.selected = [];
                 await this.load(true);
+            } catch (error) {
+                toast.error(error);
+            } finally {
+                this.busy = false;
+            }
+        },
+    };
+}
+
+/**
+ * Anlık bildirimler (Bildirimler sayfasının üstü): bu cihazda aç / kapat, deneme gönder. Zildeki her bildirim izin
+ * verilen cihazlara da gider (Core\Push; sayfa kapalıyken de). Durum: unsupported | denied | off | on.
+ */
+export function kmPush() {
+    return {
+        state: 'loading',
+        available: true,
+        devices: 0,
+        busy: false,
+
+        async init() {
+            const permission = pushPermission();
+            if (permission === 'unsupported') return (this.state = 'unsupported');
+            try {
+                const subscription = await currentSubscription();
+                const info = await api.push(subscription?.endpoint || '');
+                this.available = info.available;
+                this.devices = info.devices;
+                this.state = permission === 'denied' ? 'denied' : subscription && info.subscribed ? 'on' : 'off';
+            } catch {
+                this.state = 'off';
+            }
+        },
+
+        async enable() {
+            this.busy = true;
+            try {
+                const info = await api.push('');
+                const body = await subscribePush(info.public_key);
+                const res = await api.pushSubscribe(body);
+                this.devices = res.devices;
+                this.state = 'on';
+                toast.success('Anlık bildirimler bu cihazda açıldı.');
+            } catch (error) {
+                if (error.code === 'denied') this.state = pushPermission() === 'denied' ? 'denied' : 'off';
+                toast.error(error);
+            } finally {
+                this.busy = false;
+            }
+        },
+
+        async disable() {
+            this.busy = true;
+            try {
+                const endpoint = await unsubscribePush();
+                const res = await api.pushUnsubscribe({ endpoint: endpoint || '' });
+                this.devices = res.devices;
+                this.state = 'off';
+                toast.success('Anlık bildirimler bu cihazda kapatıldı.');
+            } catch (error) {
+                toast.error(error);
+            } finally {
+                this.busy = false;
+            }
+        },
+
+        async test() {
+            this.busy = true;
+            try {
+                const res = await api.pushTest();
+                if (res.sent) toast.success(res.sent === 1 ? 'Deneme bildirimi gönderildi.' : `${res.sent} cihaza deneme bildirimi gönderildi.`);
+                else toast.error('Bildirim gönderilemedi; cihazın aboneliği bitmiş olabilir. Kapatıp yeniden açın.');
             } catch (error) {
                 toast.error(error);
             } finally {

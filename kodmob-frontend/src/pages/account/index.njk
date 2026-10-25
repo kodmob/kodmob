@@ -1,0 +1,142 @@
+{% extends "layouts/base.njk" %}
+
+{#
+  Üye hesabı (araç `members`; kodmob-core Modules\Members): giriş, kayıt, şifremi unuttum, e-posta doğrulama ve
+  hesabım (bilgiler, siparişler, şifre, hesabı silme) tek sayfada (pages/account/main.js). Arama motoru dışı.
+#}
+{% block content %}
+<section class="container-site max-w-xl py-10 lg:py-16" x-data="accountPage" data-testid="account-page" :data-mode="mode">
+  <h1 class="h2 mb-6">
+    <span x-show="mode === 'account'" x-cloak>{{ t('account.titleAccount') }}</span>
+    <span x-show="mode === 'register'" x-cloak>{{ t('account.titleRegister') }}</span>
+    <span x-show="mode === 'forgot' || mode === 'reset'" x-cloak>{{ t('account.titleForgot') }}</span>
+    <span x-show="mode === 'login' || mode === 'loading'">{{ t('account.titleLogin') }}</span>
+  </h1>
+
+  <p class="mb-5 rounded-control border border-line bg-surface-subtle px-4 py-3 text-sm text-ink" role="status" x-show="message" x-text="message" x-cloak data-testid="account-message"></p>
+
+  <template x-if="mode === 'loading'"><div class="skeleton h-56"></div></template>
+
+  {# Giriş #}
+  <template x-if="mode === 'login'">
+    <form class="card card-body flex flex-col gap-4" @submit.prevent="login()" data-testid="account-login">
+      <label class="field"><span class="field-label">{{ t('account.email') }}</span>
+        <input class="input" type="email" x-model="form.email" autocomplete="email" required :aria-invalid="!!errors.email">
+        <span class="field-error" x-show="errors.email" x-text="errors.email"></span></label>
+      <label class="field"><span class="field-label">{{ t('account.password') }}</span>
+        <input class="input" type="password" x-model="form.password" autocomplete="current-password" required :aria-invalid="!!errors.password">
+        <span class="field-error" x-show="errors.password" x-text="errors.password"></span></label>
+      <button type="submit" class="btn btn-primary" :disabled="busy">{{ t('account.login') }}</button>
+      <template x-if="google"><a :href="googleUrl()" class="btn btn-secondary" data-testid="account-google">{{ t('account.google') }}</a></template>
+      <p class="flex flex-wrap justify-between gap-2 text-sm">
+        <button type="button" class="text-primary hover:underline" @click="show('forgot')">{{ t('account.forgotLink') }}</button>
+        <button type="button" class="text-primary hover:underline" @click="show('register')" data-testid="account-to-register">{{ t('account.registerLink') }}</button>
+      </p>
+    </form>
+  </template>
+
+  {# Kayıt #}
+  <template x-if="mode === 'register'">
+    <form class="card card-body flex flex-col gap-4" @submit.prevent="register()" data-testid="account-register">
+      <label class="field"><span class="field-label">{{ t('account.name') }}</span>
+        <input class="input" x-model="form.name" autocomplete="name" required :aria-invalid="!!errors.name">
+        <span class="field-error" x-show="errors.name" x-text="errors.name"></span></label>
+      <label class="field"><span class="field-label">{{ t('account.email') }}</span>
+        <input class="input" type="email" x-model="form.email" autocomplete="email" required :aria-invalid="!!errors.email">
+        <span class="field-error" x-show="errors.email" x-text="errors.email"></span></label>
+      <label class="field"><span class="field-label">{{ t('account.password') }}</span>
+        <input class="input" type="password" x-model="form.password" autocomplete="new-password" required :aria-invalid="!!errors.password">
+        <span class="field-help">{{ t('account.passwordHelp') }}</span>
+        <span class="field-error" x-show="errors.password" x-text="errors.password"></span></label>
+      {# Tuzak alan: insanlar görmez, botlar doldurur. #}
+      <label class="sr-only" aria-hidden="true">Web <input tabindex="-1" autocomplete="off" x-model="form.website"></label>
+      <label class="flex items-start gap-2 text-sm text-ink-2"><input type="checkbox" class="mt-1 h-4 w-4 accent-primary" x-model="form.consent">
+        <span>{{ t('account.consent') }}{% if url('privacy') %} <a href="{{ url('privacy') }}" class="text-primary underline" target="_blank" rel="noopener">{{ t('account.privacy') }}</a>{% endif %}</span></label>
+      <span class="field-error" x-show="errors.consent" x-text="errors.consent"></span>
+      <button type="submit" class="btn btn-primary" :disabled="busy">{{ t('account.register') }}</button>
+      <template x-if="google"><a :href="googleUrl()" class="btn btn-secondary">{{ t('account.google') }}</a></template>
+      <button type="button" class="text-sm text-primary hover:underline" @click="show('login')">{{ t('account.loginLink') }}</button>
+    </form>
+  </template>
+
+  {# Şifremi unuttum / yeni şifre #}
+  <template x-if="mode === 'forgot'">
+    <form class="card card-body flex flex-col gap-4" @submit.prevent="forgot()" data-testid="account-forgot">
+      <p class="text-sm text-ink-2">{{ t('account.forgotText') }}</p>
+      <label class="field"><span class="field-label">{{ t('account.email') }}</span>
+        <input class="input" type="email" x-model="form.email" autocomplete="email" required>
+        <span class="field-error" x-show="errors.email" x-text="errors.email"></span></label>
+      <button type="submit" class="btn btn-primary" :disabled="busy">{{ t('account.forgotButton') }}</button>
+      <button type="button" class="text-sm text-primary hover:underline" @click="show('login')">{{ t('account.loginLink') }}</button>
+    </form>
+  </template>
+  <template x-if="mode === 'reset'">
+    <form class="card card-body flex flex-col gap-4" @submit.prevent="reset()" data-testid="account-reset">
+      <label class="field"><span class="field-label">{{ t('account.newPassword') }}</span>
+        <input class="input" type="password" x-model="form.password" autocomplete="new-password" required>
+        <span class="field-help">{{ t('account.passwordHelp') }}</span>
+        <span class="field-error" x-show="errors.password || errors.token" x-text="errors.password || errors.token"></span></label>
+      <button type="submit" class="btn btn-primary" :disabled="busy">{{ t('account.resetButton') }}</button>
+    </form>
+  </template>
+
+  {# Hesabım #}
+  <template x-if="mode === 'account' && member">
+    <div class="flex flex-col gap-5" data-testid="account-dashboard">
+      <div class="card card-body flex flex-wrap items-center gap-3" x-show="!member.verified" data-testid="account-unverified">
+        <p class="min-w-0 flex-1 text-sm text-ink-2">{{ t('account.unverified') }}</p>
+        <button type="button" class="btn btn-secondary btn-sm" @click="resend()" :disabled="busy">{{ t('account.resend') }}</button>
+      </div>
+
+      <form class="card card-body flex flex-col gap-4" @submit.prevent="saveProfile()">
+        <h2 class="h3">{{ t('account.profile') }}</h2>
+        <label class="field"><span class="field-label">{{ t('account.name') }}</span>
+          <input class="input" x-model="member.name" autocomplete="name">
+          <span class="field-error" x-show="errors.name" x-text="errors.name"></span></label>
+        <p class="text-sm text-ink-2"><span>{{ t('account.email') }}:</span> <span class="font-medium text-ink" x-text="member.email" data-testid="account-email"></span></p>
+        <div class="flex flex-wrap gap-2">
+          <button type="submit" class="btn btn-primary btn-sm" :disabled="busy">{{ t('account.save') }}</button>
+          <button type="button" class="btn btn-ghost btn-sm" @click="logout()" data-testid="account-logout">{{ t('account.logout') }}</button>
+        </div>
+      </form>
+
+      <section class="card card-body flex flex-col gap-3" data-testid="account-orders">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <h2 class="h3">{{ t('account.orders') }}</h2>
+          <button type="button" class="btn btn-secondary btn-sm" x-show="pushKey && pushState === 'off'" @click="enablePush()" :disabled="busy">{{ t('account.pushButton') }}</button>
+        </div>
+        <p class="text-sm text-ink-2" x-show="!orders.length">{{ t('account.noOrders') }}</p>
+        <ul class="flex flex-col divide-y divide-line" x-show="orders.length">
+          <template x-for="o in orders" :key="o.number">
+            <li class="flex flex-wrap items-center gap-3 py-3">
+              <span class="min-w-0 flex-1"><span class="block font-medium text-ink" x-text="o.number"></span><span class="block text-xs text-muted" x-text="o.date"></span></span>
+              <span class="badge badge-neutral" x-text="o.statusLabel"></span>
+              <span class="font-semibold tabular-nums text-ink" x-text="o.total"></span>
+              <a :href="o.url" class="text-sm text-primary hover:underline" x-show="o.url">{{ t('account.orderDetail') }}</a>
+            </li>
+          </template>
+        </ul>
+      </section>
+
+      <form class="card card-body flex flex-col gap-4" @submit.prevent="changePassword()" x-show="member.has_password">
+        <h2 class="h3">{{ t('account.changePassword') }}</h2>
+        <label class="field"><span class="field-label">{{ t('account.currentPassword') }}</span><input class="input" type="password" x-model="form.current" autocomplete="current-password">
+          <span class="field-error" x-show="errors.current" x-text="errors.current"></span></label>
+        <label class="field"><span class="field-label">{{ t('account.newPassword') }}</span><input class="input" type="password" x-model="form.password" autocomplete="new-password">
+          <span class="field-error" x-show="errors.password" x-text="errors.password"></span></label>
+        <button type="submit" class="btn btn-secondary btn-sm w-max" :disabled="busy">{{ t('account.changePassword') }}</button>
+      </form>
+
+      <form class="card card-body flex flex-col gap-4 border-danger/30" @submit.prevent="remove()" data-testid="account-delete">
+        <h2 class="h3">{{ t('account.deleteTitle') }}</h2>
+        <p class="text-sm text-ink-2">{{ t('account.deleteText') }}</p>
+        <label class="field" x-show="member.has_password"><span class="field-label">{{ t('account.currentPassword') }}</span><input class="input" type="password" x-model="form.current" autocomplete="current-password">
+          <span class="field-error" x-show="errors.password" x-text="errors.password"></span></label>
+        <label class="field"><span class="field-label">{{ t('account.deleteConfirm') }}</span><input class="input" x-model="form.confirm" autocomplete="off">
+          <span class="field-error" x-show="errors.confirm" x-text="errors.confirm"></span></label>
+        <button type="submit" class="btn btn-danger btn-sm w-max" :disabled="busy">{{ t('account.deleteButton') }}</button>
+      </form>
+    </div>
+  </template>
+</section>
+{% endblock %}

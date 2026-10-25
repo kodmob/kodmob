@@ -34,6 +34,7 @@ export const NAV_TEXT = {
     orders: 'Mağazanın siparişleri: ödeme bekleyen, hazırlanan, kargodaki. Siparişi açınca müşteri, adres ve ürünler; durumu değiştirince müşteriye e-posta gider.',
     coupons: 'İndirim kuponları: yüzde ya da tutar, alt sınır, kullanım sayısı ve tarih aralığı.',
     newsletter: 'E-posta bülteni: Bültenler sekmesinde yazın, kendinize deneme gönderin, onaylı abonelere gönderin (saatlik sınırla parça parça). Aboneler sekmesinde liste, CSV ve silme.',
+    members: 'Site üyeleri: üyelik tarihi, doğrulama, son giriş. Kapat (oturumları sonlanır) ya da sil; siparişleri kalır.',
     bookings: 'Tur ve etkinlik rezervasyonları tarihe göre: Yaklaşan ve Geçmiş; kişi sayıları, müşteri ve siparişin ödeme durumu.',
     briefs: 'Siteden gelen talepler: proje brifi, teklif hesaplayıcı ve iletişim formu. Yeni, Okundu, Arşiv sekmeleri; talebi açınca okundu olur, Yanıtla e-posta programınızı açar.',
     jarvis: 'Yapay zekâ asistanı: siteyle ilgili sorular, metin yazdırma ve çeviri, site durumunun özeti, domain taraması. Talep sahiplerinin kişisel verisi yapay zekâya gönderilmez.',

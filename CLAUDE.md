@@ -39,6 +39,7 @@ cd kodmob-core && php artisan kodmob:install --profile=<ad>   # yeni projenin ye
 cd kodmob-core && php artisan kodmob:pack | kodmob:lock | kodmob:upgrade --from=<zip> --dry-run   # çatı paketi ve güncelleme
 cd kodmob-core && php artisan kodmob:tool new <ad> | kodmob:tool check <ad> | kodmob:add <klasör|zip|anahtar>   # araç paketi
 cd kodmob-core && php artisan kodmob:contracts        # sözleşme + OpenAPI → docs/contracts (uç, yetki, ayar değişince; ContractsTest)
+cd kodmob-core && php artisan kodmob:messages         # sunucu mesajlarının kodlu kataloğu → resources/messages.json (yeni sabit mesajda; test kilitli)
 ```
 
 PHP PATH'te değilse yerel betikler `KM_PHP` ortam değişkenine bakar (Windows'ta MAMP kuruluysa onun PHP'sine).
@@ -66,7 +67,8 @@ SEO, llms.txt, IndexNow, 404 önerileri, arama bunu dolaşır).
   (Sistem Sağlığı kartı: `Core\Health\Health::section()`; panelde kod gerekmez), `capabilities()` (modülün yetkileri),
   `contentTypes()` (modülün içerik türleri; modülle açılıp kapanır), `legal()` (yasal metne değer), `backup()`
   (yedeğe giren tabloları: `Core\Database\BackupPart`; kişisel veri `personal: true`, geri yüklemede ayrıca seçilir),
-  `steps()` (Genel bakış'taki Sıradaki adımlar; `done` gerçek veriden)
+  `steps()` (Genel bakış'taki Sıradaki adımlar; `done` gerçek veriden), `widgets()` (Genel bakış kartları: `stats` |
+  `list` | `custom`; kişi düzenler, `Core\Dashboard\Widgets`)
 - Yetki: `Core\Security\Capability` (sabit + etiket) ve hazır rollerde yeri (`Roles::DEFAULTS`)
 - Ayar: `SettingDefinition` (anahtar `grup.ad`, etiket, grup, açıklama; `format: 'color' | 'image'` renk / görsel
   seçici); panelde kendiliğinden çizilir ve aranır
@@ -74,6 +76,10 @@ SEO, llms.txt, IndexNow, 404 önerileri, arama bunu dolaşır).
 - İçerik türü: `php artisan kodmob:module <ad> --label=… --singular=…` ya da `--intent=<niyet.json>` (alanlar ve amaç;
   örnek `docs/sablonlar/modul-niyeti.json`) (tür `app/Project`, kayıt
   `config/project.php`, panel profilin `panel.js`'i, test `tests/Project`; hepsi projenin dosyaları)
+- Site üyesi: araç `members` (`Modules\Members`; oturum `km_member` çerezi, panelden ayrı), site sayfası rotada `account`
+  (`kodmob-frontend/src/pages/account`); üyeye bildirim `SendPush::to('member', …)`
+- Bildirim: `NotificationService::notifyCapable()` (zil + anlık bildirimi açık cihazlar, kendiliğinden); panel dışı
+  anlık bildirim `Core\Push\SendPush::to('user' | 'member', $id, [...])` (Web Push, RFC 8291; abonelik `push_subscriptions`)
 - Zamanlanmış görev: `Core\Jobs\Scheduler::define()` ya da modülün `schedule()`'ı (alt siteler aynı listeyi çalıştırır)
 - Rezervasyonlu tür: `Modules\Commerce\Booking\Bookable` (`bookingProfile()`: birim person | day | fixed | night, özellikler,
   sayfa bölümleri); alanlar `BookingFields`, sitedeki çıktı `BookingView`; `kodmob:module … --bookable=<birim>`
@@ -99,7 +105,8 @@ SEO, llms.txt, IndexNow, 404 önerileri, arama bunu dolaşır).
 gerekçeyle eklenir. Uç, yetki, ayar ya da olay değişince `php artisan kodmob:contracts` (docs/contracts; test kilitli).
 Yeni ya da dokunulan uçta gövde biçimi bildirimsel: `Core\Http\Schema` + `Field` (aynı Türkçe mesajlar; iş kuralları
 serviste), uç `Core\Contracts\RequestSchemas`'a ("YÖNTEM /yol") yazılır, OpenAPI oradan. Hata: `DomainException` / `ValidationException::fields()` (Türkçe mesaj + kod; ön yüz
-`kodmob-frontend/src/domain/errors.js`). Gizli değerler `Core\Support\Secret::seal()` ile saklanır, panele geri gönderilmez.
+`kodmob-frontend/src/domain/errors.js`); her mesajın kodu `message_code` (MessageCatalog, `kodmob:messages`). Panel metni Türkçe
+yazılır, çok dilli panel metnin kendisini anahtar alır (`frontend-lang.json`; betikte `pt()`). Gizli değerler `Core\Support\Secret::seal()` ile saklanır, panele geri gönderilmez.
 
 **Veritabanı.** SQLite, MySQL/MariaDB ve PostgreSQL desteklenir; testler üçünde de geçmeli (`npm run test:db`).
 Sürüme özgü SQL yalnızca `app/Core/Database` altında (`Sql::like()` büyük/küçük harften bağımsız arama).

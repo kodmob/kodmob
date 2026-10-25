@@ -120,6 +120,12 @@ final class Router
                 }
             }
         }
+        // Proje ikonu (Site\ProjectIcon): sekme simgesi PNG'ye, telefona ekleme simgesi; sürümlü adres.
+        if (! empty($this->manifest['iconVersion'])) {
+            $v = $esc((string) $this->manifest['iconVersion']);
+            $pairs['<link rel="icon" href="/assets/favicon/favicon.svg" type="image/svg+xml">'] = '<link rel="icon" href="/api/v1/icon/32.png?v='.$v.'" type="image/png" sizes="32x32">'
+                .'<link rel="apple-touch-icon" href="/api/v1/icon/180.png?v='.$v.'">';
+        }
         // Panelde verilen renkler (Site\SiteProfile::css): sürümlü adres, ayar değişince değişir.
         if (! empty($this->manifest['themeVersion'])) {
             $pairs['</head>'] = '<link rel="stylesheet" href="/api/v1/theme.css?v='.$esc((string) $this->manifest['themeVersion']).'"></head>';

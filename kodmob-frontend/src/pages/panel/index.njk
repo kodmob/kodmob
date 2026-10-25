@@ -16,6 +16,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Panel · Kodmob</title>
   <meta name="robots" content="noindex, nofollow">
+  {% set manifestApp = "panel" %}
   {% include "shell/head.html" %}
   <script type="application/json" id="km-i18n">{{ clientPayload | json }}</script>
 </head>
@@ -200,6 +201,7 @@
         <template x-if="r.view === 'profile'">{% include "pages/panel/_profile.njk" %}</template>
         <template x-if="r.view === 'guide'">{% include "pages/panel/_guide.njk" %}</template>
         <template x-if="r.view === 'notifications'">{% include "pages/panel/_notifications.njk" %}</template>
+        <template x-if="r.view === 'members'">{% include "pages/panel/_members.njk" %}</template>
         <template x-if="r.view === 'notFound'">{% include "pages/panel/_not-found.njk" %}</template>
         {# Projenin özel sayfaları (profilin panel.js PAGES; şablon profil klasöründen). #}
         {% for p in panelPages %}

@@ -20,6 +20,29 @@ yapılacaklar **Yükseltme** başlığında. Sürüm numarası `kodmob-frontend/
   gelinince alanın sekmesi açılır ve alan vurgulanır. Ayar vurgusu yavaş sunucuda 10 sn'ye kadar alanı bekler.
 
 **Eklendi**
+- **Site üyeliği** (araç `members`, Araç Pazarı'ndan): ziyaretçi sitenin **Hesabım** sayfasında (`/hesap/`, `/en/account/`)
+  üye olur, e-postasını doğrular, girer; bilgilerini ve şifresini değiştirir, siparişlerini görür, sipariş bildirimlerini
+  açar, hesabını siler (KVKK). **Google ile giriş** isteğe bağlı (Proje Ayarları › Üyelik). Panelde Gelenler › **Üyeler**
+  (arama, kapat / aç, sil). Oturum panelden ayrı, HttpOnly çerezde; kayıtta tuzak alan ve süre denetimi. Sipariş durumu
+  değişince üyenin cihazlarına anlık bildirim.
+- **Güvenlik:** sızmış şifre denetimi (Have I Been Pwned; yalnızca özetin ilk 5 hanesi gider, servis yoksa atlanır),
+  **yeni cihaz uyarısı** e-postası, **zorunlu iki adımlı doğrulama** (kapalı / yöneticiler / herkes; açılana kadar
+  yalnızca Profilim), Güvenlik sayfasında ve Sistem Sağlığı'nda **güvenlik puanı** (denetimden, 100 üzerinden).
+- **Genel bakış kartları:** Genel bakış artık kartlardan (içerik, son değişenler, talepler, satış, son siparişler, bülten,
+  bildirimler, son işlemlerim, domain taramaları). "Kartları düzenle": sürükle ya da oklarla sırala, küçük / orta / geniş,
+  gizle ve geri ekle, varsayılana dön; düzen kişiye saklanır. Modüller kart ekler: `Module::widgets()` (sayılar, liste ya da
+  özel şablon). Uçlar: `GET /admin/dashboard`, `PUT` / `DELETE /me/dashboard`.
+- **Çok dilli panel:** Sistem Ayarları › **Panel dili**: panelin bütün metinleri ve sunucunun mesajları tek dosyada
+  (`frontend-lang.json`) dışa aktarılır, doldurulan dosya içe aktarılınca dil kurulur; kişi dilini Profilim'den seçer.
+  Sunucunun her mesajı kodlu (`message_code`; alan hataları `details.codes`); katalog `php artisan kodmob:messages`
+  (`resources/messages.json`).
+- **Web uygulaması (PWA) ve anlık bildirimler:** site ve panel telefona / bilgisayara uygulama olarak eklenir (dinamik
+  manifest: ad, renk, ikon ayarlardan; panelin ayrı manifesti). Service worker çevrim dışı sayfası gösterir ve sürüm izli
+  dosyaları saklar. Bildirimler sayfasında **"Bu cihazda aç"**: zildeki her bildirim panel kapalıyken de cihaza gelir
+  (Web Push, ek kütüphanesiz; RFC 8291 / 8292). Sistem Sağlığı'nda "Anlık bildirim" kartı. Uçlar: `/push`,
+  `/push/subscribe`, `/push/unsubscribe`, `/push/test`, `/manifest.webmanifest`, `/icon/{boy}.png`.
+- Proje Ayarları › Kimlik › **Proje ikonu**: sekme simgesi, telefona eklenen uygulama ve bildirim ikonu; yüklenen
+  görselden 32 / 180 / 192 / 512 ve maskable boyları üretilir.
 - **Bildirimler sayfası** (`/panel/bildirimler`): kişinin bütün bildirimleri sayfa sayfa; Tümü / Okunmamış / Okunmuş
   ve türe göre süzgeç (adreste), tek tek ya da seçerek okundu / okunmadı say ve sil, okunmuşları temizle. Zilde
   "Tümünü gör", kullanıcı menüsünde "Bildirimler". Uçlar: `GET /notifications?page=…`, `POST /notifications/unread`,
@@ -39,12 +62,16 @@ yapılacaklar **Yükseltme** başlığında. Sürüm numarası `kodmob-frontend/
   vurgulu, iptal / iade kapanış olarak yazar.
 
 **Yükseltme**
+- Yeni tablolar `known_devices`, `members`, `member_sessions`, `member_tokens`: kurulum adresini bir kez açın.
+- Yeni tablo `push_subscriptions`: kurulum adresini (`/api/v1/setup?token=…`) bir kez açın ya da `php artisan migrate`.
+- `public/site.webmanifest` kalktı (manifest artık `/api/v1/manifest.webmanifest`); sunucuda kalan eski dosya zararsızdır.
 - 3.0 ile başlamış projede güncellemeden önce klasörleri ve `kodmob.json` / `kodmob.lock.json`'daki yolları yeniden
   adlandırın: [07 Güncelleme](docs/gelistirici/07-guncelleme.md) "3.0'dan sonraki sürüme".
 
 **Düzeltildi**
-- Proje / Sistem Ayarları: ayarlar geç gelirken başka sayfaya geçilince adres çubuğu ayarlar sayfasına geri
-  dönüyordu (yavaş sunucuda). Adres artık yalnızca o sayfadayken yazılır.
+- Panel: verisi geç gelen ya da kapanırken adresini yazan sayfa (Proje / Sistem Ayarları, SEO…), kişi başka sayfaya
+  geçtiyse adres çubuğunu eski sayfaya geri alıyordu (yavaş sunucuda). Adres artık yalnızca aynı sayfadayken yazılır
+  (`replaceUrl`, bütün sayfalar).
 - Talepler listesinde "Okundu say" 409 hatası veriyordu (panelin durum adresi yalnızca arşivi biliyordu).
 - Koyu temada beyaz düğme (`btn-white`; ör. Çağrı bandı, Öne çıkan projeler): beyaz zemin üstünde açık mavi yazı
   okunmuyordu; artık koyu zemin, açık yazı ve ince açık kenar, üzerine gelince zemin açılır.

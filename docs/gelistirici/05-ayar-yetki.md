@@ -55,3 +55,34 @@ Kurallar (`ArchitectureTest` denetler):
 Adı olan yazma rotası kendiliğinden İşlem Geçmişi'ne düşer (kim, ne zaman, hangi kayıt). Ayrıntı eklemek:
 `Activity::subject('tur', $id, 'Başlık')`, `Activity::with([...])`. Bildirim ve canlı şerit olayları modülün
 `events()`'inde başlık ve tonla tanımlanır.
+
+## Mesajlar ve çok dilli panel
+
+Kullanıcıya giden her sunucu mesajının sabit bir kodu vardır (`message_code`, metinden türer: `km_m_…`; alan hataları
+`details.codes`). İş mantığının kodu (`code`, ör. `km_brief_not_found`) ayrıdır. Yeni sabit mesaj eklenince katalog
+yeniden üretilir (test kilitli):
+
+```bash
+php artisan kodmob:messages        # resources/messages.json
+```
+
+Panelin metinleri Türkçe yazılır, anahtar metnin kendisidir: şablona anahtar yazılmaz. Derleme panelin metinlerini toplar
+(`km-panel-strings.json`); Sistem Ayarları › Panel dili bütün metinleri ve kodlu mesajları tek dosyada
+(`frontend-lang.json`) verir, doldurulan dosya içe aktarılınca dil kurulur; kişi dilini Profilim'den seçer. İçinde değişken
+olan metin (`${n} kayıt silindi`) katalogda yoktur ve Türkçe kalır; betikte sabit metin çeviri için `pt('…')`
+(`panel/i18n.js`).
+
+## Bildirim ve anlık bildirim
+
+Panel bildirimi (zil, Bildirimler sayfası) yetkisi olanlara: `NotificationService::notifyCapable(Capability::…, 'tur.olay',
+'Başlık', 'metin', PanelUrl::to(...), 'success')`. Bildirim oluşunca kişinin anlık bildirimi açık cihazlarına da gider
+(Web Push; `Core\Push`): ek kod gerekmez. Panel dışında doğrudan göndermek (ör. site üyesine sipariş durumu):
+
+```php
+SendPush::to('member', $memberId, ['title' => 'Siparişiniz kargoda', 'body' => 'KM-1042', 'url' => '/hesabim/siparisler/1042']);
+```
+
+Gönderim arka planda (`Background`), tek deneme; biten abonelik (404 / 410) kendiliğinden silinir. Şifre RFC 8291, gönderen
+kimliği RFC 8292 (VAPID; anahtar çifti proje başına, ilk istekte üretilir). Abonelik adresi yalnızca bilinen itme
+servislerinden olabilir (Google, Mozilla, Apple, Microsoft): sunucu başka adrese istek atmaz.
+

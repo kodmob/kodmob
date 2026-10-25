@@ -16,6 +16,15 @@
       <template x-if="loading"><div class="pn-stats"><span class="skeleton h-28"></span><span class="skeleton h-28"></span><span class="skeleton h-28"></span><span class="skeleton h-28"></span></div></template>
       <template x-if="!loading && overview">
         <div class="flex flex-col gap-5">
+          {# Güvenlik puanı: denetimin maddelerinden (tamam tam, uyarı yarım puan). #}
+          <section class="card card-body flex flex-wrap items-center gap-4" data-testid="security-score" x-show="overview.score !== undefined">
+            <span class="grid h-16 w-16 shrink-0 place-items-center rounded-full text-xl font-bold tabular-nums"
+              :class="overview.score >= 80 ? 'bg-success-soft text-success-ink' : overview.score >= 50 ? 'bg-warning-soft text-warning-ink' : 'bg-danger-soft text-danger-ink'" x-text="overview.score"></span>
+            <span class="min-w-0 flex-1">
+              <span class="block font-semibold text-ink">Güvenlik puanı <span class="text-muted">/ 100</span></span>
+              <span class="block text-sm text-ink-2">Aşağıdaki denetimden: tamam olan madde tam puan, uyarı yarım. Uyarıları düzelttikçe artar.</span>
+            </span>
+          </section>
           <div class="pn-stats">
             <button type="button" class="card card-hover pn-stat text-left" @click="show('sessions')">
               <span class="pn-stat-label">Açık oturum</span>

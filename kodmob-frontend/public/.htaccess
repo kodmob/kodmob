@@ -79,10 +79,10 @@ DirectoryIndex index.html index.php
 
         Header set Cache-Control "public, max-age=31536000, immutable" env=KM_LONG_CACHE
         Header set Cache-Control "public, max-age=2592000" env=KM_MEDIA_CACHE
-        # HTML ve manifest her istekte sunucuya sorulur (eski sayfa yeni derlemenin silinmiş dosyalarına işaret
+        # HTML, manifest ve service worker (sw.js) her istekte sunucuya sorulur (eski sayfa yeni derlemenin silinmiş dosyalarına işaret
         # etmesin); `no-store` değil: geri / ileri önbelleği (bfcache) çalışsın, değişmeyen sayfa 304 dönsün
         # (render.php Last-Modified / ETag). Panel saklanmaz: çıkıştan sonra geri tuşu paneli göstermesin.
-        Header set Cache-Control "no-cache" "expr=%{CONTENT_TYPE} =~ m#^text/html# || %{REQUEST_URI} =~ m#\.webmanifest$#"
+        Header set Cache-Control "no-cache" "expr=%{CONTENT_TYPE} =~ m#^text/html# || %{REQUEST_URI} =~ m#\.webmanifest$# || %{REQUEST_URI} == '/sw.js'"
         Header set Cache-Control "no-cache, no-store, must-revalidate" env=KM_NOINDEX
     </If>
 </IfModule>

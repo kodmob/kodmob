@@ -117,8 +117,18 @@ final class ReportsModule extends Module
         return [new BackupPart('reports', 'Raporlar', ['reports', 'report_rows'], personal: false)];
     }
     public function boot(): void {}                                                       // dinleyiciler, Jarvis araçları
+    public function widgets(): array                                                     // Genel bakış kartları
+    {
+        return [['key' => 'reports', 'label' => 'Raporlar', 'icon' => 'bar-chart', 'type' => 'stats', 'size' => 'md',
+            'can' => 'km_view_reports', 'link' => ['route' => 'reports', 'label' => 'Tümü'],
+            'data' => fn (array $ctx) => ['items' => [['label' => 'Bu hafta', 'value' => Reports::weekCount()]]]]];
+    }
 }
 ```
+
+Genel bakış kartı: `type` `stats` (sayılar: `label`, `value`, `sub`, `route` / `params`), `list` (satırlar: `title`, `meta`,
+`time`, `badge` `[metin, ton]`, `route` / `params` ya da `url`; `empty`, `note`) ya da `custom` (panelde anahtarına özel
+şablon). Kişi kartları sıralar, boyutlandırır (`sm` | `md` | `lg`), gizler; düzen kişiye saklanır. Panel kodu gerekmez.
 
 Yedek: içerik türleri ve ayarlar kendiliğinden girer; modülün kendi tabloları `backup()` ile (satırlar kimlikleriyle,
 geri yüklemede tablo yedektekiyle değişir; içerik kaydına bağlanan sütun `contentLinks` ile yeni kimliğe taşınır).

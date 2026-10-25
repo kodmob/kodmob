@@ -3,6 +3,7 @@
 namespace App\Modules\Auth\Services;
 
 use App\Core\Exceptions\ValidationException;
+use App\Modules\Security\BreachedPasswords;
 use App\Modules\Security\SecurityModule;
 
 /**
@@ -38,6 +39,10 @@ final class PasswordPolicy
             if (preg_replace('/[\d\W_]+/u', '', $lower) === $common) {
                 throw ValidationException::field($field, 'Bu şifre çok yaygın; daha tahmin edilmesi zor bir şifre seçin.');
             }
+        }
+        // Bilinen veri sızıntılarında görülmüş mü (k-anonimlik; servis yanıt vermezse atlanır).
+        if (BreachedPasswords::count($password) > 0) {
+            throw ValidationException::field($field, 'Bu şifre bilinen veri sızıntılarında görülmüş; başka bir şifre seçin.');
         }
     }
 }

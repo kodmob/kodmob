@@ -5,11 +5,13 @@ namespace Tests;
 use App\Core\Content\Types;
 use App\Core\Extensions\Extensions;
 use App\Core\ModuleState;
+use App\Core\Settings\SettingsService;
 use App\Core\Sites\SiteContext;
 use App\Core\Sites\Sites;
 use App\Core\Support\SiteManifest;
 use App\Modules\Auth\Models\User;
 use App\Modules\Auth\Services\TokenService;
+use App\Modules\Security\SecurityModule;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Bootstrap\RegisterProviders;
@@ -99,6 +101,8 @@ abstract class TestCase extends BaseTestCase
             'app.url' => 'https://kodmob.test',
         ]);
         Sites::forgetMemory();
+        // Sızmış şifre denetimi dış servise gider: testler ağa çıkmasın (denetimin kendi testi açar ve servisi taklit eder).
+        SettingsService::instance()->set(SecurityModule::BREACHED_PASSWORDS, false);
     }
 
     protected function tearDown(): void

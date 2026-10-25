@@ -67,6 +67,10 @@ final class ActivityCatalog
             'blocks.library' => ['Blok kitaplığı değişti', 'neutral', static fn ($p) => ($p['block'] ?? '').' · '.(! empty($p['added']) ? 'eklendi' : 'çıkarıldı')],
             'estimate.updated' => ['Teklif fiyatları değişti', 'primary'],
             'settings.updated' => ['Ayarlar değiştirildi', 'neutral', $changes],
+            'panel_language.imported' => ['Panel dili içe aktarıldı', 'neutral', static fn ($p) => (string) ($p['name'] ?? '')],
+            'panel_language.deleted' => ['Panel dili kaldırıldı', 'warning'],
+            'members.updated' => ['Üyenin durumu değişti', 'neutral'],
+            'members.deleted' => ['Üye silindi', 'danger'],
             'settings.defaults' => ['Ayarlar varsayılana döndü', 'warning', static fn ($p) => ($p['keys'] ?? '') === 'all' ? 'Bütün ayarlar' : count((array) ($p['keys'] ?? [])).' ayar'],
 
             // SEO

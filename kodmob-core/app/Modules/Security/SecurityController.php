@@ -41,6 +41,7 @@ final class SecurityController extends Controller
         return [
             'stats' => SecurityAudit::stats(),
             'audit' => SecurityAudit::run(),
+            'score' => SecurityAudit::score(),
             'key' => ['version' => Jwt::version(), 'fingerprint' => app(Jwt::class)->fingerprint()],
             'types' => array_map(static fn ($key, $t) => ['value' => $key, 'label' => $t['label'], 'tone' => $t['tone']], array_keys(SecurityLog::types()), SecurityLog::types()),
         ];

@@ -26,6 +26,15 @@ final class DomainsModule extends Module
 {
     public const RDAP_CONCURRENCY = 'jarvis.rdap_concurrency';
 
+    /** Genel bakış: süren domain taramaları (panelde özel kart; veriyi kart kendisi ister). */
+    public function widgets(): array
+    {
+        return [
+            ['key' => 'domains', 'label' => 'Domain taramaları', 'icon' => 'globe', 'type' => 'custom', 'size' => 'md', 'order' => 60, 'can' => Capability::USE_DOMAINS,
+                'link' => ['route' => 'domains', 'label' => 'Domain arama']],
+        ];
+    }
+
     public function settings(): array
     {
         return [

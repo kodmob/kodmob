@@ -7,6 +7,7 @@ use App\Core\Module;
 use App\Core\Security\Capability;
 use App\Core\Settings\SettingDefinition;
 use App\Core\Settings\SettingsService;
+use App\Core\Support\Clock;
 use App\Modules\Briefs\BriefsModule;
 use App\Modules\Site\Legal\LegalData;
 use App\Modules\Site\Pages\PageType;
@@ -56,6 +57,44 @@ final class SiteModule extends Module
     public const LEGAL_COURT = 'legal.court';
 
     /** Sıradaki adımlar: kimlik, iletişim ve yasal bilgiler, ana sayfa, ilk içerik. */
+    /** Genel bakış kartları (Core\Dashboard\Widgets): içerik sayıları ve son değişen kayıtlar. */
+    public function widgets(): array
+    {
+        $statuses = ['publish' => ['Yayında', 'success'], 'draft' => ['Taslak', 'neutral'], 'future' => ['Zamanlandı', 'info'], 'private' => ['Gizli', 'warning']];
+
+        return [
+            ['key' => 'content', 'label' => 'İçerik', 'icon' => 'layers', 'type' => 'stats', 'size' => 'lg', 'order' => 10, 'can' => Types::capabilities(),
+                'description' => 'Her içerik türünde kayıt sayısı; yayında ve taslak.',
+                'data' => static function () {
+                    $items = [];
+                    foreach (Types::editable() as $name => $type) {
+                        $rows = $type->adminList();
+                        $published = count(array_filter($rows, static fn ($r) => $r['status'] === 'publish'));
+                        $draft = count(array_filter($rows, static fn ($r) => $r['status'] === 'draft'));
+                        $items[] = ['label' => $type->labels()[0], 'value' => count($rows), 'sub' => $published.' yayında'.($draft ? " · {$draft} taslak" : ''), 'route' => 'list', 'params' => ['type' => $name]];
+                    }
+
+                    return ['items' => $items];
+                }],
+            ['key' => 'recent', 'label' => 'Son değişenler', 'icon' => 'clock', 'type' => 'list', 'size' => 'md', 'order' => 20, 'can' => Types::capabilities(),
+                'description' => 'En son düzenlenen kayıtlar.',
+                'data' => static function () use ($statuses) {
+                    $rows = [];
+                    foreach (Types::editable() as $name => $type) {
+                        foreach ($type->adminList() as $row) {
+                            $rows[] = ['type' => $name, 'singular' => $type->labels()[1]] + $row;
+                        }
+                    }
+                    usort($rows, static fn ($a, $b) => strcmp((string) $b['modified'], (string) $a['modified']));
+
+                    return ['empty' => 'Henüz kayıt yok.', 'items' => array_map(static fn ($r) => [
+                        'title' => (string) ($r['title'] ?: 'Adsız'), 'meta' => $r['singular'], 'time' => Clock::local((string) $r['modified']),
+                        'badge' => $statuses[$r['status']] ?? null, 'route' => 'editor', 'params' => ['type' => $r['type'], 'id' => $r['id']],
+                    ], array_slice($rows, 0, 6))];
+                }],
+        ];
+    }
+
     public function steps(): array
     {
         $s = SettingsService::instance();
@@ -84,6 +123,7 @@ final class SiteModule extends Module
             new SettingDefinition(SiteProfile::LOGO, 'string', '', 'Logo yazısı', 'Kimlik', 'Üst bar ve alt bilgideki logo yazısı. Boşsa derlemedeki.'),
             new SettingDefinition(SiteProfile::LOGO_SUB, 'string', '', 'Logo alt yazısı', 'Kimlik', 'Logonun yanındaki küçük yazı (bütün dillerde aynı). Boşsa derlemedeki, dile göre.'),
             new SettingDefinition(SiteProfile::LOGO_IMAGE, 'int', 0, 'Logo görseli', 'Kimlik', 'Seçilirse logo yazısının yerine üst bar ve alt bilgide görünür. Yüksekliği 36 piksel gösterilir; yatay, şeffaf zeminli (SVG ya da PNG) olmalı.', 0, null, '', [], 'image'),
+            new SettingDefinition(SiteProfile::ICON, 'int', 0, 'Proje ikonu', 'Kimlik', 'Tarayıcı sekmesinde, telefona eklenen uygulamada ve anlık bildirimlerde görünür. Kare, en az 512 × 512 piksel PNG ya da JPG; boşsa derlemedeki simge.', 0, null, '', [], 'image'),
             new SettingDefinition(SiteProfile::COLOR, 'string', '', 'Ana renk', 'Kimlik', 'Düğmeler, bağlantılar ve vurgular; açık ve koyu tonları kendiliğinden türetilir. Boşsa derlemedeki renk. Beyaz yazıyla okunacak kadar koyu seçin.', null, null, '', [], 'color'),
             new SettingDefinition(SiteProfile::COLOR_DARK, 'string', '', 'Koyu bant rengi', 'Kimlik', 'Öne çıkan bölümler, çağrı bandı ve alt bilgi vurgularındaki koyu zemin. Boşsa derlemedeki.', null, null, '', [], 'color'),
             new SettingDefinition(self::EMAIL, 'string', '', 'E-posta', 'İletişim', 'Sitede gösterilen iletişim adresi.'),

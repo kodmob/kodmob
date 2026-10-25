@@ -204,6 +204,34 @@
 - **E-posta sunucusu art arda 5 kez hata verirse bülten durur** (bildirim gelir, Sistem Sağlığı uyarır); ayar düzeltilip "Devam et" denince o aboneler yeniden denenir. Tek tük başarısız adresler atlanır ve "başarısız" sayılır; yeniden denenmez.
 - **Onaylanmayan abonelik 7 gün sonra silinir.** Aynı adrese onay e-postası 10 dakikada bir gider; zaten abone olan adres formda aynı yanıtı alır (listede kim olduğu dışarıdan anlaşılmasın).
 
+## Web uygulaması ve anlık bildirim (25 Ekim)
+
+- **Anlık bildirim yalnızca https'te çalışır** (yerelde 127.0.0.1 / localhost da olur). Kişi her cihazda Bildirimler sayfasından "Bu cihazda aç" der; tarayıcı izin ister.
+- **iPhone ve iPad'de yalnızca siteyi "Ana Ekrana Ekle" ile uygulama olarak ekleyince** (iOS 16.4+) bildirim gelir; Safari sekmesinde kart "desteklenmiyor" der.
+- **Gönderim arka planda, tek deneme.** Cron yoksa aynı istekte, yanıttan sonra gider. Geç kalan bildirim yeniden denenmez; zildeki kayıt kalır.
+- **Anahtar çifti proje başına ve bir kez üretilir** (Options'ta, özel anahtar mühürlü; yedeğe girmez). Veritabanı sıfırlanır ya da başka sunucuya yedekten taşınırsa anahtar yeniden üretilir: cihazlarda bildirim yeniden açılmalı.
+- **Site üyelerine anlık bildirim altyapısı hazır** (`SendPush::to('member', …)`), ama üyelik gelene kadar bağlayan bir şey yok.
+- **Proje ikonu PNG / JPG olmalı** (SVG işlenemez; derlemedeki favicon.svg kalır). Ortadan kare kırpılır. Tarayıcılar sekme simgesini günlerce saklayabilir; değişiklik yeni ziyaretlerde hemen görünür.
+- **Service worker sayfaları saklamaz** (her açılış sunucudan; sunucunun sayfa önbelleği aynen çalışır), yalnızca adında sürüm izi olan dosyaları ve çevrim dışı sayfasını saklar. Çevrim dışı sayfası Türkçe ve İngilizce, sitenin stillerine bağlı değil (`public/offline.html`).
+
+## Genel bakış kartları ve çok dilli panel (25 Ekim)
+
+- **Kart düzeni kişiye özel ve projeye göre** (kullanıcının tercihi; alt projede ayrı). Yeni kart (yeni modül ya da araç) kaydedilmiş düzenin sonuna eklenir. Rol için varsayılan düzen yok: kişi düzenlemediyse yetkisi olan bütün kartlar katalog sırasıyla.
+- **Panel dili metnin kendisiyle eşleşir.** Türkçe metin değişirse (yeni sürümde düzeltilen bir cümle) eski çevirisi tutmaz: "Eksikleri indir" ile tamamlanır. İçinde sayı ya da ad geçen metinler (`3 bildirim silindi`) ve rehberler (Kullanım Kılavuzu) Türkçe kalır.
+- **Çeviri ekranda yapılır**: sayfa önce Türkçe çizilir, sözlük inince çevrilir (ilk açılışta bir an Türkçe görünebilir). Kişinin girdiği içerik (kayıt başlıkları, form değerleri) çevrilmez; aynı metin hem arayüzde hem bir kaydın başlığında geçiyorsa başlık da çevrilebilir.
+- **Site ziyaretçisinin dili ayrıdır** (Sayfalar ve Diller); panel dili yalnızca yönetim panelidir. Diller bütün projelerde ortaktır.
+
+## Güvenlik ve site üyeliği (25 Ekim)
+
+- **Sızmış şifre denetimi dış servise gider** (api.pwnedpasswords.com; şifre değil, SHA-1 özetinin ilk 5 hanesi). Sunucu dışarıya çıkamıyorsa ya da servis yavaşsa (4 sn) denetim atlanır ve şifre kabul edilir. İstemezseniz Güvenlik › Ayarlar'dan kapatın.
+- **Yeni cihaz uyarısı tarayıcı ailesi ve ağla tanır**: aynı tarayıcı başka şehirde (farklı ağ) yeni sayılır, uyarı gider; tarayıcının sürüm güncellemesi sayılmaz. İlk giriş ve projeler arası geçiş uyarı göndermez.
+- **Zorunlu iki adımlı doğrulamayı açan yönetici de kapsamdaysa** kendi doğrulamasını açana kadar ayarlara dönemez (yalnızca Profilim açık). Önce kendi hesabınızda açın.
+- **Üyelik e-postaları üyenin diline göre Türkçe ya da İngilizce**; başka dildeki üye İngilizce alır. Metinler kodda (`Modules/Members/Members.php`), panelden değişmez.
+- **Siparişlerim e-postayla eşleşir** (doğrulanmış e-posta); misafir olarak aynı adresle verilmiş eski siparişler de görünür. Hesap silinince siparişler kalır (yasal saklama), üyelikle bağı kopar. Sipariş ayrıntısı bağlantısı yok (sipariş numarası ve durumu).
+- **Hesabım bağlantısı sitenin menüsünde kendiliğinden yok**: profil üst bara ya da alt bilgiye `url('account')` ile ekler (araç kapalıyken adres yoktur).
+- **Google ile giriş için** Google Cloud Console'da OAuth istemcisi (Web) ve yetkili yönlendirme adresi `<site>/api/v1/members/google/callback`. Doğrulanmış Google e-postası aynı adresli üyeye bağlanır.
+- **Doğrulanmamış ve hiç giriş yapılmamış kayıt 30 gün sonra silinir** (başkasının adresiyle açılmış olabilir).
+
 ## Yeni içerik türü (iskelet)
 
 - **`php artisan kodmob:module courses --label=Kurslar --singular=Kurs` yeni türü panelde hemen çalıştırıyor, ama sitede göstermiyor.** Tür sınıfı (`app/Project/<Ad>/`), `config/project.php` `content_types` kaydı, profilin tür listesi (`kodmob-frontend/src/profiles/<ad>/site.config.js`), panel menüsü ve adresi (`kodmob-frontend/src/panel/types.js`), test manifestindeki adres ve bir test dosyası yazılır. Liste, form, dil sekmeleri, sıralama, Silinenler, işlem kaydı, canlı şerit, yetki (Editör'e de gelir) ve yedek tür kaydından (`App\Core\Content\Types`) türer; başka dosyaya dokunulmaz. `--dry-run` yazmadan gösterir.

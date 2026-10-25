@@ -43,7 +43,7 @@ export function useTypes(types) {
 export const TAB_SLUGS = {
     seo: { content: 'icerik', ai: 'yapay-zeka', pages: 'sayfalar', redirects: 'yonlendirmeler', 404: '404', robots: 'robots', settings: 'ayarlar' },
     security: { sessions: 'oturumlar', events: 'kayitlar', blocks: 'ip-engelleri', lockouts: 'kilitli-girisler', settings: 'ayarlar' },
-    settings: { mail: 'e-posta', sms: 'sms', ai: 'yapay-zeka', jobs: 'arka-plan', backup: 'yedekleme' },
+    settings: { mail: 'e-posta', sms: 'sms', ai: 'yapay-zeka', jobs: 'arka-plan', backup: 'yedekleme', panel: 'panel-dili' },
     languages: { list: 'liste', urls: 'adresler', visitor: 'ziyaretci', health: 'saglik' },
     history: { all: 'tumu' },
     tools: { discover: 'kesfet' },
@@ -89,6 +89,8 @@ export const ROUTES = [
     { name: 'profile', path: 'profilim' },
     // Bildirimler: kişinin bütün bildirimleri (zilde son 30); `?durum=okunmamis&tur=brief&sayfa=2`.
     { name: 'notifications', path: 'bildirimler' },
+    // Site üyeleri (araç `members`).
+    { name: 'members', path: 'uyeler' },
     // Kullanım Kılavuzu: menüyü tanıtan tur ve rehberler; `?rehber=<anahtar>` rehberi açar.
     { name: 'guide', path: 'kilavuz' },
     { name: 'editor', path: ':type/:idOrNew', key: (p) => `editor-${p.type}-${p.id}` },
@@ -261,6 +263,12 @@ export function navigate(url, { replace = false } = {}) {
 /** Görünümü yeniden kurmadan adresi değiştirir (sekme, sohbet, süzgeç): `replaceState` + kmPanel'e haber. */
 export function replaceUrl(url) {
     const next = toPanelUrl(url);
+    // Yalnızca aynı sayfanın adresi (sekme, kimlik, sorgu) yazılır: verisi geç gelen sayfa, kişi başka sayfaya geçtiyse
+    // adresi geri almasın (yavaş sunucuda görülen yarış).
+    const [path, search = ''] = next.split('?');
+    const target = match(path, search);
+    const current = match(window.location.pathname, window.location.search);
+    if (target.name !== current.name || (target.type || '') !== (current.type || '')) return;
     if (next !== window.location.pathname + window.location.search) history.replaceState(history.state, '', next);
     window.dispatchEvent(new CustomEvent('km-url-replaced', { detail: next }));
 }

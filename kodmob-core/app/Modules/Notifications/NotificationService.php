@@ -2,6 +2,7 @@
 
 namespace App\Modules\Notifications;
 
+use App\Core\Push\SendPush;
 use App\Core\Security\Roles;
 use App\Core\Support\Clock;
 use App\Core\Support\PanelUrl;
@@ -59,6 +60,10 @@ final class NotificationService
             'created_at' => Clock::now(),
         ]);
         PulseFile::touch('notification');
+        // Anlık bildirimi açık cihazlara da (kişinin aboneliği yoksa hiçbir şey yapmaz).
+        SendPush::to('user', $userId, array_filter([
+            'title' => mb_substr($title, 0, 120), 'body' => mb_substr($message, 0, 240), 'url' => (string) PanelUrl::normalize($url), 'tag' => 'km-'.$id,
+        ], static fn ($v) => $v !== ''));
 
         return $id;
     }

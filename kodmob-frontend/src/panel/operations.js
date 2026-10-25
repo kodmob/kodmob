@@ -99,6 +99,7 @@ export const CARDS = [
             shortcut('settings-ai', 'system-settings', 'Yapay zekâ', ['settings', { tab: 'ai' }], 'Claude, OpenAI ya da Gemini: etkin sağlayıcı, anahtarlar ve modeller.', 'km_manage_ai', 'sparkles'),
             shortcut('settings-jobs', 'system-settings', 'Arka plan işleri', ['settings', { tab: 'jobs' }], 'Cron durumu, kuyruk ve başarısız işler.', 'km_manage_settings', 'activity'),
             shortcut('settings-backup', 'system-settings', 'Yedekleme', ['settings', { tab: 'backup' }], 'Yedek al, yedekten geri yükle, otomatik ve uzak yedek.', 'km_manage_backups', 'download'),
+            shortcut('settings-panel', 'system-settings', 'Panel dili', ['settings', { tab: 'panel' }], 'Panelin dilleri: frontend-lang.json dışa ve içe aktarma.', 'km_manage_settings', 'globe'),
         ],
     },
     {
@@ -109,6 +110,7 @@ export const CARDS = [
             page('domains', 'Alan adı uygunluğu ve toplu tarama.'),
             page('estimate', 'Teklif hesaplayıcının kalemleri ve fiyatları.'),
             page('newsletter', 'E-posta bülteni: aboneler, bülten yazma, deneme ve gönderim.'),
+            page('members', 'Site üyeleri: arama, kapat / aç, sil.'),
             // Araç paketlerinin sayfaları (kodmob-core/extensions; vite/extensions.js).
             ...PROJECT_PAGES.filter((p) => p.tool).map((p) => page(p.key, p.hint || p.guide || p.label)),
             page('tools-add', 'Projeye yeni araç: çatının araçları ve nasıl eklendiği.'),
