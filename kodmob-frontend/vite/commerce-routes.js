@@ -10,6 +10,7 @@
  * ve sipariş sayfaları arama motoru dışı. Satış sözleşmesi, ön bilgilendirme, teslimat ve iade metinleri yasal belgeler
  * (kodmob-frontend/src/legal; vite/legal.js), modülle açılır.
  */
+import { onlyLocales } from './route-locales.js';
 const page = (name) => ({ template: `pages/shop/${name}.njk`, script: '/pages/shop/main.js', module: 'commerce' });
 
 export const COMMERCE_PATHS = {
@@ -30,7 +31,7 @@ export const COMMERCE_PATHS = {
  */
 export function commerceRoutes(paths = {}, locales = null) {
     const p = { ...COMMERCE_PATHS, ...paths };
-    const only = (byLocale) => (locales ? Object.fromEntries(Object.entries(byLocale).filter(([code]) => locales.includes(code))) : byLocale);
+    const only = (byLocale) => onlyLocales(byLocale, locales);
     const hidden = { sitemap: false, noindex: true };
 
     return [
@@ -48,7 +49,7 @@ export function commerceRoutes(paths = {}, locales = null) {
  */
 export function bookingRoutes(paths = {}, locales = null) {
     const p = { ...COMMERCE_PATHS, ...paths };
-    const only = (byLocale) => (locales ? Object.fromEntries(Object.entries(byLocale).filter(([code]) => locales.includes(code))) : byLocale);
+    const only = (byLocale) => onlyLocales(byLocale, locales);
     const book = (name) => ({ ...page(name), module: 'booking' });
 
     return [
@@ -63,7 +64,7 @@ export function bookingRoutes(paths = {}, locales = null) {
  */
 export function hotelRoutes(paths = {}, locales = null) {
     const p = { ...COMMERCE_PATHS, ...paths };
-    const only = (byLocale) => (locales ? Object.fromEntries(Object.entries(byLocale).filter(([code]) => locales.includes(code))) : byLocale);
+    const only = (byLocale) => onlyLocales(byLocale, locales);
     const stay = (name) => ({ ...page(name), module: 'hotels' });
 
     return [

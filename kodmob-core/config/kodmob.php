@@ -11,7 +11,11 @@
 return [
     // Uygulama sürümü (kodmob-frontend/package.json ile aynı olmalı; paketleme betiği denetler).
     // 1.x: WordPress (tv-core + eklentiler) · 2.0: Laravel, çok kullanıcılı panel, SEO.
-    'version' => '3.0.0',
+    'version' => '3.1.0',
+
+    // Araç Pazarı › Keşfet'in topluluk kataloğu (github.com/kodmob/kodmob-explore; Core\Extensions\Marketplace). Birkaç
+    // saatte bir okunur, okunamazsa son kopya ya da çatıyla gelen resources/marketplace/catalog.json. Boş: dışarı istek yok.
+    'marketplace_url' => env('KODMOB_MARKETPLACE_URL', 'https://raw.githubusercontent.com/kodmob/kodmob-explore/main/catalog.json'),
 
     // Çok site: bu isteğin sitesi (`main` ya da storage/sites.json'daki alt site anahtarı). Elle
     // yazılmaz; alan adından ya da KODMOB_SITE'tan seçilir (App\Core\Sites).

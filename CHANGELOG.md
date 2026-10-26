@@ -4,9 +4,19 @@ Kodmob'un sürümleri. Biçim: her sürümde **Eklendi**, **Değişti**, **Düze
 yapılacaklar **Yükseltme** başlığında. Sürüm numarası `kodmob-frontend/package.json`, `kodmob-core/config/kodmob.php` ve
 `kodmob.json`'da aynıdır (`node build.mjs --bump minor` üçünü birlikte yükseltir).
 
-## Yayımlanmadı
+## 3.1.0 — 2026-10-26
 
 **Değişti**
+- **Keşfet kataloğu ayrı depoda:** [kodmob/kodmob-explore](https://github.com/kodmob/kodmob-explore). Depoya araç
+  eklenince CI paketler ve kataloğu üretir; Araç Pazarı › Keşfet kataloğu birkaç saatte bir okur (**Yenile** hemen),
+  okunamazsa son kopya ya da çatıyla gelen. `kodmob:add <anahtar>` aynı kataloğu kullanır (sha256 denetlenir). Adres
+  `KODMOB_MARKETPLACE_URL`. İlk paketler: `merhaba` (örnek), `netgsm` (NetGSM SMS).
+- **SMS sağlayıcı kaydı:** `Core\Sms\SmsProvider` + `SmsProviders::register()`; Sistem Ayarları › SMS formu sağlayıcının
+  alan tanımından çizilir. NetGSM çatıda kalır (yerleşik sağlayıcı); başka sağlayıcı (İleti Merkezi, Twilio…) araç paketi
+  olarak eklenir. 3.0'ın NetGSM ayarları kendiliğinden yeni biçime taşınır.
+- İç düzenleme: saklanmayan JSON yanıtı (`Controller::noStore`), sayfalı liste (`Core\Database\Paged`), şimdinin
+  zamanı (`Clock::moment()` / `Clock::later()`), sipariş durumunun etiketi ve tonu, üyeyi silme, rotalarda dil süzgeci
+  ve panelin sayfa düğmeleri tek yerde.
 - E-posta: gönderen adı panelde ya da `.env`'de (`MAIL_FROM_NAME`) verilmemişse sitenin adı; talebe yanıtın konusu
   sitenin adıyla ("<site> · Talebiniz"). `.env.example`'da kodmob.com değerleri yerine örnek değerler.
 - Klasör adları: `kodmob-api/` → **`kodmob-core/`**, `tv/` → **`kodmob-frontend/`**. Komutlar aynı, yalnızca klasör
@@ -69,6 +79,7 @@ yapılacaklar **Yükseltme** başlığında. Sürüm numarası `kodmob-frontend/
   adlandırın: [07 Güncelleme](docs/gelistirici/07-guncelleme.md) "3.0'dan sonraki sürüme".
 
 **Düzeltildi**
+- Üyelik › Siparişlerim siparişi olan üyede hata veriyordu (eksik içe aktarma; statik analiz yakaladı, test eklendi).
 - Panel: verisi geç gelen ya da kapanırken adresini yazan sayfa (Proje / Sistem Ayarları, SEO…), kişi başka sayfaya
   geçtiyse adres çubuğunu eski sayfaya geri alıyordu (yavaş sunucuda). Adres artık yalnızca aynı sayfadayken yazılır
   (`replaceUrl`, bütün sayfalar).

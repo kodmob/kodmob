@@ -2,6 +2,7 @@
 
 namespace App\Modules\Notifications;
 
+use App\Core\Database\Paged;
 use App\Core\Push\SendPush;
 use App\Core\Security\Roles;
 use App\Core\Support\Clock;
@@ -96,8 +97,7 @@ final class NotificationService
         if ($kind !== '' && preg_match('/^[a-z0-9_]{1,40}$/', $kind)) {
             $query->where(static fn ($q) => $q->where('type', $kind)->orWhere('type', 'like', $kind.'.%'));
         }
-        $total = (clone $query)->count();
-        $rows = $query->orderByDesc('id')->offset(($page - 1) * $perPage)->limit($perPage)->get();
+        $paged = Paged::of($query->orderByDesc('id'), $page, $perPage, fn ($row) => $this->present((array) $row));
 
         $counts = [];
         foreach (DB::table('notifications')->where('user_id', $userId)->select('type', DB::raw('count(*) as n'))->groupBy('type')->get() as $row) {
@@ -111,15 +111,7 @@ final class NotificationService
         // Çok olan önce; eşitse adına göre (veritabanından bağımsız, sabit sıra).
         usort($kinds, static fn ($a, $b) => [$b['count'], $a['key']] <=> [$a['count'], $b['key']]);
 
-        return [
-            'items' => $rows->map(fn ($row) => $this->present((array) $row))->all(),
-            'total' => $total,
-            'page' => $page,
-            'per_page' => $perPage,
-            'pages' => (int) ceil($total / $perPage),
-            'unread' => $this->unread($userId),
-            'kinds' => $kinds,
-        ];
+        return $paged + ['unread' => $this->unread($userId), 'kinds' => $kinds];
     }
 
     public function unread(int $userId): int

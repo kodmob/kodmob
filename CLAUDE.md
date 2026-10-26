@@ -86,6 +86,8 @@ SEO, llms.txt, IndexNow, 404 önerileri, arama bunu dolaşır).
 - Yasal belge (gizlilik, KVKK, sözleşme…): `kodmob-frontend/src/legal/<ad>/` (`doc.json`: grup, `module`, adresler; `<dil>.html`
   şablon), başlığı sözlükte `legal.<ad>.title`; modülün metne verdiği değerler `Module::legal()`; sunucu
   `Modules/Site/Legal`, panel Yasal belgeler (docs/gelistirici/09-yasal-belgeler.md)
+- SMS sağlayıcısı: `Core\Sms\SmsProvider` (alanlar + gönderici) + modülün `boot()`'unda `SmsProviders::register()`
+  (NetGSM ve deneme çatıda); Keşfet kataloğu: github.com/kodmob/kodmob-explore (`Core\Extensions\Marketplace`)
 - Mağaza ödeme yöntemi: `Modules\Commerce\Payments\PaymentMethod` + modülün `boot()`'unda `Payments::register()` (Stripe,
   PayTR: Mağaza'ya takılı ayrı modüller). API anahtarı gibi ayar `SettingDefinition` `format: 'secret'` (mühürlü; panele,
   işlem geçmişine, yedeğe girmez)

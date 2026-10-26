@@ -20,6 +20,18 @@ final class Clock
         return Carbon::now()->format('Y-m-d H:i:s');
     }
 
+    /** Şimdi, Carbon olarak (site saati): hesap için (`Clock::moment()->startOfMonth()`). */
+    public static function moment(): Carbon
+    {
+        return Carbon::now(config('app.timezone'));
+    }
+
+    /** Şimdiden kaydırılmış zaman, veritabanı biçiminde: `Clock::later('+30 days')`, `Clock::later('-7 days')`. */
+    public static function later(string $modifier): string
+    {
+        return self::moment()->modify($modifier)->format('Y-m-d H:i:s');
+    }
+
     /** Bugün (site saatiyle): `2026-10-20`. */
     public static function today(): string
     {

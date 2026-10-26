@@ -130,7 +130,7 @@ export function kmSms() {
         testing: false,
         view: null,
         form: {},
-        password: '',
+        secrets: {},
         senders: [],
         errors: {},
         log: [],
@@ -152,17 +152,37 @@ export function kmSms() {
         apply(view) {
             this.view = view;
             this.log = view.log || [];
-            this.form = { provider: view.provider, username: view.username, sender: view.sender, iys_filter: view.iys_filter, app_name: view.app_name };
-            this.password = '';
+            this.form = { provider: view.provider, values: this.valuesOf(view.provider, view) };
+            this.secrets = {};
         },
 
-        get netgsm() {
-            return this.form.provider === 'netgsm';
+        /** Sağlayıcının alanlarının kayıtlı değerleri (gizliler boş; yazılırsa değişir). */
+        valuesOf(key, view = this.view) {
+            const provider = (view?.providers || []).find((p) => p.key === key);
+            return Object.fromEntries((provider?.fields || []).filter((f) => f.type !== 'secret').map((f) => [f.key, provider.values?.[f.key] ?? f.default ?? '']));
+        },
+
+        /** Seçili sağlayıcının tanımı (alanlar, açıklama; kodmob-core Core/Sms/SmsProvider). */
+        get provider() {
+            return (this.view?.providers || []).find((p) => p.key === this.form.provider) || null;
+        },
+
+        get senderField() {
+            return this.provider?.fields.find((f) => f.sender)?.key || null;
+        },
+
+        pickProvider(key) {
+            this.form = { provider: key, values: this.valuesOf(key) };
+            this.secrets = {};
+            this.errors = {};
+            this.senders = [];
         },
 
         get dirty() {
-            const v = this.view || {};
-            return !!this.password || ['provider', 'username', 'sender', 'iys_filter', 'app_name'].some((k) => (this.form[k] ?? '') !== (v[k] ?? ''));
+            if (!this.view) return false;
+            if (this.form.provider !== this.view.provider || Object.values(this.secrets).some((v) => v)) return true;
+            const saved = this.valuesOf(this.form.provider);
+            return Object.keys(this.form.values).some((k) => (this.form.values[k] ?? '') !== (saved[k] ?? ''));
         },
 
         get info() {
@@ -174,7 +194,8 @@ export function kmSms() {
             this.saving = true;
             this.errors = {};
             try {
-                this.apply(await api.saveSmsSettings({ ...this.form, ...(this.password ? { password: this.password } : {}) }));
+                const secrets = Object.fromEntries(Object.entries(this.secrets).filter(([, v]) => v));
+                this.apply(await api.saveSmsSettings({ provider: this.form.provider, values: { ...this.form.values, ...secrets } }));
                 if (!quiet) toast.success('SMS ayarları kaydedildi.');
                 return true;
             } catch (error) {
@@ -186,10 +207,10 @@ export function kmSms() {
             }
         },
 
-        async clearPassword() {
+        async clearSecret(field) {
             try {
-                this.apply(await api.saveSmsSettings({ clear_password: true }));
-                toast.success('NetGSM şifresi silindi.');
+                this.apply(await api.saveSmsSettings({ provider: this.form.provider, clear: [field.key] }));
+                toast.success(`${field.label} silindi.`);
             } catch (error) {
                 toast.error(error);
             }
@@ -202,9 +223,9 @@ export function kmSms() {
             this.checking = true;
             try {
                 this.senders = (await api.smsSenders()).senders || [];
-                const known = this.senders.includes(this.form.sender);
-                if (known) toast.success(`Bağlantı çalışıyor. Onaylı başlıklar: ${this.senders.join(', ')}`);
-                else toast.info(`Bağlantı çalışıyor ama "${this.form.sender}" başlığı listede yok. Aşağıdan seçin.`);
+                const current = this.senderField ? this.form.values[this.senderField] : '';
+                if (!this.senderField || this.senders.includes(current)) toast.success(`Bağlantı çalışıyor.${this.senders.length ? ` Onaylı başlıklar: ${this.senders.join(', ')}` : ''}`);
+                else toast.info(`Bağlantı çalışıyor ama "${current}" başlığı listede yok. Aşağıdan seçin.`);
             } catch (error) {
                 toast.error(error);
             } finally {
@@ -213,7 +234,8 @@ export function kmSms() {
         },
 
         async useSender(sender) {
-            this.form.sender = sender;
+            if (!this.senderField) return;
+            this.form.values[this.senderField] = sender;
             await this.save();
         },
 

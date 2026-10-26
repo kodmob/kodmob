@@ -1,4 +1,38 @@
 {
-    "description": "Kodmob topluluk araçları kataloğu. Araç bu listeye açık depoda çekme isteğiyle (PR) eklenir; kontrol listesi ve paket biçimi: docs/arac-paketi.md. Alanlar: key, label, description, author, license, version, kodmob (uyumlu çatı), repository, download (zip), sha256 (zip'in özeti), verified (incelendi).",
-    "tools": []
+    "description": "Keşfet kataloğunun çatıyla gelen kopyası (çevrim dışı yedek). Asıl kaynak github.com/kodmob/kodmob-explore: kurulumlar oradan birkaç saatte bir okur (Core\\Extensions\\Marketplace). Araç eklemek için o depoya çekme isteği; paket biçimi docs/arac-paketi.md.",
+    "format": 1,
+    "tools": [
+        {
+            "key": "merhaba",
+            "label": "Merhaba (örnek araç)",
+            "description": "Araç paketi örneği: panelde bir sayfa, yetkisi ve bir uç. Kendi aracınızı yazarken başlangıç olarak bakın.",
+            "author": "Kodmob",
+            "license": "MIT",
+            "version": "0.1.0",
+            "kodmob": ">=3.0 <4",
+            "requires": [],
+            "homepage": "https://github.com/kodmob/kodmob-explore/tree/main/tools/merhaba",
+            "repository": "https://github.com/kodmob/kodmob-explore/tree/main/tools/merhaba",
+            "download": "https://raw.githubusercontent.com/kodmob/kodmob-explore/main/dist/merhaba-0.1.0.zip",
+            "sha256": "10559ddc37f9728676ad220d3892ce37f9fd6ee16932adc4fe85a8d324b31376",
+            "verified": true
+        },
+        {
+            "key": "netgsm",
+            "label": "NetGSM SMS",
+            "description": "NetGSM ile SMS gönderimi (REST v2): abone numarası, API şifresi, onaylı gönderici başlığı, İYS filtresi. Kodmob'un SMS aracına sağlayıcı olarak takılır; çatıdaki NetGSM'in yerine bu paketin sürümü kullanılır.",
+            "author": "Kodmob",
+            "license": "MIT",
+            "version": "1.0.0",
+            "kodmob": ">=3.1 <4",
+            "requires": [
+                "sms"
+            ],
+            "homepage": "https://github.com/kodmob/kodmob-explore/tree/main/tools/netgsm",
+            "repository": "https://github.com/kodmob/kodmob-explore/tree/main/tools/netgsm",
+            "download": "https://raw.githubusercontent.com/kodmob/kodmob-explore/main/dist/netgsm-1.0.0.zip",
+            "sha256": "75a04ab8308004376254360b65f13cf5d19fda6aa793326fe2b6ab7e9517f48a",
+            "verified": false
+        }
+    ]
 }

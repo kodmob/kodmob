@@ -7,6 +7,7 @@ use App\Core\Http\Controller;
 use App\Core\Push\PushSubscriptions;
 use App\Core\Push\VapidKeys;
 use App\Core\Support\Clock;
+use App\Modules\Commerce\CommerceText;
 use App\Modules\Commerce\Money;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -120,11 +121,10 @@ final class MembersController extends Controller
         if (! $member['verified'] || ! DB::getSchemaBuilder()->hasTable('commerce_orders')) {
             return $this->json(['items' => []]);
         }
-        $labels = ['pending' => 'Ödeme bekliyor', 'paid' => 'Ödendi', 'processing' => 'Hazırlanıyor', 'shipped' => 'Kargoda', 'completed' => 'Tamamlandı', 'cancelled' => 'İptal', 'refunded' => 'İade'];
         $items = DB::table('commerce_orders')->where('customer_email', $member['email'])->orderByDesc('id')->limit(50)->get()
             ->map(static fn ($o) => [
                 'number' => (string) $o->number, 'date' => (string) Clock::local((string) $o->created_at), 'status' => (string) $o->status,
-                'statusLabel' => $labels[$o->status] ?? (string) $o->status, 'total' => Money::format((int) $o->total, (string) $o->currency), 'url' => null,
+                'statusLabel' => CommerceText::get('status.'.$o->status, $member['locale'] ?: 'tr'), 'total' => Money::format((int) $o->total, (string) $o->currency), 'url' => null,
             ])->all();
 
         return $this->json(['items' => $items]);
@@ -184,7 +184,7 @@ final class MembersController extends Controller
 
     private function json(array $data, ?Cookie $cookie = null): JsonResponse
     {
-        $response = (new JsonResponse($data))->header('Cache-Control', 'no-store');
+        $response = $this->noStore($data);
 
         return $cookie ? $response->withCookie($cookie) : $response;
     }

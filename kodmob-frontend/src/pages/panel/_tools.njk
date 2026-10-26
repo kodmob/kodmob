@@ -122,8 +122,18 @@
     </div>
     <p class="text-sm text-muted" x-show="!available.length && (filter === 'all' || filter === 'tools')">Çatının bütün araçları bu projede kurulu.</p>
 
-    {# Topluluk kataloğu (kodmob-core resources/marketplace/catalog.json): kurulum komutla. #}
-    <h3 class="pn-group-title mt-2" x-show="filter === 'all' || filter === 'tools'">Topluluk araçları</h3>
+    {# Topluluk kataloğu (github.com/kodmob/kodmob-explore; kodmob-core Core\Extensions\Marketplace): kurulum komutla. #}
+    <div class="mt-2 flex flex-wrap items-center justify-between gap-2" x-show="filter === 'all' || filter === 'tools'">
+      <h3 class="pn-group-title">Topluluk araçları</h3>
+      <span class="flex flex-wrap items-center gap-2 text-xs text-muted">
+        <span x-show="catalogSource?.source === 'remote' && catalogSource?.fetched_at" x-text="'Keşfet deposu · ' + (catalogSource?.fetched_at || '').slice(0, 16)"></span>
+        <span x-show="catalogSource?.source === 'bundled'">Çatıyla gelen katalog</span>
+        <a href="https://github.com/kodmob/kodmob-explore" target="_blank" rel="noopener" class="text-primary hover:underline">Depo</a>
+        <button type="button" class="btn btn-ghost btn-sm" @click="refreshCatalog()" :disabled="refreshing || !catalogSource?.url" data-testid="catalog-refresh">
+          <svg class="icon icon-sm" :class="refreshing && 'animate-spin'" aria-hidden="true"><use href="#i-refresh"/></svg> Yenile
+        </button>
+      </span>
+    </div>
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3" x-show="catalog.length && (filter === 'all' || filter === 'tools')">
       <template x-for="t in catalog" :key="t.key">
         <section class="card flex flex-col" :data-tool="t.key" data-testid="tool-catalog">

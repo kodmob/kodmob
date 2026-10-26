@@ -145,9 +145,4 @@ final class AuthController extends Controller
 
         return new Cookie(self::COOKIE, $value, $expires, '/api/v1/auth', null, $request->isSecure(), true, false, Cookie::SAMESITE_STRICT);
     }
-
-    private function noStore(array $data): JsonResponse
-    {
-        return (new JsonResponse($data))->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')->header('Pragma', 'no-cache');
-    }
 }

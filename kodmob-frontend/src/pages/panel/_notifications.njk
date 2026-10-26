@@ -92,16 +92,7 @@
       </template>
     </ul>
 
-    {# Sayfalar #}
-    <div class="flex items-center justify-between border-t border-line px-4 py-3 text-sm text-ink-2" x-show="pages > 1">
-      <button type="button" class="btn btn-ghost btn-sm" @click="go({ page: page - 1 })" :disabled="page <= 1">
-        <svg class="icon icon-sm" aria-hidden="true"><use href="#i-chevron-left"/></svg> Önceki
-      </button>
-      <span x-text="`Sayfa ${page} / ${pages}`"></span>
-      <button type="button" class="btn btn-ghost btn-sm" @click="go({ page: page + 1 })" :disabled="page >= pages" data-testid="notifications-next">
-        Sonraki <svg class="icon icon-sm" aria-hidden="true"><use href="#i-chevron-right"/></svg>
-      </button>
-    </div>
+    {% include "pages/panel/_pager.njk" %}
   </div>
   <p class="text-xs text-muted">Bildirimler 90 gün saklanır.</p>
 </div>

@@ -38,8 +38,12 @@ final class ToolsController extends Controller
         $optional = Modules::optional();
         $version = (string) config('kodmob.version');
 
+        // Keşfet deposunun kataloğu (eskiyse okunur; okunamazsa son kopya).
+        $source = Marketplace::refresh();
+
         return [
             'items' => Modules::catalog(),
+            'catalog_source' => $source,
             // Keşfet'teki yönerge: aracın ekleneceği yer.
             'profile' => Sites::isMain() ? ($name !== '' ? "kodmob-frontend/src/profiles/{$name}/site.config.js" : 'site.config.js') : 'ana projenin Projeler sayfası',
             // Topluluk kataloğundan bu kurulumda olmayanlar (Keşfet; kurulum komutla: kodmob:add).
@@ -50,6 +54,14 @@ final class ToolsController extends Controller
             // Klasörde olup yüklenemeyen paketler (tanım bozuk, sürüm uyumsuz, anahtar çakışıyor).
             'problems' => array_map(static fn ($key, $message) => ['key' => $key, 'message' => $message], array_keys(Extensions::problems()), Extensions::problems()),
         ];
+    }
+
+    /** Keşfet › Yenile: topluluk kataloğunu hemen okur. */
+    public function refreshCatalog(): array
+    {
+        Marketplace::refresh(true);
+
+        return $this->index();
     }
 
     public function toggle(Request $request, string $key): array

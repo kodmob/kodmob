@@ -37,6 +37,11 @@ export function kmMembers() {
             }
         },
 
+        goPage(page) {
+            this.page = Math.min(Math.max(1, page), this.pages || 1);
+            this.load();
+        },
+
         find() {
             clearTimeout(this.timer);
             this.timer = setTimeout(() => {

@@ -33,6 +33,8 @@ export function kmTools(route = {}) {
         tab: 'installed',
         items: [],
         catalog: [],
+        catalogSource: null,
+        refreshing: false,
         problems: [],
         loading: true,
         busy: null,
@@ -57,11 +59,28 @@ export function kmTools(route = {}) {
             replaceUrl(href('tools', { tab: this.tab }));
         },
 
+        /** Keşfet › Yenile: topluluk kataloğunu (github.com/kodmob/kodmob-explore) hemen okur. */
+        async refreshCatalog() {
+            this.refreshing = true;
+            try {
+                const data = await api.toolsCatalogRefresh();
+                this.catalog = data.catalog || [];
+                this.catalogSource = data.catalog_source || null;
+                if (this.catalogSource?.error) toast.warning(`Katalog okunamadı (${this.catalogSource.error}); son kopya gösteriliyor.`);
+                else toast.success('Katalog güncellendi.');
+            } catch (error) {
+                toast.error(error);
+            } finally {
+                this.refreshing = false;
+            }
+        },
+
         async load() {
             try {
                 const data = await api.tools();
                 this.items = data.items;
                 this.catalog = data.catalog || [];
+                this.catalogSource = data.catalog_source || null;
                 this.problems = data.problems || [];
                 // Bloklar (yetki yoksa ya da derlemede kitaplık yoksa boş).
                 const blocks = await api.blocks().catch(() => null);

@@ -35,6 +35,9 @@ final class Orders
 {
     public const STATUSES = ['pending', 'paid', 'processing', 'shipped', 'completed', 'cancelled', 'refunded'];
 
+    /** Durumun rozet tonu (panelin kartları; etiketi CommerceText `status.<durum>`). */
+    public const TONES = ['pending' => 'warning', 'paid' => 'success', 'processing' => 'info', 'shipped' => 'info', 'completed' => 'success', 'cancelled' => 'neutral', 'refunded' => 'neutral'];
+
     /** Durum → gidebileceği durumlar. */
     public const FLOW = [
         'pending' => ['paid', 'processing', 'cancelled'],

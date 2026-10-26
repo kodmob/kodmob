@@ -212,6 +212,7 @@ export const api = {
     // Siteler (çok site; yalnızca ana sitede). Kurulum ve güncelleme tablolar kurulurken sürebilir.
     // Araç Pazarı (Core\Modules): projede kurulu araçlar, aç / kapat.
     tools: () => http.get('/system/tools'),
+    toolsCatalogRefresh: () => http.post('/system/tools/catalog/refresh', {}, { timeout: 30000 }),
     toggleTool: (key, enabled) => http.put(`/system/tools/${key}`, { enabled }),
     /** Çatının aracını derlemesiz ekler / çıkarır: { items, with } (`with`: birlikte eklenen takıldığı araçlar). */
     installTool: (key, installed) => http.put(`/system/tools/${key}/install`, { installed }),

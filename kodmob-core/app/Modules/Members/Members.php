@@ -128,7 +128,7 @@ final class Members
         DB::table('member_sessions')->insert([
             'member_id' => $memberId, 'token_hash' => hash('sha256', $token), 'ip' => (string) $request->ip(),
             'user_agent' => mb_substr((string) $request->userAgent(), 0, 255), 'created_at' => Clock::now(),
-            'expires_at' => Clock::carbon(Clock::now())->addDays(self::SESSION_DAYS)->format('Y-m-d H:i:s'),
+            'expires_at' => Clock::later('+'.self::SESSION_DAYS.' days'),
         ]);
 
         return self::cookie($token, $request);
@@ -159,7 +159,7 @@ final class Members
 
     public static function cookie(string $value, Request $request, bool $forget = false): Cookie
     {
-        $expires = $forget ? 1 : Clock::carbon(Clock::now())->addDays(self::SESSION_DAYS);
+        $expires = $forget ? 1 : Clock::moment()->addDays(self::SESSION_DAYS);
 
         return new Cookie(self::COOKIE, $value, $expires, '/api/v1/members', null, $request->isSecure(), true, false, Cookie::SAMESITE_LAX);
     }
@@ -261,10 +261,16 @@ final class Members
         if (! in_array(mb_strtoupper(trim((string) ($input['confirm'] ?? ''))), ['SİL', 'SIL', 'DELETE', 'LÖSCHEN'], true)) {
             throw ValidationException::field('confirm', 'Onaylamak için SİL yazın.');
         }
-        DB::table('member_sessions')->where('member_id', $member['id'])->delete();
-        DB::table('member_tokens')->where('member_id', $member['id'])->delete();
-        DB::table('push_subscriptions')->where('owner_type', 'member')->where('owner_id', $member['id'])->delete();
-        DB::table('members')->where('id', $member['id'])->delete();
+        self::purge((int) $member['id']);
+    }
+
+    /** Üyeyi ve ona bağlı her şeyi (oturumlar, anahtarlar, anlık bildirim abonelikleri) siler; siparişler kalır. */
+    public static function purge(int $id): void
+    {
+        DB::table('member_sessions')->where('member_id', $id)->delete();
+        DB::table('member_tokens')->where('member_id', $id)->delete();
+        DB::table('push_subscriptions')->where('owner_type', 'member')->where('owner_id', $id)->delete();
+        DB::table('members')->where('id', $id)->delete();
     }
 
     // ------------------------------------------------------------ okuma
@@ -315,7 +321,7 @@ final class Members
         DB::table('member_tokens')->where('member_id', $memberId)->where('purpose', $purpose)->delete();
         DB::table('member_tokens')->insert([
             'member_id' => $memberId, 'purpose' => $purpose, 'token_hash' => hash('sha256', $token), 'created_at' => Clock::now(),
-            'expires_at' => Clock::carbon(Clock::now())->addMinutes($minutes)->format('Y-m-d H:i:s'),
+            'expires_at' => Clock::later("+{$minutes} minutes"),
         ]);
 
         return $token;

@@ -129,7 +129,7 @@ final class AutoBackup
             return;
         }
         $hours = $s['frequency'] === 'weekly' ? 167 : 23;
-        if ($s['last_at'] && Clock::carbon((string) $s['last_at'])->diffInHours(Clock::carbon(Clock::now()), true) < $hours) {
+        if ($s['last_at'] && Clock::carbon((string) $s['last_at'])->diffInHours(Clock::moment(), true) < $hours) {
             return;
         }
         self::run('zamanlanmış');

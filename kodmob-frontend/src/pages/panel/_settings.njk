@@ -122,54 +122,42 @@
       </template>
       <section class="card pn-group-card" x-show="!loading" x-cloak data-setting="sms">
         <h3 class="pn-group-title">Sağlayıcı</h3>
-        <p class="text-sm text-ink-2">Kullanıcılar sayfasındaki SMS düğmeleri bu ayarla çalışır. NetGSM için: abone numaranız (ya da API izni verilmiş alt kullanıcı), API şifresi ve NetGSM'de onaylı gönderici başlığı. NetGSM panelinde IP kısıtlaması açıksa sitenin sunucu IP'sini izinli listeye ekleyin.</p>
+        <p class="text-sm text-ink-2">Kullanıcılar sayfasındaki SMS düğmeleri bu ayarla çalışır. <span x-text="provider?.help || ''"></span></p>
         <div class="pn-grid">
           <label class="pn-field pn-w-half" data-setting="sms.provider">
             <span class="field-label">Sağlayıcı</span>
-            <select class="input" x-model="form.provider" data-testid="sms-provider">
-              <template x-for="(label, value) in view?.providers || {}" :key="value"><option :value="value" x-text="label" :selected="value === form.provider"></option></template>
+            <select class="input" :value="form.provider" @change="pickProvider($event.target.value)" data-testid="sms-provider">
+              <option value="off" :selected="form.provider === 'off'">Kapalı</option>
+              <template x-for="p in view?.providers || []" :key="p.key"><option :value="p.key" x-text="p.label" :selected="p.key === form.provider"></option></template>
             </select>
-            <span class="text-xs text-muted" x-show="form.provider === 'log'">SMS gönderilmez; sunucu günlüğüne yazılır. Deneme ve test için.</span>
             <span class="field-error" x-show="errors.provider" x-text="errors.provider"></span>
           </label>
-          <template x-if="netgsm">
-            <div class="contents">
-              <label class="pn-field pn-w-half" data-setting="sms.username">
-                <span class="field-label">Kullanıcı adı</span>
-                <input class="input" x-model.trim="form.username" autocomplete="off" placeholder="850xxxxxxx" :aria-invalid="!!errors.username" data-testid="sms-username">
-                <span class="field-error" x-show="errors.username" x-text="errors.username"></span>
-              </label>
-              <label class="pn-field pn-w-half" data-setting="sms.password">
-                <span class="field-label">API şifresi</span>
-                <input class="input" type="password" x-model="password" autocomplete="new-password" :placeholder="view?.password_set ? '•••••••• (kayıtlı; değiştirmek için yazın)' : ''" data-testid="sms-password">
-                <span class="text-xs text-muted" x-show="view?.password_set">Şifre şifreli saklanıyor ve panele gösterilmiyor. <button type="button" class="font-medium text-primary hover:underline" @click="clearPassword()">Sil</button></span>
-              </label>
-              <label class="pn-field pn-w-half" data-setting="sms.sender">
-                <span class="field-label">Gönderici başlığı</span>
-                <input class="input" x-model.trim="form.sender" maxlength="20" autocomplete="off" placeholder="FIRMAADI" :aria-invalid="!!errors.sender" data-testid="sms-sender">
-                <span class="text-xs text-muted">NetGSM'de onaylandığı gibi (büyük-küçük harf ve boşluk dahil). "Bağlantıyı dene" onaylı başlıkları getirir.</span>
-                <span class="field-error" x-show="errors.sender" x-text="errors.sender"></span>
-              </label>
-              <label class="pn-field pn-w-half" data-setting="sms.iys_filter">
-                <span class="field-label">İleti türü (İYS)</span>
-                <select class="input" x-model="form.iys_filter">
-                  <template x-for="(label, value) in view?.iys_filters || {}" :key="value"><option :value="value" x-text="label" :selected="value === form.iys_filter"></option></template>
+          {# Sağlayıcının alanları (kodmob-core SmsProvider::fields()) #}
+          <template x-for="field in provider?.fields || []" :key="form.provider + field.key">
+            <label class="pn-field pn-w-half" :data-setting="'sms.' + field.key">
+              <span class="field-label" x-text="field.label"></span>
+              <template x-if="field.type === 'select'">
+                <select class="input" x-model="form.values[field.key]" :data-testid="'sms-' + field.key">
+                  <template x-for="(label, value) in field.options" :key="value"><option :value="value" x-text="label" :selected="value === form.values[field.key]"></option></template>
                 </select>
-                <span class="text-xs text-muted">Ekibe giden duyuru ve bildirimler bilgilendirmedir. Ticari ileti yalnızca İYS'de onayı olan alıcıya gider.</span>
-              </label>
-              <label class="pn-field pn-w-half" data-setting="sms.app_name">
-                <span class="field-label">Uygulama adı <span class="font-normal text-muted">(isteğe bağlı)</span></span>
-                <input class="input" x-model.trim="form.app_name" maxlength="100" autocomplete="off">
-                <span class="text-xs text-muted">NetGSM geliştirici hesabındaki uygulama adı (appname); yoksa boş bırakın.</span>
-              </label>
-            </div>
+              </template>
+              <template x-if="field.type === 'secret'">
+                <input class="input" type="password" x-model="secrets[field.key]" autocomplete="new-password" :placeholder="provider.secrets?.[field.key] ? '•••••••• (kayıtlı; değiştirmek için yazın)' : ''" :data-testid="'sms-' + field.key">
+              </template>
+              <template x-if="field.type !== 'select' && field.type !== 'secret'">
+                <input class="input" x-model.trim="form.values[field.key]" :maxlength="field.max || 200" autocomplete="off" :placeholder="field.placeholder" :aria-invalid="!!errors[field.key]" :data-testid="'sms-' + field.key">
+              </template>
+              <span class="text-xs text-muted" x-show="field.type === 'secret' && provider.secrets?.[field.key]">Şifreli saklanıyor ve panele gösterilmiyor. <button type="button" class="font-medium text-primary hover:underline" @click="clearSecret(field)">Sil</button></span>
+              <span class="text-xs text-muted" x-show="field.help" x-text="field.help"></span>
+              <span class="field-error" x-show="errors[field.key]" x-text="errors[field.key]"></span>
+            </label>
           </template>
         </div>
         <p class="rounded-control bg-warning-soft p-3 text-sm text-warning-ink" x-show="view?.problem" x-text="view?.problem"></p>
         <div class="flex flex-wrap items-center gap-2" x-show="senders.length" data-testid="sms-senders">
           <span class="text-sm text-muted">Onaylı başlıklar:</span>
           <template x-for="s in senders" :key="s">
-            <button type="button" class="badge" :class="s === form.sender ? 'badge-success' : 'badge-neutral hover:bg-line'" @click="useSender(s)" :title="s === form.sender ? 'Kullanılan başlık' : 'Bu başlığı kullan'" x-text="s"></button>
+            <button type="button" class="badge" :class="s === form.values[senderField] ? 'badge-success' : 'badge-neutral hover:bg-line'" @click="useSender(s)" :title="s === form.values[senderField] ? 'Kullanılan başlık' : 'Bu başlığı kullan'" x-text="s"></button>
           </template>
         </div>
         <div class="flex flex-wrap justify-end gap-2">
@@ -186,7 +174,7 @@
 
       <section class="card pn-group-card" x-show="!loading && form.provider !== 'off'" x-cloak data-setting="sms.test">
         <h3 class="pn-group-title">Deneme</h3>
-        <p class="text-sm text-ink-2">Kayıtlı ayarlarla hemen bir SMS gönderir (NetGSM'de kredi harcar). Gönderilemezse NetGSM'in verdiği hata burada görünür.</p>
+        <p class="text-sm text-ink-2">Kayıtlı ayarlarla hemen bir SMS gönderir (sağlayıcıda kredi harcar). Gönderilemezse sağlayıcının verdiği hata burada görünür.</p>
         <div class="grid gap-3 sm:grid-cols-[minmax(0,14rem)_minmax(0,1fr)]">
           <label class="field">
             <span class="field-label">Cep telefonu</span>

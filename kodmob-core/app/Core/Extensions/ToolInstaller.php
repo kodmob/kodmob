@@ -13,8 +13,8 @@ use ZipArchive;
  *
  * - paketin klasörü (kodmob-tool.json kökte ya da tek alt klasörde),
  * - paketin zip'i (GitHub'ın "Download ZIP"i gibi tek üst klasörlü olabilir),
- * - katalogdaki anahtar (resources/marketplace/catalog.json): `download` adresinden indirilir, `sha256`
- *   özeti tutmazsa kurulmaz.
+ * - Keşfet kataloğundaki anahtar (github.com/kodmob/kodmob-explore; Marketplace): `download` adresinden indirilir,
+ *   `sha256` özeti tutmazsa kurulmaz.
  *
  * Tanım denetlenir (ToolManifest), çatı sürümüyle uyumu ve anahtarın çatının modülleriyle çakışmadığı
  * bakılır; paket `extensions/<anahtar>/`'a kopyalanır. Kurulu paketin üstüne yalnızca `--update` ile.
@@ -72,6 +72,9 @@ final class ToolInstaller
         }
         if (! preg_match(ToolManifest::KEY, $source)) {
             throw ValidationException::field('source', "Klasör, zip ya da katalogdaki bir anahtar olmalı: {$source}");
+        }
+        if ($catalog === null) {
+            Marketplace::refresh(true);
         }
         $entry = Marketplace::find($source, $catalog);
         if ($entry === null) {

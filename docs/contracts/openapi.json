@@ -9786,6 +9786,49 @@
                 }
             }
         },
+        "/v1/system/tools/catalog/refresh": {
+            "post": {
+                "operationId": "post_v1_system_tools_catalog_refresh",
+                "tags": [
+                    "system"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "x-kodmob-capabilities": [
+                    "km_manage_settings"
+                ],
+                "x-kodmob-throttle": "10/1",
+                "responses": {
+                    "200": {
+                        "description": "Başarılı"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/Error"
+                    }
+                }
+            }
+        },
         "/v1/system/tools/{key}": {
             "put": {
                 "operationId": "tools.toggled",

@@ -77,24 +77,24 @@ final class ShopController extends Controller
         $result = (new Orders)->place($cart, $this->input($request), self::locale($request));
         $order = (new Orders)->forCustomer($result['order']['number'], $result['token']);
 
-        return self::noStore(['order' => $order, 'token' => $result['token'], 'payment' => $result['payment']], 201)
+        return $this->noStore(['order' => $order, 'token' => $result['token'], 'payment' => $result['payment']], 201)
             ->withCookie(self::cookie('', $request, true));
     }
 
     public function order(Request $request, string $number): JsonResponse
     {
-        return self::noStore((new Orders)->forCustomer($number, (string) $request->query('token', '')));
+        return $this->noStore((new Orders)->forCustomer($number, (string) $request->query('token', '')));
     }
 
     /** Online ödemeyi yeniden başlatır (sağlayıcının sayfası açılamamıştı ya da müşteri vazgeçmişti). */
     public function pay(Request $request, string $number): JsonResponse
     {
-        return self::noStore(['payment' => (new Orders)->pay($number, (string) ($this->input($request)['token'] ?? ''))]);
+        return $this->noStore(['payment' => (new Orders)->pay($number, (string) ($this->input($request)['token'] ?? ''))]);
     }
 
     private function respond(Cart $cart, Request $request, bool $setCookie = true): JsonResponse
     {
-        $response = self::noStore($cart->view(self::locale($request), $request->query('payment') ? (string) $request->query('payment') : null));
+        $response = $this->noStore($cart->view(self::locale($request), $request->query('payment') ? (string) $request->query('payment') : null));
 
         return $setCookie ? $response->withCookie(self::cookie($cart->token, $request)) : $response;
     }
@@ -109,10 +109,5 @@ final class ShopController extends Controller
     private static function cookie(string $token, Request $request, bool $forget = false): Cookie
     {
         return new Cookie(Cart::COOKIE, $token, $forget ? 1 : time() + 30 * 86400, '/api/v1/shop', null, $request->isSecure(), true, false, Cookie::SAMESITE_LAX);
-    }
-
-    private static function noStore(array $data, int $status = 200): JsonResponse
-    {
-        return (new JsonResponse($data, $status))->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
     }
 }

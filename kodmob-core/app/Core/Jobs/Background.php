@@ -73,7 +73,7 @@ final class Background
     {
         $at = self::lastCron();
 
-        return $at !== null && Clock::carbon($at)->diffInSeconds(Clock::carbon(Clock::now()), true) <= self::STALE_AFTER;
+        return $at !== null && Clock::carbon($at)->diffInSeconds(Clock::moment(), true) <= self::STALE_AFTER;
     }
 
     /** Panel özeti: cron, kuyrukta bekleyen ve başarısız işler. */

@@ -1,0 +1,10 @@
+{# Sayfa düğmeleri (kodmob-core Core\Database\Paged biçimi): bileşen `page`, `pages` ve `goPage(n)` verir. #}
+<div class="flex items-center justify-between border-t border-line px-4 py-3 text-sm text-ink-2" x-show="pages > 1" data-testid="pager">
+  <button type="button" class="btn btn-ghost btn-sm" @click="goPage(page - 1)" :disabled="page <= 1">
+    <svg class="icon icon-sm" aria-hidden="true"><use href="#i-chevron-left"/></svg> Önceki
+  </button>
+  <span x-text="`Sayfa ${page} / ${pages}`"></span>
+  <button type="button" class="btn btn-ghost btn-sm" @click="goPage(page + 1)" :disabled="page >= pages" data-testid="pager-next">
+    Sonraki <svg class="icon icon-sm" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+  </button>
+</div>

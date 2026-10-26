@@ -2,6 +2,7 @@
  * Çatının rotaları: her profilde aynı, profilin rota tablosuna eklenir (vite.config.js). Şablon ve betik
  * kodmob-frontend/src altında (profilde değil). Alan anlamları profilin routes.config.js'indeki gibi.
  */
+import { onlyLocales } from './route-locales.js';
 import { bookingRoutes, commerceRoutes, hotelRoutes } from './commerce-routes.js';
 import { legalRoutes } from './legal.js';
 
@@ -34,7 +35,7 @@ export const NEWSLETTER_PATHS = { newsletter: { tr: '/bulten/', en: '/newsletter
 
 export function newsletterRoutes(paths = {}, locales = null) {
     const p = { ...NEWSLETTER_PATHS, ...paths };
-    const only = (byLocale) => (locales ? Object.fromEntries(Object.entries(byLocale).filter(([code]) => locales.includes(code))) : byLocale);
+    const only = (byLocale) => onlyLocales(byLocale, locales);
 
     return [{
         name: 'newsletter', paths: only(p.newsletter), ...page('newsletter'), module: 'newsletter',
@@ -50,7 +51,7 @@ export const MEMBER_PATHS = { account: { tr: '/hesap/', en: '/account/', de: '/k
 
 export function memberRoutes(paths = {}, locales = null) {
     const p = { ...MEMBER_PATHS, ...paths };
-    const only = (byLocale) => (locales ? Object.fromEntries(Object.entries(byLocale).filter(([code]) => locales.includes(code))) : byLocale);
+    const only = (byLocale) => onlyLocales(byLocale, locales);
 
     return [{
         name: 'account', paths: only(p.account), ...page('account'), module: 'members',

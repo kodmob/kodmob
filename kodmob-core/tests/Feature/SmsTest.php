@@ -3,9 +3,14 @@
 namespace Tests\Feature;
 
 use App\Core\Mail\SiteMail;
+use App\Core\Sms\LogGateway;
 use App\Core\Sms\NetgsmGateway;
+use App\Core\Sms\SmsGateway;
+use App\Core\Sms\SmsProvider;
+use App\Core\Sms\SmsProviders;
 use App\Core\Sms\SmsText;
 use App\Core\Support\Options;
+use App\Core\Support\Secret;
 use App\Modules\Auth\Models\User;
 use Illuminate\Http\Client\Request as HttpRequest;
 use Illuminate\Support\Facades\DB;
@@ -13,7 +18,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
-/** SMS (NetGSM) ve kullanıcılara SMS / e-posta. */
+/** SMS (sağlayıcı kaydı, NetGSM) ve kullanıcılara SMS / e-posta. */
 class SmsTest extends TestCase
 {
     public function test_text_and_number_rules_match_the_shared_vectors(): void
@@ -40,20 +45,75 @@ class SmsTest extends TestCase
     public function test_settings_keep_the_password_secret(): void
     {
         $h = $this->admin();
-        $this->getJson('/v1/system/sms', $h)->assertOk()->assertJsonPath('provider', 'off')->assertJsonPath('enabled', false);
-        $this->putJson('/v1/system/sms', ['provider' => 'netgsm'], $h)->assertStatus(422)->assertJsonStructure(['details' => ['fields' => ['username', 'sender']]]);
+        $view = $this->getJson('/v1/system/sms', $h)->assertOk()->assertJsonPath('provider', 'off')->assertJsonPath('enabled', false)->json();
+        $this->assertSame(['netgsm', 'log'], array_column($view['providers'], 'key'), 'NetGSM çatıda; deneme sağlayıcısı');
+        $this->assertSame(['username', 'password', 'sender', 'iys_filter', 'app_name'], array_column($view['providers'][0]['fields'], 'key'));
+        $this->putJson('/v1/system/sms', ['provider' => 'netgsm', 'values' => ['username' => '']], $h)->assertStatus(422)
+            ->assertJsonPath('details.fields.username', 'NetGSM kullanıcı adını (abone numarası ya da alt kullanıcı) yazın.')
+            ->assertJsonPath('details.fields.sender', 'Onaylı gönderici başlığını yazın.');
 
-        $view = $this->putJson('/v1/system/sms', ['provider' => 'netgsm', 'username' => '8503020000', 'password' => 'çok-gizli', 'sender' => 'KODMOB', 'iys_filter' => '0'], $h)->assertOk()->json();
-        $this->assertTrue($view['password_set']);
+        $view = $this->putJson('/v1/system/sms', ['provider' => 'netgsm', 'values' => ['username' => '8503020000', 'password' => 'çok-gizli', 'sender' => 'KODMOB', 'iys_filter' => '0']], $h)->assertOk()->json();
+        $netgsm = $view['providers'][0];
+        $this->assertTrue($netgsm['secrets']['password']);
         $this->assertTrue($view['enabled']);
-        $this->assertArrayNotHasKey('password', $view);
-        $this->assertStringStartsWith('enc:', Options::get('sms_settings')['password']);
+        $this->assertArrayNotHasKey('password', $netgsm['values']);
+        $this->assertStringStartsWith('enc:', Options::get('sms_settings')['values']['netgsm']['password']);
         $this->assertStringNotContainsString('çok-gizli', (string) DB::table('events')->get()->toJson());
 
-        $this->putJson('/v1/system/sms', ['password' => ''], $h)->assertJsonPath('password_set', true);
-        $this->putJson('/v1/system/sms', ['clear_password' => true], $h)->assertJsonPath('password_set', false)->assertJsonPath('enabled', false);
-        $this->putJson('/v1/system/sms', ['iys_filter' => '99'], $h)->assertStatus(422);
+        $this->putJson('/v1/system/sms', ['values' => ['password' => '']], $h)->assertJsonPath('providers.0.secrets.password', true);
+        $this->putJson('/v1/system/sms', ['clear' => ['password']], $h)->assertJsonPath('providers.0.secrets.password', false)->assertJsonPath('enabled', false)
+            ->assertJsonPath('problem', 'NetGSM api şifresi eksik (Sistem Ayarları › SMS).');
+        $this->putJson('/v1/system/sms', ['values' => ['iys_filter' => '99']], $h)->assertStatus(422);
+        $this->putJson('/v1/system/sms', ['provider' => 'yok'], $h)->assertStatus(422);
         $this->getJson('/v1/system/sms', $this->as('editor'))->assertForbidden();
+    }
+
+    public function test_settings_from_3_0_are_read_and_a_removed_provider_is_explained(): void
+    {
+        $h = $this->admin();
+        // 3.0: NetGSM alanları düz saklanıyordu.
+        Options::set('sms_settings', ['provider' => 'netgsm', 'username' => '8503020000', 'password' => Secret::seal('eski'), 'sender' => 'KODMOB', 'iys_filter' => '0', 'app_name' => '']);
+        $this->getJson('/v1/system/sms', $h)->assertJsonPath('enabled', true)->assertJsonPath('providers.0.values.username', '8503020000')->assertJsonPath('providers.0.secrets.password', true);
+
+        // Kayıtta olmayan (paketi kaldırılmış) sağlayıcı: ne yapılacağı söylenir.
+        Options::set('sms_settings', ['provider' => 'ileti', 'values' => ['ileti' => ['key' => 'x']]]);
+        $this->getJson('/v1/system/sms', $h)->assertJsonPath('provider', 'off')->assertJsonPath('problem', fn ($m) => str_contains($m, 'kodmob:add ileti'));
+        $this->postJson('/v1/system/sms/test', ['to' => '05321234567'], $h)->assertStatus(422)->assertJsonPath('code', 'km_sms_off');
+    }
+
+    public function test_a_package_can_register_its_own_provider(): void
+    {
+        $h = $this->admin();
+        SmsProviders::register(new class implements SmsProvider
+        {
+            public function key(): string
+            {
+                return 'deneme';
+            }
+
+            public function label(): string
+            {
+                return 'Deneme sağlayıcı';
+            }
+
+            public function help(): string
+            {
+                return '';
+            }
+
+            public function fields(): array
+            {
+                return [['key' => 'token', 'label' => 'Anahtar', 'type' => 'secret', 'required' => true]];
+            }
+
+            public function gateway(array $values): SmsGateway
+            {
+                return new LogGateway('PAKET');
+            }
+        });
+        $this->putJson('/v1/system/sms', ['provider' => 'deneme', 'values' => ['token' => 'gizli-anahtar']], $h)->assertOk()->assertJsonPath('enabled', true);
+        $this->postJson('/v1/system/sms/test', ['to' => '05321234567'], $h)->assertOk()->assertJsonPath('sent', 1);
+        SmsProviders::reset();
     }
 
     public function test_netgsm_request_and_errors(): void
@@ -144,7 +204,7 @@ class SmsTest extends TestCase
     /** NetGSM ayarı (deneme hesabı). */
     private function netgsm(array $h): void
     {
-        $this->putJson('/v1/system/sms', ['provider' => 'netgsm', 'username' => '8503020000', 'password' => 'api-sifre', 'sender' => 'KODMOB'], $h)->assertOk();
+        $this->putJson('/v1/system/sms', ['provider' => 'netgsm', 'values' => ['username' => '8503020000', 'password' => 'api-sifre', 'sender' => 'KODMOB']], $h)->assertOk();
     }
 
     /** Beş kullanıcı: iki geçerli telefon (biri iki kişide), biri telefonsuz, biri sabit hat; biri e-postasız. */

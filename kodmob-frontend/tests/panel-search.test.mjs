@@ -55,7 +55,9 @@ test('panel formlarındaki her alan şablonda işaretli ve adresi bir sayfaya ç
     assert.equal(anchors.size, FIELDS.length, 'aynı alan iki kez');
     for (const f of FIELDS) {
         // Sağlayıcı kartları listeden üretilir: :data-setting="'ai.' + p.key" (ai.anthropic, ai.openai, ai.google).
-        const dynamic = /^ai\.(anthropic|openai|google)$/.test(f.anchor) && html.includes(`:data-setting="'ai.' + p.key"`);
+        // SMS sağlayıcısının alanları tanımından üretilir: :data-setting="'sms.' + field.key" (NetGSM: username, sender…).
+        const dynamic = (/^ai\.(anthropic|openai|google)$/.test(f.anchor) && html.includes(`:data-setting="'ai.' + p.key"`))
+            || (/^sms\.(username|password|sender|iys_filter|app_name)$/.test(f.anchor) && html.includes(`:data-setting="'sms.' + field.key"`));
         assert.ok(dynamic || html.includes(`data-setting="${f.anchor}"`), `şablonda yok: data-setting="${f.anchor}"`);
         const p = place(f.view, f.tab);
         assert.notEqual(match(p.href, '').view, 'notFound', `${f.anchor}: ${p.href}`);

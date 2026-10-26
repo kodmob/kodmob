@@ -67,7 +67,7 @@ final class TwoFactor
         if (! preg_match('/^\d{6}$/', (string) $code) || $secret === '') {
             return false;
         }
-        $now = intdiv(Clock::carbon(Clock::now())->getTimestamp(), self::STEP);
+        $now = intdiv(Clock::moment()->getTimestamp(), self::STEP);
         $last = (int) ($user->two_factor_last_step ?? 0);
         for ($step = $now - self::WINDOW; $step <= $now + self::WINDOW; $step++) {
             if ($step > $last && hash_equals(self::code($secret, $step), $code)) {

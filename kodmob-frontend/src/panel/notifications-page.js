@@ -95,6 +95,10 @@ export function kmNotificationsPage(route = {}) {
             this.load();
         },
 
+        goPage(page) {
+            this.go({ page: Math.min(Math.max(1, page), this.pages || 1) });
+        },
+
         toggleAll() {
             this.selected = this.allSelected ? [] : this.items.map((n) => n.id);
         },

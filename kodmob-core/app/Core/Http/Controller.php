@@ -24,6 +24,12 @@ abstract class Controller
         return response()->noContent();
     }
 
+    /** Saklanmayan JSON yanıtı (oturum, sepet, sipariş, üye): tarayıcı ve ara sunucular kopya tutmaz. */
+    protected function noStore(array $data, int $status = 200): JsonResponse
+    {
+        return (new JsonResponse($data, $status))->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')->header('Pragma', 'no-cache');
+    }
+
     /** JSON gövdesi (form gönderimlerinde form alanları). */
     protected function input(Request $request): array
     {

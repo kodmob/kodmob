@@ -34,10 +34,6 @@
         </li>
       </template>
     </ul>
-    <div class="flex items-center justify-between border-t border-line px-4 py-3 text-sm text-ink-2" x-show="pages > 1">
-      <button type="button" class="btn btn-ghost btn-sm" @click="page--; load()" :disabled="page <= 1">Önceki</button>
-      <span x-text="`Sayfa ${page} / ${pages}`"></span>
-      <button type="button" class="btn btn-ghost btn-sm" @click="page++; load()" :disabled="page >= pages">Sonraki</button>
-    </div>
+    {% include "pages/panel/_pager.njk" %}
   </div>
 </div>

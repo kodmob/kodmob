@@ -1,6 +1,6 @@
 {
     "name": "kodmob",
-    "version": "3.0.0",
+    "version": "3.1.0",
     "description": "Çatının dosyaları: kodmob:upgrade yalnızca `framework` desenlerindeki (ve `project` / `exclude` dışındaki) dosyaları yeniler. Proje, bilerek değiştirdiği bir çatı dosyasını `project` listesine ekleyebilir (güncelleme korur). Araç paketleri (kodmob-core/extensions/<anahtar>/) üçüncü sahiptir: çatı deseninde değildir, kodmob:upgrade dokunmaz; kodmob:add kurar.",
     "framework": [
         "build.mjs",

@@ -3,6 +3,7 @@
 namespace App\Modules\Members;
 
 use App\Core\Activity\Activity;
+use App\Core\Database\Paged;
 use App\Core\Database\Sql;
 use App\Core\Exceptions\ValidationException;
 use App\Core\Http\Controller;
@@ -30,18 +31,12 @@ final class AdminMembersController extends Controller
         if (in_array($request->query('status'), ['active', 'disabled'], true)) {
             $query->where('status', $request->query('status'));
         }
-        $page = max(1, (int) $request->query('page', 1));
-        $total = (clone $query)->count();
-        $rows = $query->orderByDesc('id')->offset(($page - 1) * 25)->limit(25)->get();
 
-        return [
-            'items' => $rows->map(static fn ($r) => [
-                'id' => (int) $r->id, 'name' => (string) $r->name, 'email' => (string) $r->email, 'status' => (string) $r->status,
-                'verified' => $r->email_verified_at !== null, 'google' => $r->google_id !== null,
-                'created_at' => Clock::local((string) $r->created_at), 'last_login_at' => Clock::local($r->last_login_at),
-            ])->all(),
-            'total' => $total, 'page' => $page, 'pages' => (int) ceil($total / 25),
-        ];
+        return Paged::of($query->orderByDesc('id'), (int) $request->query('page', 1), 25, static fn ($r) => [
+            'id' => (int) $r->id, 'name' => (string) $r->name, 'email' => (string) $r->email, 'status' => (string) $r->status,
+            'verified' => $r->email_verified_at !== null, 'google' => $r->google_id !== null,
+            'created_at' => Clock::local((string) $r->created_at), 'last_login_at' => Clock::local($r->last_login_at),
+        ]);
     }
 
     public function update(Request $request, int $id): array
@@ -63,10 +58,7 @@ final class AdminMembersController extends Controller
     public function destroy(int $id): array
     {
         $member = Members::find($id) ?? throw ValidationException::field('id', 'Üye bulunamadı.');
-        DB::table('member_sessions')->where('member_id', $id)->delete();
-        DB::table('member_tokens')->where('member_id', $id)->delete();
-        DB::table('push_subscriptions')->where('owner_type', 'member')->where('owner_id', $id)->delete();
-        DB::table('members')->where('id', $id)->delete();
+        Members::purge($id);
         Activity::subject('member', $id, $member['email']);
 
         return ['ok' => true];

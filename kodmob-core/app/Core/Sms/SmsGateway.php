@@ -3,8 +3,8 @@
 namespace App\Core\Sms;
 
 /**
- * SMS sağlayıcısı. Şimdilik NetGSM ve deneme (günlüğe yazan) var; başka sağlayıcı (İleti Merkezi,
- * Twilio…) bu arayüzü uygulayıp SmsSettings::PROVIDERS ve SmsSettings::gateway()'e eklenir.
+ * SMS göndericisi (sağlayıcının API'si). Sağlayıcı (SmsProvider) ayarlardan kurar: NetgsmGateway, LogGateway; başka
+ * sağlayıcı bu arayüzü ve SmsProvider'ı uygulayıp SmsProviders'a kaydolur.
  * Hata DomainException('km_sms_failed', yöneticiye gösterilecek Türkçe mesaj) olarak atılır.
  */
 interface SmsGateway

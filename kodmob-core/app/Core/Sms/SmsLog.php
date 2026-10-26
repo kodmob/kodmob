@@ -56,7 +56,7 @@ final class SmsLog
     public static function prune(): void
     {
         try {
-            DB::table('sms_log')->where('created_at', '<', Clock::carbon(Clock::now())->subDays(self::KEEP_DAYS)->format('Y-m-d H:i:s'))->delete();
+            DB::table('sms_log')->where('created_at', '<', Clock::later('-'.self::KEEP_DAYS.' days'))->delete();
         } catch (Throwable) {
         }
     }

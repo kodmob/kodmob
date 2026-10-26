@@ -99,6 +99,8 @@ abstract class TestCase extends BaseTestCase
             'kodmob.site_root' => base_path('tests/fixtures/site'),
             'kodmob.media_root' => $this->mediaRoot,
             'app.url' => 'https://kodmob.test',
+            // Keşfet'in uzak kataloğu: testler ağa çıkmaz (MarketplaceTest açar ve taklit eder).
+            'kodmob.marketplace_url' => '',
         ]);
         Sites::forgetMemory();
         // Sızmış şifre denetimi dış servise gider: testler ağa çıkmasın (denetimin kendi testi açar ve servisi taklit eder).

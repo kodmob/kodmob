@@ -249,7 +249,7 @@ final class Health
         if ($status['failed'] > 0) {
             $flags[] = self::flag('warn', "{$status['failed']} başarısız arka plan işi var.", 'Ayarlar › Arka plan\'dan yeniden deneyin ya da silin.');
         }
-        $since = Clock::carbon(Clock::now())->subDay();
+        $since = Clock::moment()->subDay();
         $failedMail = array_filter(MailLog::recent(50), static fn ($m) => $m['status'] !== 'sent' && Clock::carbon((string) $m['created_at'])->greaterThan($since));
         if ($failedMail) {
             $flags[] = self::flag('warn', 'Son 24 saatte '.count($failedMail).' e-posta gönderilemedi: '.mb_substr((string) (reset($failedMail)['error'] ?? ''), 0, 160), 'Ayarlar › E-posta\'dan ayarları kontrol edip deneme gönderin.');

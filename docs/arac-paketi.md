@@ -99,8 +99,11 @@ Tabloları ve verisi kalır (elle silinir).
 
 ## 5. Kataloğa ekleme (topluluk)
 
-Katalog açık depoda `kodmob-core/resources/marketplace/catalog.json`; araç **çekme isteğiyle** (PR) eklenir.
-Panel kataloğu dışarıya istek atmadan bu dosyadan okur (çatıyla güncellenir).
+Katalog ayrı bir depodadır: **[github.com/kodmob/kodmob-explore](https://github.com/kodmob/kodmob-explore)**. Araç
+`tools/<anahtar>/` klasörüne **çekme isteğiyle** (PR) eklenir; CI paketi denetler, `dist/<anahtar>-<sürüm>.zip`'i ve
+`catalog.json`'u üretir. Kurulumlar kataloğu en çok 6 saatte bir okur (Araç Pazarı › Keşfet › **Yenile** hemen okur);
+okunamazsa son kopya, o da yoksa çatıyla gelen `kodmob-core/resources/marketplace/catalog.json` kullanılır. Adres
+`.env`'de `KODMOB_MARKETPLACE_URL` (boş: dışarı istek yok). Örnekler: `merhaba` (en küçük paket), `netgsm` (SMS sağlayıcısı).
 
 ```json
 {

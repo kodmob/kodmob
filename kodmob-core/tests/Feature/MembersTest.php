@@ -82,6 +82,14 @@ class MembersTest extends TestCase
 
         $this->putJson('/v1/members/me', ['name' => 'Ayşe Y.'])->assertOk()->assertJsonPath('member.name', 'Ayşe Y.');
         $this->getJson('/v1/members/orders')->assertOk()->assertJsonPath('items', []);
+        // Siparişlerim: doğrulanmış e-postanın siparişi, durumu sözlükteki adıyla.
+        DB::table('commerce_orders')->insert([
+            'number' => 'S-000777', 'token_hash' => str_repeat('0', 64), 'status' => 'shipped', 'currency' => 'TRY', 'total' => 12990,
+            'customer_name' => 'Ayşe Yılmaz', 'customer_email' => 'ayse@ornek.test', 'address' => '{}', 'note' => '', 'data' => '{}',
+            'created_at' => now()->format('Y-m-d H:i:s'), 'updated_at' => now()->format('Y-m-d H:i:s'),
+        ]);
+        $this->getJson('/v1/members/orders')->assertOk()->assertJsonPath('items.0.number', 'S-000777')
+            ->assertJsonPath('items.0.statusLabel', 'Kargoda')->assertJsonPath('items.0.total', fn ($t) => str_contains($t, '129,90'));
 
         // Çıkış, hatalı ve doğru giriş.
         $this->postJson('/v1/members/logout')->assertOk();

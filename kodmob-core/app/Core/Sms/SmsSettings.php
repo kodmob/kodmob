@@ -9,46 +9,44 @@ use App\Core\Support\Secret;
 use App\Core\Support\Text;
 
 /**
- * SMS ayarları (Ayarlar > SMS). `provider`:
+ * SMS ayarları (Sistem Ayarları › SMS): seçili sağlayıcı ve her sağlayıcının kendi alanları (SmsProvider::fields()).
  *
- * - `off`: kapalı (varsayılan; panelde SMS düğmeleri görünmez);
- * - `netgsm`: NetGSM hesabı: kullanıcı adı (abone no / alt kullanıcı), API şifresi, onaylı
- *   gönderici başlığı, İYS filtresi, isteğe bağlı uygulama adı (appname);
- * - `log`: gönderilmez, günlüğe yazılır (deneme ve uçtan uca testler).
+ *   sms_settings = { provider: "netgsm", values: { netgsm: { username, password: "enc:…", sender, … }, log: { … } } }
  *
- * Şifre APP_KEY ile şifrelenmiş saklanır ve panele geri gönderilmez (Secret).
+ * - `off`: kapalı (varsayılan; panelde SMS düğmeleri görünmez). Sağlayıcılar SmsProviders kaydından (NetGSM ve deneme
+ *   çatıda; diğerleri araç paketi). Paketi kaldırılmış sağlayıcı seçiliyse yönetici ne yapacağını görür.
+ * - Gizli alanlar (`secret`) APP_KEY ile mühürlü saklanır, panele geri gönderilmez; boş gelen gizli alan eskisini korur,
+ *   `clear` listesindekiler silinir.
+ * - 3.0'ın düz NetGSM ayarları (username, password, sender, iys_filter, app_name) okunurken `values.netgsm`'e taşınır.
  */
 final class SmsSettings
 {
     private const OPTION = 'sms_settings';
 
-    public const PROVIDERS = ['off' => 'Kapalı', 'netgsm' => 'NetGSM', 'log' => 'Gönderme, günlüğe yaz (deneme)'];
-
-    /** NetGSM `iysfilter`: bilgilendirme İYS'ye takılmaz; ticari ileti İYS onayı olan alıcıya gider. */
-    public const IYS_FILTERS = [
-        '0' => 'Bilgilendirme (İYS kontrolü yok)',
-        '11' => 'Ticari ileti · bireysel alıcı (İYS kontrollü)',
-        '12' => 'Ticari ileti · tacir alıcı (İYS kontrollü)',
-    ];
-
-    private const DEFAULTS = ['provider' => 'off', 'username' => '', 'password' => '', 'sender' => '', 'iys_filter' => '0', 'app_name' => ''];
-
+    /** Kayıtlı ayar (gizliler açık): sağlayıcı ve her sağlayıcının değerleri. @return array{provider:string,values:array<string,array<string,string>>} */
     public static function get(): array
     {
         $stored = Options::get(self::OPTION, []);
-        $s = array_merge(self::DEFAULTS, is_array($stored) ? array_intersect_key($stored, self::DEFAULTS) : []);
-        $s['password'] = Secret::open($s['password']);
+        $stored = is_array($stored) ? $stored : [];
+        $values = is_array($stored['values'] ?? null) ? $stored['values'] : [];
+        // 3.0: NetGSM alanları düz saklanıyordu.
+        if (! isset($values['netgsm']) && isset($stored['username'])) {
+            $values['netgsm'] = array_intersect_key($stored, array_flip(['username', 'password', 'sender', 'iys_filter', 'app_name']));
+        }
+        foreach ($values as $provider => $fields) {
+            $values[$provider] = array_map(static fn ($v) => is_string($v) && str_starts_with($v, 'enc:') ? Secret::open($v) : (string) $v, is_array($fields) ? $fields : []);
+        }
 
-        return $s;
+        return ['provider' => (string) ($stored['provider'] ?? 'off'), 'values' => $values];
     }
 
-    /** Panelde SMS düğmeleri görünsün mü: sağlayıcı seçili ve bilgiler tam. */
+    /** Panelde SMS düğmeleri görünsün mü: sağlayıcı seçili, kurulu ve zorunlu alanlar dolu. */
     public static function enabled(): bool
     {
         return self::missing(self::get()) === null;
     }
 
-    /** Ayarlı sağlayıcı; kapalı ya da eksikse yöneticiye ne yapacağını söyleyen hata. */
+    /** Ayarlı sağlayıcının göndericisi; kapalı ya da eksikse yöneticiye ne yapacağını söyleyen hata. */
     public static function gateway(): SmsGateway
     {
         $s = self::get();
@@ -56,86 +54,138 @@ final class SmsSettings
         if ($missing !== null) {
             throw new DomainException('km_sms_off', $missing, 422);
         }
+        $provider = SmsProviders::get($s['provider']);
 
-        return match ($s['provider']) {
-            'netgsm' => new NetgsmGateway($s['username'], $s['password'], $s['sender'], $s['iys_filter'], $s['app_name']),
-            default => new LogGateway($s['sender']),
-        };
+        return $provider->gateway(self::values($provider, $s));
     }
 
-    /** Panelde gösterilen hal (şifresiz). */
+    /** Panelde gösterilen hal: sağlayıcılar ve alanları, seçilinin değerleri (gizliler yok, yalnızca dolu mu). */
     public static function view(): array
     {
         $s = self::get();
+        $providers = [];
+        foreach (SmsProviders::all() as $key => $provider) {
+            $values = self::values($provider, $s);
+            $providers[] = [
+                'key' => $key, 'label' => $provider->label(), 'help' => $provider->help(),
+                'fields' => array_map(static fn (array $f) => $f + ['required' => false, 'options' => [], 'help' => '', 'placeholder' => '', 'default' => ''], $provider->fields()),
+                'values' => (object) array_filter($values, static fn ($k) => ! self::secret($provider, $k), ARRAY_FILTER_USE_KEY),
+                'secrets' => (object) array_map(static fn ($k) => $values[$k] !== '', array_combine(self::secretKeys($provider), self::secretKeys($provider)) ?: []),
+            ];
+        }
+        $stale = $s['provider'] !== 'off' && SmsProviders::get($s['provider']) === null;
 
         return [
-            'provider' => $s['provider'],
-            'username' => $s['username'],
-            'password_set' => $s['password'] !== '',
-            'sender' => $s['sender'],
-            'iys_filter' => $s['iys_filter'],
-            'app_name' => $s['app_name'],
+            'provider' => $stale ? 'off' : $s['provider'],
+            'providers' => $providers,
             'enabled' => self::missing($s) === null,
             'problem' => $s['provider'] === 'off' ? null : self::missing($s),
-            'providers' => self::PROVIDERS,
-            'iys_filters' => self::IYS_FILTERS,
         ];
     }
 
-    /** Verilmeyen alan değişmez; `password` boş gelirse eski şifre kalır, `clear_password` siler. */
+    /**
+     * Kaydeder: `{ provider, values: { alan: değer }, clear: [gizli alan] }`. Verilmeyen alan değişmez; zorunlu alanlar
+     * ve seçenekler denetlenir.
+     */
     public static function save(array $input): array
     {
+        $stored = Options::get(self::OPTION, []);
+        $stored = is_array($stored) ? $stored : [];
         $s = self::get();
-        if (array_key_exists('provider', $input)) {
-            if (! isset(self::PROVIDERS[$input['provider']])) {
-                throw ValidationException::field('provider', 'Geçersiz SMS sağlayıcısı.');
+        $key = array_key_exists('provider', $input) ? (string) $input['provider'] : $s['provider'];
+        $provider = $key === 'off' ? null : SmsProviders::get($key);
+        if ($key !== 'off' && $provider === null) {
+            throw ValidationException::field('provider', 'Geçersiz SMS sağlayıcısı.');
+        }
+        $all = $s['values'];
+        if ($provider !== null) {
+            $values = self::values($provider, $s);
+            $incoming = is_array($input['values'] ?? null) ? $input['values'] : [];
+            $clear = array_map('strval', (array) ($input['clear'] ?? []));
+            $errors = [];
+            foreach ($provider->fields() as $field) {
+                $name = $field['key'];
+                if (in_array($name, $clear, true) && $field['type'] === 'secret') {
+                    $values[$name] = '';
+                } elseif (array_key_exists($name, $incoming)) {
+                    $value = (string) $incoming[$name];
+                    if ($field['type'] === 'secret' && $value === '') {
+                        continue;
+                    }
+                    $value = $field['type'] === 'secret' ? mb_substr($value, 0, 500) : mb_substr(Text::field($value), 0, (int) ($field['max'] ?? 200));
+                    if (($field['options'] ?? []) && ! array_key_exists($value, $field['options'])) {
+                        $errors[$name] = $field['label'].': geçersiz seçim.';
+                    }
+                    $values[$name] = $value;
+                }
+                if (($field['required'] ?? false) && $field['type'] !== 'secret' && ($values[$name] ?? '') === '') {
+                    $errors[$name] = $field['message'] ?? $field['label'].' gerekli.';
+                }
             }
-            $s['provider'] = (string) $input['provider'];
-        }
-        if (array_key_exists('iys_filter', $input)) {
-            if (! isset(self::IYS_FILTERS[(string) $input['iys_filter']])) {
-                throw ValidationException::field('iys_filter', 'Geçersiz İYS filtresi.');
-            }
-            $s['iys_filter'] = (string) $input['iys_filter'];
-        }
-        foreach (['username', 'app_name'] as $key) {
-            if (array_key_exists($key, $input)) {
-                $s[$key] = mb_substr(Text::field((string) $input[$key]), 0, 100);
-            }
-        }
-        if (array_key_exists('sender', $input)) {
-            // Gönderici başlığı NetGSM'de onaylı haliyle yazılmalı (büyük-küçük harf, boşluk dahil).
-            $s['sender'] = mb_substr(Text::field((string) $input['sender']), 0, 20);
-        }
-        if (! empty($input['clear_password'])) {
-            $s['password'] = '';
-        } elseif (isset($input['password']) && (string) $input['password'] !== '') {
-            $s['password'] = mb_substr((string) $input['password'], 0, 200);
-        }
-        if ($s['provider'] === 'netgsm') {
-            $errors = array_filter([
-                'username' => $s['username'] === '' ? 'NetGSM kullanıcı adını (abone numarası ya da alt kullanıcı) yazın.' : null,
-                'sender' => $s['sender'] === '' ? 'Onaylı gönderici başlığını yazın.' : null,
-            ]);
             if ($errors) {
                 throw ValidationException::fields($errors);
             }
+            $all[$key] = $values;
         }
-
-        $stored = $s;
-        $stored['password'] = Secret::seal($s['password']);
-        Options::set(self::OPTION, $stored);
+        // Gizliler mühürlenerek yazılır; 3.0'ın düz alanları kalkar.
+        $sealed = [];
+        foreach ($all as $providerKey => $values) {
+            $p = SmsProviders::get((string) $providerKey);
+            $sealed[$providerKey] = array_map(static fn ($v) => (string) $v, $values);
+            foreach ($p ? self::secretKeys($p) : [] as $secret) {
+                if (isset($sealed[$providerKey][$secret])) {
+                    $sealed[$providerKey][$secret] = Secret::seal($sealed[$providerKey][$secret]);
+                }
+            }
+            if ($p === null) {
+                // Kurulu olmayan sağlayıcının saklı değerleri olduğu gibi (zaten mühürlü) korunur.
+                $sealed[$providerKey] = (array) ($stored['values'][$providerKey] ?? $values);
+            }
+        }
+        Options::set(self::OPTION, ['provider' => $key, 'values' => $sealed]);
 
         return self::view();
     }
 
+    /** Sağlayıcının bütün alanları, kayıtlı ya da varsayılan değerleriyle. @return array<string,string> */
+    private static function values(SmsProvider $provider, array $s): array
+    {
+        $saved = $s['values'][$provider->key()] ?? [];
+        $out = [];
+        foreach ($provider->fields() as $field) {
+            $out[$field['key']] = (string) ($saved[$field['key']] ?? ($field['default'] ?? ''));
+        }
+
+        return $out;
+    }
+
+    /** @return list<string> */
+    private static function secretKeys(SmsProvider $provider): array
+    {
+        return array_values(array_map(static fn ($f) => $f['key'], array_filter($provider->fields(), static fn ($f) => $f['type'] === 'secret')));
+    }
+
+    private static function secret(SmsProvider $provider, string $key): bool
+    {
+        return in_array($key, self::secretKeys($provider), true);
+    }
+
     private static function missing(array $s): ?string
     {
-        return match (true) {
-            $s['provider'] === 'off' => 'SMS kapalı: Ayarlar > SMS\'ten bir sağlayıcı seçin.',
-            $s['provider'] === 'netgsm' && ($s['username'] === '' || $s['password'] === '') => 'NetGSM kullanıcı adı ya da şifresi eksik (Ayarlar > SMS).',
-            $s['provider'] === 'netgsm' && $s['sender'] === '' => 'NetGSM gönderici başlığı eksik (Ayarlar > SMS).',
-            default => null,
-        };
+        if ($s['provider'] === 'off') {
+            return 'SMS kapalı: Sistem Ayarları › SMS\'ten bir sağlayıcı seçin.';
+        }
+        $provider = SmsProviders::get($s['provider']);
+        if ($provider === null) {
+            return "SMS sağlayıcısı \"{$s['provider']}\" kurulu değil: geliştirme bilgisayarında `php artisan kodmob:add {$s['provider']}` (Araç Pazarı › Keşfet), ya da başka bir sağlayıcı seçin.";
+        }
+        $values = self::values($provider, $s);
+        foreach ($provider->fields() as $field) {
+            if (($field['required'] ?? false) && ($values[$field['key']] ?? '') === '') {
+                return $provider->label().' '.mb_strtolower($field['label']).' eksik (Sistem Ayarları › SMS).';
+            }
+        }
+
+        return null;
     }
 }

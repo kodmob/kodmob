@@ -268,6 +268,7 @@ Route::prefix('v1')->group(function () use ($content) {
         // Araç Pazarı: projede kurulu araçlar, aç / kapat (Core\Modules, Core\ModuleState).
         Route::middleware('cap:km_manage_settings')->prefix('system')->group(function () {
             Route::get('tools', [ToolsController::class, 'index']);
+            Route::post('tools/catalog/refresh', [ToolsController::class, 'refreshCatalog'])->middleware('throttle:10,1')->defaults('activity', false);
             Route::put('tools/{key}', [ToolsController::class, 'toggle'])->where('key', '[a-z][a-z0-9-]*')->name('tools.toggled');
             Route::put('tools/{key}/install', [ToolsController::class, 'install'])->where('key', '[a-z][a-z0-9-]*')->name('tools.installed');
         });

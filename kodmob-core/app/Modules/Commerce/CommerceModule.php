@@ -88,14 +88,11 @@ final class CommerceModule extends Module
     /** Genel bakış: bu ayın satışı ve son siparişler. */
     public function widgets(): array
     {
-        $labels = ['pending' => ['Ödeme bekliyor', 'warning'], 'paid' => ['Ödendi', 'success'], 'processing' => ['Hazırlanıyor', 'info'], 'shipped' => ['Kargoda', 'info'],
-            'completed' => ['Tamamlandı', 'success'], 'cancelled' => ['İptal', 'neutral'], 'refunded' => ['İade', 'neutral']];
-
         return [
             ['key' => 'sales', 'label' => 'Satış', 'icon' => 'cart', 'type' => 'stats', 'size' => 'md', 'order' => 25, 'can' => self::VIEW_ORDERS,
                 'link' => ['route' => 'orders', 'label' => 'Siparişler'], 'description' => 'Bu ayın siparişleri ve ödenen tutar; bekleyenler.',
                 'data' => static function () {
-                    $month = Clock::carbon(Clock::now())->startOfMonth()->format('Y-m-d H:i:s');
+                    $month = Clock::moment()->startOfMonth()->format('Y-m-d H:i:s');
                     $orders = DB::table('commerce_orders');
                     $paid = (clone $orders)->where('payment_status', 'paid')->where('paid_at', '>=', $month);
 
@@ -111,7 +108,7 @@ final class CommerceModule extends Module
                 'data' => static fn () => ['empty' => 'Henüz sipariş yok.', 'items' => DB::table('commerce_orders')->orderByDesc('id')->limit(5)->get()
                     ->map(static fn ($o) => [
                         'title' => $o->number.' · '.$o->customer_name, 'meta' => Money::format((int) $o->total, (string) $o->currency), 'time' => Clock::local((string) $o->created_at),
-                        'badge' => $labels[$o->status] ?? null, 'route' => 'orders', 'params' => ['id' => (int) $o->id],
+                        'badge' => [CommerceText::get('status.'.$o->status, 'tr'), Orders::TONES[$o->status] ?? 'neutral'], 'route' => 'orders', 'params' => ['id' => (int) $o->id],
                     ])->all()]],
         ];
     }

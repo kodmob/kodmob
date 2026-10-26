@@ -119,6 +119,7 @@ class ArchitectureTest extends TestCase
         'SettingsRegistry' => 'ayar tanımları kodla tanımlanır',
         'SiteContext' => 'site seçiminin kendisi',
         'SkillRegistry' => 'Jarvis araçları kodla tanımlanır',
+        'SmsProviders' => 'SMS sağlayıcıları kodla tanımlanır (çatı ve paketlerin modül boot kancası)',
     ];
 
     /** Veritabanına özgü SQL kalıpları; yalnızca app/Core/Database içinde. */

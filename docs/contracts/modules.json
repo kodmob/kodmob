@@ -3304,6 +3304,15 @@
                     ]
                 },
                 {
+                    "method": "POST",
+                    "path": "/v1/system/tools/catalog/refresh",
+                    "auth": true,
+                    "caps": [
+                        "km_manage_settings"
+                    ],
+                    "throttle": "10/1"
+                },
+                {
                     "method": "PUT",
                     "path": "/v1/system/tools/{key}",
                     "name": "tools.toggled",
