@@ -11,7 +11,7 @@
 return [
     // Uygulama sürümü (kodmob-frontend/package.json ile aynı olmalı; paketleme betiği denetler).
     // 1.x: WordPress (tv-core + eklentiler) · 2.0: Laravel, çok kullanıcılı panel, SEO.
-    'version' => '3.1.0',
+    'version' => '3.1.1',
 
     // Araç Pazarı › Keşfet'in topluluk kataloğu (github.com/kodmob/kodmob-explore; Core\Extensions\Marketplace). Birkaç
     // saatte bir okunur, okunamazsa son kopya ya da çatıyla gelen resources/marketplace/catalog.json. Boş: dışarı istek yok.

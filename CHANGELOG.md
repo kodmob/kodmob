@@ -4,6 +4,11 @@ Kodmob'un sürümleri. Biçim: her sürümde **Eklendi**, **Değişti**, **Düze
 yapılacaklar **Yükseltme** başlığında. Sürüm numarası `kodmob-frontend/package.json`, `kodmob-core/config/kodmob.php` ve
 `kodmob.json`'da aynıdır (`node build.mjs --bump minor` üçünü birlikte yükseltir).
 
+## 3.1.1 — 2026-10-26
+
+**Değişti**
+- Çalışma anı dosyaları (hata günlüğü, Keşfet kataloğunun kopyası, proje ikonunun boyları) git'e girmez.
+
 ## 3.1.0 — 2026-10-26
 
 **Değişti**

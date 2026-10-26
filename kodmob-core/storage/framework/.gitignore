@@ -9,3 +9,7 @@ schedule-*
 services.json
 modules.json
 preview/
+errors.json
+marketplace.json
+marketplace.meta.json
+icons/
